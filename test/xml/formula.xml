@@ -1,551 +1,554 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Formula">
-	<controller name="controller" url="formula.js"/>
-	<source name="itemsSource" url="data/source_items.xml"/>
+  <controller name="controller" url="formula.js"/>
+  <source name="itemsSource" url="data/source_items.xml"/>
 
-	<space all="30">
-	<box width="800" title="Special inputs" variant="textured" padding="10">
-		<text-input width="100"/>
-		<button text="Click me"/>
-		<checkbox/><checkbox/>
-		<radiobuttons>
-			<option text="Hey" value="1"/>
-			<option text="Hey" value="2"/>
-		</radiobuttons>
-		<color-input/>
-		<searchfield placeholder="Search here" expanded-width="200"/>
-		<dropdown key="template">
-			<option text="Lorem inpsum" value="1"/>
-			<option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
-			<option text="Ut enim ad minim veniam" value="3"/>
-			<option text="Excepteur sint occaecat" value="4"/>
-		</dropdown>
-		<button text="Click me">
-			<confirm text="Are you sure?"/>
-		</button>
-		<button text="Click me" highlighted="true"/>
-		<button text="Click me" small="true"/>
-		<button text="Click me" small="true" highlighted="true"/>
-		<number-input/>
-		<style-length-input/>
-		<searchfield/>
-		<slider key="slider" width="100"/>
-	</box>
+  <space all="30">
+  <box width="800" title="Special inputs" variant="textured" padding="10">
+    <text-input width="100"/>
+    <button text="Click me"/>
+    <checkbox/><checkbox/>
+    <radiobuttons>
+      <option text="Hey" value="1"/>
+      <option text="Hey" value="2"/>
+    </radiobuttons>
+    <color-input/>
+    <searchfield placeholder="Search here" expanded-width="200"/>
+    <dropdown key="template">
+      <option text="Lorem inpsum" value="1"/>
+      <option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+      <option text="Ut enim ad minim veniam" value="3"/>
+      <option text="Excepteur sint occaecat" value="4"/>
+    </dropdown>
+    <button text="Click me">
+      <confirm text="Are you sure?"/>
+    </button>
+    <button text="Click me" highlighted="true"/>
+    <button text="Click me" small="true"/>
+    <button text="Click me" small="true" highlighted="true"/>
+    <number-input/>
+    <style-length-input/>
+    <searchfield/>
+    <slider key="slider" width="100"/>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Special inputs" variant="textured" padding="10">
-		<formula name="formulatore">
-			<fields labels="above">
-				<field label="Color:">
-					<color-input key="color"/>
-				</field>
-				<field label="Adpative search:">
-					<searchfield adaptive="true"/>
-				</field>
-				<field label="Location:">
-					<location-input key="location"/>
-				</field>
-				<field label="Slider:">
-					<slider key="slider" name="sliderTest" width="200"/>
-					<space width="10"/>
-					<number-input name="sliderValue" width="200" tick-size="0.1" decimals="2" min="0" max="1"/>
-					<script>
-						hui.ui.listen({
-							$valueChanged$sliderTest : function(value) {
-								sliderValue.setValue(value);
-							},
-							$valueChanged$sliderValue : function(value) {
-								sliderTest.setValue(value);
-							}
-						})
-					</script>
-				</field>
-			</fields>
-			<buttons>
-				<button click='formulatore.setValues({color: "#ff2ead",location: {latitude: 56.64242820898831, longitude: 10.16157250976562}})' text="Set data"/>
-				<button click="logForm(formulatore)" text="Data"/>
-			</buttons>
-		</formula>
-	</box>
+  <box width="600" title="Special inputs" variant="textured" padding="10">
+    <formula name="formulatore">
+      <fields labels="above">
+        <field label="Color:">
+          <color-input key="color"/>
+        </field>
+        <field label="Adpative search:">
+          <searchfield adaptive="true"/>
+        </field>
+        <field label="Location:">
+          <location-input key="location"/>
+        </field>
+        <field label="Tokens:">
+          <tokens key="tokens"/>
+        </field>
+        <field label="Slider:">
+          <slider key="slider" name="sliderTest" width="200"/>
+          <space width="10"/>
+          <number-input name="sliderValue" width="200" tick-size="0.1" decimals="2" min="0" max="1"/>
+          <script>
+            hui.ui.listen({
+              $valueChanged$sliderTest : function(value) {
+                sliderValue.setValue(value);
+              },
+              $valueChanged$sliderValue : function(value) {
+                sliderTest.setValue(value);
+              }
+            })
+          </script>
+        </field>
+      </fields>
+      <buttons>
+        <button click='formulatore.setValues({color: "#ff2ead",location: {latitude: 56.64242820898831, longitude: 10.16157250976562}})' text="Set data"/>
+        <button click="logForm(formulatore)" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Dates" variant="textured" padding="10">
-		<formula name="dateForm">
-			<fields>
-				<field label="Seconds:">
-					<datetime-input key="date-seconds" return-type="seconds"/>
-				</field>
-				<field label="Date:">
-					<datetime-input key="date"/>
-				</field>
-			</fields>
-			<buttons>
-				<button click="createDateInput()" text="Create"/>
-				<button click="hui.log(dateForm.getValues())" text="Data"/>
-			</buttons>
-		</formula>
-		<div class="abc"></div>
-		<script>
-			function createDateInput() {
-				var f = hui.ui.DateTimeField.create();
-				hui.find('.abc').appendChild(f.element);
-			}
-		</script>
-	</box>
+  <box width="600" title="Dates" variant="textured" padding="10">
+    <formula name="dateForm">
+      <fields>
+        <field label="Seconds:">
+          <datetime-input key="date-seconds" return-type="seconds"/>
+        </field>
+        <field label="Date:">
+          <datetime-input key="date"/>
+        </field>
+      </fields>
+      <buttons>
+        <button click="createDateInput()" text="Create"/>
+        <button click="hui.log(dateForm.getValues())" text="Data"/>
+      </buttons>
+    </formula>
+    <div class="abc"></div>
+    <script>
+      function createDateInput() {
+        var f = hui.ui.DateTimeField.create();
+        hui.find('.abc').appendChild(f.element);
+      }
+    </script>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Location" variant="textured" padding="10">
-		<formula name="locationForm">
-			<fields labels="above">
-				<field label="Seconds:">
-					<location-input key="one"/>
-				</field>
-				<field label="Date:">
-					<location-input key="two"/>
-				</field>
-			</fields>
-			<buttons>
-				<button click="createLocationInput()" text="Create"/>
-				<button click="hui.log(locationForm.getValues())" text="Data"/>
-			</buttons>
-		</formula>
-		<div class="locationContainer"></div>
-		<script>
-			function createLocationInput() {
-				var f = hui.ui.LocationField.create();
-				hui.find('.locationContainer').appendChild(f.element);
-			}
-		</script>
-	</box>
+  <box width="600" title="Location" variant="textured" padding="10">
+    <formula name="locationForm">
+      <fields labels="above">
+        <field label="Seconds:">
+          <location-input key="one"/>
+        </field>
+        <field label="Date:">
+          <location-input key="two"/>
+        </field>
+      </fields>
+      <buttons>
+        <button click="createLocationInput()" text="Create"/>
+        <button click="hui.log(locationForm.getValues())" text="Data"/>
+      </buttons>
+    </formula>
+    <div class="locationContainer"></div>
+    <script>
+      function createLocationInput() {
+        var f = hui.ui.LocationField.create();
+        hui.find('.locationContainer').appendChild(f.element);
+      }
+    </script>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Numbers" variant="textured" padding="10">
-		<formula name="numForm">
-			<fields labels="above">
-				<field label="Number:">
-					<number-input key="number"/>
-				</field>
-				<field label="Number (min -300):">
-					<number-input key="number2" min="-300"/>
-				</field>
-				<field label="Number (min 300):">
-					<number-input key="number2" min="300"/>
-				</field>
-				<field label="Number (min -1, max 1, decimals:2):">
-					<number-input decimals="2" key="number2" min="-1" max="1"/>
-				</field>
-				<field label="Fixed width:">
-					<number-input key="number" width="200"/>
-				</field>
-			</fields>
-			<buttons>
-				<button click="logForm(numForm)" text="Data"/>
-			</buttons>
-		</formula>
-	</box>
+  <box width="600" title="Numbers" variant="textured" padding="10">
+    <formula name="numForm">
+      <fields labels="above">
+        <field label="Number:">
+          <number-input key="number"/>
+        </field>
+        <field label="Number (min -300):">
+          <number-input key="number2" min="-300"/>
+        </field>
+        <field label="Number (min 300):">
+          <number-input key="number2" min="300"/>
+        </field>
+        <field label="Number (min -1, max 1, decimals:2):">
+          <number-input decimals="2" key="number2" min="-1" max="1"/>
+        </field>
+        <field label="Fixed width:">
+          <number-input key="number" width="200"/>
+        </field>
+      </fields>
+      <buttons>
+        <button click="logForm(numForm)" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Style length" variant="textured" padding="10">
-		<formula name="styleForm">
-			<fields labels="above">
-				<field label="Pixels:">
-					<style-length-input key="style1" value="300px"/>
-				</field>
-				<field label="Em:">
-					<style-length-input key="style1" value="3em"/>
-				</field>
-				<field label="Fixed width:">
-					<style-length-input key="style1" width="200"/>
-				</field>
-			</fields>
-			<buttons>
-				<button click="logForm(styleForm)" text="Data"/>
-			</buttons>
-		</formula>
-	</box>
+  <box width="600" title="Style length" variant="textured" padding="10">
+    <formula name="styleForm">
+      <fields labels="above">
+        <field label="Pixels:">
+          <style-length-input key="style1" value="300px"/>
+        </field>
+        <field label="Em:">
+          <style-length-input key="style1" value="3em"/>
+        </field>
+        <field label="Fixed width:">
+          <style-length-input key="style1" width="200"/>
+        </field>
+      </fields>
+      <buttons>
+        <button click="logForm(styleForm)" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Text input" variant="textured" padding="10">
-		<formula name="textForm">
-			<fields labels="above">
-				<field label="Username:">
-					<text-input key="username"/>
-				</field>
-				<field label="Password:">
-					<text-input secret="true" key="password"/>
-				</field>
-				<field label="Field:">
-					<text-input key="something"/>
-				</field>
-				<field label="Placeholder:">
-					<text-input key="with_placeholder" placeholder="This is the placeholder"/>
-				</field>
-				<field label="Note:">
-					<text-input breaks="true" key="note"/>
-				</field>
-				<field label="Placeholder:">
-					<text-input breaks="true" key="note_with_placeholder" placeholder="This is the placeholder"/>
-				</field>
-			</fields>
-			<buttons>
-				<button click="logForm(textForm)" text="Data"/>
-			</buttons>
-		</formula>
-	</box>
+  <box width="600" title="Text input" variant="textured" padding="10">
+    <formula name="textForm">
+      <fields labels="above">
+        <field label="Username:">
+          <text-input key="username"/>
+        </field>
+        <field label="Password:">
+          <text-input secret="true" key="password"/>
+        </field>
+        <field label="Field:">
+          <text-input key="something"/>
+        </field>
+        <field label="Placeholder:">
+          <text-input key="with_placeholder" placeholder="This is the placeholder"/>
+        </field>
+        <field label="Note:">
+          <text-input breaks="true" key="note"/>
+        </field>
+        <field label="Placeholder:">
+          <text-input breaks="true" key="note_with_placeholder" placeholder="This is the placeholder"/>
+        </field>
+      </fields>
+      <buttons>
+        <button click="logForm(textForm)" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Checkboxes" variant="textured" padding="10">
-		<formula name="checkForm">
-			<fields labels="above">
-				<field label="Internal access:">
-					<checkbox key="internal"/>
-				</field>
-				<field label="External access:">
-					<checkbox key="external"/>
-				</field>
-				<field label="Groups:">
-					<checkboxes key="groups">
-						<option text="Fixed" value="fixed"/>
-						<options source="itemsSource"/>
-					</checkboxes>
-				</field>
-			</fields>
-			<buttons>
-				<button click="logForm(checkForm)" text="Data"/>
-			</buttons>
-		</formula>
-	</box>
+  <box width="600" title="Checkboxes" variant="textured" padding="10">
+    <formula name="checkForm">
+      <fields labels="above">
+        <field label="Internal access:">
+          <checkbox key="internal"/>
+        </field>
+        <field label="External access:">
+          <checkbox key="external"/>
+        </field>
+        <field label="Groups:">
+          <checkboxes key="groups">
+            <option text="Fixed" value="fixed"/>
+            <options source="itemsSource"/>
+          </checkboxes>
+        </field>
+      </fields>
+      <buttons>
+        <button click="logForm(checkForm)" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Text" variant="textured" padding="10">
-		<formula name="otherForm">
-			<fields labels="above">
-				<field label="Style length:">
-					<style-length-input key="style" value="15px"/>
-				</field>
-				<field label="Tokens:">
-					<tokens key="tokens"/>
-				</field>
-				<field label="Radios:">
-					<radiobuttons key="radios">
-						<option text="Lorem" value="lorem"/>
-						<option text="Ipsum" value="ipsum"/>
-						<option text="Dolor" value="dolor"/>
-					</radiobuttons>
-				</field>
-			</fields>
-			<buttons>
-				<button click="logForm(otherForm)" text="Data"/>
-			</buttons>
-		</formula>
-	</box>
+  <box width="600" title="Text" variant="textured" padding="10">
+    <formula name="otherForm">
+      <fields labels="above">
+        <field label="Style length:">
+          <style-length-input key="style" value="15px"/>
+        </field>
+        <field label="Tokens:">
+          <tokens key="tokens"/>
+        </field>
+        <field label="Radios:">
+          <radiobuttons key="radios">
+            <option text="Lorem" value="lorem"/>
+            <option text="Ipsum" value="ipsum"/>
+            <option text="Dolor" value="dolor"/>
+          </radiobuttons>
+        </field>
+      </fields>
+      <buttons>
+        <button click="logForm(otherForm)" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Drop downs" variant="textured" padding="10">
-		<formula name="dateForm">
-			<fields labels="above">
-				<field label="No initial value:">
-					<dropdown key="template" placeholder="Holding the place">
-						<option text="Lorem inpsum" value="1"/>
-						<option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
-						<option text="Ut enim ad minim veniam" value="3"/>
-						<option text="Excepteur sint occaecat" value="4"/>
-					</dropdown>
-				</field>
-				<field label="Initial long value:">
-					<dropdown key="template" value="2">
-						<option text="Lorem inpsum" value="1"/>
-						<option text="Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue." value="2"/>
-						<option text="Ut enim ad minim veniam" value="3"/>
-						<option text="Excepteur sint occaecat" value="4"/>
-					</dropdown>
-				</field>
-				<field label="Initial long value:">
-					<dropdown key="template" value="2">
-						<option text="Lorem inpsum" value="1"/>
-						<option text="MaecenasfaucibusmollisinterdumVestibulumidligulaportafeliseuismodsemperMorbleorisusportaacconsecteturacvestibulumaterosNullavitaeelitliberoapharetraaugue" value="2"/>
-						<option text="Ut enim ad minim veniam" value="3"/>
-						<option text="Excepteur sint occaecat" value="4"/>
-					</dropdown>
-				</field>
-				<field label="Many items:">
-					<dropdown key="template" value="2">
-						<option text="Lorem inpsum" value="1"/>
-						<option text="Ut enim ad minim veniam" value="2"/>
-						<option text="Excepteur sint occaecat" value="3"/>
-						<option text="Mattis Egestas Inceptos" value="4"/>
-						<option text="Mattis Egestas Inceptos" value="5"/>
-						<option text="Mattis Egestas Inceptos" value="6"/>
-						<option text="Mattis Egestas Inceptos" value="7"/>
-						<option text="Mattis Egestas Inceptos" value="8"/>
-						<option text="Mattis Egestas Inceptos" value="9"/>
-						<option text="Mattis Egestas Inceptos" value="10"/>
-						<option text="Mattis Egestas Inceptos" value="11"/>
-						<option text="Mattis Egestas Inceptos" value="12"/>
-						<option text="Mattis Egestas Inceptos" value="13"/>
-						<option text="Mattis Egestas Inceptos" value="14"/>
-						<option text="Mattis Egestas Inceptos" value="15"/>
-						<option text="Mattis Egestas Inceptos" value="16"/>
-						<option text="Mattis Egestas Inceptos" value="17"/>
-						<option text="Mattis Egestas Inceptos" value="18"/>
-						<option text="Mattis Egestas Inceptos" value="19"/>
-						<option text="Mattis Egestas Inceptos" value="20"/>
-						<option text="Mattis Egestas Inceptos" value="21"/>
-						<option text="Mattis Egestas Inceptos" value="22"/>
-						<option text="Mattis Egestas Inceptos" value="23"/>
-						<option text="Mattis Egestas Inceptos" value="24"/>
-						<option text="Mattis Egestas Inceptos" value="25"/>
-						<option text="Mattis Egestas Inceptos" value="26"/>
-						<option text="Mattis Egestas Inceptos" value="27"/>
-						<option text="Mattis Egestas Inceptos" value="28"/>
-						<option text="Mattis Egestas Inceptos" value="29"/>
-						<option text="Mattis Egestas Inceptos" value="30"/>
-						<option text="Mattis Egestas Inceptos" value="31"/>
-						<option text="Mattis Egestas Inceptos" value="32"/>
-						<option text="Mattis Egestas Inceptos" value="33"/>
-						<option text="Mattis Egestas Inceptos" value="34"/>
-						<option text="Mattis Egestas Inceptos" value="35"/>
-						<option text="Mattis Egestas Inceptos" value="36"/>
-						<option text="Mattis Egestas Inceptos" value="37"/>
-						<option text="Mattis Egestas Inceptos" value="38"/>
-						<option text="Mattis Egestas Inceptos" value="39"/>
-						<option text="Mattis Egestas Inceptos" value="40"/>
-						<option text="Mattis Egestas Inceptos" value="41"/>
-						<option text="Mattis Egestas Inceptos" value="42"/>
-						<option text="Mattis Egestas Inceptos" value="43"/>
-						<option text="Mattis Egestas Inceptos" value="44"/>
-						<option text="Mattis Egestas Inceptos" value="45"/>
-						<option text="Mattis Egestas Inceptos" value="46"/>
-						<option text="Mattis Egestas Inceptos" value="47"/>
-						<option text="Mattis Egestas Inceptos" value="48"/>
-						<option text="Mattis Egestas Inceptos" value="49"/>
-						<option text="Mattis Egestas Inceptos" value="50"/>
-					</dropdown>
-				</field>
-			</fields>
-			<buttons>
-				<button click="hui.log(dateForm.getValues())" text="Data"/>
-			</buttons>
-		</formula>
-	</box>
+  <box width="600" title="Drop downs" variant="textured" padding="10">
+    <formula name="dateForm">
+      <fields labels="above">
+        <field label="No initial value:">
+          <dropdown key="template" placeholder="Holding the place">
+            <option text="Lorem inpsum" value="1"/>
+            <option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+            <option text="Ut enim ad minim veniam" value="3"/>
+            <option text="Excepteur sint occaecat" value="4"/>
+          </dropdown>
+        </field>
+        <field label="Initial long value:">
+          <dropdown key="template" value="2">
+            <option text="Lorem inpsum" value="1"/>
+            <option text="Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue." value="2"/>
+            <option text="Ut enim ad minim veniam" value="3"/>
+            <option text="Excepteur sint occaecat" value="4"/>
+          </dropdown>
+        </field>
+        <field label="Initial long value:">
+          <dropdown key="template" value="2">
+            <option text="Lorem inpsum" value="1"/>
+            <option text="MaecenasfaucibusmollisinterdumVestibulumidligulaportafeliseuismodsemperMorbleorisusportaacconsecteturacvestibulumaterosNullavitaeelitliberoapharetraaugue" value="2"/>
+            <option text="Ut enim ad minim veniam" value="3"/>
+            <option text="Excepteur sint occaecat" value="4"/>
+          </dropdown>
+        </field>
+        <field label="Many items:">
+          <dropdown key="template" value="2">
+            <option text="Lorem inpsum" value="1"/>
+            <option text="Ut enim ad minim veniam" value="2"/>
+            <option text="Excepteur sint occaecat" value="3"/>
+            <option text="Mattis Egestas Inceptos" value="4"/>
+            <option text="Mattis Egestas Inceptos" value="5"/>
+            <option text="Mattis Egestas Inceptos" value="6"/>
+            <option text="Mattis Egestas Inceptos" value="7"/>
+            <option text="Mattis Egestas Inceptos" value="8"/>
+            <option text="Mattis Egestas Inceptos" value="9"/>
+            <option text="Mattis Egestas Inceptos" value="10"/>
+            <option text="Mattis Egestas Inceptos" value="11"/>
+            <option text="Mattis Egestas Inceptos" value="12"/>
+            <option text="Mattis Egestas Inceptos" value="13"/>
+            <option text="Mattis Egestas Inceptos" value="14"/>
+            <option text="Mattis Egestas Inceptos" value="15"/>
+            <option text="Mattis Egestas Inceptos" value="16"/>
+            <option text="Mattis Egestas Inceptos" value="17"/>
+            <option text="Mattis Egestas Inceptos" value="18"/>
+            <option text="Mattis Egestas Inceptos" value="19"/>
+            <option text="Mattis Egestas Inceptos" value="20"/>
+            <option text="Mattis Egestas Inceptos" value="21"/>
+            <option text="Mattis Egestas Inceptos" value="22"/>
+            <option text="Mattis Egestas Inceptos" value="23"/>
+            <option text="Mattis Egestas Inceptos" value="24"/>
+            <option text="Mattis Egestas Inceptos" value="25"/>
+            <option text="Mattis Egestas Inceptos" value="26"/>
+            <option text="Mattis Egestas Inceptos" value="27"/>
+            <option text="Mattis Egestas Inceptos" value="28"/>
+            <option text="Mattis Egestas Inceptos" value="29"/>
+            <option text="Mattis Egestas Inceptos" value="30"/>
+            <option text="Mattis Egestas Inceptos" value="31"/>
+            <option text="Mattis Egestas Inceptos" value="32"/>
+            <option text="Mattis Egestas Inceptos" value="33"/>
+            <option text="Mattis Egestas Inceptos" value="34"/>
+            <option text="Mattis Egestas Inceptos" value="35"/>
+            <option text="Mattis Egestas Inceptos" value="36"/>
+            <option text="Mattis Egestas Inceptos" value="37"/>
+            <option text="Mattis Egestas Inceptos" value="38"/>
+            <option text="Mattis Egestas Inceptos" value="39"/>
+            <option text="Mattis Egestas Inceptos" value="40"/>
+            <option text="Mattis Egestas Inceptos" value="41"/>
+            <option text="Mattis Egestas Inceptos" value="42"/>
+            <option text="Mattis Egestas Inceptos" value="43"/>
+            <option text="Mattis Egestas Inceptos" value="44"/>
+            <option text="Mattis Egestas Inceptos" value="45"/>
+            <option text="Mattis Egestas Inceptos" value="46"/>
+            <option text="Mattis Egestas Inceptos" value="47"/>
+            <option text="Mattis Egestas Inceptos" value="48"/>
+            <option text="Mattis Egestas Inceptos" value="49"/>
+            <option text="Mattis Egestas Inceptos" value="50"/>
+          </dropdown>
+        </field>
+      </fields>
+      <buttons>
+        <button click="hui.log(dateForm.getValues())" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Text" variant="textured" padding="10">
-		<formula name="objectListForm">
-			<fields labels="above">
-				<field label="Object list">
-					<objectlist key="objectlist">
-						<text key="email" label="E-mail"/>
-						<select key="context" label="Context">
-							<option value="home" text="Home"/>
-							<option value="work" text="Work"/>
-							<option value="school" text="School"/>
-						</select>
-					</objectlist>
-				</field>
-			</fields>
-			<buttons>
-				<button click="logForm(objectListForm)" text="Data"/>
-			</buttons>
-		</formula>
-	</box>
+  <box width="600" title="Text" variant="textured" padding="10">
+    <formula name="objectListForm">
+      <fields labels="above">
+        <field label="Object list">
+          <objectlist key="objectlist">
+            <text key="email" label="E-mail"/>
+            <select key="context" label="Context">
+              <option value="home" text="Home"/>
+              <option value="work" text="Work"/>
+              <option value="school" text="School"/>
+            </select>
+          </objectlist>
+        </field>
+      </fields>
+      <buttons>
+        <button click="logForm(objectListForm)" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
 
-	<space height="30"/>
+  <space height="30"/>
 
-	<box width="600" title="Title with toolbars" variant="textured">
-		<toolbar>
-			<icon icon="common/color" text="Hep hey!" selected="true"/>
-			<icon icon="common/folder" text="Show values" name="showValues"/>
-			<icon icon="common/settings" text="Hep hey!" disabled="true"/>
-			<icon icon="common/folder" text="Show window" click="win.show();"/>
-		</toolbar>
-		<tabs>
-			<tab title="Formula 1" padding="10">
-				<formula name="formula1">
-					<fields labels="above">
-						<field label="Object list:">
-							<objectlist key="objectlist">
-								<text key="email" label="E-mail"/>
-								<select key="context" label="Context">
-									<option value="home" text="Home"/>
-									<option value="work" text="Work"/>
-									<option value="school" text="School"/>
-								</select>
-							</objectlist>
-						</field>
-					</fields>
-					<buttons top="10">
-						<button text="Gem" highlighted="true"/>
-						<button text="Slet"/>
-						<button text="Annuller"/>
-					</buttons>
-				</formula>
-			</tab>
-			<tab title="Formula 2" padding="10">
-				<formula name="formula2">
-					<fields>
-						<field label="Template:">
-							<dropdown key="template" source="itemsSource" value="c"/>
-						</field>
-						<field label="Brugernavn:">
-							<text-input key="username"/>
-						</field>
-						<field label="Kodeord:">
-							<text-input secret="true" key="password"/>
-						</field>
-						<field label="Notat:">
-							<text-input breaks="true" key="note"/>
-						</field>
-						<field label="Date (secs):">
-							<datetime-input key="date-seconds" return-type="seconds"/>
-						</field>
-						<field label="Date:">
-							<datetime-input key="date"/>
-						</field>
-						<field label="Internal access:">
-							<checkbox key="internal"/>
-						</field>
-						<field label="External access:">
-							<checkbox key="external"/>
-						</field>
-						<field label="Groups:">
-							<checkboxes key="groups">
-								<options source="itemsSource"/>
-							</checkboxes>
-						</field>
-						<field label="Tokens:">
-							<tokens key="tokens"/>
-						</field>
-						<field label="Radios:">
-							<radiobuttons key="radios">
-								<option text="Lorem" value="lorem"/>
-								<option text="Ipsum" value="ipsum"/>
-								<option text="Dolor" value="dolor"/>
-							</radiobuttons>
-						</field>
-						<field label="Object list:">
-							<objectlist key="objectlist">
-								<text key="email" label="E-mail"/>
-								<select key="context" label="Context">
-									<option value="home" text="Home"/>
-									<option value="work" text="Work"/>
-									<option value="school" text="School"/>
-								</select>
-							</objectlist>
-						</field>
-					</fields>
-					<buttons top="10">
-						<button text="Gem" highlighted="true"/>
-						<button text="Slet"/>
-						<button text="Annuller"/>
-					</buttons>
-				</formula>
-			</tab>
-			<tab title="Field" padding="10">
-				<formula name="formula2">
-					<fields>
-						<field label="Language">
-							<dropdown source="itemsSource" value="c"/>
-						</field>
-						<field label="Username" hint="This is a hint describing something">
-							<text-input key="username"/>
-						</field>
-					</fields>
-				</formula>
-			</tab>
-		</tabs>
-	</box>
+  <box width="600" title="Title with toolbars" variant="textured">
+    <toolbar>
+      <icon icon="common/color" text="Hep hey!" selected="true"/>
+      <icon icon="common/folder" text="Show values" name="showValues"/>
+      <icon icon="common/settings" text="Hep hey!" disabled="true"/>
+      <icon icon="common/folder" text="Show window" click="win.show();"/>
+    </toolbar>
+    <tabs>
+      <tab title="Formula 1" padding="10">
+        <formula name="formula1">
+          <fields labels="above">
+            <field label="Object list:">
+              <objectlist key="objectlist">
+                <text key="email" label="E-mail"/>
+                <select key="context" label="Context">
+                  <option value="home" text="Home"/>
+                  <option value="work" text="Work"/>
+                  <option value="school" text="School"/>
+                </select>
+              </objectlist>
+            </field>
+          </fields>
+          <buttons top="10">
+            <button text="Gem" highlighted="true"/>
+            <button text="Slet"/>
+            <button text="Annuller"/>
+          </buttons>
+        </formula>
+      </tab>
+      <tab title="Formula 2" padding="10">
+        <formula name="formula2">
+          <fields>
+            <field label="Template:">
+              <dropdown key="template" source="itemsSource" value="c"/>
+            </field>
+            <field label="Brugernavn:">
+              <text-input key="username"/>
+            </field>
+            <field label="Kodeord:">
+              <text-input secret="true" key="password"/>
+            </field>
+            <field label="Notat:">
+              <text-input breaks="true" key="note"/>
+            </field>
+            <field label="Date (secs):">
+              <datetime-input key="date-seconds" return-type="seconds"/>
+            </field>
+            <field label="Date:">
+              <datetime-input key="date"/>
+            </field>
+            <field label="Internal access:">
+              <checkbox key="internal"/>
+            </field>
+            <field label="External access:">
+              <checkbox key="external"/>
+            </field>
+            <field label="Groups:">
+              <checkboxes key="groups">
+                <options source="itemsSource"/>
+              </checkboxes>
+            </field>
+            <field label="Tokens:">
+              <tokens key="tokens"/>
+            </field>
+            <field label="Radios:">
+              <radiobuttons key="radios">
+                <option text="Lorem" value="lorem"/>
+                <option text="Ipsum" value="ipsum"/>
+                <option text="Dolor" value="dolor"/>
+              </radiobuttons>
+            </field>
+            <field label="Object list:">
+              <objectlist key="objectlist">
+                <text key="email" label="E-mail"/>
+                <select key="context" label="Context">
+                  <option value="home" text="Home"/>
+                  <option value="work" text="Work"/>
+                  <option value="school" text="School"/>
+                </select>
+              </objectlist>
+            </field>
+          </fields>
+          <buttons top="10">
+            <button text="Gem" highlighted="true"/>
+            <button text="Slet"/>
+            <button text="Annuller"/>
+          </buttons>
+        </formula>
+      </tab>
+      <tab title="Field" padding="10">
+        <formula name="formula2">
+          <fields>
+            <field label="Language">
+              <dropdown source="itemsSource" value="c"/>
+            </field>
+            <field label="Username" hint="This is a hint describing something">
+              <text-input key="username"/>
+            </field>
+          </fields>
+        </formula>
+      </tab>
+    </tabs>
+  </box>
 
-	<window name="log" width="400" padding="5" title="Log">
+  <window name="log" width="400" padding="5" title="Log">
     <fields labels="above">
       <field>
         <text-input breaks="true" name="logfield"/>
       </field>
     </fields>
-	</window>
+  </window>
 
-	<script>
-		var logForm = function(name) {
-			var values = hui.get(name).getValues();
-			logfield.setValue(hui.string.toJSON(values));
-			log.show();
-		}
-		hui.onReady(function() {
-		//win.show()
-		})
-	</script>
+  <script>
+    var logForm = function(name) {
+      var values = hui.get(name).getValues();
+      logfield.setValue(hui.string.toJSON(values));
+      log.show();
+    }
+    hui.onReady(function() {
+    //win.show()
+    })
+  </script>
 
-	<window name="win" width="400" padding="10" variant="dark">
-		<formula name="formula2">
-			<fields>
-				<field label="Template:">
-					<dropdown key="template" source="itemsSource" value="c"/>
-				</field>
-				<field label="Brugernavn:">
-					<text-input key="username"/>
-				</field>
-				<field label="Kodeord:">
-					<text-input secret="true" key="password"/>
-				</field>
-				<field label="Notat:">
-					<text-input breaks="true" key="note"/>
-				</field>
-				<field label="Date (secs):">
-					<datetime-input key="date-seconds" return-type="seconds"/>
-				</field>
-				<field label="Date:">
-					<datetime-input key="date"/>
-				</field>
-				<field label="Internal access:">
-					<checkbox key="internal"/>
-				</field>
-				<field label="External access:">
-					<checkbox key="external"/>
-				</field>
-				<field label="Groups:">
-					<checkboxes key="groups">
-						<options source="itemsSource"/>
-					</checkboxes>
-				</field>
-				<field label="Tokens:">
-					<tokens key="tokens"/>
-				</field>
-				<field label="Radios:">
-					<radiobuttons key="radios">
-						<option text="Lorem" value="lorem"/>
-						<option text="Ipsum" value="ipsum"/>
-						<option text="Dolor" value="dolor"/>
-					</radiobuttons>
-				</field>
-				<field label="Object list:">
-					<objectlist key="objectlist">
-						<text key="email" label="E-mail"/>
-						<select key="context" label="Context">
-							<option value="home" text="Home"/>
-							<option value="work" text="Work"/>
-							<option value="school" text="School"/>
-						</select>
-					</objectlist>
-				</field>
-			</fields>
-			<buttons top="10">
-				<button text="Normal" click="win.setVariant(null)"/>
-				<button text="Dark" click="win.setVariant('dark')"/>
-				<button text="News" click="win.setVariant('news')"/>
-				<button text="Light" click="win.setVariant('light')" highlighted="true"/>
-			</buttons>
-		</formula>
-	</window>
+  <window name="win" width="400" padding="10" variant="dark">
+    <formula name="formula2">
+      <fields>
+        <field label="Template:">
+          <dropdown key="template" source="itemsSource" value="c"/>
+        </field>
+        <field label="Brugernavn:">
+          <text-input key="username"/>
+        </field>
+        <field label="Kodeord:">
+          <text-input secret="true" key="password"/>
+        </field>
+        <field label="Notat:">
+          <text-input breaks="true" key="note"/>
+        </field>
+        <field label="Date (secs):">
+          <datetime-input key="date-seconds" return-type="seconds"/>
+        </field>
+        <field label="Date:">
+          <datetime-input key="date"/>
+        </field>
+        <field label="Internal access:">
+          <checkbox key="internal"/>
+        </field>
+        <field label="External access:">
+          <checkbox key="external"/>
+        </field>
+        <field label="Groups:">
+          <checkboxes key="groups">
+            <options source="itemsSource"/>
+          </checkboxes>
+        </field>
+        <field label="Tokens:">
+          <tokens key="tokens"/>
+        </field>
+        <field label="Radios:">
+          <radiobuttons key="radios">
+            <option text="Lorem" value="lorem"/>
+            <option text="Ipsum" value="ipsum"/>
+            <option text="Dolor" value="dolor"/>
+          </radiobuttons>
+        </field>
+        <field label="Object list:">
+          <objectlist key="objectlist">
+            <text key="email" label="E-mail"/>
+            <select key="context" label="Context">
+              <option value="home" text="Home"/>
+              <option value="work" text="Work"/>
+              <option value="school" text="School"/>
+            </select>
+          </objectlist>
+        </field>
+      </fields>
+      <buttons top="10">
+        <button text="Normal" click="win.setVariant(null)"/>
+        <button text="Dark" click="win.setVariant('dark')"/>
+        <button text="News" click="win.setVariant('news')"/>
+        <button text="Light" click="win.setVariant('light')" highlighted="true"/>
+      </buttons>
+    </formula>
+  </window>
   </space>
 </gui>

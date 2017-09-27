@@ -1,0 +1,165 @@
+@import 'tools';
+
+.hui_presentation {
+  position: fixed;
+  background: #000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 0;
+  display: none;
+  z-index: 99999;
+  text-align: left;
+
+  &.hui-is-open {
+    display: block;
+  }
+
+  &_viewer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    transition: bottom .3s;
+    -webkit-tap-highlight-color: transparent;
+    .hui-is-native-scroll & {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      -webkit-user-select: none;
+      scroll-snap-type: mandatory;
+      -webkit-scroll-snap-type: mandatory;
+      scroll-snap-points-x: repeat(100%);
+      -webkit-scroll-snap-points-x: repeat(100%);
+    }
+  }
+
+  &_items {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    white-space: nowrap;
+    width: 100%;
+    transform: translate3d(0,0,0);
+  }
+  &_item {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: center;
+    box-sizing: border-box;
+  }
+
+  &_image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding: 10px 5px;
+    box-sizing: border-box;
+
+    &_content {
+      background: 50% no-repeat;
+      background-size: contain;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &_close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    box-sizing: border-box;
+    padding: 10px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: rgba(255,255,255,.5);
+  }
+  &.hui-is-mouse &_icon:hover {
+    path {
+      stroke-width: 2px;
+    }
+  };
+
+  &_next,
+  &_previous {
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    padding: 10px 5px;
+    -webkit-tap-highlight-color: transparent;
+    margin-top: -20px;
+    background: rgba(255,255,255,.5);
+  }
+
+  &_next {
+    right: 0;
+  }
+
+  &_previous {
+    left: 0;
+  }
+
+  &_thumbnails {
+    position: absolute;
+    height: 0;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    overflow-x: auto;
+    transition: height .3s;
+    -webkit-tap-highlight-color: transparent ;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: mandatory;
+    -webkit-scroll-snap-type: mandatory;
+    scroll-snap-points-x: repeat(100px);
+    -webkit-scroll-snap-points-x: repeat(100px);
+  }
+
+  &_thumbnail {
+    width: 100px;
+    height: 100px;
+    white-space: nowrap;
+    display: inline-block;
+    background: 50% no-repeat;
+    background-size: contain;
+  }
+  &_line {
+    stroke: #fff;
+    stroke-width: 1px;
+    fill: none;
+  }
+  &.hui-is-thumbnails & {
+    &_thumbnails {
+      height: 100px;
+    }
+    &_viewer {
+      bottom: 100px;
+    }
+  }
+  &.hui-is-light {
+    background: #fff;
+  }
+
+  &.hui-is-light &_line {
+    stroke: rgba(0,0,0,.5);
+  }
+}
+
+@media (min-width: 600px) {
+  .presentation {
+    &_image {
+      padding: 10px 30px;
+    }
+  }
+}

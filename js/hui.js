@@ -895,6 +895,7 @@ hui.get.byClass = function(parentElement,className,tag) {
  * @param node The node to start from
  * @param name The name of the nodes to find
  * @returns An array of nodes (not NodeList)
+ * @deprecated
  */
 hui.get.byTag = function(node,name) {
   var nl = node.getElementsByTagName(name),
@@ -909,7 +910,7 @@ hui.get.byId = function(e,id) {
     if (children[i].nodeType===1 && children[i].getAttribute('id')===id) {
       return children[i];
     } else {
-      var found = hui.get.byId(children[i],id);
+      var found = hui.find('#' + id,children[i]);
       if (found) {
         return found;
       }
@@ -966,6 +967,16 @@ hui.findAll = function(selector,context) {
   var nl = (context || document).querySelectorAll(selector);
   return Array.prototype.slice.call(nl);
 }
+
+hui.closest = function(selector,context) {
+  var parent = context;
+  while (parent) {
+    if (parent.matches && parent.matches(selector)) {
+      return parent;
+    }
+    parent = parent.parentNode;
+  }
+};
 
 if (!document.querySelector) {
   hui.find = function(selector,context) {
@@ -1576,14 +1587,7 @@ hui.Event.prototype = {
    * @returns {Element} The found element or null
    */
   findByTag : function(tag) {
-    var parent = this.element;
-    while (parent) {
-      if (parent.tagName && parent.tagName.toLowerCase()==tag) {
-        return parent;
-      }
-      parent = parent.parentNode;
-    }
-    return null;
+    return hui.closest(tag, this.element);
   },
   find : function(func) {
     var parent = this.element;
@@ -2261,6 +2265,7 @@ hui.drag = {
    */
   start : function(options,e) {
     var win = options.window || window;
+    var root = window.document.body.parentNode;
     var target = hui.browser.msie ? win.document : win;
     var touch = options.touch && hui.browser.touch;
     options.$before && options.$before();
@@ -2285,17 +2290,17 @@ hui.drag = {
       options.onMove && options.onMove(e);
       options.$move && options.$move(e);
     }.bind(this);
-    hui.listen(win.document.body,touch ? 'touchmove' : 'mousemove',mover);
-    upper = function() {
-      hui.unListen(win.document.body,touch ? 'touchmove' : 'mousemove',mover);
+    hui.listen(root,touch ? 'touchmove' : 'mousemove',mover);
+    upper = function(e) {
+      hui.unListen(root,touch ? 'touchmove' : 'mousemove',mover);
       hui.unListen(target,touch ? 'touchend' : 'mouseup',upper);
       options.onEnd && options.onEnd(); // TODO: deprecated
       if (moved) {
-        options.onAfterMove && options.onAfterMove(); // TODO: deprecated
-        options.$endMove && options.$endMove();
+        options.onAfterMove && options.onAfterMove(e); // TODO: deprecated
+        options.$endMove && options.$endMove(e);
       } else {
-        options.onNotMoved && options.onNotMoved(); // TODO: deprecated
-        options.$notMoved && options.$notMoved();
+        options.onNotMoved && options.onNotMoved(e); // TODO: deprecated
+        options.$notMoved && options.$notMoved(e);
       }
       options.$finally && options.$finally();
       hui.selection.enable(true);

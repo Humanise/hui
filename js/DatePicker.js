@@ -43,7 +43,7 @@ hui.ui.DatePicker.create = function(options) {
 hui.ui.DatePicker.prototype = {
   _addBehavior : function() {
     var self = this;
-    this.cells = hui.get.byTag(this.element,'td');
+    this.cells = hui.findAll('td',this.element);
     hui.each(this.cells,function(cell,index) {
       hui.listen(cell,'mousedown',function(e) {hui.stop(e);self._selectCell(index)});
     })

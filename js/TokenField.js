@@ -67,7 +67,7 @@ hui.ui.TokenField.prototype = {
   },
   /** @private */
   $$layout : function() {
-    var inputs = hui.get.byTag(this.element,'input');
+    var inputs = hui.findAll('input',this.element);
     for (var i=0; i < inputs.length; i++) {
       inputs[i].style.width = Math.min(Math.max(inputs[i].value.length*7+3,50),150)+'px';
     };
