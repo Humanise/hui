@@ -34,8 +34,8 @@
       html : '<div class="' + ns + '_viewer id-viewer"><div class="' + ns + '_items id-items"></div></div>' +
         '<div class="' + ns + '_thumbnails id-thumbs"></div>'+
         '<div class="' + ns + '_close id-close">' + close + '</div>'+
-        '<div class="' + ns + '_next id-next">' + right + '</div>'+
-        '<div class="' + ns + '_previous id-previous">' + left + '</div>',
+        '<div class="' + ns + '_arrow ' + ns + '_next id-next">' + right + '</div>'+
+        '<div class="' + ns + '_arrow ' + ns + '_previous id-previous">' + left + '</div>',
       parent: document.body
     });
     if (!hui.browser.touch) {
@@ -221,6 +221,7 @@
         }
         this.images.push({node:content,scale:1,x:0,y:0});
       }
+      hui.cls.set(this.element, 'hui-is-multiple', this.items.length > 1)
       this._updateImages();
     },
     _updateImages : function() {
@@ -323,7 +324,9 @@
       })
     },
     _toggleThumbs : function() {
-      hui.cls.toggle(this.element,'hui-is-thumbnails');
+      if (this.items.length > 1) {
+        hui.cls.toggle(this.element,'hui-is-thumbnails');
+      }
     },
     _goTo : function(index) {
       if (this.index == index) {

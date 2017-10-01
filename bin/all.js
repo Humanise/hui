@@ -7829,6 +7829,12 @@ hui.ui.Button = function(options) {
   this.options = options;
   this.name = options.name;
   this.element = hui.get(options.element);
+  for (var i = 0; i < this.element.childNodes.length; i++) {
+    if (this.element.childNodes[i].nodeType == 3) {
+      this.textNode = this.element.childNodes[i];
+      break;
+    }
+  }
   this.enabled = !hui.cls.has(this.element,'hui_button_disabled');
   hui.ui.extend(this);
   this._attach();
@@ -7983,6 +7989,9 @@ hui.ui.Button.prototype = {
    * @param
    */
   setText : function(text) {
+    if (this.textNode) {
+      return this.textNode.nodeValue = hui.ui.getTranslated(text);
+    }
     hui.dom.setText(this.element, hui.ui.getTranslated(text));
   },
   /**
@@ -22277,8 +22286,8 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       html : '<div class="' + ns + '_viewer id-viewer"><div class="' + ns + '_items id-items"></div></div>' +
         '<div class="' + ns + '_thumbnails id-thumbs"></div>'+
         '<div class="' + ns + '_close id-close">' + close + '</div>'+
-        '<div class="' + ns + '_next id-next">' + right + '</div>'+
-        '<div class="' + ns + '_previous id-previous">' + left + '</div>',
+        '<div class="' + ns + '_arrow ' + ns + '_next id-next">' + right + '</div>'+
+        '<div class="' + ns + '_arrow ' + ns + '_previous id-previous">' + left + '</div>',
       parent: document.body
     });
     if (!hui.browser.touch) {
@@ -22464,6 +22473,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
         }
         this.images.push({node:content,scale:1,x:0,y:0});
       }
+      hui.cls.set(this.element, 'hui-is-multiple', this.items.length > 1)
       this._updateImages();
     },
     _updateImages : function() {
@@ -22566,7 +22576,9 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       })
     },
     _toggleThumbs : function() {
-      hui.cls.toggle(this.element,'hui-is-thumbnails');
+      if (this.items.length > 1) {
+        hui.cls.toggle(this.element,'hui-is-thumbnails');
+      }
     },
     _goTo : function(index) {
       if (this.index == index) {

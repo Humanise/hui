@@ -87,8 +87,7 @@
     }
   };
 
-  &_next,
-  &_previous {
+  &_arrow {
     position: absolute;
     top: 50%;
     cursor: pointer;
@@ -98,6 +97,10 @@
     -webkit-tap-highlight-color: transparent;
     margin-top: -20px;
     background: rgba(255,255,255,.5);
+    display: none;
+  }
+  &.hui-is-multiple &_arrow {
+    display: block;
   }
 
   &_next {

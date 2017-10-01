@@ -7829,6 +7829,12 @@ hui.ui.Button = function(options) {
   this.options = options;
   this.name = options.name;
   this.element = hui.get(options.element);
+  for (var i = 0; i < this.element.childNodes.length; i++) {
+    if (this.element.childNodes[i].nodeType == 3) {
+      this.textNode = this.element.childNodes[i];
+      break;
+    }
+  }
   this.enabled = !hui.cls.has(this.element,'hui_button_disabled');
   hui.ui.extend(this);
   this._attach();
@@ -7983,6 +7989,9 @@ hui.ui.Button.prototype = {
    * @param
    */
   setText : function(text) {
+    if (this.textNode) {
+      return this.textNode.nodeValue = hui.ui.getTranslated(text);
+    }
     hui.dom.setText(this.element, hui.ui.getTranslated(text));
   },
   /**

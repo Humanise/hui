@@ -67,7 +67,7 @@
     background: rgba(255, 255, 255, 0.5); }
   .hui_presentation.hui-is-mouse .hui_presentation_icon:hover path {
     stroke-width: 2px; }
-  .hui_presentation_next, .hui_presentation_previous {
+  .hui_presentation_arrow {
     position: absolute;
     top: 50%;
     cursor: pointer;
@@ -76,7 +76,10 @@
     padding: 10px 5px;
     -webkit-tap-highlight-color: transparent;
     margin-top: -20px;
-    background: rgba(255, 255, 255, 0.5); }
+    background: rgba(255, 255, 255, 0.5);
+    display: none; }
+  .hui_presentation.hui-is-multiple .hui_presentation_arrow {
+    display: block; }
   .hui_presentation_next {
     right: 0; }
   .hui_presentation_previous {
