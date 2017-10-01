@@ -1587,7 +1587,14 @@ hui.Event.prototype = {
    * @returns {Element} The found element or null
    */
   findByTag : function(tag) {
-    return hui.closest(tag, this.element);
+    var parent = this.element;
+    while (parent) {
+      if (parent.tagName && parent.tagName.toLowerCase()==tag) {
+        return parent;
+      }
+      parent = parent.parentNode;
+    }
+    return null;
   },
   find : function(func) {
     var parent = this.element;
