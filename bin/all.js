@@ -22263,7 +22263,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
     this.items = [];
     this.images = [];
     hui.cls.add(this.element,'hui-is-light');
-    this.nativeScroll = !!navigator.userAgent.match('iPhone|iPad|iPod|Safari') && !window['chrome'];
+    this.nativeScroll = !!navigator.userAgent.match('iPhone|iPad|iPod|Safari') && !window['chrome'] && hui.browser.webkitVersion > 603;
     //this.nativeScroll = false;
     this._attach();
   }
@@ -22329,7 +22329,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       var moved = false;
       hui.listen(this.nodes.viewer,'touchstart',function(e) {
         moved = false;
-      });
+      }.bind(this));
       hui.listen(this.nodes.viewer,'touchmove',function(e) {
         if (e.touches && e.touches.length == 2) {
           if (x===undefined) {x = e.pageX};
@@ -22432,7 +22432,6 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       params = params || {};
       if (params.source) {
         var pos = hui.position.get(params.source);
-        console.log(pos);
         hui.cls.add(this.element,'hui-is-minimized');
       }
       hui.cls.add(this.element,'hui-is-open');
@@ -22506,7 +22505,6 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       this.width = this.nodes.viewer.clientWidth;
     },
     $$layout : function() {
-      console.info('layout')
       this._calculateSize();
       this._updateImages();
     },
@@ -22588,17 +22586,24 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
     },
     _goToImage : function(animate,num,user,drag,speed) {
       if (this.nativeScroll) {
-        var scrl = this.nodes.viewer.clientWidth * this.index;
+        var viewer = this.nodes.viewer,
+          scrl = viewer.clientWidth * this.index;
         if (animate) {
           hui.animate({
-            node: this.nodes.viewer,
+            node: viewer,
             duration: 500,
             property: 'scrollLeft',
             value: scrl,
             ease: hui.ease.fastSlow
           })
         } else {
-          this.nodes.viewer.scrollLeft = scrl;
+          if (hui.browser.webkitVersion < 603) {
+            setTimeout(function() {
+              viewer.scrollTo(scrl,0);
+            })
+          } else {
+            this.nodes.viewer.scrollLeft = scrl;
+          }
         }
         return;
       }
