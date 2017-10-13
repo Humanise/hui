@@ -77,10 +77,10 @@
     _attachNative : function() {
       var x,y;
       var moved = false;
-      hui.listen(this.nodes.viewer,'touchstart',function(e) {
+      hui.listen(this.element,'touchstart',function(e) {
         moved = false;
       }.bind(this));
-      hui.listen(this.nodes.viewer,'touchmove',function(e) {
+      hui.listen(this.element,'touchmove',function(e) {
         if (e.touches && e.touches.length == 2) {
           if (x===undefined) {x = e.pageX};
           if (y===undefined) {y = e.pageY};
@@ -92,12 +92,14 @@
           img.newX = newX;
           img.newY = newY;
           img.node.style.transform =  'scale(' + scale + ') translate(' + (newX)/scale + 'px,' + (newY)/scale + 'px)';
+        }
+        if (e.touches && e.touches.length > 1) {
           e.preventDefault();
         }
         moved = true;
         //console.log('Scale', e.scale);
       }.bind(this));
-      hui.listen(this.nodes.viewer,'touchend',function(e) {
+      hui.listen(this.element,'touchend',function(e) {
         x = y = undefined;
         this.images.forEach(function(img) {
           if (img.newScale) {
@@ -113,7 +115,7 @@
             img.newY = undefined;
           }
         })
-        if (!moved) {
+        if (!moved && hui.dom.isDescendantOrSelf(e.target, this.nodes.viewer)) {
           var img = this.images[this.index];
           if (img.scale != 1) {
             img.node.style.transition = 'transform .3s';
