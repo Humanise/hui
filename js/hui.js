@@ -195,13 +195,15 @@ hui.each = function(items,func) {
     for (i = 0; i < items.length; i++) {
       func(items[i],i);
     }
-    } else if (items instanceof NodeList) {
+  } else if (items instanceof NodeList) {
     for (i = 0; i < items.length; i++) {
       func(items.item(i),i);
     }
-  } else {
+  } else if (hui.isDefined(items)) {
     for (var key in items) {
-      func(key,items[key]);
+      if (items.hasOwnProperty(key)) {
+        func(key,items[key]);
+      }
     }
   }
 };
