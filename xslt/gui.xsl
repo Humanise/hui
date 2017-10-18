@@ -3578,4 +3578,33 @@ doc title:'Rich text' class:'hui.ui.RichText'
     registerTemplateItem(<xsl:value-of select="generate-id()"/>);
   </xsl:template>
 
+  <!--             Tokens            -->
+
+
+  <!--doc title:'Style editor (string list)' class:'hui.ui.StyleEditor' module:'input'
+  <style-editor name="«text»">
+    <component>
+    </component>
+  </style-editor>
+  -->
+  <xsl:template match="gui:style-editor">
+    <div class="hui_styleeditor" id="{generate-id()}">
+      <div class="hui_styleeditor_list"><![CDATA[ ]]></div>
+    </div>
+    <script type="text/javascript">
+      (function() {
+      var components = [];
+      <xsl:for-each select="gui:component">
+      components.push({name:'<xsl:value-of select="@key"/>',description:'<xsl:value-of select="@description"/>'})
+      </xsl:for-each>
+      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.StyleEditor({
+        element:'<xsl:value-of select="generate-id()"/>',
+        name:'<xsl:value-of select="@name"/>',
+        components: components
+      });
+      <xsl:call-template name="gui:createobject"/>
+      })()
+    </script>
+  </xsl:template>
+
 </xsl:stylesheet>

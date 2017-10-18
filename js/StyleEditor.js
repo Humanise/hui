@@ -15,12 +15,15 @@
 
   hui.ui.StyleEditor.create = function(options) {
     options = options || {};
-    var element = hui.build('div.hui_styleeditor');
+    var element = hui.build('div.hui_styleeditor',{html:'<div class="hui_styleeditor_list"></div>'});
     options.element = element;
     return new hui.ui.StyleEditor(options);
   }
 
   hui.ui.StyleEditor.prototype = {
+    nodes : {
+      list : '.hui_styleeditor_list'
+    },
     _attach : function() {
       var self = this;
       hui.on(this.element, 'click', function(e) {
@@ -30,6 +33,9 @@
           self.editQuery(parseInt(query.getAttribute('data-index'), 10));
         }
       })
+      var button = hui.ui.Button.create({text:'Add', small:true});
+      this.element.appendChild(button.element);
+      button.listen({$click:this.add.bind(this)})
     },
     editQuery : function(index) {
       var query = this.value.queries[index];
@@ -63,7 +69,9 @@
           type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
         }])
         overflow.add(hui.build('div',{text:component.description}));
+        form.setValues(self._getComponentValues(query, component));
         overflow.add(form);
+        var values = {};
         form.listen({
           $valuesChanged : function(values) {
             var rules = self._getRulesFor({query:index, component:component.name});
@@ -75,7 +83,8 @@
               }
             })
             hui.each(values,function(key,value) {
-              if (!hui.isBlank(value)) {
+              // TODO We filter out unnamed (could be text filed inside color or other stuff)
+              if (key.indexOf('unnamed')!==0 && !hui.isBlank(value)) {
                 rules.push({name:key, value:value});
               }
             })
@@ -84,6 +93,22 @@
         })
       })
       win.show();
+    },
+    _getComponentValues : function(query,component) {
+      var values = {};
+      if (query.components) {
+        var found = query.components.find(function(other) {return other.name == component.name});
+        if (found) {
+          found.rules.forEach(function(rule) {
+            values[rule.name] = rule.value;
+          })
+        }
+      }
+      return values;
+    },
+    add : function() {
+      this.value.queries.push({components:[]});
+      this.draw();
     },
     setValue : function(value) {
       this.value = value;
@@ -105,11 +130,11 @@
       return rules;
     },
     draw : function() {
-      this.element.innerHTML = '';
+      this.nodes.list.innerHTML = '';
       if (this.value && this.value.queries) {
         for (var i = 0; i < this.value.queries.length; i++) {
           var query = this.value.queries[i];
-          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.element, 'data-index':i})
+          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.nodes.list, 'data-index':i})
         }
       }
     },
@@ -121,6 +146,9 @@
         if (query[prop]) {
           text.push(prop + ': ' + query[prop]);
         }
+      }
+      if (!text.length) {
+        text.push('Anything')
       }
       return text.join(', ');
     },

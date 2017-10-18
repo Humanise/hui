@@ -23,6 +23,13 @@ hui.ui.listen({
         'max-width' : '500px',
         'components' : [
           {
+            name : 'base',
+            rules : [
+              {name:'display', value:'flex'},
+              {name:'max-width', value:'50%'}
+            ]
+          },
+          {
             name : 'container',
             rules : [
               {name:'color', value:'#abc'}
