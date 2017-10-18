@@ -96,7 +96,6 @@ hui.animation._colorUpater = function(element, v, work) {
   if (work.to.alpha < 255 || work.from.alpha < 255) {
     var alpha = Math.max(0,Math.min(1,work.from.alpha + (work.to.alpha - work.from.alpha) * v));
     element.style[work.property] = 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')';
-    hui.log('rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')')
   } else {
     element.style[work.property] = 'rgb(' + red + ',' + green + ',' + blue + ')';
   }
