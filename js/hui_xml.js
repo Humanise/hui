@@ -31,17 +31,17 @@ hui.xml = {
   parse : function(xml) {
     var doc;
     try {
-    if (window.DOMParser) {
+      if (window.DOMParser) {
         var parser = new DOMParser();
         doc = parser.parseFromString(xml,"text/xml");
-      var errors = doc.getElementsByTagName('parsererror');
-      if (errors.length>0 && errors[0].textContent) {
-        hui.log(errors[0].textContent);
-        return null;
-      }
+        var errors = doc.getElementsByTagName('parsererror');
+        if (errors.length > 0 && errors[0].textContent) {
+          hui.log(errors[0].textContent);
+          return null;
+        }
       } else {
         doc = new ActiveXObject("Microsoft.XMLDOM");
-      doc.async = false;
+        doc.async = false;
         doc.loadXML(xml);
       }
     } catch (e) {
@@ -50,14 +50,14 @@ hui.xml = {
     return doc;
   },
   serialize : function(node) {
+    try {
+      return (new XMLSerializer()).serializeToString(node);
+    } catch (e) {
       try {
-          return (new XMLSerializer()).serializeToString(node);
-      } catch (e) {
-        try {
-            return node.xml;
-        }
-        catch (ex) {}
+        return node.xml;
       }
-    return null;
+      catch (ex) {}
     }
+    return null;
+  }
 };
