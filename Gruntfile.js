@@ -154,7 +154,7 @@ module.exports = function(grunt) {
       tests = ['test/unittests/' + testname + '.html']
     }
     for (var i = 0; i < tests.length; i++) {
-      tests[i] = 'http://hui.local/' + tests[i]
+      tests[i] = 'http://hui.local/hui/' + tests[i]
     }
     grunt.config('qunit.live.options.urls', tests);
     grunt.task.run('qunit:live');
