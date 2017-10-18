@@ -34,7 +34,7 @@
   line-height: 24px;
   cursor: pointer;
   text-decoration: none;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  @include font;
   -webkit-user-select: none;
   -moz-user-select: none;
   white-space: nowrap;
