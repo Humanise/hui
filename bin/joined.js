@@ -195,13 +195,15 @@ hui.each = function(items,func) {
     for (i = 0; i < items.length; i++) {
       func(items[i],i);
     }
-    } else if (items instanceof NodeList) {
+  } else if (items instanceof NodeList) {
     for (i = 0; i < items.length; i++) {
       func(items.item(i),i);
     }
-  } else {
+  } else if (hui.isDefined(items)) {
     for (var key in items) {
-      func(key,items[key]);
+      if (items.hasOwnProperty(key)) {
+        func(key,items[key]);
+      }
     }
   }
 };
@@ -2695,7 +2697,6 @@ hui.animation._colorUpater = function(element, v, work) {
   if (work.to.alpha < 255 || work.from.alpha < 255) {
     var alpha = Math.max(0,Math.min(1,work.from.alpha + (work.to.alpha - work.from.alpha) * v));
     element.style[work.property] = 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')';
-    hui.log('rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')')
   } else {
     element.style[work.property] = 'rgb(' + red + ',' + green + ',' + blue + ')';
   }
@@ -3700,17 +3701,17 @@ hui.xml = {
   parse : function(xml) {
     var doc;
     try {
-    if (window.DOMParser) {
+      if (window.DOMParser) {
         var parser = new DOMParser();
         doc = parser.parseFromString(xml,"text/xml");
-      var errors = doc.getElementsByTagName('parsererror');
-      if (errors.length>0 && errors[0].textContent) {
-        hui.log(errors[0].textContent);
-        return null;
-      }
+        var errors = doc.getElementsByTagName('parsererror');
+        if (errors.length > 0 && errors[0].textContent) {
+          hui.log(errors[0].textContent);
+          return null;
+        }
       } else {
         doc = new ActiveXObject("Microsoft.XMLDOM");
-      doc.async = false;
+        doc.async = false;
         doc.loadXML(xml);
       }
     } catch (e) {
@@ -3719,16 +3720,16 @@ hui.xml = {
     return doc;
   },
   serialize : function(node) {
+    try {
+      return (new XMLSerializer()).serializeToString(node);
+    } catch (e) {
       try {
-          return (new XMLSerializer()).serializeToString(node);
-      } catch (e) {
-        try {
-            return node.xml;
-        }
-        catch (ex) {}
+        return node.xml;
       }
-    return null;
+      catch (ex) {}
     }
+    return null;
+  }
 };
 
 /**

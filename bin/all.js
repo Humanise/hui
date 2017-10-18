@@ -195,13 +195,15 @@ hui.each = function(items,func) {
     for (i = 0; i < items.length; i++) {
       func(items[i],i);
     }
-    } else if (items instanceof NodeList) {
+  } else if (items instanceof NodeList) {
     for (i = 0; i < items.length; i++) {
       func(items.item(i),i);
     }
-  } else {
+  } else if (hui.isDefined(items)) {
     for (var key in items) {
-      func(key,items[key]);
+      if (items.hasOwnProperty(key)) {
+        func(key,items[key]);
+      }
     }
   }
 };
@@ -2695,7 +2697,6 @@ hui.animation._colorUpater = function(element, v, work) {
   if (work.to.alpha < 255 || work.from.alpha < 255) {
     var alpha = Math.max(0,Math.min(1,work.from.alpha + (work.to.alpha - work.from.alpha) * v));
     element.style[work.property] = 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')';
-    hui.log('rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')')
   } else {
     element.style[work.property] = 'rgb(' + red + ',' + green + ',' + blue + ')';
   }
@@ -3700,17 +3701,17 @@ hui.xml = {
   parse : function(xml) {
     var doc;
     try {
-    if (window.DOMParser) {
+      if (window.DOMParser) {
         var parser = new DOMParser();
         doc = parser.parseFromString(xml,"text/xml");
-      var errors = doc.getElementsByTagName('parsererror');
-      if (errors.length>0 && errors[0].textContent) {
-        hui.log(errors[0].textContent);
-        return null;
-      }
+        var errors = doc.getElementsByTagName('parsererror');
+        if (errors.length > 0 && errors[0].textContent) {
+          hui.log(errors[0].textContent);
+          return null;
+        }
       } else {
         doc = new ActiveXObject("Microsoft.XMLDOM");
-      doc.async = false;
+        doc.async = false;
         doc.loadXML(xml);
       }
     } catch (e) {
@@ -3719,16 +3720,16 @@ hui.xml = {
     return doc;
   },
   serialize : function(node) {
+    try {
+      return (new XMLSerializer()).serializeToString(node);
+    } catch (e) {
       try {
-          return (new XMLSerializer()).serializeToString(node);
-      } catch (e) {
-        try {
-            return node.xml;
-        }
-        catch (ex) {}
+        return node.xml;
       }
-    return null;
+      catch (ex) {}
     }
+    return null;
+  }
 };
 
 /**
@@ -18519,6 +18520,77 @@ if (!Array.prototype.indexOf)
   };
 }
 
+if (!Array.prototype.filter) {
+  Array.prototype.filter = function(func, thisArg) {
+    'use strict';
+    if ( ! ((typeof func === 'Function' || typeof func === 'function') && this) )
+        throw new TypeError();
+
+    var len = this.length >>> 0,
+        res = new Array(len), // preallocate array
+        t = this, c = 0, i = -1;
+    if (thisArg === undefined)
+      while (++i !== len)
+        // checks to see if the key was set
+        if (i in this)
+          if (func(t[i], i, t))
+            res[c++] = t[i];
+    else
+      while (++i !== len)
+        // checks to see if the key was set
+        if (i in this)
+          if (func.call(thisArg, t[i], i, t))
+            res[c++] = t[i];
+    res.length = c; // shrink down array to proper size
+    return res;
+  };
+}
+
+// https://tc39.github.io/ecma262/#sec-array.prototype.find
+if (!Array.prototype.find) {
+  Object.defineProperty(Array.prototype, 'find', {
+    value: function(predicate) {
+     // 1. Let O be ? ToObject(this value).
+      if (this == null) {
+        throw new TypeError('"this" is null or not defined');
+      }
+
+      var o = Object(this);
+
+      // 2. Let len be ? ToLength(? Get(O, "length")).
+      var len = o.length >>> 0;
+
+      // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+      if (typeof predicate !== 'function') {
+        throw new TypeError('predicate must be a function');
+      }
+
+      // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+      var thisArg = arguments[1];
+
+      // 5. Let k be 0.
+      var k = 0;
+
+      // 6. Repeat, while k < len
+      while (k < len) {
+        // a. Let Pk be ! ToString(k).
+        // b. Let kValue be ? Get(O, Pk).
+        // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+        // d. If testResult is true, return kValue.
+        var kValue = o[k];
+        if (predicate.call(thisArg, kValue, k, o)) {
+          return kValue;
+        }
+        // e. Increase k by 1.
+        k++;
+      }
+
+      // 7. Return undefined.
+      return undefined;
+    }
+  });
+}
+
 /*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
 ;(function () {
   // Detect the `define` function exposed by asynchronous module loaders. The
@@ -22036,6 +22108,28 @@ hui.Color.table = {
   yellowgreen: '9acd32'
 };
 
+hui = window.hui || {};
+
+hui.query = function(q, ctx) {
+  return new hui.Query(hui.findAll(q, ctx));
+}
+
+hui.Query = function(context) {
+  this._context = context;
+}
+
+hui.Query.prototype = {
+  addClass : function(cls) {
+    return this.each(function(node) {
+      hui.cls.add(node, cls);
+    })
+  },
+  each : function(fn) {
+    this._context.forEach(fn);
+    return this;
+  }
+}
+
 hui.ui.KeyboardNavigator = function(options) {
   options = options || {};
   this.text = '';
@@ -22327,10 +22421,10 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
     _attachNative : function() {
       var x,y;
       var moved = false;
-      hui.listen(this.nodes.viewer,'touchstart',function(e) {
+      hui.listen(this.element,'touchstart',function(e) {
         moved = false;
       }.bind(this));
-      hui.listen(this.nodes.viewer,'touchmove',function(e) {
+      hui.listen(this.element,'touchmove',function(e) {
         if (e.touches && e.touches.length == 2) {
           if (x===undefined) {x = e.pageX};
           if (y===undefined) {y = e.pageY};
@@ -22342,12 +22436,14 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
           img.newX = newX;
           img.newY = newY;
           img.node.style.transform =  'scale(' + scale + ') translate(' + (newX)/scale + 'px,' + (newY)/scale + 'px)';
+        }
+        if (e.touches && e.touches.length > 1) {
           e.preventDefault();
         }
         moved = true;
         //console.log('Scale', e.scale);
       }.bind(this));
-      hui.listen(this.nodes.viewer,'touchend',function(e) {
+      hui.listen(this.element,'touchend',function(e) {
         x = y = undefined;
         this.images.forEach(function(img) {
           if (img.newScale) {
@@ -22363,7 +22459,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
             img.newY = undefined;
           }
         })
-        if (!moved) {
+        if (!moved && hui.dom.isDescendantOrSelf(e.target, this.nodes.viewer)) {
           var img = this.images[this.index];
           if (img.scale != 1) {
             img.node.style.transition = 'transform .3s';
@@ -22793,12 +22889,15 @@ hui.ui.RevealingToolbar.prototype = {
 
   hui.ui.StyleEditor.create = function(options) {
     options = options || {};
-    var element = hui.build('div.hui_styleeditor');
+    var element = hui.build('div.hui_styleeditor',{html:'<div class="hui_styleeditor_list"></div>'});
     options.element = element;
     return new hui.ui.StyleEditor(options);
   }
 
   hui.ui.StyleEditor.prototype = {
+    nodes : {
+      list : '.hui_styleeditor_list'
+    },
     _attach : function() {
       var self = this;
       hui.on(this.element, 'click', function(e) {
@@ -22808,6 +22907,9 @@ hui.ui.RevealingToolbar.prototype = {
           self.editQuery(parseInt(query.getAttribute('data-index'), 10));
         }
       })
+      var button = hui.ui.Button.create({text:'Add', small:true});
+      this.element.appendChild(button.element);
+      button.listen({$click:this.add.bind(this)})
     },
     editQuery : function(index) {
       var query = this.value.queries[index];
@@ -22841,7 +22943,9 @@ hui.ui.RevealingToolbar.prototype = {
           type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
         }])
         overflow.add(hui.build('div',{text:component.description}));
+        form.setValues(self._getComponentValues(query, component));
         overflow.add(form);
+        var values = {};
         form.listen({
           $valuesChanged : function(values) {
             var rules = self._getRulesFor({query:index, component:component.name});
@@ -22853,7 +22957,8 @@ hui.ui.RevealingToolbar.prototype = {
               }
             })
             hui.each(values,function(key,value) {
-              if (!hui.isBlank(value)) {
+              // TODO We filter out unnamed (could be text filed inside color or other stuff)
+              if (key.indexOf('unnamed')!==0 && !hui.isBlank(value)) {
                 rules.push({name:key, value:value});
               }
             })
@@ -22862,6 +22967,22 @@ hui.ui.RevealingToolbar.prototype = {
         })
       })
       win.show();
+    },
+    _getComponentValues : function(query,component) {
+      var values = {};
+      if (query.components) {
+        var found = query.components.find(function(other) {return other.name == component.name});
+        if (found) {
+          found.rules.forEach(function(rule) {
+            values[rule.name] = rule.value;
+          })
+        }
+      }
+      return values;
+    },
+    add : function() {
+      this.value.queries.push({components:[]});
+      this.draw();
     },
     setValue : function(value) {
       this.value = value;
@@ -22883,11 +23004,11 @@ hui.ui.RevealingToolbar.prototype = {
       return rules;
     },
     draw : function() {
-      this.element.innerHTML = '';
+      this.nodes.list.innerHTML = '';
       if (this.value && this.value.queries) {
         for (var i = 0; i < this.value.queries.length; i++) {
           var query = this.value.queries[i];
-          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.element, 'data-index':i})
+          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.nodes.list, 'data-index':i})
         }
       }
     },
@@ -22899,6 +23020,9 @@ hui.ui.RevealingToolbar.prototype = {
         if (query[prop]) {
           text.push(prop + ': ' + query[prop]);
         }
+      }
+      if (!text.length) {
+        text.push('Anything')
       }
       return text.join(', ');
     },
