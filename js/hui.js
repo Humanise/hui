@@ -1255,10 +1255,11 @@ hui.window = {
 
       func = function() {
         var pos = (new Date().getTime()-startTime)/options.duration;
-        if (pos>1) {
+        if (pos>1 || isNaN(pos)) {
           pos = 1;
         }
-        window.scrollTo(0, viewTop+Math.round((top-viewTop)*hui.ease.fastSlow(pos)));
+        var scrl = viewTop+Math.round((top-viewTop)*hui.ease.fastSlow(pos));
+        window.scrollTo(0, scrl);
         if (pos<1) {
           window.setTimeout(func);
         }
