@@ -226,6 +226,7 @@
       this._updateImages();
     },
     _updateImages : function() {
+      if (!this.items.length) { return; }
       var width = this.nodes.viewer.clientWidth,
         height = this.nodes.viewer.clientHeight,
       thumbs = hui.get.children(this.nodes.thumbs);
@@ -401,5 +402,7 @@
   }
 
   hui.extend(hui.ui.Presentation, _super);
+
+  hui.define('hui.ui.Presentation', hui.ui.Presentation);
 
 })(hui.ui.Component);

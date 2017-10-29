@@ -101,13 +101,6 @@
     return $script;
   };
 
-  var old = win.$script;
-  $script.noConflict = function () {
-    win.$script = old;
-    return this;
-  };
+  win.hui.require = $script
 
-  (typeof module !== 'undefined' && module.exports) ?
-    (module.exports = $script) :
-    (win.hui.require = $script);
 }(this, document, setTimeout);

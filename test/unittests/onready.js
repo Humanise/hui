@@ -21,7 +21,8 @@ QUnit.test("color", function(assert) {
 
 QUnit.test("hui.ui", function(assert) {
   var done = assert.async();
-  hui.onReady(['hui.ui'],function() {
+  hui.onReady(['hui.ui'],function(found) {
+    assert.ok(hui.ui === found);
     assert.ok(typeof(hui.ui)=='object');
     hui.onReady(['hui.ui'],function() {
       hui.ui.onReady(function() {
@@ -31,7 +32,7 @@ QUnit.test("hui.ui", function(assert) {
     })
   })
 
-})
+});
 
 QUnit.test("Button", function(assert) {
   var done = assert.async();
@@ -40,5 +41,18 @@ QUnit.test("Button", function(assert) {
     done()
   })
   hui.ui.require(['Button']);
+  hui.ui.require(['Button']);
+})
+
+QUnit.test("Multiple", function(assert) {
+  var done = assert.async();
+  hui.onReady(['hui','hui.ui','hui.Color','hui.ui.Button'],function(hui,ui,Color,Button) {
+    assert.equal(4, arguments.length);
+    assert.ok(hui.ui === ui);
+    assert.ok(hui.ui.Button === Button);
+    assert.ok(typeof(Color) == 'function');
+    assert.ok(typeof(Button) == 'function');
+    hui.onReady(function() {hui.onReady(done)});
+  })
   hui.ui.require(['Button']);
 })

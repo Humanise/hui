@@ -8,7 +8,7 @@ hui.ui = hui.ui || {};
 
 hui.ui.domReady = false;
 hui.ui.context = undefined,
-hui.ui.language = 'en';
+hui.ui.language = undefined;
 
 hui.ui.objects = {};
 hui.ui.delegates = [];
@@ -401,8 +401,9 @@ hui.ui.getTranslated = function(value) {
   if (!hui.isDefined(value) || hui.isString(value) || typeof(value) == 'number') {
     return value;
   }
-  if (value[hui.ui.language]) {
-    return value[hui.ui.language];
+  var lang = hui.ui.getLanguage();
+  if (value[lang]) {
+    return value[lang];
   }
   if (value[null]) {
     return value[null];
@@ -412,6 +413,12 @@ hui.ui.getTranslated = function(value) {
   }
 };
 
+hui.ui.getLanguage = function() {
+  if (hui.ui.language) {
+    return hui.ui.language;
+  }
+  return (document.documentElement && document.documentElement.lang) || 'en';
+}
 
 
 //////////////////////////////// Message //////////////////////////////

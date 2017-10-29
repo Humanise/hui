@@ -84,37 +84,52 @@ hui = window.hui || {};
  */
 hui.log = function(obj) {
   if (window.console && window.console.log) {
-    if (arguments.length==1) {
-      console.log(obj);
-    }
-    else if (arguments.length==2) {
-      console.log(arguments[0],arguments[1]);
-    } else {
-      console.log(arguments);
-    }
+    console.log.apply(this,arguments);
   }
 };
 
-hui._demanded = [];
+// Postponed listeners
+hui._postponed = [];
 
-hui.define = function(name,obj) {
-  var demanded = hui._demanded;
-  for (var i = demanded.length - 1; i >= 0; i--) {
-    var d = demanded[i]
-    hui.array.remove(d.requirements,name);
-    if (d.requirements.length == 0) {
-      d.callback();
-      demanded.splice(i,1);
+/**
+ * Register code as ready
+ * @param name The name of the module
+ * @param obj The object, function, namespace
+ */
+hui.define = function(name, obj) {
+  var postponed = hui._postponed;
+  for (var i = postponed.length - 1; i >= 0; i--) {
+    var item = postponed[i];
+    var deps = [];
+    for (var j = 0; j < item.requirements.length; j++) {
+      var path = item.requirements[j];
+      var found = hui.evaluate(path); // TODO Handle objects defined by name but not evaluated by that name
+      if (found) {
+        deps.push(found);
+      } else {
+        break;
+      }
+    }
+    if (item.requirements.length == deps.length) {
+      item.callback.apply(null, deps);
+      postponed.splice(i,1);
     }
   }
 }
 
-hui.demand = function() {
-  var names = arguments[0];
-  var callback = arguments[1];
+hui._runOrPostpone = function() {
+  var dependencies = [];
+  var callback = null;
+  for (var i = 0; i < arguments.length; i++) {
+    if (typeof(arguments[i])=='function') {
+      callback = arguments[i];
+    } else if (hui.isArray(arguments[i])) {
+      dependencies = arguments[i];
+    }
+  }
   var found = [];
-  for (var i = 0; i < names.length; i++) {
-    var vld = hui.evaluate(names[i]);
+  for (var i = 0; i < dependencies.length; i++) {
+    var vld = hui.evaluate(dependencies[i]);
     if (!vld) {
       found = false;
       break;
@@ -122,16 +137,19 @@ hui.demand = function() {
     found[i] = vld;
   }
   if (found) {
-    callback(found);
+    callback.apply(null, found);
   } else {
-    hui.log('deferring: ' + names);
-    hui._demanded.push({requirements:names,callback:callback})
+    hui.log('Postponing: ' + dependencies);
+    hui._postponed.push({requirements:dependencies,callback:callback})
   }
 }
 
-hui.evaluate = function(expression) {
+/**
+ * Evaluate an expression
+ */
+hui.evaluate = function(expression, context) {
   var path = expression.split('.');
-  var cur = window;
+  var cur = context || window;
   for (var i = 0; i < path.length && cur!==undefined; i++) {
     cur = cur[path[i]];
   }
@@ -1644,7 +1662,7 @@ hui._ready = document.readyState == 'complete';// || document.readyState;
 
 hui.onReady = function() {
   if (hui._ready) {
-    hui._handle(arguments)
+    hui._runOrPostpone.apply(hui, arguments)
   } else {
     hui._.push(arguments);
   }
@@ -2568,36 +2586,20 @@ if (window.define) {
   define('hui',hui);
 }
 
+/**
+ * Run through all postponed actions in "_" and remove it afterwards
+ */
 hui._onReady(function() {
   hui._ready = true;
   for (var i = 0; i < hui._.length; i++) {
     var item = hui._[i];
-    hui._handle(item);
+    if (typeof(item) === 'function') {
+      item = [item];
+    }
+    hui._runOrPostpone.apply(hui, item);
   }
   delete hui._;
 });
-
-hui._handle = function(item) {
-  if (typeof(item) === 'function') {
-    item();
-  } else {
-    var func = null,
-      demands = null;
-    for (var j = 0; j < item.length; j++) {
-      if (typeof(item[j]) === 'function') {
-        func = item[j];
-      }
-      else if (hui.isArray(item[j])) {
-        demands = item[j];
-      }
-    }
-    if (demands && func) {
-      hui.demand(demands,func);
-    } else if (func) {
-      func();
-    }
-  }
-}
 
 hui = window.hui || {};
 
@@ -3562,15 +3564,8 @@ hui.onReady(function() {
     return $script;
   };
 
-  var old = win.$script;
-  $script.noConflict = function () {
-    win.$script = old;
-    return this;
-  };
+  win.hui.require = $script
 
-  (typeof module !== 'undefined' && module.exports) ?
-    (module.exports = $script) :
-    (win.hui.require = $script);
 }(this, document, setTimeout);
 
 
@@ -3637,7 +3632,9 @@ hui.parallax = {
   }
 };
 
-window.define && define('hui.parallax', hui.parallax);
+hui.onReady(function() {
+  hui.define('hui.parallax', hui.parallax);
+});
 
 hui.store = {
 
@@ -4218,7 +4215,7 @@ hui.ui = hui.ui || {};
 
 hui.ui.domReady = false;
 hui.ui.context = undefined,
-hui.ui.language = 'en';
+hui.ui.language = undefined;
 
 hui.ui.objects = {};
 hui.ui.delegates = [];
@@ -4611,8 +4608,9 @@ hui.ui.getTranslated = function(value) {
   if (!hui.isDefined(value) || hui.isString(value) || typeof(value) == 'number') {
     return value;
   }
-  if (value[hui.ui.language]) {
-    return value[hui.ui.language];
+  var lang = hui.ui.getLanguage();
+  if (value[lang]) {
+    return value[lang];
   }
   if (value[null]) {
     return value[null];
@@ -4622,6 +4620,12 @@ hui.ui.getTranslated = function(value) {
   }
 };
 
+hui.ui.getLanguage = function() {
+  if (hui.ui.language) {
+    return hui.ui.language;
+  }
+  return (document.documentElement && document.documentElement.lang) || 'en';
+}
 
 
 //////////////////////////////// Message //////////////////////////////
@@ -22570,6 +22574,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       this._updateImages();
     },
     _updateImages : function() {
+      if (!this.items.length) { return; }
       var width = this.nodes.viewer.clientWidth,
         height = this.nodes.viewer.clientHeight,
       thumbs = hui.get.children(this.nodes.thumbs);
@@ -22745,6 +22750,8 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
   }
 
   hui.extend(hui.ui.Presentation, _super);
+
+  hui.define('hui.ui.Presentation', hui.ui.Presentation);
 
 })(hui.ui.Component);
 
