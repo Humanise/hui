@@ -654,6 +654,7 @@
       <xs:element name="font-input" type="font-input"/>
       <xs:element name="color-input" type="color-input"/>
       <xs:element name="style-length-input" type="style-length-input"/>
+      <xs:element name="slider" type="slider"/>
     </xs:choice>
     <xs:attribute name="label" type="xs:string"/>
   </xs:complexType>
@@ -1219,6 +1220,7 @@
       <xs:element name="upload" type="upload"/>
       <xs:element name="div" type="div"/>
       <xs:element name="space" type="space"/>
+      <xs:element name="gallery" type="gallery"/>
     </xs:choice>
     <xs:attribute name="title" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
@@ -1596,6 +1598,19 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="style-editor" type="style-editor"/>
+  <xs:complexType name="style-editor">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="component" type="style-editor_component"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="style-editor_component">
+    <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="description" type="xs:string"/>
   </xs:complexType>
 
 </xs:schema>
