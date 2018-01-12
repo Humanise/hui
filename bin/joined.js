@@ -1255,10 +1255,11 @@ hui.window = {
 
       func = function() {
         var pos = (new Date().getTime()-startTime)/options.duration;
-        if (pos>1) {
+        if (pos>1 || isNaN(pos)) {
           pos = 1;
         }
-        window.scrollTo(0, viewTop+Math.round((top-viewTop)*hui.ease.fastSlow(pos)));
+        var scrl = viewTop+Math.round((top-viewTop)*hui.ease.fastSlow(pos));
+        window.scrollTo(0, scrl);
         if (pos<1) {
           window.setTimeout(func);
         }
@@ -1969,11 +1970,6 @@ hui.style = {
         value = css ? css.getPropertyValue(style) : null;
       } else if (element.currentStyle) {
         value = element.currentStyle[cameled];
-      }
-    }
-    if (window.opera && hui.array.contains(['left', 'top', 'right', 'bottom'],style)) {
-      if (hui.style.get(element, 'position') == 'static') {
-        value = 'auto';
       }
     }
     return value == 'auto' ? '' : value;
@@ -15061,7 +15057,7 @@ hui.ui.Checkbox = function(o) {
   this.name = o.name;
   this.value = o.value==='true' || o.value===true;
   hui.ui.extend(this);
-  this.addBehavior();
+  this._attach();
 };
 
 /**
@@ -15076,23 +15072,20 @@ hui.ui.Checkbox.create = function(o) {
 };
 
 hui.ui.Checkbox.prototype = {
-  /** @private */
-  addBehavior : function() {
+  _attach : function() {
     hui.ui.addFocusClass({element:this.element,'class':'hui_checkbox_focused'});
-    hui.listen(this.element,'click',this.click.bind(this));
+    hui.listen(this.element,'click',this._click.bind(this));
   },
-  /** @private */
-  click : function(e) {
+  _click : function(e) {
     hui.stop(e);
     this.element.focus();
     this.value = !this.value;
-    this.updateUI();
+    this._updateUI();
     hui.ui.callAncestors(this,'childValueChanged',this.value);
     this.fire('valueChanged',this.value);
     hui.ui.firePropertyChange(this,'value',this.value);
   },
-  /** @private */
-  updateUI : function() {
+  _updateUI : function() {
     hui.cls.set(this.element,'hui_checkbox_selected',this.value);
   },
   /** Sets the value
@@ -15100,7 +15093,7 @@ hui.ui.Checkbox.prototype = {
    */
   setValue : function(value) {
     this.value = value===true || value==='true';
-    this.updateUI();
+    this._updateUI();
   },
   /** Gets the value
    * @return {Boolean} Whether the checkbox is checked

@@ -579,7 +579,11 @@ hui.ui.Editor.prototype = {
       var parts = hui.get.byClass(column,this.options.partClass);
 
       if (parts[dropInfo.partIndex] != dragged) {
-        this.fire('partWasMoved',{dragged:dragged,rowIndex : dropInfo.rowIndex,columnIndex : dropInfo.columnIndex,partIndex : dropInfo.partIndex,
+        var partIndex = dropInfo.partIndex;
+        if (dragInfo.columnIndex == dropInfo.columnIndex && dragInfo.partIndex < dropInfo.partIndex) {
+          partIndex--;
+        }
+        this.fire('partWasMoved',{dragged:dragged,rowIndex : dropInfo.rowIndex,columnIndex : dropInfo.columnIndex,partIndex : partIndex,
           $success : function() {
             dragged.style.webkitTransformOrigin='0 0';
             var dummy = hui.build('div');
@@ -681,7 +685,7 @@ hui.ui.Editor.prototype = {
         var min = hui.position.getTop(column);
         var max = min+column.clientHeight;
         var current = min;
-        var k=0;
+        var k = 0;
         var previous = null;
         for (; k < parts.length; k++) {
           var part = parts[k],
@@ -720,7 +724,7 @@ hui.ui.Editor.prototype = {
         var info = {
           rowIndex : i,
           columnIndex : j,
-          partIndex : k+1,
+          partIndex : k, // TODO 
           part : part,
           left : left,
           right : right,
@@ -742,9 +746,8 @@ hui.ui.Editor.prototype = {
 }
 
 hui.ui.Editor.getPartId = function(element) {
-  if (!element.id) return;
-  var m = element.id.match(/part\-([\d]+)/i);
-  if (m && m.length>0) return m[1];
+  var data = hui.string.fromJSON(element.getAttribute('data'));
+  return data ? data.id : null;
 }
 
 ////////////////////////////////// Header editor ////////////////////////////////
