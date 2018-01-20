@@ -21,7 +21,7 @@
       width: 29px;
       height: 29px;
       top: 0;
-      background: red; }
+      background: rgba(0, 0, 0, 0.1); }
     .hui_foundation_details.hui-is-open {
       right: 0; }
 
@@ -76,6 +76,9 @@
   bottom: 0;
   z-index: 1; }
 
+.hui_foundation_overlay_title {
+  display: none; }
+
 @media screen and (max-width: 800px) {
   .hui_foundation_overlay {
     position: absolute;
@@ -84,14 +87,26 @@
     transition: left .3s;
     bottom: 0;
     width: 80%;
-    z-index: 2; }
+    z-index: 2;
+    border-top: 28px solid transparent; }
     .hui_foundation_overlay_toggle {
       position: absolute;
       right: -29px;
       width: 29px;
       height: 29px;
       top: 0;
-      background: red; }
+      background: rgba(0, 0, 0, 0.1); }
+    .hui_foundation_overlay_title {
+      height: 28px;
+      top: -28px;
+      height: 28px;
+      background: #fff;
+      position: absolute;
+      left: 0;
+      right: 0;
+      font-size: 14px;
+      z-index: 4;
+      display: block; }
   .hui_foundation.hui-is-open .hui_foundation_overlay {
     left: 0; }
   .hui_foundation_navigation {

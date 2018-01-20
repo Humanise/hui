@@ -120,7 +120,8 @@ jsFiles = [
     'js/NumberValidator.js',
     'js/ObjectInput.js',
     'js/Rows.js',
-    'js/Pages.js'
+    'js/Pages.js',
+    'js/Panel.js'
 ]
 
 cssFiles = [
@@ -192,7 +193,8 @@ cssFiles = [
     'rows',
     'textinput',
     'pages',
-    'presentation'
+    'presentation',
+    'panel'
 ]
 
 print('Joining JavaScript')
@@ -231,7 +233,7 @@ for name in allFiles :
     path = base + '/' + name
     file = open(path,'rb')
     destination.write(file.read())
-    destination.write('\n\n')
+    destination.write('\n;\n')
     file.close();
 
 destination.close();

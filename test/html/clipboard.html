@@ -32,14 +32,22 @@
       }
 
       hui.on(document, 'paste', function(e) {
-        console.log(e.clipboardData)
+        console.log('Paste event', e);
+        console.log('Clipboard data', e.clipboardData)
         var items = e.clipboardData.items;
+        console.log('Clipboard data items', items)
         if (items) {
           console.log('items:', items)
           for (var i = 0; i < items.length; i++) {
             console.log(items[i]);
             if (items[i].type == 'file') {
               readFile(items[i].getAsFile());
+            }
+            if (items[i].type == 'text/plain') {
+              items[i].getAsString(function(x) {
+                console.log('getAsString:', x)
+                hui.build('p',{text:x, parent: document.body})
+              });
             }
           }
         }
@@ -53,7 +61,7 @@
         }
 
         var types = e.clipboardData.types;
-        console.log('types:', types)
+        console.log('Clipboard data types:', types)
         if (types) {
           for (var i = 0; i < types.length; i++) {
             var data = e.clipboardData.getData(types[i], console.log);

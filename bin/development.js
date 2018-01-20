@@ -76,3 +76,4 @@ document.write('<script type="text/javascript" src="'+_context+'/js/NumberValida
 document.write('<script type="text/javascript" src="'+_context+'/js/ObjectInput.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Rows.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Pages.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/Panel.js"></script>');

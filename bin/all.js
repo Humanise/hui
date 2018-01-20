@@ -2596,7 +2596,7 @@ hui._onReady(function() {
   }
   delete hui._;
 });
-
+;
 hui = window.hui || {};
 
 /////////////////////////// Animation ///////////////////////////
@@ -3198,7 +3198,7 @@ if (!Date.now) {
 hui.onReady(function() {
   hui.define('hui.animation',hui.animation);
 })
-
+;
 hui = window.hui || {};
 
 /** @constructor
@@ -3456,7 +3456,7 @@ hui.Color.rgb2hex = function(rgbary) {
 hui.onReady(function() {
   hui.define('hui.Color',hui.Color)
 })
-
+;
 /*
   * $script.js v1.3
   * https://github.com/ded/script.js
@@ -3564,7 +3564,7 @@ hui.onReady(function() {
 
 }(this, document, setTimeout);
 
-
+;
 hui.parallax = {
 
   _listeners : [],
@@ -3631,7 +3631,7 @@ hui.parallax = {
 hui.onReady(function() {
   hui.define('hui.parallax', hui.parallax);
 });
-
+;
 hui.store = {
 
   isSupported: function() {
@@ -3660,7 +3660,7 @@ hui.store = {
     return hui.string.fromJSON(this.get(key));
   }
 };
-
+;
 hui.xml = {
 /*  transform : function(xml,xsl) {
     if (window.ActiveXObject) {
@@ -3724,7 +3724,7 @@ hui.xml = {
     return null;
   }
 };
-
+;
 /**
  * A preloader for images
  * @constructor
@@ -3790,7 +3790,7 @@ hui.Preloader.prototype = {
     }
   }
 };
-
+;
 /*
  * Copyright (C) 2004 Baron Schwartz <baron at sequent dot org>
  *
@@ -4200,7 +4200,7 @@ Date.patterns = {
     UniversalSortableDateTimePattern: "Y-m-d H:i:sO",
     YearMonthPattern: "F, Y"};
 
-
+;
 hui = window.hui || {};
 
 /**
@@ -5296,7 +5296,7 @@ hui.onReady(function() {
 });
 
 /* EOF */
-
+;
 /**
  * A component
  * @constructor
@@ -5370,7 +5370,7 @@ hui.ui.Component.prototype = {
     hui.ui.callAncestors(this,'$$childSizeChanged');
   }
 };
-
+;
 /** A data source
  * @constructor
  */
@@ -5587,7 +5587,7 @@ hui.ui.Source.prototype = {
   }
 }
 /* EOF */
-
+;
 /** Send a global drag and drop message */
 hui.ui.callDelegatesDrop = function(dragged,dropped) {
   for (var i=0; i < hui.ui.delegates.length; i++) {
@@ -5704,7 +5704,7 @@ hui.ui.dropOutListener = function(event) {
     //this.style.backgroundColor='';
   }
 };
-
+;
 /**
  * @constructor
  */
@@ -5916,7 +5916,7 @@ hui.ui.Window.prototype = {
 
 hui.define && hui.define('hui.Window',hui.Window);
 /* EOF */
-
+;
 /**
  * @class
  * This is a formula
@@ -6124,7 +6124,7 @@ hui.ui.Formula.Field.prototype = {
     this.element.style.display = visible ? '' : 'none';
   }
 };
-
+;
 /**
  * A list
  * <pre><strong>options:</strong> {
@@ -7067,7 +7067,7 @@ hui.ui.List.prototype = {
 };
 
 /* EOF */
-
+;
 /**
  * @constructor
  */
@@ -7173,7 +7173,7 @@ hui.ui.Tab.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * @constructor
  */
@@ -7383,7 +7383,7 @@ hui.ui.ObjectList.Select.prototype = {
 }
 
 /* EOF */
-
+;
 ////////////////////////// DropDown ///////////////////////////
 
 /**
@@ -7682,7 +7682,7 @@ hui.ui.DropDown.prototype = {
     }
   }
 };
-
+;
 /**
  * An alert
  * @constructor
@@ -7814,7 +7814,7 @@ hui.ui.Alert.prototype = {
     this.buttons.add(button);
   }
 };
-
+;
 hui = window.hui || {}; hui.ui = hui.ui || {};
 
 /**
@@ -8046,7 +8046,7 @@ hui.onReady(['hui.ui'],function() {
   hui.define('hui.ui.Button',hui.ui.Button);
 })
 /* EOF */
-
+;
 /**
  * @constructor
  * @param {Object} options The options : {value:null}
@@ -8465,7 +8465,7 @@ hui.ui.Selection.Items.prototype = {
   }
 }
 /* EOF */
-
+;
 
 /** @constructor */
 hui.ui.Toolbar = function(options) {
@@ -8639,7 +8639,7 @@ hui.ui.Toolbar.More.prototype = {
     hui.cls.toggle(this.element,'hui_is_expanded');
   }
 }
-
+;
 /**
   Used to choose an image
   @constructor
@@ -8790,7 +8790,7 @@ hui.ui.ImageInput.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * A bound panel is a panel that is shown at a certain place
  * @constructor
@@ -9133,7 +9133,7 @@ hui.ui.BoundPanel.prototype = {
     hui.dom.remove(this.element);
   }
 };
-
+;
 /**
  * An image slideshow viewer
  * <pre><strong>options:</strong> {
@@ -9733,7 +9733,7 @@ if (window.define) {
 }
 
 /* EOF */
-
+;
 /** @constructor */
 hui.ui.Picker = function(options) {
   options = this.options = hui.override({itemWidth:100,itemHeight:150,itemsVisible:null,shadow:true,valueProperty:'value'},options);
@@ -9914,7 +9914,7 @@ hui.ui.Picker.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * @constructor
  */
@@ -10079,7 +10079,7 @@ hui.ui.Menu.prototype = {
 
 
 /* EOF */
-
+;
 /**
  * @constructor
  */
@@ -10234,7 +10234,7 @@ hui.ui.Overlay.prototype = {
 
 /* EOF */
 
-
+;
 /**
  * A component for uploading files
  * <pre><strong>options:</strong> {
@@ -10832,7 +10832,7 @@ hui.ui.Upload.HTML5.prototype = {
 }
 
 /* EOF */
-
+;
 /** A progress bar is a widget that shows progress from 0% to 100%
   @constructor
 */
@@ -10898,7 +10898,7 @@ hui.ui.ProgressBar.prototype = {
 }
 
 /* EOF */
-
+;
 /** @constructor */
 hui.ui.Gallery = function(options) {
   this.options = options || {};
@@ -11176,7 +11176,7 @@ hui.ui.Gallery.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * @constructor
  */
@@ -11447,7 +11447,7 @@ hui.ui.Calendar.prototype = {
     }
   }
 };
-
+;
 /**
   Fires dateChanged(date) when the user changes the date
   @constructor
@@ -11608,7 +11608,7 @@ Date.dayNames =
     "Lørdag"];
 
 /* EOF */
-
+;
 /**
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
@@ -11686,7 +11686,7 @@ hui.ui.Layout.prototype = {
 };
 
 /* EOF */
-
+;
 /**
  * A dock
  * @param {Object} The options
@@ -11820,7 +11820,7 @@ hui.ui.Dock.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * @constructor
  * @param {Object} options The options : {modal:false}
@@ -11951,7 +11951,7 @@ hui.ui.Box.prototype = {
     }
   }
 };
-
+;
 /**
  * A wizard with a number of steps
  * @constructor
@@ -12028,7 +12028,7 @@ hui.ui.Wizard.prototype = {
 }
 
 /* EOF */
-
+;
 /** @constructor */
 hui.ui.Input = function(options) {
   this.options = hui.override({placeholderElement:null,validator:null},options);
@@ -12144,7 +12144,7 @@ hui.ui.Input.prototype = {
 };
 
 /* EOF */
-
+;
 /** @constructor */
 hui.ui.InfoView = function(options) {
   this.options = hui.override({clickObjects:false},options);
@@ -12211,7 +12211,7 @@ hui.ui.InfoView.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * Overflow with scroll bars
  * @param options {Object} The options
@@ -12291,7 +12291,7 @@ hui.ui.Overflow.prototype = {
     }
   }
 };
-
+;
 /** @constructor */
 hui.ui.SearchField = function(options) {
   this.options = hui.override({expandedWidth:null},options);
@@ -12413,7 +12413,7 @@ if (window.define) {
   define('hui.ui.SearchField',hui.ui.SearchField);
 }
 /* EOF */
-
+;
 /**
  * Simple container
  * @param {Object} The options
@@ -12449,7 +12449,7 @@ hui.ui.Fragment.prototype = {
 }
 
 /* EOF */
-
+;
 /**
   Used to get a geografical location
   @constructor
@@ -12545,7 +12545,7 @@ hui.ui.LocationPicker.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * A bar
  * <pre><strong>options:</strong> {
@@ -12777,7 +12777,7 @@ hui.ui.Bar.Text.prototype = {
     hui.dom.setText(this.element,hui.ui.getTranslated(str));
   }
 };
-
+;
 /**
  * A dock
  * @param {Object} The options
@@ -12819,7 +12819,7 @@ hui.ui.IFrame.prototype = {
 }
 
 /* EOF */
-
+;
 /** A video player
  * @constructor
  */
@@ -13031,7 +13031,7 @@ hui.ui.VideoPlayer.Embedded.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * @constructor
  * @param {Object} options The options
@@ -13110,7 +13110,7 @@ hui.ui.Segmented.prototype = {
 }
 
 /* EOF */
-
+;
 /** @namespace */
 hui.ui.Flash = {
 
@@ -13242,7 +13242,7 @@ hui.ui.Flash = {
 }
 
 /* EOF */
-
+;
 /**
  * A link
  * @constructor
@@ -13269,7 +13269,7 @@ hui.ui.Link.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * Simple container
  * @param {Object} The options
@@ -13464,7 +13464,7 @@ hui.ui.Links.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * @constructor
  * @param options {Object} The options
@@ -14243,7 +14243,7 @@ hui.ui.MarkupEditor.util = {
 }
 
 /* EOF */
-
+;
 /**
  * @constructor
  */
@@ -14509,7 +14509,7 @@ hui.ui.ColorPicker.prototype = {
 }
 
 /* EOF */
-
+;
 /////////////////////////// Style length /////////////////////////
 
 /**
@@ -14599,7 +14599,7 @@ hui.ui.LocationInput.prototype = {
     hui.ui.callAncestors(this,'childValueChanged',this.value);
   }
 }
-
+;
 /////////////////////////// Style length /////////////////////////
 
 /**
@@ -14733,7 +14733,7 @@ hui.ui.StyleLength.prototype = {
     this.setValue('');
   }
 }
-
+;
 /////////////////////////// Date time /////////////////////////
 
 /**
@@ -14956,7 +14956,7 @@ hui.ui.DateTimeField.prototype = {
 		}
 	}
 }
-
+;
 /**
  * A tokens component
  * @constructor
@@ -15045,7 +15045,7 @@ hui.ui.TokenField.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * A check box
  * @constructor
@@ -15112,7 +15112,7 @@ hui.ui.Checkbox.prototype = {
     return this.options.label;
   }
 };
-
+;
 /////////////////////////// Checkboxes ////////////////////////////////
 
 /**
@@ -15320,7 +15320,7 @@ hui.ui.Checkboxes.Items.prototype = {
     return false;
   }
 };
-
+;
 /**
  * @constructor
  */
@@ -15378,7 +15378,7 @@ hui.ui.Radiobuttons.prototype = {
     }
   }
 }
-
+;
 /////////////////////////// Number /////////////////////////
 
 /**
@@ -15565,7 +15565,7 @@ hui.ui.NumberField.prototype = {
     }
   }
 }
-
+;
 ///////////////////////// Text /////////////////////////
 
 /**
@@ -15810,7 +15810,7 @@ hui.ui.TextField.prototype = {
     return t.clientHeight;
   }
 }
-
+;
 /** @constructor */
 hui.ui.Rendering = function(options) {
   this.options = hui.override({clickObjects:false},options);
@@ -15829,7 +15829,7 @@ hui.ui.Rendering.prototype = {
     this.element.innerHTML = html;
   }
 }
-
+;
 /**
  * A push button
  * <pre><strong>options:</strong> {
@@ -15868,7 +15868,7 @@ hui.ui.Icon.prototype = {
     inner.style.backgroundImage = 'url('+hui.ui.getIconUrl(this.options.icon,this.size)+')';
   }
 };
-
+;
 /////////////////////////// Color input /////////////////////////
 
 /**
@@ -15984,7 +15984,7 @@ hui.ui.ColorInput.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
@@ -16047,7 +16047,7 @@ hui.ui.Columns.prototype = {
 }
 
 /* EOF */
-
+;
 ////////////////////////// Finder ///////////////////////////
 
 /**
@@ -16364,7 +16364,7 @@ hui.ui.Finder.prototype = {
 };
 
 window.define && define('hui.ui.Finder',hui.ui.Finder);
-
+;
 /**
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
@@ -16409,7 +16409,7 @@ hui.ui.Structure.prototype = {
     }
   }
 }
-
+;
 /**
  * @constructor
  * @param {Object} options The options : {modal:false}
@@ -16489,7 +16489,7 @@ hui.ui.Slider.prototype = {
     this.position = this.value = pos;
   }
 }
-
+;
 /**
  * A code editor
  * @constructor
@@ -16676,7 +16676,7 @@ hui.ui.CodeInput.prototype = {
   }
 
 }
-
+;
 /**
  * An input for a link
  * @constructor
@@ -16832,7 +16832,7 @@ hui.ui.LinkInput.prototype = {
     this.setValue(null);
   }
 }
-
+;
 /**
  * A component for font input
  * @constructor
@@ -16927,7 +16927,7 @@ hui.ui.FontInput.prototype = {
 }
 
 /* EOF */
-
+;
 /**
   @constructor
   @param options The options (non)
@@ -17067,7 +17067,7 @@ hui.ui.FontPicker.prototype = {
 
 
 
-
+;
 /**
  * A bar
  * <pre><strong>options:</strong> {
@@ -17176,7 +17176,7 @@ hui.ui.Split.prototype = {
     };
   }
 }
-
+;
 /** @constructor */
 hui.ui.NumberValidator = function(options) {
   hui.override({allowNull:false,min:0,max:10},options)
@@ -17202,7 +17202,7 @@ hui.ui.NumberValidator.prototype = {
     return {valid:true,value:number};
   }
 }
-
+;
 ;(function (_super) {
 
   /**
@@ -17309,7 +17309,7 @@ hui.ui.NumberValidator.prototype = {
 
 })(hui.ui.Component);
 
-
+;
 (function (_super) {
 
   /**
@@ -17385,7 +17385,7 @@ hui.ui.NumberValidator.prototype = {
   hui.extend(hui.ui.Rows, _super);
 
 })(hui.ui.Component);
-
+;
 /**
  * Pages
  * @constructor
@@ -17523,8 +17523,196 @@ hui.ui.Pages.prototype = {
             }.bind(this)
         });
   }
-}
+};
+;
+(function (_super) {
 
+  var ns = 'hui_panel';
+  /**
+   * @constructor
+   */
+  hui.ui.Panel = function(options) {
+    this.element = hui.get(options.element);
+    this.name = options.name;
+    this.visible = false;
+    hui.ui.extend(this);
+    this._attach();
+    if (options.listener) {
+      this.listen(options.listener);
+    }
+  }
+
+  hui.ui.Panel.create = function(options) {
+    options = hui.override({close : true}, options);
+    var html = (options.close ? '<div class="hui_panel_close"></div>' : '')+
+      '<div class="hui_panel_titlebar">';
+      if (options.icon) {
+        html+='<span class="hui_icon hui_icon_16 hui_panel_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,16)+')"></span>';
+      }
+    html+='<span class="hui_panel_title">' + hui.ui.getTranslated(options.title) + '</span></div>'+
+      '<div class="hui_panel_body" style="'+
+      (options.width ? 'width:'+options.width+'px;':'')+
+      (options.height ? 'height:'+options.height+'px;':'')+
+      (options.padding ? 'padding:'+options.padding+'px;':'')+
+      (options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
+      '">'+
+      '</div>'+
+      '';
+    var cls = 'hui_panel hui-is-floating'+(options.variant ? ' hui_panel_'+options.variant : '');
+    if (options.variant=='dark') {
+      cls+=' hui_context_dark';
+    }
+    options.element = hui.build('div', {'class' : cls, html : html, parent: options.parent || document.body});
+    return new hui.ui.Panel(options);
+  }
+
+  hui.ui.Panel.prototype = {
+    nodes : {
+      close: '.hui_panel_close',
+      titlebar: '.hui_panel_titlebar',
+      title: '.hui_panel_title',
+      body: '.hui_panel_body'
+    },
+    _attach : function() {
+      if (this.nodes.close) {
+        hui.listen(this.nodes.close,'click',function(e) {
+          this.hide();
+          this.fire('close');
+        }.bind(this));
+        hui.listen(this.nodes.close,'mousedown',function(e) {hui.stop(e)});
+      }
+      hui.drag.register({
+        touch: true,
+        window: this.element.ownerDocument.defaultView,
+        element : this.nodes.titlebar,
+        $before : this._onDragStart.bind(this) ,
+        $startMove : this._onBeforeMove.bind(this) ,
+        $move : this._onMove.bind(this),
+        $endMove : this._onAfterMove.bind(this)
+      });
+      hui.listen(this.element,'mousedown',function() {
+        self.element.style.zIndex = hui.ui.nextPanelIndex();
+      }.bind(this));
+    },
+    setTitle : function(title) {
+      hui.dom.setText(this.nodes.title,hui.ui.getTranslated(title));
+    },
+    _positionInView : function() {
+      var scrollTop = hui.window.getScrollTop();
+      var winTop = hui.position.getTop(this.element);
+      if (winTop < scrollTop || winTop+this.element.clientHeight > hui.window.getViewHeight()+scrollTop) {
+        hui.animate({node:this.element,css:{top:(scrollTop+40)+'px'},duration:500,ease:hui.ease.slowFastSlow});
+      }
+    },
+    show : function(options) {
+      if (this.visible) {
+        this._positionInView();
+        this.element.style.zIndex=hui.ui.nextPanelIndex();
+        return;
+      }
+      options = options || {};
+      hui.style.set(this.element,{
+        zIndex : hui.ui.nextPanelIndex(), visibility : 'hidden', display : 'block'
+      })
+      var width = this.element.clientWidth;
+      hui.style.set(this.element,{
+        width : width+'px' , visibility : 'visible'
+      });
+      if (options.avoid) {
+        hui.position.place({insideViewPort : true, target : {element : options.avoid, vertical : .5, horizontal : 1}, source : {element : this.element, vertical : .5, horizontal : 0} });
+      } else {
+        if (!this.element.style.top) {
+          this.element.style.top = (hui.window.getScrollTop()+40)+'px';
+        } else {
+          this._positionInView();
+        }
+        if (!this.element.style.left) {
+          this.element.style.left = Math.round((hui.window.getViewWidth()-width)/2)+'px';
+        }
+      }
+      if (hui.browser.opacity) {
+        hui.animate(this.element,'opacity',1,0);
+      }
+      this.visible = true;
+      hui.ui.callVisible(this);
+    },
+    toggle : function(options) {
+      (this.visible ? this.hide() : this.show(options) );
+    },
+    hide : function() {
+      if (!this.visible) return;
+      if (hui.browser.opacity) {
+        hui.animate(this.element,'opacity',0,100,{$complete:function() {
+          this.element.style.display='none';
+          hui.ui.callVisible(this);
+        }.bind(this)});
+      } else {
+        this.element.style.display='none';
+        hui.ui.callVisible(this);
+      }
+      this.visible = false;
+    },
+    add : function(widgetOrNode) {
+      if (widgetOrNode.getElement) {
+        this.nodes.body.appendChild(widgetOrNode.getElement());
+      } else {
+        this.nodes.body.appendChild(widgetOrNode);
+      }
+    },
+    setBusy : function(stringOrBoolean) {
+      window.clearTimeout(this._busyTimer);
+      if (stringOrBoolean===false) {
+        if (this._busyCurtain) {
+          this._busyCurtain.style.display = 'none';
+        }
+        return;
+      }
+      this._busyTimer = window.setTimeout(function() {
+        var curtain = this._busyCurtain;
+        if (!curtain) {
+          curtain = this._busyCurtain = hui.build('div',{'class':'hui_panel_busy',parentFirst:hui.get.firstByClass(this.element,'hui_panel_content')})
+        }
+        curtain.innerHTML = hui.isString(stringOrBoolean) ? '<span>'+stringOrBoolean+'</span>' : '<span></span>';
+        curtain.style.display = '';
+      }.bind(this),300);
+    },
+
+    move : function(point) {
+      hui.style.set(this.element,{top:point.top+'px',left:point.left+'px'});
+    },
+
+    _onDragStart : function(e) {
+      this.element.style.zIndex = hui.ui.nextPanelIndex();
+    },
+    _onBeforeMove : function(e) {
+      e = hui.event(e);
+      var pos = hui.position.get(this.element);
+      this.dragState = {left: e.getLeft() - pos.left,top:e.getTop()-pos.top};
+      this.element.style.right = 'auto';
+      hui.cls.add(this.element,'hui-is-dragging');
+    },
+    _onMove : function(e) {
+      var top = (e.getTop()-this.dragState.top);
+      var left = (e.getLeft()-this.dragState.left);
+      this.element.style.top = Math.max(top,0)+'px';
+      this.element.style.left = Math.max(left,0)+'px';
+    },
+    _onAfterMove : function() {
+      hui.ui.callDescendants(this,'$$parentMoved');
+      hui.cls.remove(this.element,'hui-is-dragging');
+    },
+    destroy : function() {
+      hui.dom.remove(this.element);
+    }
+  }
+
+
+  hui.extend(hui.ui.Panel, _super);
+
+  hui.define('hui.ui.Panel', hui.ui.Panel);
+
+})(hui.ui.Component);
+;
 /**
  * @constructor
  */
@@ -17925,7 +18113,7 @@ hui.geometry = {
   }
 }
 
-
+;
 /** A progress indictator that shows progress from 0% to 100%
   @constructor
 */
@@ -18013,7 +18201,7 @@ hui.ui.ProgressIndicator.prototype = {
     });
   }
 }
-
+;
 /** A graph
  * @constructor
  */
@@ -18294,7 +18482,7 @@ hui.ui.Graph.D3 = {
 
   }
 }
-
+;
 /**
  * Tiles
  * @constructor
@@ -18382,7 +18570,7 @@ hui.ui.Tile.prototype = {
     this.fullScreen = !this.fullScreen;
   }
 }
-
+;
 (function (_super) {
 
   /**
@@ -18546,7 +18734,7 @@ hui.ui.Tile.prototype = {
   hui.extend(hui.ui.StyleEditor, _super);
 
 })(hui.ui.Component);
-
+;
 /** @namespace */
 hui.test = {
   status : null,
@@ -18710,7 +18898,7 @@ hui.test = {
     }
   }
 }
-
+;
 (function (_super) {
 
   /**
@@ -18720,7 +18908,12 @@ hui.test = {
    * @param {Object} options
    */
   hui.ui.Foundation = function(options) {
-    this.nodes = {
+    _super.call(this, options);
+    this._attach();
+  }
+
+  hui.ui.Foundation.prototype = {
+    nodes : {
       resizeNavigation : '.hui_foundation_resize_navigation',
       resizeResults : '.hui_foundation_resize_results',
       navigation : '.hui_foundation_navigation',
@@ -18730,12 +18923,7 @@ hui.test = {
       toggle : '.hui_foundation_overlay_toggle',
       details : '.hui_foundation_details',
       detailsToggle : '.hui_foundation_details_toggle'
-    }
-    _super.call(this, options);
-    this._attach();
-  }
-
-  hui.ui.Foundation.prototype = {
+    },
     _attach : function() {
       var initial = 0,
         navigation = this.nodes.navigation,
@@ -18799,7 +18987,7 @@ hui.test = {
   hui.extend(hui.ui.Foundation, _super);
 
 })(hui.ui.Component);
-
+;
 /**
  * A chart (line / column etc.)
  * <pre><strong>options:</strong> {
@@ -19541,7 +19729,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
   hui.log(data)
   return data;
 };
-
+;
 (function(_super, _) {
 
   hui.ui.EditManager = function(options) {
@@ -19687,7 +19875,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
   hui.extend(hui.ui.EditManager, _super);
 })(hui.ui.Component, hui)
 
-
+;
 // MSIE 8-
 if (!Function.prototype.bind) {
   Function.prototype.bind = function () {
@@ -20916,7 +21104,7 @@ if (!Array.prototype.find) {
 * @preserve HTML5 Shiv 3.7.2 | @afarkas @jdalton @jon_neal @rem | MIT/GPL2 Licensed
 */
 !function(a,b){function c(a,b){var c=a.createElement("p"),d=a.getElementsByTagName("head")[0]||a.documentElement;return c.innerHTML="x<style>"+b+"</style>",d.insertBefore(c.lastChild,d.firstChild)}function d(){var a=t.elements;return"string"==typeof a?a.split(" "):a}function e(a,b){var c=t.elements;"string"!=typeof c&&(c=c.join(" ")),"string"!=typeof a&&(a=a.join(" ")),t.elements=c+" "+a,j(b)}function f(a){var b=s[a[q]];return b||(b={},r++,a[q]=r,s[r]=b),b}function g(a,c,d){if(c||(c=b),l)return c.createElement(a);d||(d=f(c));var e;return e=d.cache[a]?d.cache[a].cloneNode():p.test(a)?(d.cache[a]=d.createElem(a)).cloneNode():d.createElem(a),!e.canHaveChildren||o.test(a)||e.tagUrn?e:d.frag.appendChild(e)}function h(a,c){if(a||(a=b),l)return a.createDocumentFragment();c=c||f(a);for(var e=c.frag.cloneNode(),g=0,h=d(),i=h.length;i>g;g++)e.createElement(h[g]);return e}function i(a,b){b.cache||(b.cache={},b.createElem=a.createElement,b.createFrag=a.createDocumentFragment,b.frag=b.createFrag()),a.createElement=function(c){return t.shivMethods?g(c,a,b):b.createElem(c)},a.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+d().join().replace(/[\w\-:]+/g,function(a){return b.createElem(a),b.frag.createElement(a),'c("'+a+'")'})+");return n}")(t,b.frag)}function j(a){a||(a=b);var d=f(a);return!t.shivCSS||k||d.hasCSS||(d.hasCSS=!!c(a,"article,aside,dialog,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}mark{background:#FF0;color:#000}template{display:none}")),l||i(a,d),a}var k,l,m="3.7.2",n=a.html5||{},o=/^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,p=/^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,q="_html5shiv",r=0,s={};!function(){try{var a=b.createElement("a");a.innerHTML="<xyz></xyz>",k="hidden"in a,l=1==a.childNodes.length||function(){b.createElement("a");var a=b.createDocumentFragment();return"undefined"==typeof a.cloneNode||"undefined"==typeof a.createDocumentFragment||"undefined"==typeof a.createElement}()}catch(c){k=!0,l=!0}}();var t={elements:n.elements||"abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output picture progress section summary template time video",version:m,shivCSS:n.shivCSS!==!1,supportsUnknownElements:l,shivMethods:n.shivMethods!==!1,type:"default",shivDocument:j,createElement:g,createDocumentFragment:h,addElements:e};a.html5=t,j(b)}(this,document);
-
+;
 hui.ui.Matrix = function(options) {
   this.options = options = options || {};
   this.element = hui.get(options.element);
@@ -20940,7 +21128,7 @@ hui.ui.Matrix.prototype = {
     this.render();
   }
 }
-
+;
 (function(_super) {
 
   /**
@@ -20978,7 +21166,7 @@ hui.ui.Matrix.prototype = {
 
 })(hui.ui.Component)
 
-
+;
 /** @constructor */
 hui.ui.RevealingToolbar = function(options) {
   this.element = hui.get(options.element);
@@ -21014,7 +21202,7 @@ hui.ui.RevealingToolbar.prototype = {
     hui.animate(this.element,'height','0px',500,{ease:hui.ease.slowFastSlow,hideOnComplete:true});
   }
 }
-
+;
 hui.onReady(function() {
   var configs = document.getElementsByTagName('noscript');
   for (var i = 0; i < configs.length; i++) {
@@ -21059,7 +21247,7 @@ hui.onReady(function() {
     new hui.ui[configs[i].getAttribute('data-type')](data);
   }
 })
-
+;
 /** A diagram
  * @constructor
  */
@@ -21635,7 +21823,7 @@ hui.ui.Diagram.util = {
     });
   }
 }
-
+;
 hui = window.hui || {};
 
 hui.query = function(q, ctx) {
@@ -21657,7 +21845,7 @@ hui.Query.prototype = {
     return this;
   }
 }
-
+;
 /**
  * A timeline showing events over time
  * @constructor
@@ -21713,222 +21901,7 @@ hui.ui.TimeLine.prototype = {
     this.paused = true;
   }
 };
-
-(function (_super) {
-
-  var ns = 'hui_panel';
-  /**
-   * @constructor
-   */
-  hui.ui.Panel = function(options) {
-    this.element = hui.get(options.element);
-    this.name = options.name;
-    this.titlebar = hui.get.firstByClass(this.element,'hui_panel_titlebar');
-    this.content = hui.get.firstByClass(this.element,'hui_panel_body');
-    this.visible = false;
-    hui.ui.extend(this);
-    this._attach();
-    if (options.listener) {
-      this.listen(options.listener);
-    }
-  }
-
-  hui.ui.Panel.create = function(options) {
-    options = hui.override({title:'Window',close:true},options);
-    var html = '<div class="hui_panel_front">'+(options.close ? '<div class="hui_panel_close"></div>' : '')+
-      '<div class="hui_panel_titlebar"><div><div>';
-      if (options.icon) {
-        html+='<span class="hui_panel_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,16)+')"></span>';
-      }
-    html+='<span class="hui_panel_title">'+hui.ui.getTranslated(options.title)+'</span></div></div></div>'+
-      '<div class="hui_panel_content"><div class="hui_panel_content"><div class="hui_panel_body" style="'+
-      (options.width ? 'width:'+options.width+'px;':'')+
-      (options.height ? 'height:'+options.height+'px;':'')+
-      (options.padding ? 'padding:'+options.padding+'px;':'')+
-      (options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
-      '">'+
-      '</div></div></div>'+
-      '<div class="hui_panel_bottom"><div class="hui_panel_bottom"><div class="hui_panel_bottom"></div></div></div></div>';
-    var cls = 'hui_panel'+(options.variant ? ' hui_panel_'+options.variant : '');
-    if (options.variant=='dark') {
-      cls+=' hui_context_dark';
-    }
-    options.element = hui.build('div',{'class':cls,html:html,parent: options.parent || document.body});
-    if (options.variant=='dark') {
-      hui.cls.add(options.element,'hui_context_dark');
-    }
-    return new hui.ui.Panel(options);
-  }
-
-  hui.ui.Panel.prototype = {
-    nodes : {
-      close: '.hui_panel_close',
-      close: '.hui_panel_title'
-    },
-    _attach : function() {
-      var self = this;
-      if (this.nodes.close) {
-        hui.listen(this.nodes.close,'click',function(e) {
-          this.hide();
-          this.fire('close');
-        }.bind(this));
-        hui.listen(this.nodes.close,'mousedown',function(e) {hui.stop(e)});
-      }
-      hui.drag.register({
-        touch: true,
-        window: this.element.ownerDocument.defaultView,
-        element : this.titlebar,
-        $before : this._onDragStart.bind(this) ,
-        $startMove : this._onBeforeMove.bind(this) ,
-        $move : this._onMove.bind(this),
-        $endMove : this._onAfterMove.bind(this)
-      });
-      hui.listen(this.element,'mousedown',function() {
-        self.element.style.zIndex = hui.ui.nextPanelIndex();
-      });
-    },
-    setTitle : function(title) {
-      hui.dom.setText(this.nodes.title,hui.ui.getTranslated(title));
-    },
-    _positionInView : function() {
-      var scrollTop = hui.window.getScrollTop();
-      var winTop = hui.position.getTop(this.element);
-      if (winTop < scrollTop || winTop+this.element.clientHeight > hui.window.getViewHeight()+scrollTop) {
-        hui.animate({node:this.element,css:{top:(scrollTop+40)+'px'},duration:500,ease:hui.ease.slowFastSlow});
-      }
-    },
-    show : function(options) {
-      if (this.visible) {
-        this._positionInView();
-        this.element.style.zIndex=hui.ui.nextPanelIndex();
-        return;
-      }
-      options = options || {};
-      hui.style.set(this.element,{
-        zIndex : hui.ui.nextPanelIndex(), visibility : 'hidden', display : 'block'
-      })
-      var width = this.element.clientWidth;
-      hui.style.set(this.element,{
-        width : width+'px' , visibility : 'visible'
-      });
-      if (options.avoid) {
-        hui.position.place({insideViewPort : true, target : {element : options.avoid, vertical : .5, horizontal : 1}, source : {element : this.element, vertical : .5, horizontal : 0} });
-      } else {
-        if (!this.element.style.top) {
-          this.element.style.top = (hui.window.getScrollTop()+40)+'px';
-        } else {
-          this._positionInView();
-        }
-        if (!this.element.style.left) {
-          this.element.style.left = Math.round((hui.window.getViewWidth()-width)/2)+'px';
-        }
-      }
-      if (hui.browser.opacity) {
-        hui.animate(this.element,'opacity',1,0);
-      }
-      this.visible = true;
-      hui.ui.callVisible(this);
-    },
-    toggle : function(options) {
-      (this.visible ? this.hide() : this.show(options) );
-    },
-    hide : function() {
-      if (!this.visible) return;
-      if (hui.browser.opacity) {
-        hui.animate(this.element,'opacity',0,100,{$complete:function() {
-          this.element.style.display='none';
-          hui.ui.callVisible(this);
-        }.bind(this)});
-      } else {
-        this.element.style.display='none';
-        hui.ui.callVisible(this);
-      }
-      this.visible = false;
-    },
-    add : function(widgetOrNode) {
-      if (widgetOrNode.getElement) {
-        this.content.appendChild(widgetOrNode.getElement());
-      } else {
-        this.content.appendChild(widgetOrNode);
-      }
-    },
-    addToBack : function(widgetOrNode) {
-      if (!this.back) {
-        this.back = hui.build('div',{className:'hui_panel_back'});
-        this.element.insertBefore(this.back,this.front);
-        hui.effect.makeFlippable({container:this.element,front:this.front,back:this.back});
-      }
-      this.back.appendChild(hui.ui.getElement(widgetOrNode));
-    },
-    setVariant : function(variant) {
-      hui.cls.remove(this.element,'hui_panel_dark');
-      hui.cls.remove(this.element,'hui_panel_light');
-      hui.cls.remove(this.element,'hui_panel_news');
-      if (variant=='dark' || variant=='light' || variant=='news') {
-        hui.cls.add(this.element,'hui_panel_'+variant);
-      }
-      hui.cls.set(this.element,'hui_context_dark',variant=='dark');
-    },
-    flip : function() {
-      if (this.back) {
-        this.back.style.minHeight = this.element.clientHeight+'px';
-        hui.effect.flip({element:this.element});
-      }
-    },
-    setBusy : function(stringOrBoolean) {
-      window.clearTimeout(this._busyTimer);
-      if (stringOrBoolean===false) {
-        if (this._busyCurtain) {
-          this._busyCurtain.style.display = 'none';
-        }
-        return;
-      }
-      this._busyTimer = window.setTimeout(function() {
-        var curtain = this._busyCurtain;
-        if (!curtain) {
-          curtain = this._busyCurtain = hui.build('div',{'class':'hui_panel_busy',parentFirst:hui.get.firstByClass(this.element,'hui_panel_content')})
-        }
-        curtain.innerHTML = hui.isString(stringOrBoolean) ? '<span>'+stringOrBoolean+'</span>' : '<span></span>';
-        curtain.style.display = '';
-      }.bind(this),300);
-    },
-
-    move : function(point) {
-      hui.style.set(this.element,{top:point.top+'px',left:point.left+'px'});
-    },
-
-    _onDragStart : function(e) {
-      this.element.style.zIndex = hui.ui.nextPanelIndex();
-    },
-    _onBeforeMove : function(e) {
-      e = hui.event(e);
-      var pos = hui.position.get(this.element);
-      this.dragState = {left: e.getLeft() - pos.left,top:e.getTop()-pos.top};
-      this.element.style.right = 'auto';
-      hui.cls.add(this.element,'hui_panel_dragging');
-    },
-    _onMove : function(e) {
-      var top = (e.getTop()-this.dragState.top);
-      var left = (e.getLeft()-this.dragState.left);
-      this.element.style.top = Math.max(top,0)+'px';
-      this.element.style.left = Math.max(left,0)+'px';
-    },
-    _onAfterMove : function() {
-      hui.ui.callDescendants(this,'$$parentMoved');
-      hui.cls.remove(this.element,'hui_panel_dragging');
-    },
-    destroy : function() {
-      hui.dom.remove(this.element);
-    }
-  }
-
-
-  hui.extend(hui.ui.Panel, _super);
-
-  hui.define('hui.ui.Panel', hui.ui.Panel);
-
-})(hui.ui.Component);
-
+;
 /**
  * Editing of documents composed of different parts
  *
@@ -22791,7 +22764,7 @@ hui.ui.Editor.Html.prototype = {
 }
 
 /* EOF */
-
+;
 /**
  * Media simulator
  * @class
@@ -22859,7 +22832,7 @@ hui.ui.MediaSimulator.prototype = {
 }
 
 hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
-
+;
 hui = window.hui || {};
 
 hui._ready = false;
@@ -22886,7 +22859,7 @@ hui.ready = function(delegate) {
     }
   }
 };
-
+;
 (function (_super) {
 
   var ns = 'hui_presentation';
@@ -23295,7 +23268,7 @@ hui.ready = function(delegate) {
   hui.define('hui.ui.Presentation', hui.ui.Presentation);
 
 })(hui.ui.Component);
-
+;
 hui.Color.table = {
   aliceblue: 'f0f8ff',
   antiquewhite: 'faebd7',
@@ -23441,7 +23414,7 @@ hui.Color.table = {
   yellow: 'ffff00',
   yellowgreen: '9acd32'
 };
-
+;
 hui.ui.KeyboardNavigator = function(options) {
   options = options || {};
   this.text = '';
@@ -23561,7 +23534,7 @@ hui.ui.KeyboardNavigator.prototype = {
     });
   }
 }
-
+;
 /**
  * Image pasting madness
  * @constructor
@@ -23688,7 +23661,7 @@ hui.ui.ImagePaster.prototype = {
 		}
 	}
 }
-
+;
 /**
  * Help stuff
  * @namespace
@@ -23718,7 +23691,7 @@ hui.ui.help = {
 		})
 	}
 }
-
+;
 /**
  * Help stuff
  * @namespace 
@@ -23730,4 +23703,4 @@ hui.ui.Debugger = {
 		win.show();
 	}
 }
-
+;

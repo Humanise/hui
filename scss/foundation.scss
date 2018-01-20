@@ -24,7 +24,7 @@
       width: 29px;
       height: 29px;
       top: 0;
-      background: red;
+      background: rgba(0, 0, 0, 0.1);
     }
     &.hui-is-open {
       right: 0;
@@ -87,6 +87,12 @@
   z-index: 1;
 }
 
+.hui_foundation_overlay {
+  &_title {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 800px) {
   .hui_foundation {
     &_overlay {
@@ -97,13 +103,27 @@
       bottom: 0;
       width: 80%;
       z-index: 2;
+      border-top: 28px solid transparent;
+
       &_toggle {
         position: absolute;
         right: -29px;
         width: 29px;
         height: 29px;
         top: 0;
-        background: red;
+        background: rgba(0, 0, 0, 0.1);
+      }
+      &_title {
+        height: $bar-height;
+        top: $bar-height * -1;
+        height: 28px;
+        background: #fff;
+        position: absolute;
+        left: 0;
+        right: 0;
+        font-size: 14px;
+        z-index: 4;
+        display: block;
       }
     }
     &.hui-is-open {

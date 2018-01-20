@@ -135,4 +135,4 @@ hui.ui.Pages.prototype = {
             }.bind(this)
         });
   }
-}
+};

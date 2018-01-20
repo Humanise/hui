@@ -2812,8 +2812,41 @@ div.hui_boundpanel_light div.hui_boundpanel_arrow_bottom
 }
 
 .hui_panel {
-  display: none;
-}
+  display: none; }
+  .hui_panel_titlebar {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    text-align: center;
+    font-size: 14px;
+    line-height: 16px;
+    padding: 5px 0;
+    cursor: move;
+    cursor: -webkit-grab;
+    cursor: -moz-grab; }
+  .hui_panel_close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 26px;
+    height: 26px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 26px;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+    .hui_panel_close:before {
+      content: '\2573';
+      content: '\00D7'; }
+  .hui_panel .hui_panel_icon {
+    margin-right: 5px;
+    vertical-align: top; }
+  .hui_panel.hui-is-dragging .hui_panel_titlebar {
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing; }
+  .hui_panel.hui-is-floating {
+    position: absolute;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 3px 20px rgba(0, 0, 0, 0.1); }
+
 
 .hui_imageviewer
 {
@@ -6418,5 +6451,42 @@ textarea.hui_textinput {
 @media (min-width: 600px) {
   .presentation_image {
     padding: 10px 30px; } }
+
+
+.hui_panel {
+  display: none; }
+  .hui_panel_titlebar {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    text-align: center;
+    font-size: 14px;
+    line-height: 16px;
+    padding: 5px 0;
+    cursor: move;
+    cursor: -webkit-grab;
+    cursor: -moz-grab; }
+  .hui_panel_close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 26px;
+    height: 26px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 26px;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+    .hui_panel_close:before {
+      content: '\2573';
+      content: '\00D7'; }
+  .hui_panel .hui_panel_icon {
+    margin-right: 5px;
+    vertical-align: top; }
+  .hui_panel.hui-is-dragging .hui_panel_titlebar {
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing; }
+  .hui_panel.hui-is-floating {
+    position: absolute;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 3px 20px rgba(0, 0, 0, 0.1); }
 
 

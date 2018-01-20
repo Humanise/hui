@@ -1,0 +1,49 @@
+@import 'tools';
+
+.hui_panel {
+  display: none;
+
+  &_titlebar {
+    font-family: $font;
+    text-align: center;
+    font-size: 14px;
+    line-height: 16px;
+    padding: 5px 0;
+    cursor: move;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+  }
+  &_close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 26px;
+    height: 26px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 26px;
+    font-family: $font;
+
+    &:before {
+      content: '\2573';
+      content: '\00D7';
+    }
+  }
+
+  & &_icon {
+    margin-right: 5px;
+    vertical-align: top;
+  }
+
+  &.hui-is-dragging &_titlebar{
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+  }
+
+  &.hui-is-floating {
+    position: absolute;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 3px 20px rgba(0,0,0,.1);
+  }
+}

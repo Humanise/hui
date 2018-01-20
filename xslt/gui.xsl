@@ -892,7 +892,41 @@
 </xsl:template>
 
 
-
+<!--doc title:'Upload' class:'hui.ui.Panel' module:'container'
+<panel name="«name»" title="«name»">
+...
+</panel>
+-->
+<xsl:template match="gui:panel">
+  <div id="{generate-id()}">
+    <xsl:attribute name="class">
+      <xsl:text>hui_panel hui-is-floating</xsl:text>
+    </xsl:attribute>
+    <xsl:if test="not(@closable='false')">
+      <div class="hui_panel_close"><xsl:comment/></div>
+    </xsl:if>
+    <div class="hui_panel_titlebar">
+      <xsl:if test="@icon">
+        <span class="hui_icon hui_icon_16 hui_panel_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"></span>
+      </xsl:if>
+      <span class="hui_panel_title"><xsl:value-of select="@title"/></span>
+    </div>
+    <div class="hui_panel_body">
+      <xsl:attribute name="style">
+        <xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
+        <xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if>
+      </xsl:attribute>
+      <xsl:apply-templates />
+    </div>
+  </div>
+  <script type="text/javascript">
+    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Panel({
+      element:'<xsl:value-of select="generate-id()"/>',
+      name:'<xsl:value-of select="@name"/>'
+    });
+    <xsl:call-template name="gui:createobject"/>
+  </script>
+</xsl:template>
 
 
 <!--doc title:'Upload' class:'hui.ui.Upload' module:'unknown'
@@ -2194,6 +2228,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:foundation">
     <div class="hui_foundation" id="{generate-id()}">
       <div class="hui_foundation_overlay">
+        <div class="hui_foundation_overlay_title">Back</div>
         <div class="hui_foundation_overlay_toggle"></div>
         <div class="hui_foundation_navigation hui_context_sidebar">
           <div class="hui_foundation_resize hui_foundation_resize_navigation"></div>

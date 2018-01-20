@@ -7,7 +7,12 @@
    * @param {Object} options
    */
   hui.ui.Foundation = function(options) {
-    this.nodes = {
+    _super.call(this, options);
+    this._attach();
+  }
+
+  hui.ui.Foundation.prototype = {
+    nodes : {
       resizeNavigation : '.hui_foundation_resize_navigation',
       resizeResults : '.hui_foundation_resize_results',
       navigation : '.hui_foundation_navigation',
@@ -17,12 +22,7 @@
       toggle : '.hui_foundation_overlay_toggle',
       details : '.hui_foundation_details',
       detailsToggle : '.hui_foundation_details_toggle'
-    }
-    _super.call(this, options);
-    this._attach();
-  }
-
-  hui.ui.Foundation.prototype = {
+    },
     _attach : function() {
       var initial = 0,
         navigation = this.nodes.navigation,
