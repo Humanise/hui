@@ -83,8 +83,10 @@ hui = window.hui || {};
  * @param {Object} obj The object to log
  */
 hui.log = function(obj) {
-  if (window.console && window.console.log) {
-    console.log.apply(this,arguments);
+  if (window.console && console.log) {
+    try { // Somehow it fails in IE if dev tools are not open
+      console.log.apply(null,arguments);
+    } catch (e) {}
   }
 };
 
