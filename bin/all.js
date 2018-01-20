@@ -83,8 +83,10 @@ hui = window.hui || {};
  * @param {Object} obj The object to log
  */
 hui.log = function(obj) {
-  if (window.console && window.console.log) {
-    console.log.apply(this,arguments);
+  if (window.console && console.log) {
+    try { // Somehow it fails in IE if dev tools are not open
+      console.log.apply(null,arguments);
+    } catch (e) {}
   }
 };
 
@@ -1104,7 +1106,7 @@ hui.build = function(name,options,doc) {
  */
 hui.position = {
   getTop : function(element) {
-      element = hui.get(element);
+    element = hui.get(element);
     if (element) {
       var top = element.offsetTop,
         tempEl = element.offsetParent;
@@ -1117,7 +1119,7 @@ hui.position = {
     else return 0;
   },
   getLeft : function(element) {
-      element = hui.get(element);
+    element = hui.get(element);
     if (element) {
       var left = element.offsetLeft,
         tempEl = element.offsetParent;
@@ -1136,16 +1138,13 @@ hui.position = {
     };
   },
   getScrollOffset : function(element) {
-      element = hui.get(element);
+    element = hui.get(element);
     var top = 0, left = 0;
-      do {
-        top += element.scrollTop  || 0;
-        left += element.scrollLeft || 0;
-        element = element.parentNode;
-      if (element && element.tagName === 'HTML') {
-        break; // TODO Temporary hack - Chrome has the same scrollTop on html as on body
-      }
-      } while (element);
+    do {
+      top += element.scrollTop  || 0;
+      left += element.scrollLeft || 0;
+      element = element.parentNode;
+    } while (element);
     return {top:top,left:left};
   },
   /**
