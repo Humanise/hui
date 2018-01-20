@@ -802,6 +802,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
+    <xs:attribute name="top" type="xs:positiveInteger"/>
     <xs:attribute name="height">
       <xs:simpleType>
         <xs:restriction base="xs:string">

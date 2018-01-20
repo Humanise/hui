@@ -1926,7 +1926,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:text>display:none;</xsl:text>
       </xsl:if>
       <xsl:if test="@height='full'">
-        <xsl:text>min-height: 100%;</xsl:text>
+        <xsl:text>min-height: 100%; box-sizing: border-box;</xsl:text>
+      </xsl:if>
+      <xsl:if test="@top">
+        <xsl:text>padding-top: </xsl:text><xsl:value-of select="@top"/><xsl:text>px;</xsl:text>
       </xsl:if>
     </xsl:attribute>
     <xsl:if test="@background">
