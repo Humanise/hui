@@ -3114,10 +3114,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:if>
     <xsl:attribute name="class">
       <xsl:text>hui_dropdown</xsl:text>
-      <xsl:if test="@adaptive='true'"> hui_dropdown_adaptive</xsl:if>
+      <xsl:if test="@adaptive='true'"> hui_dropdown-adaptive</xsl:if>
       <xsl:if test="@size='small' or ancestor::gui:cell"> hui_is_small</xsl:if>
     </xsl:attribute>
-    <strong><xsl:comment/></strong>
+    <span class="hui_dropdown_text"><xsl:comment/></span>
     </a>
     <script type="text/javascript">
       var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DropDown(
