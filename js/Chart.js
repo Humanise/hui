@@ -258,15 +258,15 @@ hui.ui.Chart.Renderer.prototype.render = function() {
     return;
   }
 
-  var i;
+  var i, dataSet;
 
   // Extract basic info about the chart
   for (i=0;i<this.chart.data.dataSets.length;i++) {
-    var set = this.chart.data.dataSets[i];
-    if (set.style.type=='line' || set.style.type=='column') {
+    dataSet = this.chart.data.dataSets[i];
+    if (dataSet.style.type=='line' || dataSet.style.type=='column') {
       this.state.coordinateSystem = true;
     }
-    if (set.style.type=='column') {
+    if (dataSet.style.type=='column') {
       this.state.numColumns++;
     }
   }
@@ -288,24 +288,24 @@ hui.ui.Chart.Renderer.prototype.render = function() {
 
   // Loop through data sets and render them
   var xLabels = this.state.xLabels;
-  for (i=0;i<this.chart.data.dataSets.length;i++) {
-    var set = this.chart.data.dataSets[i];
+  for (i = 0; i < this.chart.data.dataSets.length; i++) {
+    dataSet = this.chart.data.dataSets[i];
     var values, legend;
-    if (set.style.type=='line') {
-      values = set.keysToValues(xLabels);
-      this.renderLineGraph( { values:values, style:set.style , legend:set.legend } );
-    } else if (set.style.type=='column') {
-      if (set.isMultiDimensional()) {
-        values = set.keysToValues2D(xLabels);
-        legend = set.getSubLegends();
+    if (dataSet.style.type=='line') {
+      values = dataSet.keysToValues(xLabels);
+      this.renderLineGraph( { values:values, style:dataSet.style , legend:dataSet.legend } );
+    } else if (dataSet.style.type=='column') {
+      if (dataSet.isMultiDimensional()) {
+        values = dataSet.keysToValues2D(xLabels);
+        legend = dataSet.getSubLegends();
       } else {
-        values = set.keysToValues(xLabels);
-        legend = set.legend;
+        values = dataSet.keysToValues(xLabels);
+        legend = dataSet.legend;
       }
-      this.renderColumnGraph( { values:values, style:set.style , legend: legend} );
-    } else if (set.style.type=='pie') {
-      values = set.keysToValues(xLabels);
-      this.renderPie( { values:values, style:set.style } );
+      this.renderColumnGraph( { values:values, style:dataSet.style , legend: legend} );
+    } else if (dataSet.style.type=='pie') {
+      values = dataSet.keysToValues(xLabels);
+      this.renderPie( { values:values, style:dataSet.style } );
     }
   }
 
@@ -385,9 +385,9 @@ hui.ui.Chart.Renderer.prototype.renderBody = function() {
   this.ctx.strokeStyle=stroke;
   for (var i = 0; i < xLabels.length; i++) {
     var left = i * ((innerBody.width) / (xLabels.length - 1)) + innerBody.left;
-    var left = Math.round(left);
+    left = Math.round(left);
 
-    if (mod < 10 || (i % mod) ==0) {
+    if (mod < 10 || (i % mod) === 0) {
       // Draw grid
       if (this.chart.data.xAxis.grid) {
         this.ctx.beginPath();
@@ -399,7 +399,7 @@ hui.ui.Chart.Renderer.prototype.renderBody = function() {
     }
     if ((i % mod) === 0) {
       // Draw label
-      var label = hui.build('span',{
+      hui.build('span',{
         'class' : 'hui_chart_label',
         text : xLabels[i].label,
         before : this.canvas,
@@ -416,9 +416,10 @@ hui.ui.Chart.Renderer.prototype.renderBody = function() {
   /* Build Y-axis*/
   var yLabels = this.state.yLabels.concat();
   yLabels.reverse();
-  for (var i=0; i < yLabels.length ; i++) {
+  var top;
+  for (i = 0; i < yLabels.length; i++) {
     // Draw grid
-    var top = i*((state.body.height-body.innerPaddingVertical*2)/(yLabels.length-1))+body.paddingTop+body.innerPaddingVertical;
+    top = i * ((state.body.height - body.innerPaddingVertical * 2) / (yLabels.length - 1)) + body.paddingTop + body.innerPaddingVertical;
     top = Math.round(top);
     if (!this.chart.data.yAxis.above) {
       this.ctx.beginPath();
@@ -433,22 +434,22 @@ hui.ui.Chart.Renderer.prototype.renderBody = function() {
       textAlign : 'right',
       width : (this.state.yLabelWidth - 5) + 'px',
       font : '9px Tahoma',
-      marginTop : top-5+'px',
+      marginTop : (top - 5) +'px',
       marginLeft : body.paddingLeft+'px',
-            color : '#999'
+      color : '#999'
     }});
     this.canvas.parentNode.insertBefore(label,this.canvas);
   }
 
   // Draw a line at 0 if
   if (!this.chart.data.yAxis.above && yLabels[0] > 0 && yLabels[yLabels.length-1] < 0) {
-    var top = (state.body.height - body.innerPaddingVertical*2) * yLabels[0] / (yLabels[0] - yLabels[yLabels.length-1]) + body.paddingTop + body.innerPaddingVertical;
+    top = (state.body.height - body.innerPaddingVertical * 2) * yLabels[0] / (yLabels[0] - yLabels[yLabels.length - 1]) + body.paddingTop + body.innerPaddingVertical;
     top = Math.round(top);
     this.ctx.lineWidth = 2;
     this.ctx.strokeStyle=stroke;
     this.ctx.beginPath();
-    this.ctx.moveTo(.5+state.body.left,top);
-    this.ctx.lineTo(.5+state.body.right,top);
+    this.ctx.moveTo(0.5 + state.body.left, top);
+    this.ctx.lineTo(0.5 + state.body.right, top);
     this.ctx.stroke();
     this.ctx.closePath();
   }
@@ -461,24 +462,25 @@ hui.ui.Chart.Renderer.prototype.renderPostBody = function() {
     this.ctx.strokeStyle='rgb(240,240,240)';
     var yLabels = this.state.yLabels.concat();
     yLabels.reverse();
-    for (var i=0;i<yLabels.length;i++) {
-      var top = i*((this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)/(yLabels.length-1))+body.paddingTop+body.innerPaddingVertical;
+    var top;
+    for (var i = 0; i < yLabels.length; i++) {
+      top = i * ((this.height - body.innerPaddingVertical * 2 - body.paddingTop - body.paddingBottom) / (yLabels.length - 1)) + body.paddingTop + body.innerPaddingVertical;
       top = Math.round(top);
       this.ctx.lineWidth = 1;
       this.ctx.beginPath();
       this.ctx.moveTo(0.5 + body.paddingLeft, top + 0.5);
-      this.ctx.lineTo(0.5 + this.width-body.paddingRight, top + 0.5);
+      this.ctx.lineTo(0.5 + this.width - body.paddingRight, top + 0.5);
       this.ctx.stroke();
       this.ctx.closePath();
     }
-    if (yLabels[0]>0 && yLabels[yLabels.length-1]<0) {
-      var top = (this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)*yLabels[0]/(yLabels[0]-yLabels[yLabels.length-1])+body.paddingTop+body.innerPaddingVertical;
+    if (yLabels[0] > 0 && yLabels[yLabels.length - 1] < 0) {
+      top = (this.height - body.innerPaddingVertical * 2 - body.paddingTop - body.paddingBottom) * yLabels[0] / (yLabels[0] - yLabels[yLabels.length - 1]) + body.paddingTop + body.innerPaddingVertical;
       top = Math.round(top);
       this.ctx.lineWidth = 2;
-      this.ctx.strokeStyle='rgb(255,255,255)';
+      this.ctx.strokeStyle = 'rgb(255,255,255)';
       this.ctx.beginPath();
-      this.ctx.moveTo(0.5+body.paddingLeft,top);
-      this.ctx.lineTo(0.5+this.width-body.paddingRight,top);
+      this.ctx.moveTo(0.5 + body.paddingLeft,top);
+      this.ctx.lineTo(0.5 + this.width - body.paddingRight,top);
       this.ctx.stroke();
       this.ctx.closePath();
     }
@@ -495,14 +497,15 @@ hui.ui.Chart.Renderer.prototype.renderLineGraph = function(data) {
   var xLabels = this.state.xLabels;
   var yLabels = this.state.yLabels;
   var yMin = yLabels[0];
-  var yMax = yLabels[yLabels.length-1];
+  var yMax = yLabels[yLabels.length - 1];
   var body = this.chart.body;
   var innerBody = this.state.innerBody;
+  var color;
   if (data.style.colors) {
-    var color = data.style.colors[0];
+    color = data.style.colors[0];
   } else {
-    var color = this.chart.style.colors[this.state.currColor];
-    if (this.state.currColor+2>this.chart.style.colors.length) {
+    color = this.chart.style.colors[this.state.currColor];
+    if (this.state.currColor + 2 > this.chart.style.colors.length) {
       this.state.currColor = 0;
     } else {
       this.state.currColor++;
@@ -512,12 +515,12 @@ hui.ui.Chart.Renderer.prototype.renderLineGraph = function(data) {
   this.ctx.lineWidth = data.width ? data.width : 3;
   this.ctx.lineCap = this.ctx.lineJoin = 'round';
   this.ctx.beginPath();
-  for (var i=0;i<xLabels.length;i++) {
-    var amount = (values[i] == undefined ? 0 : values[i]);
+  for (var i = 0; i < xLabels.length; i++) {
+    var amount = (values[i] === undefined ? 0 : values[i]);
     var value = (amount - yMin) / (yMax - yMin);
     var top = this.height - value * (innerBody.height) - body.innerPaddingVertical - body.paddingBottom;
     var left = i * (innerBody.width / (xLabels.length - 1)) + innerBody.left;
-    if (i==0) {
+    if (i === 0) {
       this.ctx.moveTo(left + 0.5, top + 0.5);
     } else {
       this.ctx.lineTo(left + 0.5, top + 0.5);
@@ -542,18 +545,18 @@ hui.ui.Chart.Renderer.prototype.renderColumnGraph = function(data) {
   var colors = data.style.colors ? data.style.colors : this.chart.style.colors;
   this.state.currColumn++;
   var innerBody = this.state.innerBody;
-  var space = (this.width-body.paddingLeft-body.paddingRight)/xLabels.length*this.chart.data.xAxis.concentration;
-  var thickness = space/this.state.numColumns;
+  var space = (this.width - body.paddingLeft - body.paddingRight) / xLabels.length * this.chart.data.xAxis.concentration;
+  var thickness = space / this.state.numColumns;
   this.ctx.lineCap = this.ctx.lineJoin = 'round';
   this.ctx.beginPath();
-  for (var i=0;i<xLabels.length;i++) {
+  for (var i = 0; i < xLabels.length; i++) {
     if (values[i]) {
       var colorIndex = 0;
       var currTop = 0;
       if (values[i] instanceof Array) {
-        for (var j=0;j<values[i].length;j++) {
+        for (var j = 0; j < values[i].length; j++) {
           var val = values[i][j];
-          currTop+=this.renderOneColumn(val,colors[colorIndex],body,innerBody,yMin,yMax,currTop,i,xLabels,space,thickness);
+          currTop += this.renderOneColumn(val, colors[colorIndex], body, innerBody, yMin, yMax, currTop, i, xLabels, space, thickness);
 
           if (colorIndex+2>colors.length) {
             colorIndex = 0;
@@ -562,7 +565,7 @@ hui.ui.Chart.Renderer.prototype.renderColumnGraph = function(data) {
           }
         }
       } else {
-        currTop+=this.renderOneColumn(values[i],colors[colorIndex],body,innerBody,yMin,yMax,currTop,i,xLabels,space,thickness);
+        currTop += this.renderOneColumn(values[i], colors[colorIndex], body, innerBody, yMin, yMax, currTop, i, xLabels, space, thickness);
       }
     }
   }
@@ -570,34 +573,35 @@ hui.ui.Chart.Renderer.prototype.renderColumnGraph = function(data) {
   this.ctx.closePath();
 
   if (data.legend && data.legend instanceof Array) {
-    for (var i=0; i < data.legend.length; i++) {
-      this._registerLegend(colors[i],data.legend[i]);
-    };
+    for (var k = 0; k < data.legend.length; k++) {
+      this._registerLegend(colors[k], data.legend[k]);
+    }
   } else if (data.legend) {
-    this._registerLegend(colors[0],data.legend);
+    this._registerLegend(colors[0], data.legend);
   }
 };
 
 hui.ui.Chart.Renderer.prototype.renderOneColumn = function(val,color,body,innerBody,yMin,yMax,currTop,i,xLabels,space,thickness) {
-  var value = (val-yMin)/(yMax-yMin);
+  var value = (val - yMin) / (yMax - yMin);
+  var height, top;
   if (yMin<=0 && val<=0) {
-    var top = innerBody.top+(innerBody.height)*yMax/(yMax-yMin)+currTop;
-    var height = innerBody.height*Math.abs(val)/(yMax-yMin);
-  } else if (yMin<=0) {
-    var top = this.height-body.innerPaddingVertical-body.paddingBottom-value*(innerBody.height)-currTop;
-    var height = (innerBody.height)*Math.abs(val)/(yMax-yMin);
+    top = innerBody.top + (innerBody.height) * yMax / (yMax - yMin) + currTop;
+    height = innerBody.height * Math.abs(val) / (yMax - yMin);
+  } else if (yMin <= 0) {
+    top = this.height - body.innerPaddingVertical - body.paddingBottom - value * (innerBody.height) - currTop;
+    height = (innerBody.height) * Math.abs(val) / (yMax - yMin);
   }
   else {
-    var top = this.height-value*(this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)-body.innerPaddingVertical-body.paddingBottom-currTop;
-    var height = (this.height-body.paddingBottom-top);
+    top = this.height - value * (this.height - body.innerPaddingVertical * 2 - body.paddingTop - body.paddingBottom) - body.innerPaddingVertical - body.paddingBottom - currTop;
+    height = (this.height - body.paddingBottom - top);
   }
-  var left = i*((innerBody.width)/(xLabels.length-1))+innerBody.left;
+  var left = i* ((innerBody.width) / (xLabels.length - 1)) + innerBody.left;
 
   this.ctx.fillStyle = color;
   if (this.crisp) {
-    this.ctx.fillRect(Math.round(left-space/2+thickness*(this.state.currColumn-1)),Math.floor(top),Math.ceil(thickness),Math.ceil(height));
+    this.ctx.fillRect(Math.round(left - space / 2 + thickness * (this.state.currColumn - 1)), Math.floor(top), Math.ceil(thickness), Math.ceil(height));
   } else {
-    this.ctx.fillRect(left-space/2+thickness*(this.state.currColumn-1),top,thickness,height);
+    this.ctx.fillRect(left - space / 2 + thickness * (this.state.currColumn - 1), top, thickness, height);
   }
   return height;
 };
@@ -616,12 +620,12 @@ hui.ui.Chart.Renderer.prototype.renderPie = function(data) {
 
   for (var i = 0; i < values.length; i++) {
     this.ctx.beginPath();
-    var color = colors[colorIndex]
+    var color = colors[colorIndex];
     this.ctx.fillStyle = color;
     var rads = values[i] / total * (Math.PI * 2);
-    this.ctx.moveTo(cLeft,cTop);
-    this.ctx.arc(cLeft,cTop,radius,current,current+rads,false);
-    this.ctx.lineTo(cLeft,cTop);
+    this.ctx.moveTo(cLeft, cTop);
+    this.ctx.arc(cLeft, cTop, radius, current, current + rads, false);
+    this.ctx.lineTo(cLeft, cTop);
     this.ctx.fill();
     this.ctx.closePath();
     current+=rads;
@@ -629,7 +633,7 @@ hui.ui.Chart.Renderer.prototype.renderPie = function(data) {
     if (!true) {
       this._registerLegend(color, this.state.xLabels[i].label);
     } else {
-      this._registerLegend(color,values[i] + ' ' + this.state.xLabels[i].label);
+      this._registerLegend(color, values[i] + ' ' + this.state.xLabels[i].label);
     }
     if (colorIndex + 2 > colors.length) {
       colorIndex = 0;
@@ -648,13 +652,13 @@ hui.ui.Chart.Renderer.prototype.renderPie = function(data) {
 /*                           Utitlities                              */
 /*********************************************************************/
 
-hui.ui.Chart.Util = function() {}
+hui.ui.Chart.Util = function() {};
 
 hui.ui.Chart.Util.generateYLabels = function(graph) {
   var range = hui.ui.Chart.Util.getYrange(graph);
   var labels = [];
-  for (var i=0;i<=graph.yAxis.steps;i++) {
-    labels[labels.length] = Math.round(range.min+(range.max-range.min)/graph.yAxis.steps*i);
+  for (var i = 0; i <= graph.yAxis.steps; i++) {
+    labels[labels.length] = Math.round(range.min + (range.max - range.min) / graph.yAxis.steps * i);
   }
   return labels;
 };
@@ -663,29 +667,29 @@ hui.ui.Chart.Util.getYrange = function(graph) {
   var min = graph.yAxis.min,
     max = graph.yAxis.max,
     data = graph.data;
-  for (var i=0;i<data.dataSets.length;i++) {
+  for (var i = 0; i < data.dataSets.length; i++) {
     var range = data.dataSets[i].getValueRange(data.xAxis.labels);
-    min = Math.min(min,range.min);
-    max = Math.max(max,range.max);
+    min = Math.min(min, range.min);
+    max = Math.max(max, range.max);
   }
-  var factor = max/graph.yAxis.steps;
+  var factor = max / graph.yAxis.steps;
   if (factor < graph.yAxis.factor) {
     factor = Math.ceil(factor);
   } else {
     factor = graph.yAxis.factor;
   }
   if (max != Number.MIN_VALUE) {
-    max = Math.ceil(max/factor/graph.yAxis.steps)*factor*graph.yAxis.steps;
+    max = Math.ceil(max / factor / graph.yAxis.steps) * factor * graph.yAxis.steps;
   } else {
     max = graph.yAxis.steps;
   }
-  return {min:min,max:max};
+  return {min: min, max : max};
 };
 
 hui.ui.Chart.Util.arraySum = function(values) {
   var total = 0;
-  for (var i=0;i<values.length;i++) {
-    total+=values[i];
+  for (var i = 0; i < values.length; i++) {
+    total += values[i];
   }
   return total;
 };
@@ -693,26 +697,27 @@ hui.ui.Chart.Util.arraySum = function(values) {
 /** Converts a simple data-representation into a class-based stucture */
 hui.ui.Chart.Util.convertData = function(obj) {
   var labels = [],keys = [];
-  for (var i=0; i < obj.sets.length; i++) {
+  var i;
+  for (i = 0; i < obj.sets.length; i++) {
     var set = obj.sets[i];
     if (hui.isArray(set.entries)) {
       for (var j=0; j < set.entries.length; j++) {
         var entry = set.entries[j];
-        if (!hui.array.contains(keys,entry.key)) {
-          keys.push(entry.key)
-          labels.push({key:entry.key,label:entry.label || entry.key});
+        if (!hui.array.contains(keys, entry.key)) {
+          keys.push(entry.key);
+          labels.push({key: entry.key, label: entry.label || entry.key});
         }
       }
     } else {
       for (var key in set.entries) {
-        if (!hui.array.contains(keys,key)) {
-          keys.push(key)
-          labels.push({key:key,label:key});
+        if (!hui.array.contains(keys, key)) {
+          keys.push(key);
+          labels.push({key: key, label: key});
         }
       }
     }
   }
-  var options = {xAxis:{labels:labels}};
+  var options = {xAxis: {labels: labels}};
   if (obj.axis && obj.axis.x && obj.axis.x.time===true) {
     options.xAxis.resolution = 'time';
   }
@@ -721,21 +726,20 @@ hui.ui.Chart.Util.convertData = function(obj) {
   }
   var data = new hui.ui.Chart.Data(options);
 
-  for (var i=0; i < obj.sets.length; i++) {
-    var set = obj.sets[i];
-    var dataSet = new hui.ui.Chart.DataSet({type:set.type});
-    if (hui.isArray(set.entries)) {
-      for (var j=0; j < set.entries.length; j++) {
-        var entry = set.entries[j];
-        dataSet.addEntry(entry.key,entry.value);
-      };
+  for (i = 0; i < obj.sets.length; i++) {
+    var setData = obj.sets[i];
+    var dataSet = new hui.ui.Chart.DataSet({type : setData.type});
+    if (hui.isArray(setData.entries)) {
+      for (var k = 0; k < setData.entries.length; k++) {
+        var dataEntry = setData.entries[k];
+        dataSet.addEntry(dataEntry.key, dataEntry.value);
+      }
     } else {
-      for (var key in set.entries) {
-        dataSet.addEntry(key,set.entries[key]);
+      for (var setKey in setData.entries) {
+        dataSet.addEntry(setKey, setData.entries[setKey]);
       }
     }
     data.addDataSet(dataSet);
   }
-  hui.log(data)
   return data;
 };

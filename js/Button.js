@@ -69,7 +69,7 @@ hui.ui.Button.create = function(options) {
   if (options.title) { // Deprecated
     text = hui.ui.getTranslated(options.title);
   }
-  var element = options.element = hui.build('a',{'class':className,href:'javascript://'});
+  var element = options.element = hui.build('a',{'class':className, href:'#'});
   if (options.icon) {
     var icon = hui.build('span',{parent:element,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
     if (!text) {
@@ -227,5 +227,5 @@ hui.ui.Buttons.prototype = {
 
 hui.onReady(['hui.ui'],function() {
   hui.define('hui.ui.Button',hui.ui.Button);
-})
+});
 /* EOF */
