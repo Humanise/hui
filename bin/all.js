@@ -15248,7 +15248,7 @@ hui.ui.Checkboxes.prototype = {
       hui.listen(node,'click',function(e) {
         hui.stop(e);
         this.flipValue(item.value);
-      }.bind(this))
+      }.bind(this));
       hui.ui.addFocusClass({element:node,'class':'hui_checkbox_focused'});
       this.element.appendChild(node);
       this.items.push(item);
@@ -15256,7 +15256,7 @@ hui.ui.Checkboxes.prototype = {
     this._checkValues();
     this._updateUI();
   }
-}
+};
 
 /////////////////////// Checkbox items ///////////////////
 
@@ -15288,12 +15288,12 @@ hui.ui.Checkboxes.Items.prototype = {
     this.element.innerHTML='';
     var self = this;
     hui.each(items,function(item) {
-      var parsed = {text:item.title || item.text,value:hui.intOrString(item.value)}
-      var node = parsed.element = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(parsed.text)+'</span>'});
+      var parsed = {text:item.title || item.text,value:hui.intOrString(item.value)};
+      var node = parsed.element = hui.build('a',{'class':'hui_checkbox',href:'#',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(parsed.text)+'</span>'});
       hui.listen(node,'click',function(e) {
         hui.stop(e);
         node.focus();
-        self._onItemClick(parsed)
+        self._onItemClick(parsed);
       });
       hui.ui.addFocusClass({element:node,'class':'hui_checkbox_focused'});
       self.element.appendChild(node);

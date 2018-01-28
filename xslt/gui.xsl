@@ -3064,7 +3064,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   -->
   <xsl:template match="gui:font-input">
     <span class="hui_fontinput" id="{generate-id()}">
-      <a class="hui_dropdown" href="javascript://"><span><span><strong><xsl:comment/></strong></span></span></a>
+      <a class="hui_dropdown" href="javascript://"><span class="hui_dropdown_text"><xsl:comment/></span></a>
       <a class="hui_fontinput" href="javascript://" tabindex="-1">a</a>
     </span>
     <script type="text/javascript">
@@ -3474,7 +3474,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:link-input">
     <div class="hui_linkinput" id="{generate-id()}">
       <a id="{generate-id()}" href="javascript://" class="hui_dropdown">
-        <span><span><strong><xsl:comment/></strong></span></span>
+        <span class="hui_dropdown_text"><xsl:comment/></span>
       </a>
       <span class="hui_linkinput_body">
       <input spellcheck="false" style="display:none;"/>
