@@ -12,7 +12,7 @@ hui.ui.Picker = function(options) {
   this.value = null;
   this._addBehavior();
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Picker.create = function(options) {
   options = hui.override({shadow:true},options);
@@ -26,7 +26,7 @@ hui.ui.Picker.create = function(options) {
     hui.cls.add(options.element,'hui_picker_shadow')
   }
   return new hui.ui.Picker(options);
-}
+};
 
 hui.ui.Picker.prototype = {
   _addBehavior : function() {
@@ -175,6 +175,4 @@ hui.ui.Picker.prototype = {
     hui.style.set(this.container,{width:width+'px',display:'block'});
     this._updatePages();
   }
-}
-
-/* EOF */
+};

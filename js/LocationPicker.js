@@ -10,7 +10,7 @@ hui.ui.LocationPicker = function(options) {
   this.backendLoaded = window.google!==undefined && window.google.maps!==undefined;
   this.defered = [];
   hui.ui.extend(this);
-}
+};
 
 hui.ui.LocationPicker.prototype = {
   show : function(options) {
@@ -24,19 +24,19 @@ hui.ui.LocationPicker.prototype = {
       panel.add(buttons.add(button));
       hui.style.set(panel.element,{left:'-10000px',top:'-10000px',display:''});
       this._whenReady(function() {
-          var mapOptions = {
-            zoom: 15,
-            mapTypeId: google.maps.MapTypeId.TERRAIN
-          }
+        var mapOptions = {
+          zoom: 15,
+          mapTypeId: google.maps.MapTypeId.TERRAIN
+        };
         this.defaultCenter = new google.maps.LatLng(57.0465, 9.9185);
-          this.map = new google.maps.Map(mapContainer, mapOptions);
+        this.map = new google.maps.Map(mapContainer, mapOptions);
         google.maps.event.addListener(this.map, 'click', function(obj) {
           var loc = {latitude:obj.latLng.lat(),longitude:obj.latLng.lng()};
-            this.setLocation(loc);
+          this.setLocation(loc);
           this.fire('locationChanged',loc);
-          }.bind(this));
+        }.bind(this));
         this.setLocation(options.location);
-      }.bind(this))
+      }.bind(this));
     }
     if (options.node) {
       this.panel.position(options.node);
@@ -49,7 +49,7 @@ hui.ui.LocationPicker.prototype = {
       return;
     }
     this.defered.push(func);
-    if (this.loadingBackend) {return};
+    if (this.loadingBackend) {return;};
     this.loadingBackend = true;
     window.huiLocationPickerReady = function() {
       this.loadingBackend = false;
@@ -60,7 +60,7 @@ hui.ui.LocationPicker.prototype = {
       };
       window.huiLocationPickerReady = null;
     }.bind(this);
-    hui.log('Loading google maps...')
+    hui.log('Loading google maps...');
     hui.require('http://maps.google.com/maps/api/js?callback=huiLocationPickerReady&key=AIzaSyD-kxdnmiDp7Vs9U4oK_iL9UfaRJgbWF8w');
   },
   setLocation : function(loc) {
@@ -73,10 +73,10 @@ hui.ui.LocationPicker.prototype = {
       }
       loc = this._buildLatLng(loc);
       if (!this.marker) {
-          this.marker = new google.maps.Marker({
-              position: loc,
-              map: this.map
-          });
+        this.marker = new google.maps.Marker({
+          position: loc,
+          map: this.map
+        });
       } else {
           this.marker.setPosition(loc);
         this.marker.setMap(this.map);
@@ -90,6 +90,4 @@ hui.ui.LocationPicker.prototype = {
     }
     return new google.maps.LatLng(loc.latitude, loc.longitude);
   }
-}
-
-/* EOF */
+};

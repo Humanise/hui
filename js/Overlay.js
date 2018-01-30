@@ -9,7 +9,7 @@ hui.ui.Overlay = function(options) {
   this.visible = false;
   hui.ui.extend(this);
   this._addBehavior();
-}
+};
 
 /**
  * Creates a new overlay
@@ -23,7 +23,7 @@ hui.ui.Overlay.create = function(options) {
   var e = options.element = hui.build('div',{className:cls,style:'display:none'});
   document.body.appendChild(e);
   return new hui.ui.Overlay(options);
-}
+};
 
 hui.ui.Overlay.prototype = {
   _addBehavior : function() {
@@ -149,5 +149,3 @@ hui.ui.Overlay.prototype = {
     this.element.innerHTML='';
   }
 };
-
-/* EOF */

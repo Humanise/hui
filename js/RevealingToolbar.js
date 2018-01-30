@@ -3,7 +3,7 @@ hui.ui.RevealingToolbar = function(options) {
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
-}
+};
 
 hui.ui.RevealingToolbar.create = function(options) {
   options = options || {};
@@ -15,7 +15,7 @@ hui.ui.RevealingToolbar.create = function(options) {
   var bar = new hui.ui.RevealingToolbar(options);
   bar.setToolbar(hui.ui.Toolbar.create());
   return bar;
-}
+};
 
 hui.ui.RevealingToolbar.prototype = {
   setToolbar : function(widget) {
@@ -32,4 +32,4 @@ hui.ui.RevealingToolbar.prototype = {
   hide : function() {
     hui.animate(this.element,'height','0px',500,{ease:hui.ease.slowFastSlow,hideOnComplete:true});
   }
-}
+};

@@ -5,7 +5,7 @@ hui.ui.Rendering = function(options) {
   this.name = options.name;
   hui.ui.extend(this);
   //hui.listen(this.element,'click',this._click.bind(this));
-}
+};
 
 hui.ui.Rendering.prototype = {
   _click : function(e) {
@@ -15,4 +15,4 @@ hui.ui.Rendering.prototype = {
   setContent : function(html) {
     this.element.innerHTML = html;
   }
-}
+};

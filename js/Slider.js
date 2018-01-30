@@ -13,7 +13,7 @@ hui.ui.Slider = function(options) {
   this.value = 0;
   this.setValue(this.options.value);
   this._addBehavior();
-}
+};
 
 hui.ui.Slider.create = function(options) {
   options = hui.override({},options);
@@ -22,7 +22,7 @@ hui.ui.Slider.create = function(options) {
     e.style.width = options.width+'px';
   }
   return new hui.ui.Slider(options);
-}
+};
 
 hui.ui.Slider.prototype = {
   _addBehavior : function() {
@@ -76,4 +76,4 @@ hui.ui.Slider.prototype = {
     }
     this.position = this.value = pos;
   }
-}
+};

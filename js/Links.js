@@ -12,7 +12,7 @@ hui.ui.Links = function(options) {
   this.addBehavior();
   this.selectedIndex = null;
   this.inputs = {};
-}
+};
 
 hui.ui.Links.prototype = {
   addBehavior : function() {
@@ -66,7 +66,7 @@ hui.ui.Links.prototype = {
       var idx = row.hui_index;
       if (this.selectedIndex!==null) {
         var x = hui.get.byClass(this.element,'hui_links_row')[this.selectedIndex];
-        hui.cls.remove(x,'hui_links_row_selected')
+        hui.cls.remove(x,'hui_links_row_selected');
       }
       this.selectedIndex = idx;
       hui.cls.add(row,'hui_links_row_selected');
@@ -93,7 +93,7 @@ hui.ui.Links.prototype = {
       row.appendChild(remove);
 
       list.appendChild(row);
-    };
+    }
   },
   addLink : function() {
     this.editedLink = null;
@@ -111,23 +111,23 @@ hui.ui.Links.prototype = {
 
       var url = hui.ui.TextInput.create({key:'url'});
       g.add(url,'URL');
-      this.inputs['url'] = url;
+      this.inputs.url = url;
 
       var email = hui.ui.TextInput.create({key:'email'});
       g.add(email,'E-mail');
-      this.inputs['email'] = email;
+      this.inputs.email = email;
 
       page = hui.ui.DropDown.create({key:'page',source:this.options.pageSource});
       g.add(page,'Side');
-      this.inputs['page'] = page;
+      this.inputs.page = page;
 
       file = hui.ui.DropDown.create({key:'file',source:this.options.fileSource});
       g.add(file,'Fil');
-      this.inputs['file'] = file;
+      this.inputs.file = file;
 
       var self = this;
       hui.each(this.inputs,function(key,value) {
-        value.listen({$valueChanged:function(){self.changeType(key)}});
+        value.listen({$valueChanged:function(){self.changeType(key);}});
       });
 
       g.createButtons().add(hui.ui.Button.create({text:'Gem',submit:true,highlighted:true}));
@@ -159,12 +159,12 @@ hui.ui.Links.prototype = {
   valuesToLink : function(values) {
     var link = {};
     link.text = values.text;
-    if (values.email!='') {
+    if (values.email !== '') {
       link.kind='email';
       link.value=values.email;
       link.info=values.email;
       link.icon='monochrome/email';
-    } else if (values.url!='') {
+    } else if (values.url !== '') {
       link.kind='url';
       link.value=values.url;
       link.info=values.url;
@@ -172,12 +172,12 @@ hui.ui.Links.prototype = {
     } else if (hui.isDefined(values.page)) {
       link.kind='page';
       link.value=values.page;
-      link.info=this.inputs['page'].getItem().title;
+      link.info=this.inputs.page.getItem().title;
       link.icon='common/page';
     } else if (hui.isDefined(values.file)) {
       link.kind='file';
       link.value=values.file;
-      link.info=this.inputs['file'].getItem().title;
+      link.info=this.inputs.file.getItem().title;
       link.icon='monochrome/file';
     }
     return link;
@@ -189,6 +189,4 @@ hui.ui.Links.prototype = {
       }
     });
   }
-}
-
-/* EOF */
+};

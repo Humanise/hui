@@ -16,14 +16,14 @@ hui.ui.FontInput = function(options) {
   hui.ui.extend(this);
   this.setValue(this.options.value);
   this._addBehavior();
-}
+};
 
 hui.ui.FontInput.create = function(options) {
   options = options || {};
   var e = options.element = hui.build('span',{'class':'hui_colorinput',html:'<span class="hui_field_top"><span><span></span></span></span><span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"><span class="hui_field_singleline"><input type="text" value=""/></span></span></span></span><span class="hui_field_bottom"><span><span></span></span></span><a tabindex="-1" class="hui_colorinput" href="javascript://"></a>'});
 
   return new hui.ui.ColorInput(options);
-}
+};
 
 hui.ui.FontInput.prototype = {
   _addBehavior : function() {
@@ -41,7 +41,7 @@ hui.ui.FontInput.prototype = {
   },
   _onButtonClick : function() {
     if (hui.window.getViewHeight()<200) {
-      this.fire('clickPicker',this.value)
+      this.fire('clickPicker',this.value);
       return; // TODO: mini picker
     }
     if (!this.panel) {
@@ -89,6 +89,4 @@ hui.ui.FontInput.prototype = {
             this.picker.destroy();
         }
     }
-}
-
-/* EOF */
+};

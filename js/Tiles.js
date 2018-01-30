@@ -12,7 +12,7 @@ hui.ui.Tiles = function(options) {
   if (this.options.reveal) {
     hui.onReady(this._reveal.bind(this));
   }
-}
+};
 
 hui.ui.Tiles.prototype = {
   _addBehavior : function() {
@@ -26,7 +26,7 @@ hui.ui.Tiles.prototype = {
   _bounce : function(tile) {
     hui.effect.fadeIn({element:tile,delay:Math.random()*500});
   }
-}
+};
 
 hui.ui.Tile = function(options) {
   this.options = options || {};
@@ -41,7 +41,7 @@ hui.ui.Tile = function(options) {
     left : this.element.style.left
   }
   this._addBehavior();
-}
+};
 
 hui.ui.Tile._zIndex = 0;
 
@@ -84,4 +84,4 @@ hui.ui.Tile.prototype = {
     }
     this.fullScreen = !this.fullScreen;
   }
-}
+};

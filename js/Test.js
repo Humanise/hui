@@ -160,4 +160,4 @@ hui.test = {
       this._succeed('Success, not visible: '+msg);
     }
   }
-}
+};

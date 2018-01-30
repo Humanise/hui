@@ -21,7 +21,7 @@ hui.ui.VideoPlayer = function(options) {
       }.bind(this));
     }
   }
-}
+};
 
 hui.ui.VideoPlayer.prototype = {
   setVideo : function(video) {
@@ -83,7 +83,7 @@ hui.ui.VideoPlayer.prototype = {
   updateStatus : function() {
     this.status.innerHTML = this.state.time+' / '+this.state.duration+' / '+this.state.loaded;
   }
-}
+};
 
 ///////// HTML5 //////////
 
@@ -97,14 +97,14 @@ hui.ui.VideoPlayer.HTML5 = function(video,player) {
   hui.listen(e,'timeupdate',function() {
     player.onTimeChange(this.element.currentTime);
   }.bind(this));
-}
+};
 
 hui.ui.VideoPlayer.HTML5.isSupported = function(video) {
   if (hui.browser.webkitVersion>528 && (video.type==='video/quicktime' || video.type==='video/mp4')) {
     return true;
   }
   return false;
-}
+};
 
 hui.ui.VideoPlayer.HTML5.prototype = {
   showController : function() {
@@ -122,7 +122,7 @@ hui.ui.VideoPlayer.HTML5.prototype = {
   isPlaying : function() {
     return !this.element.paused;
   }
-}
+};
 
 ///////// QuickTime //////////
 
@@ -151,11 +151,11 @@ hui.ui.VideoPlayer.QuickTime = function(video,player) {
   hui.listen(e,'qt_timechanged',function() {
     player.onTimeChange(e.GetTime());
   })
-}
+};
 
 hui.ui.VideoPlayer.QuickTime.isSupported = function(video) {
   return video.html==undefined;
-}
+};
 
 hui.ui.VideoPlayer.QuickTime.prototype = {
   showController : function() {
@@ -178,17 +178,17 @@ hui.ui.VideoPlayer.QuickTime.prototype = {
   isPlaying : function() {
     return this.element.GetRate()!==0;
   }
-}
+};
 
 ///////// Embedded //////////
 
 hui.ui.VideoPlayer.Embedded = function(video,player) {
   this.element = hui.build('div',{width:video.width,height:video.height,html:video.html});
-}
+};
 
 hui.ui.VideoPlayer.Embedded.isSupported = function(video) {
   return video.html!==undefined;
-}
+};
 
 hui.ui.VideoPlayer.Embedded.prototype = {
   showController : function() {
@@ -206,6 +206,4 @@ hui.ui.VideoPlayer.Embedded.prototype = {
   isPlaying : function() {
 
   }
-}
-
-/* EOF */
+};

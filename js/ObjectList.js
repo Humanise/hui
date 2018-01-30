@@ -9,7 +9,7 @@ hui.ui.ObjectList = function(options) {
   this.template = [];
   this.objects = [];
   hui.ui.extend(this);
-}
+};
 
 hui.ui.ObjectList.create = function(o) {
   o=o || {};
@@ -18,7 +18,7 @@ hui.ui.ObjectList.create = function(o) {
     var head = '<thead><tr>';
     for (var i=0; i < o.template.length; i++) {
       head+='<th>'+(o.template[i].label || '')+'</th>';
-    };
+    }
     head+='</tr></thead>';
     e.innerHTML=head;
   }
@@ -30,7 +30,7 @@ hui.ui.ObjectList.create = function(o) {
     });
   }
   return list;
-}
+};
 
 hui.ui.ObjectList.prototype = {
   ignite : function() {
@@ -61,14 +61,14 @@ hui.ui.ObjectList.prototype = {
       } else {
         element.parentNode.removeChild(element);
       }
-    };
+    }
     this.objects = [];
     this.addObject({});
   },
   addObjects : function(data) {
     for (var i=0; i < data.length; i++) {
       this.addObject(data[i]);
-    };
+    }
   },
   setObjects : function(data) {
     this.reset();
@@ -78,7 +78,7 @@ hui.ui.ObjectList.prototype = {
     var list = [];
     for (var i=0; i < this.objects.length-1; i++) {
       list.push(this.objects[i].getData());
-    };
+    }
     return list;
   },
   getValue : function() {
@@ -124,7 +124,7 @@ hui.ui.ObjectList.Object.prototype = {
         cell.appendChild(field.getElement());
         field.setValue(this.data[template.key]);
         this.element.appendChild(cell);
-      };
+      }
     }
     return this.element;
   },
@@ -135,7 +135,7 @@ hui.ui.ObjectList.Object.prototype = {
     var data = this.data;
     for (var i=0; i < this.fields.length; i++) {
       data[this.fields[i].key] = this.fields[i].getValue();
-    };
+    }
     return data;
   }
 }
@@ -188,7 +188,7 @@ hui.ui.ObjectList.Select.prototype = {
     this.select = hui.build('select');
     for (var i=0; i < this.options.length; i++) {
       this.select.options[this.select.options.length] = new Option(this.options[i].label,this.options[i].value);
-    };
+    }
     var self = this;
     this.select.onchange = function() {
       self.object.valueDidChange();
@@ -204,6 +204,4 @@ hui.ui.ObjectList.Select.prototype = {
   addOption : function(value,label) {
     this.options.push({value:value,label:label});
   }
-}
-
-/* EOF */
+};

@@ -7,7 +7,7 @@ hui.ui.Structure = function(options) {
   this.options = options || {};
   this.element = hui.get(options.element);
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Structure.create = function(options) {
   options = hui.override({},options);
@@ -19,7 +19,7 @@ hui.ui.Structure.create = function(options) {
       '</div>'+
       '</div>');
   return new hui.ui.Structure(options);
-}
+};
 
 hui.ui.Structure.prototype = {
 
@@ -41,4 +41,4 @@ hui.ui.Structure.prototype = {
       m.style.bottom = (b ? b.clientHeight+2 : 0)+'px'
     }
   }
-}
+};

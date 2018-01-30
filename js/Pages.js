@@ -11,13 +11,13 @@ hui.ui.Pages = function(options) {
   this.fixedHeight = hui.cls.has(this.element,'hui_pages_full');
   this.expanded = false;
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Pages.create = function(options) {
   options = options || {};
   options.element = hui.build('div',{'class':'hui_pages'});
   return new hui.ui.Pages(options);
-}
+};
 
 hui.ui.Pages.prototype = {
   add : function(widgetOrElement) {

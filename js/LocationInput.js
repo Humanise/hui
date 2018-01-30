@@ -1,5 +1,3 @@
-/////////////////////////// Style length /////////////////////////
-
 /**
  * An input component for geo-location
  * @constructor
@@ -17,13 +15,13 @@ hui.ui.LocationInput = function(options) {
   hui.ui.extend(this);
   this.setValue(this.value);
   this._addBehavior();
-}
+};
 
 hui.ui.LocationInput.create = function(options) {
   options = options || {};
   options.element = hui.build('span',{'class':'hui_locationinput', html:'<span class="hui_locationinput_latitude"><span><input autocomplete="off"></span></span><span class="hui_locationinput_longitude"><span><input autocomplete="off"></span></span><a class="hui_locationinput_picker" href="javascript://"></a>'});
   return new hui.ui.LocationInput(options);
-}
+};
 
 hui.ui.LocationInput.prototype = {
   _addBehavior : function() {
@@ -86,4 +84,4 @@ hui.ui.LocationInput.prototype = {
     this.fire('valueChanged',this.value);
     hui.ui.callAncestors(this,'childValueChanged',this.value);
   }
-}
+};

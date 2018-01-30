@@ -13,7 +13,7 @@
     if (options.listener) {
       this.listen(options.listener);
     }
-  }
+  };
 
   hui.ui.Panel.create = function(options) {
     options = hui.override({close : true}, options);
@@ -37,7 +37,7 @@
     }
     options.element = hui.build('div', {'class' : cls, html : html, parent: options.parent || document.body});
     return new hui.ui.Panel(options);
-  }
+  };
 
   hui.ui.Panel.prototype = {
     nodes : {
@@ -177,7 +177,7 @@
     destroy : function() {
       hui.dom.remove(this.element);
     }
-  }
+  };
 
 
   hui.extend(hui.ui.Panel, _super);

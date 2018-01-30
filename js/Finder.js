@@ -12,7 +12,7 @@ hui.ui.Finder = function(options) {
   if (options.listener) {
     this.listen(options.listener);
   }
-}
+};
 
 /**
  * Creates a new finder
@@ -36,7 +36,7 @@ hui.ui.Finder = function(options) {
  */
 hui.ui.Finder.create = function(options) {
   return new hui.ui.Finder(options);
-}
+};
 
 hui.ui.Finder.prototype = {
   /** Shows the finder */
@@ -84,7 +84,7 @@ hui.ui.Finder.prototype = {
           win.setBusy(false);
           this._buildBody();
         }.bind(this)
-      })
+      });
       return;
     }
     this._buildBody();
@@ -118,7 +118,7 @@ hui.ui.Finder.prototype = {
           $valueChanged: function() {
             list.resetState();
           }
-        })
+        });
         bar.addToRight(search);
       }
     }
@@ -132,9 +132,9 @@ hui.ui.Finder.prototype = {
       $select : function() {
         list.resetState();
       }
-    })
+    });
     var selectionSource = new hui.ui.Source({url : opts.selection.url});
-    this.selection.addItems({source:selectionSource})
+    this.selection.addItems({source:selectionSource});
     left.add(this.selection);
 
     var parameters = [];
@@ -158,17 +158,17 @@ hui.ui.Finder.prototype = {
     }
 
     if (opts.search) {
-      parameters.push({key:opts.search.parameter || 'text',value:'@'+search.name+'.value'})
+      parameters.push({key:opts.search.parameter || 'text',value:'@'+search.name+'.value'});
     }
     if (opts.list.pageParameter) {
-      parameters.push({key:opts.list.pageParameter,value:'@'+list.name+'.window.page'})
+      parameters.push({key:opts.list.pageParameter,value:'@'+list.name+'.window.page'});
     }
 
     var listSource = opts.list.source;
     if (listSource) {
       for (var i=0; i < parameters.length; i++) {
         listSource.addParameter(parameters[i]);
-      };
+      }
     }
     if (opts.list.url) {
       listSource = new hui.ui.Source({
@@ -188,10 +188,10 @@ hui.ui.Finder.prototype = {
           icon: 'view/gallery',
           value: 'gallery'
         }]
-      })
+      });
       viewChanger.listen({
         $valueChanged: this.changeView.bind(this)
-      })
+      });
       bar.add(viewChanger);
       var gallerySource = new hui.ui.Source({
         url: opts.gallery.url,
@@ -199,7 +199,7 @@ hui.ui.Finder.prototype = {
       });
       var gallery = this.gallery = hui.ui.Gallery.create({
         source: gallerySource
-      })
+      });
       this.list.hide();
       right.add(gallery);
       gallery.listen({
@@ -216,7 +216,7 @@ hui.ui.Finder.prototype = {
       });
       uploadButton.listen({
         $click: this._showUpload.bind(this)
-      })
+      });
       bar.add(uploadButton);
     }
     if (opts.creation) {
@@ -227,7 +227,7 @@ hui.ui.Finder.prototype = {
           $click:  this._showCreation.bind(this)
         }
       }));
-    };
+    }
     selectionSource.refresh();
     hui.ui.reLayout();
   },
@@ -243,7 +243,7 @@ hui.ui.Finder.prototype = {
 
   _selectionChanged : function() {
     var row = this.list.getFirstSelection();
-    if (row!=null) {
+    if (row != null) {
       this.fire('select',row);
     }
   },
@@ -309,8 +309,8 @@ hui.ui.Finder.prototype = {
       $finally : function() {
         self.window.setBusy(false);
       }
-    })
+    });
   }
 };
 
-window.define && define('hui.ui.Finder',hui.ui.Finder);
+if (window.define) {define('hui.ui.Finder',hui.ui.Finder);}

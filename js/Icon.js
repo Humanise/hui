@@ -20,7 +20,7 @@ hui.ui.Icon = function(options) {
   this.element = hui.get(options.element);
   hui.ui.extend(this);
   this._addBehavior();
-}
+};
 
 hui.ui.Icon.prototype = {
   _addBehavior : function() {

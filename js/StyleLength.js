@@ -15,12 +15,12 @@ hui.ui.StyleLength = function(o) {
   this.value = this.parseValue(this.options.value);
   hui.ui.extend(this);
   this._addBehavior();
-}
+};
 
 hui.ui.StyleLength.create = function(options) {
   options.element = hui.build('span',{'class':'hui_style_length hui_numberinput',html:'<input class="hui_textinput" type="text"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'})
   return new hui.ui.StyleLength(options);
-}
+};
 
 hui.ui.StyleLength.prototype = {
   /** @private */
@@ -130,4 +130,4 @@ hui.ui.StyleLength.prototype = {
   reset : function() {
     this.setValue('');
   }
-}
+};

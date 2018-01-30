@@ -1,5 +1,3 @@
-/////////////////////////// Number /////////////////////////
-
 /**
  * A number field
  * @constructor
@@ -21,7 +19,7 @@ hui.ui.NumberField = function(o) {
   }
   hui.ui.extend(this);
   this._addBehavior();
-}
+};
 
 /** Creates a new number field */
 hui.ui.NumberField.create = function(o) {
@@ -30,7 +28,7 @@ hui.ui.NumberField.create = function(o) {
     html:'<input class="hui_textinput" type="text" value="'+(o.value!==undefined ? o.value : '0')+'"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'
   });
   return new hui.ui.NumberField(o);
-}
+};
 
 hui.ui.NumberField.prototype = {
   _addBehavior : function() {
@@ -183,4 +181,4 @@ hui.ui.NumberField.prototype = {
       this.sliderPanel.show();
     }
   }
-}
+};

@@ -7,7 +7,7 @@ hui.ui.Layout = function(options) {
   this.options = options || {};
   this.element = hui.get(options.element);
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Layout.create = function(options) {
   options = hui.override({text:'',highlighted:false,enabled:true},options);
@@ -19,7 +19,7 @@ hui.ui.Layout.create = function(options) {
       '</tr></table>'+
       '</td></tr></tbody></table>');
   return new hui.ui.Layout(options);
-}
+};
 
 hui.ui.Layout.prototype = {
 

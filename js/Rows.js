@@ -10,7 +10,7 @@
     _super.call(this, options);
     this.rows = [];
     this._attach();
-  }
+  };
 
   hui.ui.Rows.prototype = {
     _attach : function() {
@@ -68,7 +68,7 @@
         row.node.style.height = this.sizes[i] + 'px';
       }
     }
-  }
+  };
 
   hui.extend(hui.ui.Rows, _super);
 

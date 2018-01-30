@@ -10,7 +10,7 @@ hui.ui.Radiobuttons = function(options) {
   this.defaultValue = this.value;
   this.enabled = true;
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Radiobuttons.prototype = {
 /*  click : function() {
@@ -54,4 +54,4 @@ hui.ui.Radiobuttons.prototype = {
       hui.ui.callAncestors(self,'childValueChanged',radio.value);
     }
   }
-}
+};

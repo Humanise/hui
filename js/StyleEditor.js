@@ -11,14 +11,14 @@
     this.value = null;
     this.components = options.components;
     this._attach();
-  }
+  };
 
   hui.ui.StyleEditor.create = function(options) {
     options = options || {};
     var element = hui.build('div.hui_styleeditor',{html:'<div class="hui_styleeditor_list"></div>'});
     options.element = element;
     return new hui.ui.StyleEditor(options);
-  }
+  };
 
   hui.ui.StyleEditor.prototype = {
     nodes : {
@@ -156,7 +156,7 @@
     },
     $$layout : function() {
     }
-  }
+  };
 
   hui.extend(hui.ui.StyleEditor, _super);
 

@@ -9,13 +9,13 @@ hui.ui.TokenField = function(o) {
   this.value = [''];
   hui.ui.extend(this);
   this._updateUI();
-}
+};
 
 hui.ui.TokenField.create = function(o) {
   o = o || {};
   o.element = hui.build('div',{'class':'hui_tokenfield'});
   return new hui.ui.TokenField(o);
-}
+};
 
 hui.ui.TokenField.prototype = {
   setValue : function(objects) {
@@ -83,6 +83,4 @@ hui.ui.TokenField.prototype = {
     var self = this;
     hui.listen(input,'keyup',function() {self._inputChanged(input,i)});
   }
-}
-
-/* EOF */
+};

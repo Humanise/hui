@@ -5,7 +5,7 @@ hui.ui.NumberValidator = function(options) {
   this.max = options.max;
   this.allowNull = options.allowNull;
   this.middle = Math.max(Math.min(this.max,0),this.min);
-}
+};
 
 hui.ui.NumberValidator.prototype = {
   validate : function(value) {
@@ -22,4 +22,4 @@ hui.ui.NumberValidator.prototype = {
     }
     return {valid:true,value:number};
   }
-}
+};

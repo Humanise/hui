@@ -10,7 +10,7 @@ hui.ui.Menu = function(options) {
   this.visible = false;
   hui.ui.extend(this);
   this._addBehavior();
-}
+};
 
 hui.ui.Menu.create = function(options) {
   options = options || {};
@@ -18,7 +18,7 @@ hui.ui.Menu.create = function(options) {
   var obj = new hui.ui.Menu(options);
   document.body.appendChild(options.element);
   return obj;
-}
+};
 
 hui.ui.Menu.prototype = {
   _addBehavior : function() {
@@ -157,8 +157,4 @@ hui.ui.Menu.prototype = {
   _removeHider : function() {
     hui.unListen(document.body,'click',this.hider);
   }
-}
-
-
-
-/* EOF */
+};

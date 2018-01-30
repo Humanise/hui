@@ -19,7 +19,7 @@ hui.ui.Window = function(options) {
   if (options.listener) {
     this.listen(options.listener);
   }
-}
+};
 
 hui.ui.Window.create = function(options) {
   options = hui.override({title:'Window',close:true},options);
@@ -46,7 +46,7 @@ hui.ui.Window.create = function(options) {
     hui.cls.add(options.element,'hui_context_dark');
   }
   return new hui.ui.Window(options);
-}
+};
 
 hui.ui.Window.prototype = {
   _addBehavior : function() {
@@ -205,7 +205,6 @@ hui.ui.Window.prototype = {
     destroy : function() {
         hui.dom.remove(this.element);
     }
-}
+};
 
 hui.define && hui.define('hui.Window',hui.Window);
-/* EOF */

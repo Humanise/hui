@@ -212,5 +212,4 @@ hui.ui.Source.prototype = {
     };
     this.refreshLater();
   }
-}
-/* EOF */
+};

@@ -50,7 +50,7 @@ hui.ui.List = function(options) {
   this.sortDirection = null;
 
   this.window = {size:null,page:0,total:0};
-  if (options.windowSize!='') {
+  if (options.windowSize != '') {
     this.window.size = parseInt(options.windowSize);
   }
   hui.ui.extend(this);
@@ -60,7 +60,7 @@ hui.ui.List = function(options) {
   if (this.url)  {
     this.refresh();
   }
-}
+};
 
 /**
  * Creates a new list widget
@@ -86,7 +86,7 @@ hui.ui.List.create = function(options) {
     'class' : cls,
     html: '<div class="hui_list_progress"></div><div class="hui_list_navigation"><div class="hui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="hui_list_count"></span></div><div class="hui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px; overflow: auto;"' : '')+'><table class="hui_list_table"><thead><tr></tr></thead><tbody></tbody></table></div>'});
   return new hui.ui.List(options);
-}
+};
 
 hui.ui.List.prototype = {
   _addDrop : function() {
@@ -99,7 +99,7 @@ hui.ui.List.prototype = {
       $dropURL : function(url) {
         this.fire('urlDropped',url);
       }.bind(this)
-    })
+    });
   },
   /** Hides the list */
   hide : function() {
@@ -144,14 +144,14 @@ hui.ui.List.prototype = {
       ids = [];
     for (var i=0; i < selection.length; i++) {
       ids.push(selection[i].id);
-    };
+    }
     return ids;
   },
   _getRowsByIndexes : function(indexes) {
     var items = [];
     for (var i=0; i < indexes.length; i++) {
       items.push(this.rows[indexes[i]]);
-    };
+    }
     return items;
   },
 
@@ -286,8 +286,8 @@ hui.ui.List.prototype = {
     this._setBusy(true);
     hui.ui.request({
       url:url,
-      $object : function(obj) {this._setBusy(false);this.$objectsLoaded(obj)}.bind(this),
-      $xml : function(obj) {this._setBusy(false);this.$listLoaded(obj)}.bind(this)
+      $object : function(obj) {this._setBusy(false);this.$objectsLoaded(obj);}.bind(this),
+      $xml : function(obj) {this._setBusy(false);this.$listLoaded(obj);}.bind(this)
     });
   },
   /** @private */
@@ -334,7 +334,7 @@ hui.ui.List.prototype = {
     }
     if (this.checkboxMode) {
       var th = hui.build('th',{className:'list_check',parent:headTr});
-      var a = hui.build('a',{className:'list_check_all',parent:th})
+      var a = hui.build('a',{className:'list_check_all',parent:th});
       hui.listen(th,'click',this._checkAll.bind(this));
     }
     if (movable) {
@@ -357,7 +357,7 @@ hui.ui.List.prototype = {
       if (sortable) {
         var self = this;
         th.huiIndex = i;
-        th.onclick=function() {self.sort(this.huiIndex)};
+        th.onclick=function() {self.sort(this.huiIndex);};
         className+='sortable';
       }
       if (this.sortKey && key==this.sortKey) {
@@ -369,7 +369,7 @@ hui.ui.List.prototype = {
       span.appendChild(document.createTextNode(headers[i].getAttribute('title') || ''));
       headTr.appendChild(th);
       this.columns.push({'key':key,'sortable':sortable,'width':width});
-    };
+    }
     this.head.appendChild(headTr);
     var frag = document.createDocumentFragment();
     var rows = doc.getElementsByTagName('row');
@@ -423,15 +423,15 @@ hui.ui.List.prototype = {
         if (!icon) {
           icon = cells[j].getAttribute('icon');
         }
-      };
+      }
       var info = {id:rows[i].getAttribute('id'),kind:rows[i].getAttribute('kind'),icon:icon,title:title,index:i,data:this._getData(rows[i])};
       row.dragDropInfo = info;
       this._addRowBehavior(row,i);
       frag.appendChild(row);
       this.rows.push(info);
-    };
+    }
     this.body.appendChild(frag);
-    this._setEmpty(rows.length==0);
+    this._setEmpty(rows.length===0);
     if (this.options.rememberSelection) {
       hui.log('Previous:',previousSelection);
       var s = [];
@@ -440,8 +440,8 @@ hui.ui.List.prototype = {
           if (this.rows[j].id===previousSelection[i]) {
             s.push(j);
           }
-        };
-      };
+        }
+      }
       this._changeSelection(s);
     } else {
       this.fire('selectionReset');
@@ -487,16 +487,16 @@ hui.ui.List.prototype = {
       } else if (hui.dom.isElement(child,'line')) {
         var line = hui.build('p',{'class':'hui_list_line'});
         if (child.getAttribute('dimmed')=='true') {
-          hui.cls.add(line,'hui_list_dimmed')
+          hui.cls.add(line,'hui_list_dimmed');
         }
         if (child.getAttribute('minor')=='true') {
-          hui.cls.add(line,'hui_list_minor')
+          hui.cls.add(line,'hui_list_minor');
         }
         if (child.getAttribute('mini')=='true') {
-          hui.cls.add(line,'hui_list_mini')
+          hui.cls.add(line,'hui_list_mini');
         }
         if (child.getAttribute('class')) {
-          hui.cls.add(line,child.getAttribute('class'))
+          hui.cls.add(line,child.getAttribute('class'));
         }
         if (child.getAttribute('top')) {
           line.style.paddingTop=child.getAttribute('top')+'px';
@@ -524,12 +524,12 @@ hui.ui.List.prototype = {
         button.click(this._buttonClick.bind(this))
         cell.appendChild(button.getElement());
       } else if (hui.dom.isElement(child,'wrap')) {
-                if (hui.browser.wordbreak) {
-                    hui.cls.add(cell,'hui_list_wrap');
-                    hui.dom.addText(cell,hui.dom.getText(child));
-                } else {
-            hui.dom.addText(cell,this._wrap(hui.dom.getText(child)));
-                }
+        if (hui.browser.wordbreak) {
+          hui.cls.add(cell,'hui_list_wrap');
+          hui.dom.addText(cell,hui.dom.getText(child));
+        } else {
+          hui.dom.addText(cell,this._wrap(hui.dom.getText(child)));
+        }
       } else if (hui.dom.isElement(child,'delete')) {
         this._parseCell(child,hui.build('del',{parent:cell}));
       } else if (hui.dom.isElement(child,'strong')) {
@@ -548,7 +548,7 @@ hui.ui.List.prototype = {
           cell.appendChild(clone);
         }
       }
-    };
+    }
   },
 
   /** @private */
@@ -625,7 +625,7 @@ hui.ui.List.prototype = {
         out+='\u200B';
         count=0;
       }
-    };
+    }
     return out;
   },
   _getData : function(node) {
@@ -681,7 +681,7 @@ hui.ui.List.prototype = {
             self._onPageClick(this);
             return false;
           }
-          if (index==self.window.page) {
+          if (index == self.window.page) {
             a.className='hui_list_selected';
           }
           pageBody.appendChild(a);
@@ -699,9 +699,9 @@ hui.ui.List.prototype = {
         x=false;
       } else {
         if (!x) {
-          pages.push('')
-        };
-        x=true;
+          pages.push('');
+        }
+        x = true;
       }
     }
     return pages;
@@ -730,7 +730,7 @@ hui.ui.List.prototype = {
         th.style.width = h.width+'%';
       }
       if (h.sortable) {
-        hui.listen(th,'click',function() {this.sort(i)}.bind(this));
+        hui.listen(th,'click',function() {this.sort(i);}.bind(this));
         hui.cls.add(th,'sortable');
       }
       th.appendChild(hui.build('span',{text:h.title}));
@@ -755,16 +755,16 @@ hui.ui.List.prototype = {
           icon = icon || c.icon;
         }
         if (c.text) {
-          td.appendChild(document.createTextNode(c.text))
+          td.appendChild(document.createTextNode(c.text));
           title = title || c.text;
         }
         tr.appendChild(td);
-      })
+      });
       self.body.appendChild(tr);
       // TODO: Memory leak!
       var info = {id:r.id,kind:r.kind,icon:icon,title:title,index:i};
       tr.dragDropInfo = info;
-      hui.log(this._getData(tr))
+      hui.log(this._getData(tr));
       self.rows.push({id:r.id,kind:r.kind,icon:icon,title:title,index:i,data:r.data});
       this._addRowBehavior(tr,i);
     }.bind(this));
@@ -793,7 +793,7 @@ hui.ui.List.prototype = {
               } else {
                 cell.appendChild(hui.build('div',{text:value}));
               }
-            };
+            }
           } else if (value.constructor == Object) {
             cell.appendChild(this._createObject(value[j]));
           } else {
@@ -938,5 +938,3 @@ hui.ui.List.prototype = {
     };
   }
 };
-
-/* EOF */

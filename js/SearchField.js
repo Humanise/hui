@@ -13,7 +13,7 @@ hui.ui.SearchField = function(options) {
   if (this.value!=='') {
     this._updateClass()
   }
-}
+};
 
 hui.ui.SearchField.create = function(options) {
   options = options || {};
@@ -22,7 +22,7 @@ hui.ui.SearchField.create = function(options) {
     html : '<span class="hui_searchfield_placeholder"></span><a href="javascript:void(0);" class="hui_searchfield_reset"></a><input class="hui_searchfield_input" type="text"/>'
   });
   return new hui.ui.SearchField(options);
-}
+};
 
 hui.ui.SearchField.prototype = {
   _addBehavior : function() {
@@ -113,9 +113,8 @@ hui.ui.SearchField.prototype = {
       this.fireValueChange();
     }
   }
-}
+};
 
 if (window.define) {
   define('hui.ui.SearchField',hui.ui.SearchField);
 }
-/* EOF */

@@ -13,7 +13,7 @@ hui.ui.Formula = function(options) {
   if (options.listen) {
     this.listen(options.listen);
   }
-}
+};
 
 /** @static Creates a new formula */
 hui.ui.Formula.create = function(o) {
@@ -27,7 +27,7 @@ hui.ui.Formula.create = function(o) {
   }
   o.element = hui.build('form',atts);
   return new hui.ui.Formula(o);
-}
+};
 
 hui.ui.Formula.prototype = {
   /** @private */
@@ -48,7 +48,7 @@ hui.ui.Formula.prototype = {
       } else if (widget.name && widget.getValue) {
         data[widget.name] = widget.getValue();
       }
-    };
+    }
     return data;
   },
   /** Sets the values of the descendants */
@@ -126,7 +126,7 @@ hui.ui.Formula.prototype = {
   hide : function() {
     this.element.style.display='none';
   }
-}
+};
 
 ///////////////////////// Group //////////////////////////
 
@@ -141,7 +141,7 @@ hui.ui.Formula.Group = function(options) {
   this.body = hui.get.firstByTag(this.element,'tbody');
   this.options = hui.override({above:true},options);
   hui.ui.extend(this);
-}
+};
 
 /** Creates a new form group */
 hui.ui.Formula.Group.create = function(options) {
@@ -154,7 +154,7 @@ hui.ui.Formula.Group.create = function(options) {
   }
   element.appendChild(hui.build('tbody'));
   return new hui.ui.Formula.Group(options);
-}
+};
 
 hui.ui.Formula.Group.prototype = {
   add : function(widget,label) {
@@ -198,7 +198,7 @@ hui.ui.Formula.Field = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Formula.Field.prototype = {
   setVisible : function(visible) {

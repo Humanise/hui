@@ -10,7 +10,7 @@ hui.ui.ProgressIndicator = function(options) {
   this._renderedValue = 0;
   hui.ui.extend(this);
   this._init();
-}
+};
 
 /** Creates a new progress bar:
   @param o {Object} Options : {small:false}
@@ -19,7 +19,7 @@ hui.ui.ProgressIndicator.create = function(options) {
   options = options || {};
   options.element = hui.build('div',{'class':'hui_progressindicator',style:'display: inline-block; vertical-align: middle; width:'+options.size+'px;height:'+options.size+'px;'});
   return new hui.ui.ProgressIndicator(options);
-}
+};
 
 hui.ui.ProgressIndicator.prototype = {
   _init : function() {
@@ -84,4 +84,4 @@ hui.ui.ProgressIndicator.prototype = {
       }.bind(this)
     });
   }
-}
+};

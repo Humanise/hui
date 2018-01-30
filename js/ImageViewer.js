@@ -62,7 +62,7 @@ hui.ui.ImageViewer = function(options) {
   if (options.listener) {
     this.listen(options.listener);
   }
-}
+};
 
 /**
  * Creates a new image viewer
@@ -85,7 +85,7 @@ hui.ui.ImageViewer.create = function(options) {
   box.add(element);
   box.addToDocument();
   return new hui.ui.ImageViewer(options);
-}
+};
 
 hui.ui.ImageViewer.prototype = {
 
@@ -107,18 +107,18 @@ hui.ui.ImageViewer.prototype = {
     var self = this;
     this.nodes.next.onclick = function() {
       self.next(true);
-    }
+    };
     this.nodes.previous.onclick = function() {
       self.previous(true);
-    }
+    };
     this.nodes.play.onclick = function() {
       self.playOrPause();
-    }
+    };
     this.nodes.close.onclick = this.hide.bind(this);
 
     this._timer = function() {
       self.next(false);
-    }
+    };
     this._keyListener = function(e) {
       e = hui.event(e);
       if (e.escapeKey) {
@@ -132,7 +132,7 @@ hui.ui.ImageViewer.prototype = {
           self.playOrPause();
         }
       }
-    },
+    };
     hui.listen(this.nodes.viewer,'mousemove',this._onMouseMove.bind(this));
     hui.listen(this.nodes.controller,'mouseover',function() {
       self.overController = true;
@@ -195,7 +195,7 @@ hui.ui.ImageViewer.prototype = {
         this._goToImage(true,num,false,true);
       }.bind(this),
       onNotMoved : this._zoom.bind(this)
-    })
+    });
   },
   _onMouseMove : function() {
     window.clearTimeout(this.ctrlHider);
@@ -237,7 +237,7 @@ hui.ui.ImageViewer.prototype = {
       }, this.images[i]);
       maxWidth = Math.max(maxWidth, dims.width);
       maxHeight = Math.max(maxHeight, dims.height);
-    };
+    }
     newHeight = Math.floor(Math.min(newHeight, maxHeight));
     newWidth = Math.floor(Math.min(newWidth, maxWidth));
 
@@ -255,7 +255,7 @@ hui.ui.ImageViewer.prototype = {
         var element = hui.build('div',{'class':'hui_imageviewer_image'});
         hui.style.set(element,{width: (this.width + this.options.margin) + 'px',height : (this.height-1)+'px' });
         this.nodes.innerViewer.appendChild(element);
-      };
+      }
       this.nodes.controller.style.display = this._shouldShowController() ? 'block' : 'none';
       this.dirty = false;
       this._preload();
@@ -275,10 +275,10 @@ hui.ui.ImageViewer.prototype = {
         ease = hui.ease.quadOut;
       }
       else if (num > 1) {
-        duration = Math.min(num * this.options.transitionReturn, 2000)
+        duration = Math.min(num * this.options.transitionReturn, 2000);
         ease = this.options.easeReturn;
       } else {
-        var end = this.index == 0 || this.index == this.images.length - 1;
+        var end = this.index === 0 || this.index == this.images.length - 1;
         ease = (end ? this.options.easeEnd : this.options.ease);
         if (!user) {
           ease = this.options.easeAuto;
@@ -289,8 +289,8 @@ hui.ui.ImageViewer.prototype = {
         node : this.nodes.innerViewer,
         css : {marginLeft : target + 'px'},
         duration : duration,
-        ease : ease
-        ,$render : function(node,v) {
+        ease : ease,
+        $render : function(node,v) {
           this.position = initial + (target - initial) * v;
           this._draw();
         }.bind(this)
@@ -323,7 +323,7 @@ hui.ui.ImageViewer.prototype = {
         this.show(i);
         break;
       }
-    };
+    }
   },
   /** Show the image viewer
    * @param {Integer} index? Optional index to start from (zero-based)
@@ -357,6 +357,7 @@ hui.ui.ImageViewer.prototype = {
   },
   _setHash : function(visible) {
     return; // Disabled
+    /*
     if (!this._listening) {
       this._listening = true;
       if (!hui.browser.msie6 && !hui.browser.msie7) {
@@ -367,7 +368,7 @@ hui.ui.ImageViewer.prototype = {
       document.location='#imageviewer';
     } else {
       hui.location.clearHash();
-    }
+    }*/
   },
   _onHashChange : function() {
     if (this._changing) return;
@@ -419,7 +420,7 @@ hui.ui.ImageViewer.prototype = {
   addImages : function(images) {
     for (var i=0; i < images.length; i++) {
       this.addImage(images[i]);
-    };
+    }
   },
   /**
    * Add an image to the stack
@@ -512,7 +513,7 @@ hui.ui.ImageViewer.prototype = {
       if (url!==null) {
         loader.addImages(url);
       }
-    };
+    }
     this.nodes.status.innerHTML = '0%';
     this.nodes.status.style.display = '';
     loader.load(this.index);
@@ -590,10 +591,8 @@ hui.ui.ImageViewer.prototype = {
     }
   }
 
-}
+};
 
 if (window.define) {
   define('hui.ui.ImageViewer',hui.ui.ImageViewer);
 }
-
-/* EOF */

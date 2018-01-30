@@ -9,7 +9,7 @@
   hui.ui.Foundation = function(options) {
     _super.call(this, options);
     this._attach();
-  }
+  };
 
   hui.ui.Foundation.prototype = {
     nodes : {
@@ -50,7 +50,7 @@
           content.style.left = ((navWidth + resultsWidth + diff + 1) / fullWidth * 100) + '%';
           actions.style.left = ((navWidth + resultsWidth + diff + 1) / fullWidth * 100) + '%';
         }
-      })
+      });
 
       hui.drag.register({
         element : this.nodes.resizeResults,
@@ -66,22 +66,22 @@
           content.style.left = ((navWidth + resultsWidth + diff + 1) / fullWidth * 100) + '%';
           actions.style.left = ((navWidth + resultsWidth + diff + 1) / fullWidth * 100) + '%';
         }
-      })
+      });
     },
     _toggleOverlay : function() {
-      hui.cls.toggle(this.element,'hui-is-open')
+      hui.cls.toggle(this.element,'hui-is-open');
     },
     _toggleDetails : function() {
-      hui.cls.toggle(this.nodes.details,'hui-is-open')
+      hui.cls.toggle(this.nodes.details,'hui-is-open');
     },
     $$layout : function() {
       var h = this.nodes.actions.clientHeight;
-      this.nodes.content.style.top = h + 'px'
+      this.nodes.content.style.top = h + 'px';
     },
     disposeOverlay : function() {
-      hui.cls.remove(this.element,'hui-is-open')
+      hui.cls.remove(this.element,'hui-is-open');
     }
-  }
+  };
 
   hui.extend(hui.ui.Foundation, _super);
 

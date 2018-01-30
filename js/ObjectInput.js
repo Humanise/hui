@@ -25,7 +25,7 @@
     this.remove = null;
     _super.call(this, options);
     this._attach();
-  }
+  };
 
   hui.ui.ObjectInput.prototype = {
     _attach: function() {

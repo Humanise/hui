@@ -19,7 +19,7 @@ hui.ui.Tabs = function(o) {
   this.contents = hui.get.byClass(this.element,'hui_tabs_tab');
   this.addBehavior();
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Tabs.create = function(options) {
   options = options || {};
@@ -34,7 +34,7 @@ hui.ui.Tabs.create = function(options) {
   var bar = hui.build('div',{'class' : cls, parent : e});
   hui.build('ul',{parent:bar});
   return new hui.ui.Tabs(options);
-}
+};
 
 hui.ui.Tabs.prototype = {
   /** @private */
@@ -94,12 +94,10 @@ hui.ui.Tabs.prototype = {
 hui.ui.Tab = function(o) {
   this.name = o.name;
   this.element = hui.get(o.element);
-}
+};
 
 hui.ui.Tab.prototype = {
   add : function(widget) {
     this.element.appendChild(widget.element);
   }
-}
-
-/* EOF */
+};

@@ -9,7 +9,7 @@ hui.ui.Segmented = function(options) {
   this.value = this.options.value;
   hui.ui.extend(this);
   hui.listen(this.element,'mousedown',this._click.bind(this));
-}
+};
 
 hui.ui.Segmented.create = function(options) {
     var e = options.element = hui.build('span',{'class':'hui_segmented hui_segmented_standard'});
@@ -29,7 +29,7 @@ hui.ui.Segmented.create = function(options) {
         }
     }
     return new hui.ui.Segmented(options);
-}
+};
 
 hui.ui.Segmented.prototype = {
   _click : function(e) {
@@ -73,6 +73,4 @@ hui.ui.Segmented.prototype = {
   getValue : function() {
     return this.value;
   }
-}
-
-/* EOF */
+};

@@ -5,12 +5,12 @@ hui.ui.Matrix = function(options) {
   if (this.options.source) {
     this.options.source.listen(this);
   }
-}
+};
 
 hui.ui.Matrix.create = function(options) {
   options.element = hui.build('div',{'class':'hui_matrix',parent:hui.get(options.parent),style:'width: 100%; height: 100%;'});
   return new hui.ui.Matrix(options);
-}
+};
 
 hui.ui.Matrix.prototype = {
   $$layout : function() {
@@ -20,4 +20,4 @@ hui.ui.Matrix.prototype = {
     this.setData(data);
     this.render();
   }
-}
+};

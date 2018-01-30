@@ -5,12 +5,12 @@ hui.ui.KeyboardNavigator = function(options) {
   this.index = null;
   this.name = options.name;
   hui.listen(window,'keydown',this._onKeyDown.bind(this));
-  this.element = hui.build('div',{'class':'hui_keyboardnavigator',parent:document.body})
+  this.element = hui.build('div',{'class':'hui_keyboardnavigator',parent:document.body});
   this.input = hui.build('p',{'class':'hui_keyboardnavigator_input',parent:this.element});
   this.list = hui.build('ul',{parent:this.element});
   this.listNodes = [];
   hui.ui.extend(this);
-}
+};
 
 hui.ui.KeyboardNavigator.prototype = {
   _onKeyDown : function(e) {
@@ -55,10 +55,10 @@ hui.ui.KeyboardNavigator.prototype = {
     }
   },
   _selectPrevious : function() {
-    if (this.items.length==0) {
+    if (this.items.length === 0) {
       return;
     }
-    if (this.index===null) {
+    if (this.index === null) {
       this.index = 0;
     } else {
       hui.cls.remove(this.listNodes[this.index],'hui_keyboardnavigator_selected');
@@ -94,10 +94,10 @@ hui.ui.KeyboardNavigator.prototype = {
     this.listNodes = [];
     this.index = Math.min(this.index,this.items.length-1);
     for (var i=0; i < this.items.length; i++) {
-      var item = this.items[i]
+      var item = this.items[i];
       var node = hui.build('li',{text:item.text,parent:this.list});
       this.listNodes.push(node);
-    };
+    }
     if (this.index>-1) {
       hui.cls.add(this.listNodes[this.index],'hui_keyboardnavigator_selected');
     } else {
@@ -105,7 +105,7 @@ hui.ui.KeyboardNavigator.prototype = {
     }
     this.element.style.display = 'block';
     this.element.style.marginLeft = (this.element.clientWidth/-2)+'px';
-    hui.animate({node:this.element,duration:300,ease:hui.ease.slowFastSlow,css:{marginTop:(this.element.clientHeight/-2)+'px'}})
+    hui.animate({node:this.element,duration:300,ease:hui.ease.slowFastSlow,css:{marginTop:(this.element.clientHeight/-2)+'px'}});
   },
   _complete : function() {
     this.fire('complete',{
@@ -116,4 +116,4 @@ hui.ui.KeyboardNavigator.prototype = {
       }.bind(this)
     });
   }
-}
+};

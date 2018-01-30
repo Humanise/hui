@@ -9,7 +9,7 @@ hui.ui.MediaSimulator = function(options) {
   this.base = hui.find('.hui_mediasimulator_base',this.element)
   this.left = hui.find('.hui_mediasimulator_base',this.element)
   this._attach();
-}
+};
 
 hui.ui.MediaSimulator.prototype = {
   _attach : function() {
@@ -62,6 +62,6 @@ hui.ui.MediaSimulator.prototype = {
   $$draw : function() {
     hui.log('Draw!')
   }
-}
+};
 
 hui.extend(hui.ui.MediaSimulator, hui.ui.Component);

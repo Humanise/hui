@@ -11,8 +11,8 @@ hui.ui.LinkInput = function(options) {
   this.input = new hui.ui.Input({element:hui.get.firstByTag(e,'input')});
   this.input.listen({
     $valueChanged : this._onInputChange.bind(this)
-  })
-  this.object = hui.get.firstByClass(e,'hui_linkinput_object')
+  });
+  this.object = hui.get.firstByClass(e,'hui_linkinput_object');
   this.dropdown = new hui.ui.DropDown({
     element : hui.get.firstByClass(e,'hui_dropdown'),
     value : 'none',
@@ -20,10 +20,10 @@ hui.ui.LinkInput = function(options) {
     listener : {
       $valueChanged : this._onDropDownChange.bind(this)
     }
-  })
+  });
   hui.ui.extend(this);
   this._addBehavior();
-}
+};
 
 hui.ui.LinkInput.prototype = {
   _addBehavior : function() {
@@ -34,8 +34,8 @@ hui.ui.LinkInput.prototype = {
     var options = [{value:'none',text:'Intet link'}];
     for (var i=0; i < this.options.types.length; i++) {
       var type = this.options.types[i];
-      options.push({value:type.key,text:type.label})
-    };
+      options.push({value:type.key,text:type.label});
+    }
     return options;
   },
   _getType : function(key) {
@@ -43,7 +43,7 @@ hui.ui.LinkInput.prototype = {
       if (this.types[i].key==key) {
         return this.types[i];
       }
-    };
+    }
   },
   _onInputChange : function(value) {
     this.value = {type:this.dropdown.getValue(),value:value};
@@ -68,14 +68,14 @@ hui.ui.LinkInput.prototype = {
           $select : function(object) {
             this._selectObject(type,object);
           }.bind(this)
-        })
+        });
       }
       type._finder.show();
-      this.value = {type:value,value:null}
+      this.value = {type:value,value:null};
     } else  {
       this.input.focus();
       this.input.setValue('');
-      this.value = {type:value,value:''}
+      this.value = {type:value,value:''};
     }
     this._updateUI();
     this.fireValueChange();
@@ -128,7 +128,7 @@ hui.ui.LinkInput.prototype = {
                   hui.dom.setText(title,'!!Error');
                   this._setBusy(false);
                 }.bind(this)
-              })
+              });
             }
             icon.style.backgroundImage = 'url(\''+hui.ui.getIconUrl(type.icon,16)+'\')';
           }
@@ -138,7 +138,7 @@ hui.ui.LinkInput.prototype = {
   },
   _setBusy : function(busy) {
     this.busy = busy;
-    hui.cls.set(this.element,'hui_linkinput_busy',busy)
+    hui.cls.set(this.element,'hui_linkinput_busy',busy);
   },
 
 
@@ -152,4 +152,4 @@ hui.ui.LinkInput.prototype = {
   reset : function() {
     this.setValue(null);
   }
-}
+};

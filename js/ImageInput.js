@@ -11,7 +11,7 @@ hui.ui.ImageInput = function(options) {
   this.thumbnailsLoaded = false;
   hui.ui.extend(this);
   this._attach();
-}
+};
 
 hui.ui.ImageInput.prototype = {
   _attach : function() {
@@ -43,8 +43,8 @@ hui.ui.ImageInput.prototype = {
     this._updateUI();
   },
   _updateUI : function() {
-    hui.cls.set(this.element,'hui_imageinput_full',this.value!==null);
-    if (this.value==null) {
+    hui.cls.set(this.element,'hui_imageinput_full',this.value !== null);
+    if (this.value === null) {
       this.element.style.backgroundImage = '';
     } else {
       var url = hui.ui.resolveImageUrl(this,this.value,this.options.width,this.options.height);
@@ -62,7 +62,7 @@ hui.ui.ImageInput.prototype = {
           this._fireChange();
           this.finder.hide();
         }.bind(this)
-      })
+      });
     }
     this.finder.show();
   },
@@ -79,13 +79,13 @@ hui.ui.ImageInput.prototype = {
       var buttons = hui.ui.Buttons.create({align:'right'});
       var close = hui.ui.Button.create({text:'Luk',highlighted:true,small:true});
       close.listen({
-        $click : function() {self._hidePicker()}
+        $click : function() {self._hidePicker();}
       });
       var remove = hui.ui.Button.create({text:'Fjern',small:true});
       remove.listen({
         $click : function() {
           self.setObject(null);
-          self._hidePicker()
+          self._hidePicker();
           self._fireChange();
         }
       });
@@ -141,10 +141,8 @@ hui.ui.ImageInput.prototype = {
         self.setObject(this.huiObject);
         self._hidePicker();
         self._fireChange();
-      }
+      };
       this.content.appendChild(thumb);
     };
   }
-}
-
-/* EOF */
+};

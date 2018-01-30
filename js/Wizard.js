@@ -19,7 +19,7 @@ hui.ui.Wizard = function(o) {
   this.selected = 0;
   hui.ui.extend(this);
   this._addBehavior();
-}
+};
 
 hui.ui.Wizard.prototype = {
   _addBehavior : function() {
@@ -71,6 +71,4 @@ hui.ui.Wizard.prototype = {
       this.goToStep(this.selected-1);
     }
   }
-}
-
-/* EOF */
+};

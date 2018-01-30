@@ -24,7 +24,7 @@ hui.ui.Selection = function(options) {
     this.selection = {value:this.options.value};
   }
   hui.ui.extend(this);
-}
+};
 
 /**
  * Creates a new selection widget
@@ -37,7 +37,7 @@ hui.ui.Selection.create = function(options) {
     e.style.width = options.width+'px';
   }
   return new hui.ui.Selection(options);
-}
+};
 
 hui.ui.Selection.prototype = {
   /** Get the selected item
@@ -414,5 +414,4 @@ hui.ui.Selection.Items.prototype = {
     };
     this.fireProperty('value',null);
   }
-}
-/* EOF */
+};

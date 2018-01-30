@@ -14,7 +14,7 @@ hui.ui.FontPicker = function(options) {
     this.listen(this.options.listener);
   }
   this._addBehavior();
-}
+};
 
 hui.ui.FontPicker.fonts =[
   {text:'Verdana',value:'Verdana,sans-serif'},
@@ -40,7 +40,7 @@ hui.ui.FontPicker.fonts =[
   {text:'Courier',value:'Courier,Courier New,monospace'},
   {text:'Lucida Console',value:'Lucida Console,Monaco,monospace'},
   {text:'Monaco',value:'Monaco,Lucida Console,monospace'}
-]
+];
 
 hui.ui.FontPicker.create = function(options) {
   options = hui.override({
@@ -59,9 +59,9 @@ hui.ui.FontPicker.create = function(options) {
     var icon = hui.ui.createIcon('monochrome/info',16,'a');
     node.appendChild(icon);
     node.huiIndex = i;
-  };
+  }
   return new hui.ui.FontPicker(options);
-}
+};
 
 hui.ui.FontPicker.prototype = {
   _addBehavior : function() {
@@ -85,7 +85,7 @@ hui.ui.FontPicker.prototype = {
     if (!hui.dom.isVisible(this.element)) {
       hui.each(this.previews,function(key,value) {
         value.hide();
-      })
+      });
     }
   },
   _buildPreview : function(font) {
@@ -106,7 +106,7 @@ hui.ui.FontPicker.prototype = {
     html+='<thead><tr><th></th>';
     for (var i=0; i < weights.length; i++) {
       html+='<th>'+weights[i]+'</th>';
-    };
+    }
     html+='</tr></thead>';
 
     html+='<tbody>';
@@ -114,8 +114,8 @@ hui.ui.FontPicker.prototype = {
       html+='<tr><th>'+sizes[i]+'</th>';
       for (var j=0; j < weights.length; j++) {
         html+='<td style="font-weight: '+weights[j]+'; font-size:'+sizes[i]+';">Pack my box with five dozen liquor jugs</td>';
-      };
-    };
+      }
+    }
     html+='</tbody>';
     e.innerHTML = html;
     var win = hui.ui.Window.create({title:font.text,padding:3});
@@ -123,16 +123,10 @@ hui.ui.FontPicker.prototype = {
     this.previews[font.text] = win;
     win.show();
   },
-    destroy : function() {
+  destroy : function() {
     hui.each(this.previews,function(key,value) {
       value.destroy();
-    })
-        hui.dom.remove(this.element);
-    }
-}
-
-/* EOF */
-
-
-
-
+    });
+    hui.dom.remove(this.element);
+  }
+};

@@ -16,7 +16,7 @@
     this.nativeScroll = !!navigator.userAgent.match('iPhone|iPad|iPod|Safari') && !window['chrome'] && hui.browser.webkitVersion > 603;
     //this.nativeScroll = false;
     this._attach();
-  }
+  };
 
   hui.ui.Presentation.create = function(options) {
     options = options || {};
@@ -42,7 +42,7 @@
       hui.cls.add(options.element,'hui-is-mouse');
     }
     return new hui.ui.Presentation(options);
-  }
+  };
 
   hui.ui.Presentation.prototype = {
     position: 0,
@@ -399,7 +399,7 @@
         this._draw();
       }
     }
-  }
+  };
 
   hui.extend(hui.ui.Presentation, _super);
 

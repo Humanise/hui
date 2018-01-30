@@ -34,13 +34,13 @@ hui.ui.MarkupEditor = function(options) {
     this.setValue(options.value);
   }
   hui.ui.extend(this);
-}
+};
 
 hui.ui.MarkupEditor.create = function(options) {
   options = options || {};
   options.element = hui.build('div',{className:'hui_markupeditor'});
   return new hui.ui.MarkupEditor(options);
-}
+};
 
 hui.ui.MarkupEditor.prototype = {
 
@@ -773,6 +773,4 @@ hui.ui.MarkupEditor.util = {
       }
     };
   }
-}
-
-/* EOF */
+};

@@ -21,13 +21,13 @@ hui.ui.Gallery = function(options) {
     this.revealing = true;
     hui.listen(this.element.parentNode,'scroll',this._reveal.bind(this));
   }
-}
+};
 
 hui.ui.Gallery.create = function(options) {
   options = options || {};
   options.element = hui.build('div',{'class':'hui_gallery',html:'<div class="hui_gallery_progress"></div><div class="hui_gallery_body"></div>'});
   return new hui.ui.Gallery(options);
-}
+};
 
 hui.ui.Gallery.prototype = {
   _addDrop : function() {
@@ -40,7 +40,7 @@ hui.ui.Gallery.prototype = {
       $dropURL : function(url) {
         this.fire('urlDropped',url);
       }.bind(this)
-    })
+    });
   },
   hide : function() {
     this.element.style.display='none';
@@ -58,7 +58,7 @@ hui.ui.Gallery.prototype = {
       var node = this.nodes[i];
       node.style.width = size+'px';
       node.style.height = size+'px';
-    };
+    }
     this.maxRevealed = 0;
     clearTimeout(this._timer);
     this._timer = setTimeout(function() {
@@ -137,7 +137,9 @@ hui.ui.Gallery.prototype = {
     this.maxRevealed = limit;
     for (var i=0,l=this.nodes.length; i < l; i++) {
       var item = this.nodes[i];
-      if (item.revealed) {continue}
+      if (item.revealed) {
+        continue;
+      }
       if (item.offsetTop < limit) {
         hui.cls.add(item,'hui_is_loading');
         (function(item, object) {
@@ -148,24 +150,24 @@ hui.ui.Gallery.prototype = {
             hui.cls.remove(item,'hui_is_pending');
             hui.cls.remove(item,'hui_is_loading');
             item.style.backgroundImage = 'url(' + url + ')';
-          }
+          };
           img.onerror = function() {
             hui.cls.remove(item,'hui_is_loading');
             hui.cls.add(item,'hui_is_error');
-          }
+          };
           img.src = url;
           item.revealed = true;
         }.bind(this))(item, this.objects[i]);
       } else {
         hui.cls.add(item,'hui_is_pending');
       }
-    };
+    }
   },
   _updateUI : function() {
     var s = this.selected;
     for (var i=0; i < this.nodes.length; i++) {
       hui.cls.set(this.nodes[i],'hui_gallery_item_selected',hui.array.contains(s,i));
-    };
+    }
   },
   _resolveImageUrl : function(img) {
     var url = hui.ui.callDelegates(this,'buildImageUrl',{item: img, width: this.width, height: this.height});
@@ -197,7 +199,7 @@ hui.ui.Gallery.prototype = {
       if (obj) {
         selection.push(obj);
       }
-    };
+    }
     return selection;
   },
   getSelectionIds : function() {
@@ -207,7 +209,7 @@ hui.ui.Gallery.prototype = {
       if (obj) {
         selection.push(obj.id);
       }
-    };
+    }
     return selection;
   },
   getFirstSelection : function() {
@@ -272,6 +274,4 @@ hui.ui.Gallery.prototype = {
       hui.cls.remove(this.element,'hui_gallery_busy');
     }
   }
-}
-
-/* EOF */
+};

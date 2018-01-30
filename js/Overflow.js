@@ -12,7 +12,7 @@ hui.ui.Overflow = function(options) {
   hui.listen(this.element,'scroll',this._checkShadows.bind(this));
   this.name = options.name;
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Overflow.create = function(options) {
   options = options || {};
@@ -25,7 +25,7 @@ hui.ui.Overflow.create = function(options) {
   }
   options.element = hui.build('div',attributes);
   return new hui.ui.Overflow(options);
-}
+};
 
 hui.ui.Overflow.prototype = {
   _checkShadows : function() {

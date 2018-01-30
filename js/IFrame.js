@@ -8,7 +8,7 @@ hui.ui.IFrame = function(options) {
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
-}
+};
 
 hui.ui.IFrame.prototype = {
   /** Change the url of the iframe
@@ -36,6 +36,4 @@ hui.ui.IFrame.prototype = {
   hide : function() {
     this.element.style.display='none';
   }
-}
-
-/* EOF */
+};

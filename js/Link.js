@@ -8,7 +8,7 @@ hui.ui.Link = function(options) {
   this.element = hui.get(options.element);
   hui.ui.extend(this);
   this.addBehavior();
-}
+};
 
 hui.ui.Link.prototype = {
   /** @private */
@@ -21,6 +21,4 @@ hui.ui.Link.prototype = {
       });
     });
   }
-}
-
-/* EOF */
+};

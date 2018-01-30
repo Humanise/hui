@@ -32,7 +32,7 @@ hui.ui.Upload = function(options) {
   this._chooseImplementation();
   hui.ui.extend(this);
   this._addBehavior();
-}
+};
 
 hui.ui.Upload.implementations = ['HTML5','Frame','Flash'];
 
@@ -51,7 +51,7 @@ hui.ui.Upload.create = function(options) {
     '</div>' : '')
   });
   return new hui.ui.Upload(options);
-}
+};
 
 hui.ui.Upload.prototype = {
 
@@ -589,9 +589,7 @@ hui.ui.Upload.HTML5.prototype = {
         // TODO: reset/replace input field in IE
         this._resetInput();
   },
-    _resetInput : function() {
-        this.form.reset();
-    }
-}
-
-/* EOF */
+  _resetInput : function() {
+    this.form.reset();
+  }
+};

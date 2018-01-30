@@ -4,7 +4,7 @@ hui.ui.Toolbar = function(options) {
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Toolbar.create = function(options) {
   options = options || {};
@@ -16,7 +16,7 @@ hui.ui.Toolbar.create = function(options) {
     hui.cls.add(element,'hui_toolbar-'+options.variant);
   }
   return new hui.ui.Toolbar(options);
-}
+};
 
 hui.ui.Toolbar.prototype = {
   add : function(widget) {
@@ -43,7 +43,7 @@ hui.ui.Toolbar.prototype = {
       }
     };
   }
-}
+};
 
 
 
@@ -63,7 +63,7 @@ hui.ui.Toolbar.Icon = function(options) {
     this.listen(options.listener);
   }
   this._attach();
-}
+};
 
 hui.ui.Toolbar.Icon.create = function(options) {
   var element = options.element = hui.build('a.hui_toolbar_icon');
@@ -73,7 +73,7 @@ hui.ui.Toolbar.Icon.create = function(options) {
   }
   hui.build('span.hui_toolbar_icon_text',{text:options.title || options.text, parent:element});
   return new hui.ui.Toolbar.Icon(options);
-}
+};
 
 hui.ui.Toolbar.Icon.prototype = {
   _attach : function() {
@@ -152,7 +152,7 @@ hui.ui.Toolbar.Icon.prototype = {
     this.fire('toolbarIconWasClicked'); // TODO deprecated
     this.fire('click');
   }
-}
+};
 
 
 //////////////////////// More ///////////////////////
@@ -164,10 +164,10 @@ hui.ui.Toolbar.More = function(options) {
   this.button = hui.get.firstByClass(this.element,'hui_toolbar_more_toggle');
   hui.listen(this.button,'click',this.toggle.bind(this));
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Toolbar.More.prototype = {
   toggle : function() {
     hui.cls.toggle(this.element,'hui_is_expanded');
   }
-}
+};

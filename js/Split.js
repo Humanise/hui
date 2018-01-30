@@ -23,7 +23,7 @@ hui.ui.Split = function(options) {
   this._buildSizes();
   hui.ui.extend(this);
   this._attach()
-}
+};
 
 hui.ui.Split.prototype = {
     _attach : function() {
@@ -105,4 +105,4 @@ hui.ui.Split.prototype = {
       }
     };
   }
-}
+};

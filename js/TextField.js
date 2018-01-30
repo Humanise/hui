@@ -26,7 +26,7 @@ hui.ui.TextField = function(options) {
   this.value = this.input.value;
   this.modified = false;
   this._attach();
-}
+};
 
 // TODO: Temporarily until TextField is renamed to TextInput
 hui.ui.TextInput = hui.ui.TextField;
@@ -241,4 +241,4 @@ hui.ui.TextField.prototype = {
     t.style.width=(input.clientWidth)+'px';
     return t.clientHeight;
   }
-}
+};

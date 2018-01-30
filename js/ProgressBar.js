@@ -13,7 +13,7 @@ hui.ui.ProgressBar = function(o) {
   /** @private */
   this.indicator = hui.get.firstByTag(this.element,'div');
   hui.ui.extend(this);
-}
+};
 
 /** Creates a new progress bar:
   @param o {Object} Options : {small:false}
@@ -23,7 +23,7 @@ hui.ui.ProgressBar.create = function(o) {
   var e = o.element = hui.build('div',{'class':o.small ? 'hui_progressbar hui_progressbar_small' : 'hui_progressbar'});
   e.appendChild(document.createElement('div'));
   return new hui.ui.ProgressBar(o);
-}
+};
 
 hui.ui.ProgressBar.prototype = {
   /** Set the progress value
@@ -60,6 +60,4 @@ hui.ui.ProgressBar.prototype = {
   show : function() {
     this.element.style.display = 'block';
   }
-}
-
-/* EOF */
+};

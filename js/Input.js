@@ -8,7 +8,7 @@ hui.ui.Input = function(options) {
   this.name = options.name;
   hui.ui.extend(this);
   this._addBehavior();
-  if (this.options.placeholderElement && this.value!='') {
+  if (this.options.placeholderElement && this.value !== '') {
     hui.style.set(this.options.placeholderElement,{opacity:0,display:'none'});
   }
   this._checkPlaceholder();
@@ -16,8 +16,8 @@ hui.ui.Input = function(options) {
     if (e==document.activeElement) {
       this._onFocus();
     }
-  } catch (e) {}
-}
+  } catch (ignore) {}
+};
 
 hui.ui.Input.prototype = {
   _addBehavior : function() {
@@ -58,7 +58,7 @@ hui.ui.Input.prototype = {
     return value;
   },
   _checkPlaceholder : function() {
-    if (this.options.placeholderElement && this.value=='') {
+    if (this.options.placeholderElement && this.value === '') {
       hui.effect.fadeIn({element:this.options.placeholderElement,duration:200});
     }
     if (this.isPassword && !hui.browser.msie) {
@@ -92,7 +92,7 @@ hui.ui.Input.prototype = {
     this.value = this._validate(value);
   },
   isEmpty : function() {
-    return this.value=='';
+    return this.value === '';
   },
   isBlank : function() {
     return hui.isBlank(this.value);

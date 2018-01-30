@@ -8,7 +8,7 @@ hui.ui.Fragment = function(options) {
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
-}
+};
 
 hui.ui.Fragment.prototype = {
   show : function() {
@@ -30,6 +30,4 @@ hui.ui.Fragment.prototype = {
     this.element.appendChild(htmlWidgetOrNode);
     this.fireSizeChange();
   }
-}
-
-/* EOF */
+};
