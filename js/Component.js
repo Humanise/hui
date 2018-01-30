@@ -21,7 +21,7 @@ hui.ui.Component = function(options) {
     this.listen(options.listen);
   }
   hui.ui.registerComponent(this);
-}
+};
 
 hui.ui.Component.prototype = {
   /**

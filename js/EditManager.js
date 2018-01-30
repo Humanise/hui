@@ -11,7 +11,7 @@
     this.cancelButton = null;
     this._collect();
     this._attach();
-  }
+  };
 
   hui.ui.EditManager.prototype = {
     _collect : function() {
@@ -20,7 +20,7 @@
       desc.push(root);
       var components = _.ui.getComponents(function(c) {
         return (c.getElement && desc.indexOf(c.getElement()) !== -1);
-      })
+      });
       for (var i = 0; i < components.length; i++) {
         var cmp = components[i];
         if (_.ui.is(cmp,hui.ui.Window)) {
@@ -49,17 +49,17 @@
         $click : function() {
           self.end();
         }
-      })
+      });
       this.formula.listen({
         $submit : function() {
           self._save();
         }
-      })
+      });
       this.deleteButton.listen({
         $click : function() {
           self._delete();
         }
-      })
+      });
     },
 
     end : function() {
@@ -136,9 +136,9 @@
         }
       });
     }
-  }
+  };
 
 
 
   hui.extend(hui.ui.EditManager, _super);
-})(hui.ui.Component, hui)
+})(hui.ui.Component, hui);

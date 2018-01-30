@@ -39,15 +39,15 @@ hui.ui.startDrag = function(e,element,options) {
 hui.ui.findDropTypes = function(drag) {
   var gui = hui.ui;
   var drops = null;
-  for (var i=0; i < gui.delegates.length; i++) {
+  for (var i = 0; i < gui.delegates.length; i++) {
     if (gui.delegates[i].dragDrop) {
-      for (var j=0; j < gui.delegates[i].dragDrop.length; j++) {
+      for (var j = 0; j < gui.delegates[i].dragDrop.length; j++) {
         var rule = gui.delegates[i].dragDrop[j];
-        if (rule.drag==drag.kind) {
-          if (drops==null) drops={};
+        if (rule.drag == drag.kind) {
+          if (drops === null) drops={};
           drops[rule.drop] = {};
         }
-      };
+      }
     }
   }
   return drops;
@@ -56,18 +56,18 @@ hui.ui.findDropTypes = function(drag) {
 /** @private */
 hui.ui.dragListener = function(e) {
   e = new hui.Event(e);
-  hui.ui.dragProxy.style.left = (e.getLeft()+10)+'px';
-  hui.ui.dragProxy.style.top = e.getTop()+'px';
-  hui.ui.dragProxy.style.display='block';
+  hui.ui.dragProxy.style.left = (e.getLeft() + 10) + 'px';
+  hui.ui.dragProxy.style.top = e.getTop() + 'px';
+  hui.ui.dragProxy.style.display = 'block';
   var target = hui.ui.findDropTarget(e.getElement());
-  if (target && hui.ui.dropTypes[target.dragDropInfo['kind']]) {
+  if (target && hui.ui.dropTypes[target.dragDropInfo.kind]) {
     if (hui.ui.latestDropTarget) {
-      hui.cls.remove(hui.ui.latestDropTarget,'hui_drop');
+      hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
     }
-    hui.cls.add(target,'hui_drop');
+    hui.cls.add(target, 'hui_drop');
     hui.ui.latestDropTarget = target;
   } else if (hui.ui.latestDropTarget) {
-    hui.cls.remove(hui.ui.latestDropTarget,'hui_drop');
+    hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
     hui.ui.latestDropTarget = null;
   }
   return false;
@@ -86,18 +86,18 @@ hui.ui.findDropTarget = function(node) {
 
 /** @private */
 hui.ui.dragEndListener = function(event) {
-  hui.unListen(document.body,'mousemove',hui.ui.dragListener);
-  hui.unListen(document.body,'mouseup',hui.ui.dragEndListener);
+  hui.unListen(document.body, 'mousemove', hui.ui.dragListener);
+  hui.unListen(document.body, 'mouseup', hui.ui.dragEndListener);
   hui.ui.dragging = false;
   if (hui.ui.latestDropTarget) {
-    hui.cls.remove(hui.ui.latestDropTarget,'hui_drop');
-    hui.ui.callDelegatesDrop(hui.ui.dragInfo,hui.ui.latestDropTarget.dragDropInfo);
-    hui.ui.dragProxy.style.display='none';
+    hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
+    hui.ui.callDelegatesDrop(hui.ui.dragInfo, hui.ui.latestDropTarget.dragDropInfo);
+    hui.ui.dragProxy.style.display = 'none';
   } else {
-    hui.animate(hui.ui.dragProxy,'left',(hui.ui.startDragPos.left+10)+'px',200,{ease:hui.ease.fastSlow});
-    hui.animate(hui.ui.dragProxy,'top',(hui.ui.startDragPos.top-5)+'px',200,{ease:hui.ease.fastSlow,hideOnComplete:true});
+    hui.animate(hui.ui.dragProxy,'left', (hui.ui.startDragPos.left + 10) + 'px', 200, {ease: hui.ease.fastSlow});
+    hui.animate(hui.ui.dragProxy,'top', (hui.ui.startDragPos.top - 5) + 'px', 200, {ease: hui.ease.fastSlow, hideOnComplete: true});
   }
-  hui.ui.latestDropTarget=null;
+  hui.ui.latestDropTarget = null;
   hui.selection.enable(false);
 };
 

@@ -17,7 +17,7 @@ hui.ui.DatePicker = function(options) {
   hui.ui.extend(this);
   this._addBehavior();
   this._updateUI();
-}
+};
 
 hui.ui.DatePicker.create = function(options) {
   var element = options.element = hui.build('div',{
@@ -38,19 +38,22 @@ hui.ui.DatePicker.create = function(options) {
     }
   }
   return new hui.ui.DatePicker(options);
-}
+};
 
 hui.ui.DatePicker.prototype = {
   _addBehavior : function() {
     var self = this;
     this.cells = hui.findAll('td',this.element);
     hui.each(this.cells,function(cell,index) {
-      hui.listen(cell,'mousedown',function(e) {hui.stop(e);self._selectCell(index)});
-    })
+      hui.listen(cell,'mousedown',function(e) {
+        hui.stop(e);
+        self._selectCell(index);
+      });
+    });
     var next = hui.get.firstByClass(this.element,'hui_datepicker_next');
     var previous = hui.get.firstByClass(this.element,'hui_datepicker_previous');
-    hui.listen(next,'mousedown',function(e) {hui.stop(e);self.next()});
-    hui.listen(previous,'mousedown',function(e) {hui.stop(e);self.previous()});
+    hui.listen(next,'mousedown',function(e) {hui.stop(e);self.next();});
+    hui.listen(previous,'mousedown',function(e) {hui.stop(e);self.previous();});
   },
   /** Set the date
     * @param date The js Date to set
@@ -85,7 +88,7 @@ hui.ui.DatePicker.prototype = {
         hui.cls.add(cell,'hui_datepicker_today');
       }
       hui.dom.setText(cell,date.getDate());
-    };
+    }
   },
   _getPreviousMonth : function() {
     var previous = new Date(this.viewDate.getTime());
@@ -133,7 +136,7 @@ hui.ui.DatePicker.prototype = {
     }
     return date;
   }
-}
+};
 
 Date.monthNames =
    ["Januar",

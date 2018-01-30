@@ -124,6 +124,14 @@ module.exports = function(grunt) {
             declaration: true
           }
         }
+      },
+      "jsbeautifier" : {
+          files : ["js/Alert.js", "js/Bar.js", "js/BoundPanel.js", "js/DropDown.js"],
+          options : {
+            js: {
+              indentSize: 2
+            }
+          }
       }
   });
 
@@ -141,6 +149,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-typescript');
+  grunt.loadNpmTasks("grunt-jsbeautifier");
 
   // Default task(s).
   grunt.registerTask('default', 'Watch', ['sass','watch']);

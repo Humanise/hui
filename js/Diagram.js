@@ -2,7 +2,7 @@
  * @constructor
  */
 hui.ui.Diagram = function(options) {
-  this.options = hui.override({layout:'D3'},options);;
+  this.options = hui.override({layout: 'D3'}, options);
   this.name = options.name;
   this.nodes = [];
   this.lines = [];
@@ -18,15 +18,19 @@ hui.ui.Diagram = function(options) {
     options.source.listen(this);
   }
   this._init();
-}
+};
 
 hui.ui.Diagram.create = function(options) {
-  options = hui.override({width:null,height:null},options);
+  options = hui.override({width: null, height: null}, options);
 
-  options.element = hui.build('div',{'class':'hui_diagram',parent:options.parent,style:{height:options.height+'px'}});
+  options.element = hui.build('div', {
+    'class': 'hui_diagram',
+    parent: options.parent,
+    style: {height: options.height + 'px'}
+  });
 
   return new hui.ui.Diagram(options);
-}
+};
 
 hui.ui.Diagram.prototype = {
   _init : function() {
@@ -84,16 +88,17 @@ hui.ui.Diagram.prototype = {
     if (!nodes || !lines) {
       return;
     }
-    for (var i=0; i < nodes.length; i++) {
+    var i;
+    for (i = 0; i < nodes.length; i++) {
       if (nodes[i].type=='icon') {
         this.addIcon(nodes[i]);
       } else {
         this.addBox(nodes[i]);
       }
-    };
-    for (var i=0; i < lines.length; i++) {
+    }
+    for (i = 0; i < lines.length; i++) {
       this.addLine(lines[i]);
-    };
+    }
     if (this.layout.loaded) {
       this.layout.populate();
     } else {
@@ -105,13 +110,13 @@ hui.ui.Diagram.prototype = {
     this.layout.start();
   },
   resume : function() {
-    if (this.layout.resume) { this.layout.resume() }
+    if (this.layout.resume) { this.layout.resume(); }
   },
   expand : function() {
-    if (this.layout.expand) { this.layout.expand() }
+    if (this.layout.expand) { this.layout.expand(); }
   },
   contract : function() {
-    if (this.layout.contract) { this.layout.contract() }
+    if (this.layout.contract) { this.layout.contract(); }
   },
   /** @private */
   $sourceShouldRefresh : function() {
@@ -133,14 +138,14 @@ hui.ui.Diagram.prototype = {
     this.selection = null;
     this.background.clear();
     this.lines = [];
-    for (var i = this.nodes.length - 1; i >= 0; i--){
+    for (var i = this.nodes.length - 1; i >= 0; i--) {
       hui.dom.remove(this.nodes[i].element);
-    };
+    }
     this.nodes = [];
     var lines = hui.get.byClass(this.element,'hui_diagram_line_label');
-    for (var i = lines.length - 1; i >= 0; i--){
-      hui.dom.remove(lines[i]);
-    };
+    for (var j = lines.length - 1; j >= 0; j--) {
+      hui.dom.remove(lines[j]);
+    }
   },
 
   addBox : function(options) {
@@ -155,37 +160,45 @@ hui.ui.Diagram.prototype = {
   add : function(widget) {
     var e = widget.element;
     this.element.appendChild(e);
-    widget.setCenter({x:this.width/2,y:this.height/2});
+    widget.setCenter({x: this.width / 2, y : this.height / 2});
     this.nodes.push(widget);
   },
   addLine : function(options) {
     var from = this.getNode(options.from),
       to = this.getNode(options.to);
-    if (from==null || to==null) {
+    if (from === null || to === null) {
       hui.log('Unable to build line...');
       hui.log(options);
       return;
     }
     var fromCenter = this._getCenter(from),
       toCenter = this._getCenter(to);
-    var lineNode = this.background.addLine({ from: fromCenter, to: toCenter, color: options.color || '#999' ,end:{}}),
-      line = { from: options.from, fromNode : from, to: options.to, toNode : to, node: lineNode };
+    var lineNode = this.background.addLine({
+        from: fromCenter,
+        to: toCenter,
+        color: options.color || '#999' ,end:{}
+      }),
+      line = {
+        from: options.from,
+        fromNode : from,
+        to: options.to,
+        toNode : to,
+        node: lineNode
+      };
     if (options.label) {
-      line.label = hui.build('span',{parent:this.element,'class':'hui_diagram_line_label',text:options.label});
+      line.label = hui.build('span',{
+        parent: this.element,
+        'class': 'hui_diagram_line_label',
+        text: options.label
+      });
       this._updateLine(line);
     }
-    //hui.listen(lineNode.node,'click',function() {alert(line)});
     this.lines.push(line);
   },
 
 
   _getCenter : function(widget) {
     return widget.getCenter();
-    var e = widget.element;
-    return {
-      x : Math.round(parseInt(e.style.left)+e.clientWidth/2),
-      y : Math.round(parseInt(e.style.top)+e.clientHeight/2)
-    };
   },
   getNode : function(id) {
     return this._getNode(id,this.nodes);
@@ -199,7 +212,7 @@ hui.ui.Diagram.prototype = {
         if (nodes[i].id == id) {
           return nodes[i];
         }
-      };
+      }
     }
     return null;
   },
@@ -223,31 +236,32 @@ hui.ui.Diagram.prototype = {
     var h = label.huiHeight = label.huiHeight || label.clientHeight;
     w = Math.min(w,width);
     hui.style.set(line.label,{
-      left : (middle.x-w/2)+'px',
-      top : (middle.y-h/2)+'px',
-      maxWidth : Math.max(0,width)+'px',
-      visibility : width>10 ? '' : 'hidden'
+      left : (middle.x - w / 2) + 'px',
+      top : (middle.y - h / 2) + 'px',
+      maxWidth : Math.max(0, width) + 'px',
+      visibility : width > 10 ? '' : 'hidden'
     });
   },
   __nodeMoved : function(widget) {
     var center = this._getCenter(widget);
     for (var i=0; i < this.lines.length; i++) {
       var line = this.lines[i];
+      var magnet, magnet2;
       if (line.from == widget.id) {
-        var magnet = this._getMagnet(line.node.getTo(),center,widget);
+        magnet = this._getMagnet(line.node.getTo(),center,widget);
         line.node.setFrom(magnet);
-        var magnet2 = this._getMagnet(center,this._getCenter(line.toNode),line.toNode);
+        magnet2 = this._getMagnet(center,this._getCenter(line.toNode),line.toNode);
         line.node.setTo(magnet2);
         this._updateLine(line);
       }
       else if (line.to == widget.id) {
-        var magnet = this._getMagnet(line.node.getFrom(),center,widget);
+        magnet = this._getMagnet(line.node.getFrom(),center,widget);
         line.node.setTo(magnet);
-        var magnet2 = this._getMagnet(center,this._getCenter(line.fromNode),line.fromNode);
+        magnet2 = this._getMagnet(center,this._getCenter(line.fromNode),line.fromNode);
         line.node.setFrom(magnet2);
         this._updateLine(line);
       }
-    };
+    }
   },
   __select : function(widget) {
     if (this.selection) {
@@ -259,7 +273,7 @@ hui.ui.Diagram.prototype = {
   __nodeOpen : function(widget) {
     this.fire('open',this.getDataNode(widget.id));
   }
-}
+};
 
 hui.ui.Diagram.D3 = {
   loaded : false,
@@ -269,7 +283,7 @@ hui.ui.Diagram.D3 = {
     hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.min.js'),function() {
       this.loaded = true;
       this.start();
-    }.bind(this))
+    }.bind(this));
   },
 
   resize : function() {
@@ -292,7 +306,7 @@ hui.ui.Diagram.D3 = {
     for (var i=0; i < lines.length; i++) {
       lines[i].source = this._findById(nodes,lines[i].from);
       lines[i].target = this._findById(nodes,lines[i].to);
-    };
+    }
 
     var force = this.layout = d3.layout.force()
             .linkDistance(100)
@@ -315,36 +329,36 @@ hui.ui.Diagram.D3 = {
         if (node.id!=sel) {
           node.setCenter(nodes[i]);
         }
-      };
-      for (var i=0; i < links.length; i++) {
-        var link = links[i];
+      }
+      for (var j=0; j < links.length; j++) {
+        var link = links[j];
         var source = link.source,
           sourceCenter = link.source.center;
         var target = link.target,
           targetCenter = link.target;
         if (source==diagram.selection) {
-          sourceCenter = diagram._getCenter(diagram.selection)
+          sourceCenter = diagram._getCenter(diagram.selection);
         }
         if (target==diagram.selection) {
-          targetCenter = diagram._getCenter(diagram.selection)
+          targetCenter = diagram._getCenter(diagram.selection);
         }
-        var from = diagram._getMagnet(sourceCenter,targetCenter,source)
-        var to = diagram._getMagnet(targetCenter,sourceCenter,target)
+        var from = diagram._getMagnet(sourceCenter,targetCenter,source);
+        var to = diagram._getMagnet(targetCenter,sourceCenter,target);
         link.node.setFrom(from);
         link.node.setTo(to);
         diagram._updateLine(link);
-      };
+      }
     };
     force.start();
     force.gravity(0.5);
-    for (var i=0; i < 10000; i++) {
-      force.tick()
-    };
+    for (var k=0; k < 10000; k++) {
+      force.tick();
+    }
     force.gravity(0.1);
 
     force.on("tick", ticker);
 
-    force.start()
+    force.start();
   },
 
   resume : function() {
@@ -370,7 +384,7 @@ hui.ui.Diagram.D3 = {
       if (nodes[i].id===id) {
         return i;
       }
-    };
+    }
     return null;
   },
   _convert : function(data) {
@@ -380,7 +394,7 @@ hui.ui.Diagram.D3 = {
       var link = data.links[i];
       link.source = this._findById(nodes,link.from);
       link.target = this._findById(nodes,link.to);
-    };
+    }
     return data;
   },
   populate : function() {
@@ -392,7 +406,7 @@ hui.ui.Diagram.D3 = {
     }
   }
 
-}
+};
 
 
 /** A box in a diagram
@@ -406,27 +420,27 @@ hui.ui.Diagram.Box = function(options) {
   this.center = {};
   this.size = null;
   hui.ui.extend(this);
-  hui.ui.Diagram.util.enableDragging(this)
-}
+  hui.ui.Diagram.util.enableDragging(this);
+};
 
 hui.ui.Diagram.Box.create = function(options,diagram) {
-  options = hui.override({title:'Untitled',diagram:diagram},options);
-  var e = options.element = hui.build('div',{'class':'hui_diagram_box'});
-  hui.build('h1',{text:options.title,parent:e});
+  options = hui.override({title: 'Untitled', diagram: diagram}, options);
+  var e = options.element = hui.build('div', {'class': 'hui_diagram_box'});
+  hui.build('h1',{text: options.title, parent: e});
   if (options.properties) {
-    var table = hui.build('table',{parent:e})
+    var table = hui.build('table', {parent: e});
     for (var i=0; i < options.properties.length; i++) {
       var p = options.properties[i];
-      var tr = hui.build('tr',{parent:table});
-      hui.build('th',{parent:tr,text:p.label});
-      var td = hui.build('td',{parent:tr,text:p.value || ''});
+      var tr = hui.build('tr',{parent: table});
+      hui.build('th',{parent: tr,text: p.label});
+      var td = hui.build('td',{parent: tr,text: p.value || ''});
       if (p.hint) {
-        hui.build('em',{parent:td,text:p.hint});
+        hui.build('em',{parent: td, text: p.hint});
       }
-    };
+    }
   }
   return new hui.ui.Diagram.Box(options);
-}
+};
 
 hui.ui.Diagram.Box.prototype = {
   _syncSize : function() {
@@ -451,18 +465,18 @@ hui.ui.Diagram.Box.prototype = {
     this._updateCenter();
   },
   _updateCenter : function() {
-    this.element.style.top = Math.round(this.center.y - this.size.height/2)+'px';
-    this.element.style.left = Math.round(this.center.x - this.size.width/2)+'px';
+    this.element.style.top = Math.round(this.center.y - this.size.height / 2) + 'px';
+    this.element.style.left = Math.round(this.center.x - this.size.width / 2) + 'px';
   },
   setSelected : function(selected) {
-    hui.cls.set(this.element,'hui_diagram_box_selected',selected);
+    hui.cls.set(this.element,'hui_diagram_box_selected', selected);
   }
-}
+};
 
 if (hui.browser.webkit) {
   hui.ui.Diagram.Box.prototype._updateCenter = function() {
     this.element.style.WebkitTransform = 'translate3d(' + Math.round(this.center.x - this.size.width/2) + 'px,' + Math.round(this.center.y - this.size.height/2) + 'px,0)';
-  }
+  };
 }
 
 
@@ -478,18 +492,18 @@ hui.ui.Diagram.Icon = function(options) {
   this.element = hui.get(options.element);
   this.center = {};
   hui.ui.extend(this);
-  hui.ui.Diagram.util.enableDragging(this)
-}
+  hui.ui.Diagram.util.enableDragging(this);
+};
 
 hui.ui.Diagram.Icon.create = function(options,diagram) {
   options = hui.override({icon:'common/folder',diagram:diagram},options);
   var e = options.element = hui.build('div',{'class':'hui_diagram_icon'});
   e.appendChild(hui.ui.createIcon(options.icon,32));
   if (options.title) {
-    hui.build('strong',{parent:e,text:options.title})
+    hui.build('strong',{parent: e, text: options.title});
   }
   return new hui.ui.Diagram.Icon(options);
-}
+};
 
 hui.ui.Diagram.Icon.prototype = {
   _syncSize : function() {
@@ -510,21 +524,21 @@ hui.ui.Diagram.Icon.prototype = {
   },
   setCenter : function(point) {
     var e = this.element;
-    e.style.top = Math.round(point.y - e.clientHeight/2)+'px';
-    e.style.left = Math.round(point.x - e.clientWidth/2)+'px';
+    e.style.top = Math.round(point.y - e.clientHeight / 2) + 'px';
+    e.style.left = Math.round(point.x - e.clientWidth / 2) + 'px';
     this.center = {x : point.x, y : point.y};
   },
   setSelected : function(selected) {
-    hui.cls.set(this.element,'hui_diagram_icon_selected',selected);
+    hui.cls.set(this.element, 'hui_diagram_icon_selected', selected);
   }
-}
+};
 
 /** Utilities **/
 
 hui.ui.Diagram.util = {
   enableDragging : function(obj) {
     var diagram = obj.options.diagram;
-    hui.cls.add(obj.element,'hui_diagram_dragable');
+    hui.cls.add(obj.element, 'hui_diagram_dragable');
     var dragState = null;
     hui.drag.register({
       touch : true,
@@ -535,15 +549,15 @@ hui.ui.Diagram.util = {
       },
       onNotMoved : function() {
         diagram.__select(obj);
-        diagram.fire('select',obj.id);
+        diagram.fire('select', obj.id);
       },
       onBeforeMove : function(e) {
         diagram.__nodeMoved(obj);
         e = hui.event(e);
         obj.element.style.zIndex = hui.ui.nextPanelIndex();
-                var pos = obj.getCenter();
+        var pos = obj.getCenter();
         var size = obj.getSize();
-                pos = {left:pos.x - size.width/2,top:pos.y - size.height/2};
+        pos = {left: pos.x - size.width / 2, top: pos.y - size.height / 2};
         var diagramPosition = hui.position.get(diagram.element);
         dragState = {
           left : e.getLeft() - pos.left,
@@ -565,11 +579,11 @@ hui.ui.Diagram.util = {
       onEnd : function() {
         hui.cls.remove(obj.element,'hui_diagram_dragging');
         obj.fixed = false;
-        hui.log('end')
+        hui.log('end');
       }
     });
     hui.listen(obj.element,'dblclick',function(e) {
       diagram.__nodeOpen(obj);
     });
   }
-}
+};

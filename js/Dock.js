@@ -11,15 +11,12 @@ hui.ui.Dock = function(options) {
   this.resizer = hui.get.firstByClass(this.element,'hui_dock_sidebar_line');
   this.bar = hui.get.firstByClass(this.element,'hui_dock_bar');
   hui.listen(this.iframe,'load',this._load.bind(this));
-  //if (this.iframe.contentWindow) {
-  //  this.iframe.contentWindow.addEventListener('DOMContentLoaded',function() {this._load();hui.log('Fast path!')}.bind(this));
-  //}
   this.name = options.name;
   hui.ui.extend(this);
   this.busy = true;
   hui.ui.listen(this);
   this._attach();
-}
+};
 
 hui.ui.Dock.prototype = {
   _attach : function() {
@@ -57,7 +54,7 @@ hui.ui.Dock.prototype = {
           hui.ui.callVisible(this);
           hui.ui.reLayout();
         }.bind(this)
-      })
+      });
     }
   },
   _updateSidebarWidth : function(width) {
@@ -71,19 +68,6 @@ hui.ui.Dock.prototype = {
    */
   setUrl : function(url) {
     this._setBusy(true);
-    /*
-    var win = hui.frame.getWindow(this.iframe);
-    try {
-      hui.log('Trying to abort!');
-      if (win['hui']) {
-        win.hui.request.abort();
-      } else {
-        hui.log('No HUI found');
-      }
-    } catch (e) {
-      hui.log(e)
-    }*/
-    //hui.frame.getDocument(this.iframe).location.href='about:blank';
     hui.frame.getDocument(this.iframe).location.href=url;
   },
   collapse : function() {
@@ -108,7 +92,11 @@ hui.ui.Dock.prototype = {
   },
   _setBusy : function(busy) {
     if (busy) {
-      hui.style.set(this.progress,{display:'block',height:this.iframe.clientHeight+'px',width:this.iframe.clientWidth+'px'});
+      hui.style.set(this.progress,{
+        display: 'block',
+        height: this.iframe.clientHeight + 'px',
+        width: this.iframe.clientWidth + 'px'
+      });
     } else {
       this.progress.style.display = 'none';
     }
@@ -118,16 +106,5 @@ hui.ui.Dock.prototype = {
     if (win==hui.frame.getWindow(this.iframe)) {
       this._setBusy(false);
     }
-  },
-  /** @private */
-  $$layout : function() {
-    return;
-    var height = hui.window.getViewHeight();
-    hui.log(height,this.bar.clientHeight);
-    this.iframe.style.height=(height-this.bar.clientHeight)+'px';
-    this.progress.style.width=(this.iframe.clientWidth)+'px';
-    this.progress.style.height=(height-this.bar.clientHeight)+'px';
   }
-}
-
-/* EOF */
+};

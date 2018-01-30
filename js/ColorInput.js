@@ -22,12 +22,12 @@ hui.ui.ColorInput = function(options) {
       }
     }
   });
-  this.input.listen({$valueChanged:this._onInputChange.bind(this)})
+  this.input.listen({$valueChanged:this._onInputChange.bind(this)});
   this.value = null;
   hui.ui.extend(this);
   this.setValue(this.options.value);
   this._addBehavior();
-}
+};
 
 hui.ui.ColorInput.create = function(options) {
   options = options || {};
@@ -37,7 +37,7 @@ hui.ui.ColorInput.create = function(options) {
       html : '<input class="hui_textinput" type="text" value=""/><a tabindex="-1" class="hui_colorinput_color" href="javascript://"></a>'
     });
   return new hui.ui.ColorInput(options);
-}
+};
 
 hui.ui.ColorInput.prototype = {
   _addBehavior : function() {
@@ -60,14 +60,14 @@ hui.ui.ColorInput.prototype = {
   },
   _fireChange : function() {
     hui.ui.callAncestors(this,'childValueChanged',this.value);
-    this.fire('valueChanged',this.value)
+    this.fire('valueChanged',this.value);
   },
   _onBlur : function() {
     hui.Color.parse(this.value);
   },
   _onButtonClick : function() {
     if (hui.window.getViewHeight() < 200) {
-      this.fire('clickPicker',this.value)
+      this.fire('clickPicker',this.value);
       return; // TODO: mini picker
     }
     if (!this.panel) {
@@ -110,6 +110,4 @@ hui.ui.ColorInput.prototype = {
             this.panel.destroy();
         }
     }
-}
-
-/* EOF */
+};

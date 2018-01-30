@@ -8,7 +8,7 @@ hui.ui.Columns = function(options) {
   this.element = hui.get(options.element);
   this.body = hui.get.firstByTag(this.element,'tr');
   hui.ui.extend(this);
-}
+};
 
 /**
  * Creates a new Columns opject
@@ -18,7 +18,7 @@ hui.ui.Columns.create = function(options) {
   options.flexible = true;
   options.element = hui.build('table',{'class' : 'hui_columns',html : '<tbody><tr></tr></tbody>'});
   return new hui.ui.Columns(options);
-}
+};
 
 hui.ui.Columns.prototype = {
   $$layout : function() {
@@ -31,12 +31,12 @@ hui.ui.Columns.prototype = {
     for (var i=0; i < children.length; i++) {
       var child = children[i];
       var width = (this.element.clientWidth/children.length);
-      child.style.width = width+'px'
-      child.style.position = 'absolute'
-      child.style.marginLeft = left+'px';
-      child.style.height = this.element.clientHeight+'px'
+      child.style.width = width + 'px';
+      child.style.position = 'absolute';
+      child.style.marginLeft = left + 'px';
+      child.style.height = this.element.clientHeight+'px';
       left+=width;
-    };
+    }
   },
   addToColumn : function(index,widget) {
     var c = this._ensureColumn(index);
@@ -57,6 +57,4 @@ hui.ui.Columns.prototype = {
     }
     return hui.get.children(this.body)[index];
   }
-}
-
-/* EOF */
+};

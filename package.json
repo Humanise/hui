@@ -16,6 +16,7 @@
     "grunt-contrib-uglify": "^0.5.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-docular": "^0.2.4",
+    "grunt-jsbeautifier": "^0.2.13",
     "grunt-jsdoc": "^2.1.0",
     "grunt-jsdoc-plugin": "^0.1.4",
     "grunt-shell": "^0.7.0",

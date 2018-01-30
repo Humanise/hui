@@ -20,26 +20,26 @@ hui.ui.ColorPicker = function(options) {
   }
   this.addBehavior();
   this.buildData();
-}
+};
 
 hui.ui.ColorPicker.create = function(options) {
   var swatches = '',
     c, hex, j;
-  for (var i=0; i < 360; i+=30) {
-    for (j=0.05; j <= 1; j+=.15) {
-      c = hui.Color.hsv2rgb(i,j,1);
+  for (var i = 0; i < 360; i += 30) {
+    for (j = 0.05; j <= 1; j += 0.15) {
+      c = hui.Color.hsv2rgb(i, j, 1);
       hex = hui.Color.rgb2hex(c);
-      swatches+='<a style="background: rgb('+c[0]+','+c[1]+','+c[2]+')" rel="'+hex+'"></a>';
+      swatches += '<a style="background: rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')" rel="' + hex + '"></a>';
     }
-    for (j=1; j >= .20; j-=.15) {
-      c = hui.Color.hsv2rgb(i,1,j);
+    for (j = 1; j >= 0.20; j -= 0.15) {
+      c = hui.Color.hsv2rgb(i, 1, j);
       hex = hui.Color.rgb2hex(c);
-      swatches+='<a style="background: rgb('+c[0]+','+c[1]+','+c[2]+')" rel="'+hex+'"></a>';
+      swatches += '<a style="background: rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')" rel="' + hex + '"></a>';
     }
   }
-  for (j=255; j >=0; j-=255/12) {
-    hex = hui.Color.rgb2hex([j,j,j]);
-    swatches+='<a style="background: rgb('+Math.round(j)+','+Math.round(j)+','+Math.round(j)+')" rel="'+hex+'"></a>';
+  for (j = 255; j >= 0; j -= 255 / 12) {
+    hex = hui.Color.rgb2hex([j, j, j]);
+    swatches += '<a style="background: rgb('+Math.round(j)+','+Math.round(j)+','+Math.round(j)+')" rel="'+hex+'"></a>';
   }
   options = options || {};
   options.element = hui.build('div',{
@@ -71,7 +71,7 @@ hui.ui.ColorPicker.create = function(options) {
       '<div class="hui_colorpicker_preview"></div>'
   });
   return new hui.ui.ColorPicker(options);
-}
+};
 
 hui.ui.ColorPicker.prototype = {
   /** @private */
@@ -81,7 +81,7 @@ hui.ui.ColorPicker.prototype = {
       var button = new hui.ui.Bar.Button({element:bs[i]});
       button.listen(this);
       this.buttons.push(button);
-    };
+    }
 
     hui.listen(this.element,'click',this._click.bind(this));
     hui.listen(this.wheel1,'mousemove',this._hoverWheel1.bind(this));
@@ -92,7 +92,7 @@ hui.ui.ColorPicker.prototype = {
     hui.listen(this.wheel3,'click',this._pickColor.bind(this));
     hui.listen(this.element,'mousedown',function(e) {
       hui.stop(e);
-    })
+    });
     hui.listen(this.swatches,'mousemove',function(e) {
       e = hui.event(e);
       this._hoverColor(e.element.getAttribute('rel'));
@@ -105,17 +105,16 @@ hui.ui.ColorPicker.prototype = {
       i;
     for (i = this.pages.length - 1; i >= 0; i--){
       this.pages[i].style.display = i==page ? 'block' : 'none';
-    };
+    }
     for (i=0; i < this.buttons.length; i++) {
       this.buttons[i].setSelected(this.buttons[i]==button);
-    };
+    }
   },
   _click : function(e) {
     e = hui.event(e);
     e.stop();
-  //  return;
     var input = e.findByTag('input');
-    if (input) {input.focus()}
+    if (input) {input.focus();}
   },
   _pickColor : function(e) {
     hui.stop(e);
@@ -129,7 +128,7 @@ hui.ui.ColorPicker.prototype = {
   },
   /** @private */
   buildData : function() {
-    var addary = new Array();           //red
+    var addary = [];           //red
     addary[0] = new Array(0,1,0);   //red green
     addary[1] = new Array(-1,0,0);  //green
     addary[2] = new Array(0,0,1);   //green blue
@@ -171,8 +170,9 @@ hui.ui.ColorPicker.prototype = {
     sx = Math.abs(x - 512);
     sy = Math.abs(y - 512);
     var r = Math.sqrt((sx * sx) + (sy * sy));
+    var c;
     if(x == 512 & y == 512) {
-      var c = "000000";
+      c = "000000";
     } else {
       var n = 0;
       for(var i = 0; i < 3; i++) {
@@ -193,34 +193,34 @@ hui.ui.ColorPicker.prototype = {
     var x = (e.getLeft() - pos.left);
     var y = (e.getTop() - pos.top);
 
-    if (y > 256) {return}
+    if (y > 256) {return;}
 
-      var cartx = x - 128;
-      var carty = 128 - y;
-      var cartx2 = cartx * cartx;
-      var carty2 = carty * carty;
-      var rraw = Math.sqrt(cartx2 + carty2);       //raw radius
-      var rnorm = rraw/128;                        //normalized radius
-      if (rraw == 0) {
+    var cartx = x - 128;
+    var carty = 128 - y;
+    var cartx2 = cartx * cartx;
+    var carty2 = carty * carty;
+    var rraw = Math.sqrt(cartx2 + carty2);       //raw radius
+    var rnorm = rraw / 128;                        //normalized radius
+    if (rraw === 0) {
       sat = 0;
       val = 0;
-      rgb = new Array(0,0,0);
+      rgb = new Array(0, 0, 0);
     } else {
-      var arad = Math.acos(cartx/rraw);            //angle in radians
-      var aradc = (carty>=0)?arad:2*Math.PI - arad;  //correct below axis
-      var adeg = 360 * aradc/(2*Math.PI);  //convert to degrees
+      var arad = Math.acos(cartx / rraw);            //angle in radians
+      var aradc = (carty >= 0) ? arad : 2 * Math.PI - arad;  //correct below axis
+      var adeg = 360 * aradc / (2 * Math.PI);  //convert to degrees
       if (rnorm > 1) {    // outside circle
-        rgb = new Array(255,255,255);
+        rgb = new Array(255, 255, 255);
         sat = 1;
         val = 1;
-      } else if (rnorm >= .5) {
-        sat = 1 - ((rnorm - .5) *2);
+      } else if (rnorm >= 0.5) {
+        sat = 1 - ((rnorm - 0.5) * 2);
         val = 1;
-        rgb = hui.Color.hsv2rgb(adeg,sat,val);
+        rgb = hui.Color.hsv2rgb(adeg, sat, val);
       } else {
         sat = 1;
         val = rnorm * 2;
-        rgb = hui.Color.hsv2rgb(adeg,sat,val);
+        rgb = hui.Color.hsv2rgb(adeg, sat, val);
       }
     }
     this._hoverColor(hui.Color.rgb2hex(rgb));
@@ -232,15 +232,15 @@ hui.ui.ColorPicker.prototype = {
     var x = (e.getLeft() - pos.left);
     var y = (e.getTop() - pos.top);
 
-    if (y > 256) {return}
+    if (y > 256) {return;}
 
-      var cartx = x - 128;
-      var carty = 128 - y;
-      var cartx2 = cartx * cartx;
-      var carty2 = carty * carty;
-      var rraw = Math.sqrt(cartx2 + carty2);       //raw radius
-      var rnorm = rraw/128;                        //normalized radius
-      if (rraw == 0) {
+    var cartx = x - 128;
+    var carty = 128 - y;
+    var cartx2 = cartx * cartx;
+    var carty2 = carty * carty;
+    var rraw = Math.sqrt(cartx2 + carty2);       //raw radius
+    var rnorm = rraw/128;                        //normalized radius
+    if (rraw === 0) {
       sat = 0;
       val = 0;
       rgb = new Array(0,0,0);
@@ -260,6 +260,4 @@ hui.ui.ColorPicker.prototype = {
     }
     this._hoverColor(hui.Color.rgb2hex(rgb));
   }
-}
-
-/* EOF */
+};

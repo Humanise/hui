@@ -63,6 +63,7 @@ hui.ui.CodeInput.prototype = {
     var t = e.target ? e.target : e.srcElement ? e.srcElement : e.which;
     var scrollTop = t.scrollTop;
     var k = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
+    var ch, a, i, rt, nr;
     if (k == 9 && !e.ctrlKey && !e.altKey) {
       if (t.setSelectionRange) {
         e.preventDefault();
@@ -77,8 +78,8 @@ hui.ui.CodeInput.prototype = {
           var sel = t.value.slice(ss, se);
           var post = t.value.slice(se, t.value.length);
           if (e.shiftKey) {
-            var a = sel.split("\n");
-            for (var i = 0; i < a.length; i++) {
+            a = sel.split("\n");
+            for (i = 0; i < a.length; i++) {
               if (a[i].slice(0, 1) == tab || a[i].slice(0, 1) == ' ') {
                 a[i] = a[i].slice(1, a[i].length);
               }
@@ -99,7 +100,7 @@ hui.ui.CodeInput.prototype = {
         else {
           if (e.shiftKey) {
             var brt = t.value.slice(0, ss);
-            var ch = brt.slice(brt.length - 1, brt.length);
+            ch = brt.slice(brt.length - 1, brt.length);
             if (ch == tab || ch == ' ') {
               t.value = brt.slice(0, brt.length - 1).concat(t.value.slice(ss, t.value.length));
               t.selectionStart = ss - 1;
@@ -122,11 +123,11 @@ hui.ui.CodeInput.prototype = {
         br.moveToElementText(t);
         br.setEndPoint("EndToStart", r);
         //Single line selection
-        if (r.text.length == 0 || r.text.indexOf("\n") == -1) {
+        if (r.text.length === 0 || r.text.indexOf("\n") === -1) {
           if (e.shiftKey) {
-            var ch = br.text.slice(br.text.length - 1, br.text.length);
+            ch = br.text.slice(br.text.length - 1, br.text.length);
             if (ch == tab || ch == ' ') {
-              br.text = br.text.slice(0, br.text.length - 1)
+              br.text = br.text.slice(0, br.text.length - 1);
               r.setEndPoint("StartToEnd", br);
             }
           } else {
@@ -136,24 +137,25 @@ hui.ui.CodeInput.prototype = {
             }
             br.text = br.text.concat(tab);
           }
-          var nr = document.body.createTextRange();
+          nr = document.body.createTextRange();
           nr.setEndPoint("StartToEnd", br);
           nr.setEndPoint("EndToEnd", r);
           nr.select();
         }
         //Multi line selection
         else {
+          var p;
           if (e.shiftKey) {
-            var a = r.text.split("\r\n")
-            var rt = t.value.slice(br.text.length, br.text.length + 2);
+            a = r.text.split("\r\n");
+            rt = t.value.slice(br.text.length, br.text.length + 2);
             if (rt == r.text.slice(0, 2)) {
-              var p = br.text.lastIndexOf("\r\n".concat(tab));
+              p = br.text.lastIndexOf("\r\n".concat(tab));
               if (p != -1) {
                 br.text = br.text.slice(0, p + 2).concat(br.text.slice(p + 3, br.text.length));
               }
             }
-            for (var i = 0; i < a.length; i++) {
-              var ch = a[i].length > 0 && a[i].slice(0, 1);
+            for (i = 0; i < a.length; i++) {
+              ch = a[i].length > 0 && a[i].slice(0, 1);
               if (ch == tab || ch == ' ') {
                 a[i] = a[i].slice(1, a[i].length);
               }
@@ -161,11 +163,12 @@ hui.ui.CodeInput.prototype = {
             r.text = a.join("\r\n");
           } else {
             if (br.text.length > 0) {
-              var rt = t.value.slice(br.text.length, br.text.length + 2);
+              rt = t.value.slice(br.text.length, br.text.length + 2);
               if (rt != r.text.slice(0, 2)) {
                 r.text = tab.concat(r.text.split("\r\n").join("\r\n".concat(tab)));
               } else {
-                var p = br.text.slice(0, ss).lastIndexOf("\r\n") + 2;
+                var selectionStart; // TODO: what is this about?
+                p = br.text.slice(0, selectionStart).lastIndexOf("\r\n") + 2;
                 br.text = br.text.slice(0, p).concat(tab, br.text.slice(p, br.text.length));
                 r.text = r.text.split("\r\n").join("\r\n".concat(tab));
               }
@@ -173,7 +176,7 @@ hui.ui.CodeInput.prototype = {
               r.text = tab.concat(r.text).split("\r\n").join("\r\n".concat(tab));
             }
           }
-          var nr = document.body.createTextRange();
+          nr = document.body.createTextRange();
           nr.setEndPoint("StartToEnd", br);
           nr.setEndPoint("EndToEnd", r);
           nr.select();
@@ -183,4 +186,4 @@ hui.ui.CodeInput.prototype = {
     t.scrollTop = scrollTop;
   }
 
-}
+};
