@@ -104,13 +104,14 @@ hui.ui.FontPicker.prototype = {
 
     html+='<table>';
     html+='<thead><tr><th></th>';
-    for (var i=0; i < weights.length; i++) {
+    var i;
+    for (i=0; i < weights.length; i++) {
       html+='<th>'+weights[i]+'</th>';
     }
     html+='</tr></thead>';
 
     html+='<tbody>';
-    for (var i=0; i < sizes.length; i++) {
+    for (i=0; i < sizes.length; i++) {
       html+='<tr><th>'+sizes[i]+'</th>';
       for (var j=0; j < weights.length; j++) {
         html+='<td style="font-weight: '+weights[j]+'; font-size:'+sizes[i]+';">Pack my box with five dozen liquor jugs</td>';

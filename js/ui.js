@@ -7,7 +7,7 @@ hui = window.hui || {};
 hui.ui = hui.ui || {};
 
 hui.ui.domReady = false;
-hui.ui.context = undefined,
+hui.ui.context = undefined;
 hui.ui.language = undefined;
 
 hui.ui.objects = {};
@@ -30,7 +30,7 @@ hui.ui.texts = {
   'continue' : {en:'Continue',da:'Fortsæt'},
   reload_page : {en:'Reload page',da:'Indæs siden igen'},
   access_denied : {en:'Access denied, maybe you are nolonger logged in',da:'Adgang nægtet, du er måske ikke længere logget ind'}
-}
+};
 
 hui.ui.getContext = function() {
   if (this.context===undefined) {
@@ -42,7 +42,7 @@ hui.ui.getContext = function() {
     }
   }
   return this.context;
-}
+};
 
 hui.ui.getURL = function(path) {
   var ctx = hui.ui.getContext();
@@ -50,10 +50,10 @@ hui.ui.getURL = function(path) {
     path = path.substring(1);
   }
   if (ctx.substring(ctx.length - 1) === '/') {
-    ctx = ctx.substring(0,ctx.length-1)
+    ctx = ctx.substring(0, ctx.length - 1);
   }
   return ctx + '/hui/' + path;
-}
+};
 
 /**
  * Get a component by name
@@ -190,8 +190,10 @@ hui.ui.destroyDescendants = function(widgetOrElement) {
 hui.ui.remove = function(widget) {
   hui.ui.destroy(widget);
   hui.ui.destroyDescendants(widget);
-  widget.element && hui.dom.remove(widget.element);
-}
+  if (widget.element) {
+    hui.dom.remove(widget.element);
+  }
+};
 
 /** Gets all ancestors of a widget
   @param {Widget} widget A widget
@@ -418,7 +420,7 @@ hui.ui.getLanguage = function() {
     return hui.ui.language;
   }
   return (document.documentElement && document.documentElement.lang) || 'en';
-}
+};
 
 
 //////////////////////////////// Message //////////////////////////////
@@ -633,7 +635,7 @@ hui.ui.setIconImage = function(node, icon, size) {
   } else {
     node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + ');');
   }
-}
+};
 
 /**
  * Add focus class to an element
@@ -849,7 +851,7 @@ hui.ui.tellContainers = function(event,value) {
     try {
       return window.parent.hui.ui._tellContainers(event,value);
     } catch (e) {
-      window.console && console.error(e);
+      if (window.console) console.error(e);
     }
   }
 };
@@ -860,7 +862,7 @@ hui.ui._tellContainers = function(event,value) {
     try {
       result = window.parent.hui.ui._tellContainers(event,value) || result;
     } catch (e) {
-      window.console && console.error(e);
+      if (window.console) console.error(e);
     }
   }
   return result;

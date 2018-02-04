@@ -38,7 +38,7 @@ hui.ui.ObjectList.prototype = {
   },
   addObject : function(data,addToEnd) {
     var obj;
-    if (this.objects.length==0 || addToEnd) {
+    if (this.objects.length===0 || addToEnd) {
       obj = new hui.ui.ObjectList.Object(this.objects.length,data,this);
       this.objects.push(obj);
       this.body.appendChild(obj.getElement());
@@ -49,7 +49,7 @@ hui.ui.ObjectList.prototype = {
       last.index++;
       this.objects.push(obj);
       this.objects.push(last);
-      this.body.insertBefore(obj.getElement(),last.getElement())
+      this.body.insertBefore(obj.getElement(),last.getElement());
     }
   },
   reset : function() {
@@ -98,7 +98,7 @@ hui.ui.ObjectList.prototype = {
   getLabel : function() {
     return this.options.label;
   }
-}
+};
 
 /********************** Object ********************/
 
@@ -108,7 +108,7 @@ hui.ui.ObjectList.Object = function(index,data,list) {
   this.index = index;
   this.list = list;
   this.fields = [];
-}
+};
 
 hui.ui.ObjectList.Object.prototype = {
   getElement : function() {
@@ -120,7 +120,7 @@ hui.ui.ObjectList.Object.prototype = {
         field.object = this;
         this.fields.push(field);
         var cell = document.createElement('td');
-        if (i==0) cell.className='first';
+        if (i===0) cell.className='first';
         cell.appendChild(field.getElement());
         field.setValue(this.data[template.key]);
         this.element.appendChild(cell);
@@ -138,14 +138,14 @@ hui.ui.ObjectList.Object.prototype = {
     }
     return data;
   }
-}
+};
 
 /*************************** Text **************************/
 
 hui.ui.ObjectList.Text = function(key) {
   this.key = key;
   this.value = null;
-}
+};
 
 hui.ui.ObjectList.Text.prototype = {
   clone : function() {
@@ -168,7 +168,7 @@ hui.ui.ObjectList.Text.prototype = {
     this.value = value;
     this.wrapper.setValue(value);
   }
-}
+};
 
 /*************************** Select **************************/
 
@@ -176,7 +176,7 @@ hui.ui.ObjectList.Select = function(key) {
   this.key = key;
   this.value = null;
   this.options = [];
-}
+};
 
 hui.ui.ObjectList.Select.prototype = {
   clone : function() {
@@ -192,7 +192,7 @@ hui.ui.ObjectList.Select.prototype = {
     var self = this;
     this.select.onchange = function() {
       self.object.valueDidChange();
-    }
+    };
     return this.select;
   },
   getValue : function() {

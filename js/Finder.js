@@ -103,23 +103,23 @@ hui.ui.Finder.prototype = {
       $select : this._selectionChanged.bind(this)
     });
 
-    var showBar = opts.search || opts.gallery;
+    var searchField, bar;
 
-    if (showBar) {
-      var bar = hui.ui.Bar.create({
+    if (opts.search || opts.gallery) {
+      bar = hui.ui.Bar.create({
         variant: 'layout'
       });
       layout.addCenter(bar);
       if (opts.search) {
-        var search = hui.ui.SearchField.create({
+        searchField = hui.ui.SearchField.create({
           expandedWidth: 200
         });
-        search.listen({
+        searchField.listen({
           $valueChanged: function() {
             list.resetState();
           }
         });
-        bar.addToRight(search);
+        bar.addToRight(searchField);
       }
     }
     var right = hui.ui.Overflow.create({dynamic:true});
@@ -157,8 +157,8 @@ hui.ui.Finder.prototype = {
       });
     }
 
-    if (opts.search) {
-      parameters.push({key:opts.search.parameter || 'text',value:'@'+search.name+'.value'});
+    if (opts.search && searchField) {
+      parameters.push({key:opts.search.parameter || 'text',value:'@'+searchField.name+'.value'});
     }
     if (opts.list.pageParameter) {
       parameters.push({key:opts.list.pageParameter,value:'@'+list.name+'.window.page'});
@@ -243,7 +243,7 @@ hui.ui.Finder.prototype = {
 
   _selectionChanged : function() {
     var row = this.list.getFirstSelection();
-    if (row != null) {
+    if (row) {
       this.fire('select',row);
     }
   },
@@ -261,7 +261,7 @@ hui.ui.Finder.prototype = {
         $uploadDidComplete : function(file) {
           this._uploadSuccess(hui.string.fromJSON(file.request.responseText));
         }.bind(this)
-      })
+      });
       panel.add(this.uploader);
     }
     this.uploadPanel.show({target:button});
@@ -300,7 +300,6 @@ hui.ui.Finder.prototype = {
       url : this.options.creation.url,
       parameters : values,
       $object : function(obj) {
-        hui.log('Created',obj)
         self.fire('select',obj);
       },
       $failure : function() {

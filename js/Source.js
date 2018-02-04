@@ -8,8 +8,8 @@ hui.ui.Source = function(options) {
   this.parameters = [];
     // Clone parameters so they can be reused
     for (var i = 0; i < this.options.parameters.length; i++) {
-        var p = this.options.parameters[i]
-        this.parameters.push({key:p.key,value:p.value,separate:p.separate});
+      var p = this.options.parameters[i];
+      this.parameters.push({key:p.key,value:p.value,separate:p.separate});
     }
   hui.ui.extend(this);
   if (options.delegate) {
@@ -49,7 +49,7 @@ hui.ui.Source.prototype = {
     window.clearTimeout(this.paramDelay);
     this.paramDelay = window.setTimeout(function() {
       this.refresh();
-    }.bind(this),100)
+    }.bind(this),100);
   },
 
   /** Refreshes the data source */
@@ -62,19 +62,19 @@ hui.ui.Source.prototype = {
     }
   },
   _refresh : function() {
-    if (this.delegates.length==0) {
+    if (this.delegates.length===0) {
       return;
     }
-    var shouldRefresh = this.delegates.length==0;
+    var shouldRefresh = this.delegates.length === 0;
     for (var i=0; i < this.delegates.length; i++) {
       var d = this.delegates[i];
-      if (d['$sourceShouldRefresh']) {
-        shouldRefresh = shouldRefresh || d['$sourceShouldRefresh']();
+      if (d.$sourceShouldRefresh) {
+        shouldRefresh = shouldRefresh || d.$sourceShouldRefresh();
       } else {
         shouldRefresh = true;
       }
-    };
-    if (!shouldRefresh) {return}
+    }
+    if (!shouldRefresh) {return;}
     if (this.busy) {
       this.pendingRefresh = true;
       // It might be better to cue rather than abort
@@ -100,7 +100,7 @@ hui.ui.Source.prototype = {
         } else {
           prms.push({name : p.key, value : p.value});
         }
-      };
+      }
       this.busy = true;
       hui.ui.callDelegates(this,'sourceIsBusy');
       this.transport = hui.request({
@@ -109,8 +109,8 @@ hui.ui.Source.prototype = {
         parameters : prms,
         $success : this._parse.bind(this),
         $exception : function(e,t) {
-          hui.log('Exception while loading source...')
-          hui.log(e)
+          hui.log('Exception while loading source...');
+          hui.log(e);
           self._end();
         },
         $forbidden : function() {
@@ -194,7 +194,7 @@ hui.ui.Source.prototype = {
   setParameter : function(key,value) {
     value = this._convertValue(value);
     for (var i=0; i < this.parameters.length; i++) {
-      var p = this.parameters[i]
+      var p = this.parameters[i];
       if (p.key==key) {
         p.value=value;
         return;
@@ -205,11 +205,11 @@ hui.ui.Source.prototype = {
   changeParameter : function(key,value) {
     value = this._convertValue(value);
     for (var i=0; i < this.parameters.length; i++) {
-      var p = this.parameters[i]
+      var p = this.parameters[i];
       if (p.key==key) {
         p.value=value;
       }
-    };
+    }
     this.refreshLater();
   }
 };

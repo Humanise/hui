@@ -40,9 +40,9 @@
       }
       var remainingHeight = fullHeight - fixedHeight;
       var remainder = count - fixedCount;
-      for (var i = 0; i < sizes.length; i++) {
-        if (sizes[i] === null) {
-          sizes[i] = 1 / remainder * remainingHeight;
+      for (var j = 0; j < sizes.length; j++) {
+        if (sizes[j] === null) {
+          sizes[j] = 1 / remainder * remainingHeight;
         }
       }
       this.sizes = sizes;

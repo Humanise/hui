@@ -52,7 +52,7 @@
           this.hide();
           this.fire('close');
         }.bind(this));
-        hui.listen(this.nodes.close,'mousedown',function(e) {hui.stop(e)});
+        hui.listen(this.nodes.close,'mousedown',function(e) {hui.stop(e);});
       }
       hui.drag.register({
         touch: true,
@@ -86,13 +86,13 @@
       options = options || {};
       hui.style.set(this.element,{
         zIndex : hui.ui.nextPanelIndex(), visibility : 'hidden', display : 'block'
-      })
+      });
       var width = this.element.clientWidth;
       hui.style.set(this.element,{
         width : width+'px' , visibility : 'visible'
       });
       if (options.avoid) {
-        hui.position.place({insideViewPort : true, target : {element : options.avoid, vertical : .5, horizontal : 1}, source : {element : this.element, vertical : .5, horizontal : 0} });
+        hui.position.place({insideViewPort : true, target : {element : options.avoid, vertical : 0.5, horizontal : 1}, source : {element : this.element, vertical : 0.5, horizontal : 0} });
       } else {
         if (!this.element.style.top) {
           this.element.style.top = (hui.window.getScrollTop()+40)+'px';
@@ -110,7 +110,11 @@
       hui.ui.callVisible(this);
     },
     toggle : function(options) {
-      (this.visible ? this.hide() : this.show(options) );
+      if (this.visible) {
+        this.hide();
+      } else {
+        this.show(options);
+      }
     },
     hide : function() {
       if (!this.visible) return;
@@ -143,7 +147,7 @@
       this._busyTimer = window.setTimeout(function() {
         var curtain = this._busyCurtain;
         if (!curtain) {
-          curtain = this._busyCurtain = hui.build('div',{'class':'hui_panel_busy',parentFirst:hui.get.firstByClass(this.element,'hui_panel_content')})
+          curtain = this._busyCurtain = hui.build('div',{'class':'hui_panel_busy',parentFirst:hui.get.firstByClass(this.element,'hui_panel_content')});
         }
         curtain.innerHTML = hui.isString(stringOrBoolean) ? '<span>'+stringOrBoolean+'</span>' : '<span></span>';
         curtain.style.display = '';

@@ -20,7 +20,7 @@ hui.ui.LocationPicker.prototype = {
       panel.add(mapContainer);
       var buttons = hui.ui.Buttons.create({align:'right',top:5});
       var button = hui.ui.Button.create({text:{en:'Close',da:'Luk'},small:true});
-      button.listen({$click:function() {panel.hide()}});
+      button.listen({$click:function() {panel.hide();}});
       panel.add(buttons.add(button));
       hui.style.set(panel.element,{left:'-10000px',top:'-10000px',display:''});
       this._whenReady(function() {
@@ -49,15 +49,15 @@ hui.ui.LocationPicker.prototype = {
       return;
     }
     this.defered.push(func);
-    if (this.loadingBackend) {return;};
+    if (this.loadingBackend) {return;}
     this.loadingBackend = true;
     window.huiLocationPickerReady = function() {
       this.loadingBackend = false;
       this.backendLoaded = true;
-      hui.log('Google maps loaded!')
+      hui.log('Google maps loaded!');
       for (var i=0; i < this.defered.length; i++) {
         this.defered[i]();
-      };
+      }
       window.huiLocationPickerReady = null;
     }.bind(this);
     hui.log('Loading google maps...');
@@ -65,7 +65,7 @@ hui.ui.LocationPicker.prototype = {
   },
   setLocation : function(loc) {
     this._whenReady(function() {
-      hui.log('Setting location...')
+      hui.log('Setting location...');
       if (!loc && this.marker) {
         this.marker.setMap(null);
         this.map.setCenter(this.defaultCenter);
@@ -82,7 +82,7 @@ hui.ui.LocationPicker.prototype = {
         this.marker.setMap(this.map);
       }
       this.map.setCenter(loc);
-    }.bind(this))
+    }.bind(this));
   },
   _buildLatLng : function(loc) {
     if (!loc) {

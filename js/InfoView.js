@@ -5,7 +5,7 @@ hui.ui.InfoView = function(options) {
   this.body = hui.get.firstByTag(this.element,'tbody');
   this.name = options.name;
   hui.ui.extend(this);
-}
+};
 
 hui.ui.InfoView.create = function(options) {
   options = options || {};
@@ -17,7 +17,7 @@ hui.ui.InfoView.create = function(options) {
     element.style.margin = options.margin+'px';
   }
   return new hui.ui.InfoView(options);
-}
+};
 
 hui.ui.InfoView.prototype = {
   addHeader : function(text) {
@@ -30,7 +30,7 @@ hui.ui.InfoView.prototype = {
     hui.build('td',{parent:row,text:text});
   },
   addObjects : function(label,objects) {
-    if (!objects || objects.length==0) return;
+    if (!objects || objects.length === 0) return;
     var row = hui.build('tr',{parent:this.body});
     row.appendChild(hui.build('th',{text:label}));
     var cell = hui.build('td',{parent:row});
@@ -38,7 +38,7 @@ hui.ui.InfoView.prototype = {
     hui.each(objects,function(obj) {
       var node = hui.build('div',{text:obj.title,parent:cell});
       if (click) {
-        hui.cls.add(node,'hui_infoview_click')
+        hui.cls.add(node,'hui_infoview_click');
         hui.listen(node,'click',function() {
           hui.ui.callDelegates(this,'objectWasClicked',obj);
         });
@@ -59,8 +59,6 @@ hui.ui.InfoView.prototype = {
         case 'property': this.addProperty(data[i].label,data[i].value); break;
         case 'objects': this.addObjects(data[i].label,data[i].value); break;
       }
-    };
+    }
   }
-}
-
-/* EOF */
+};

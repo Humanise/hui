@@ -50,8 +50,8 @@ hui.ui.List = function(options) {
   this.sortDirection = null;
 
   this.window = {size:null,page:0,total:0};
-  if (options.windowSize != '') {
-    this.window.size = parseInt(options.windowSize);
+  if (options.windowSize) {
+    this.window.size = options.windowSize;
   }
   hui.ui.extend(this);
   if (options.dropFiles) {
@@ -301,13 +301,13 @@ hui.ui.List.prototype = {
     }
     this.sortKey = key;
   },
-  _debug : function(obj) {
-
+  _clickHeader : function(e) {
+    e = hui.event(e);
+    var th = e.findByTag('th');
+    this.sort(th.huiIndex);
   },
-
   /** @private */
   $listLoaded : function(doc) {
-    this._debug('List loaded');
     this._setError(false);
     var hadSelection = this.selected.length>0 || this.checked.length>0;
     var previousSelection;
@@ -333,9 +333,9 @@ hui.ui.List.prototype = {
       this.sortDirection = sort[0].getAttribute('direction');
     }
     if (this.checkboxMode) {
-      var th = hui.build('th',{className:'list_check',parent:headTr});
-      var a = hui.build('a',{className:'list_check_all',parent:th});
-      hui.listen(th,'click',this._checkAll.bind(this));
+      var checkTh = hui.build('th',{className:'list_check',parent:headTr});
+      hui.build('a',{className:'list_check_all',parent:checkTh});
+      hui.listen(checkTh,'click',this._checkAll.bind(this));
     }
     if (movable) {
       hui.build('th',{'class':'hui_list_order_header',parent:headTr});
@@ -348,8 +348,8 @@ hui.ui.List.prototype = {
       var width = headers[i].getAttribute('width');
       var key = headers[i].getAttribute('key');
       var sortable = headers[i].getAttribute('sortable')=='true';
-      if (width && width!='') {
-        th.style.width=width+'%';
+      if (width && width !== '') {
+        th.style.width = width+'%';
       }
       if (headers[i].getAttribute('align')) {
         th.style.textAlign=headers[i].getAttribute('align');
@@ -357,7 +357,7 @@ hui.ui.List.prototype = {
       if (sortable) {
         var self = this;
         th.huiIndex = i;
-        th.onclick=function() {self.sort(this.huiIndex);};
+        hui.on(th, 'click', this._clickHeader, this);
         className+='sortable';
       }
       if (this.sortKey && key==this.sortKey) {
@@ -377,13 +377,13 @@ hui.ui.List.prototype = {
       var cells = rows[i].getElementsByTagName('cell');
       var row = document.createElement('tr');
       row.setAttribute('data-index',i);
-
+      var td;
       if (this.checkboxMode) {
-        var td = hui.build('td',{parent:row,className:'hui_list_checkbox'});
+        td = hui.build('td',{parent:row,className:'hui_list_checkbox'});
         hui.build('a',{className:'hui_list_checkbox',parent:td});
       }
       if (movable) {
-        var td = hui.build('td',{parent:row,className:'hui_list_order'});
+        td = hui.build('td',{parent:row,className:'hui_list_order'});
         hui.build('a',{className:'hui_list_order_handler',parent:td});
       }
 
@@ -391,7 +391,7 @@ hui.ui.List.prototype = {
       var title = rows[i].getAttribute('title');
       var level = rows[i].getAttribute('level');
       for (var j=0; j < cells.length; j++) {
-        var td = document.createElement('td');
+        td = document.createElement('td');
         if (cells[j].getAttribute('wrap')=='false') {
           td.style.whiteSpace='nowrap';
         }
@@ -410,10 +410,10 @@ hui.ui.List.prototype = {
         if (cells[j].getAttribute('dimmed')=='true') {
           td.className='hui_list_dimmed';
         }
-        if (j==0 && level>1) {
+        if (j===0 && level > 1) {
           td.style.paddingLeft = ((parseInt(level)-1)*16+5)+'px';
-        } else if (j==0 && this.options.indent!=null) {
-          td.style.paddingLeft = this.options.indent+'px';
+        } else if (j===0 && this.options.indent) {
+          td.style.paddingLeft = this.options.indent + 'px';
         }
         this._parseCell(cells[j],td);
         row.appendChild(td);
@@ -433,16 +433,7 @@ hui.ui.List.prototype = {
     this.body.appendChild(frag);
     this._setEmpty(rows.length===0);
     if (this.options.rememberSelection) {
-      hui.log('Previous:',previousSelection);
-      var s = [];
-      for (var i=0; i < previousSelection.length; i++) {
-        for (var j=0; j < this.rows.length; j++) {
-          if (this.rows[j].id===previousSelection[i]) {
-            s.push(j);
-          }
-        }
-      }
-      this._changeSelection(s);
+      this._applyPreviousSelection(previousSelection);
     } else {
       this.fire('selectionReset');
       if (hadSelection) {
@@ -451,14 +442,25 @@ hui.ui.List.prototype = {
     }
     this.fireSizeChange();
   },
+  _applyPreviousSelection : function(previousSelection) {
+    var s = [];
+    for (var i=0; i < previousSelection.length; i++) {
+      for (var j=0; j < this.rows.length; j++) {
+        if (this.rows[j].id === previousSelection[i]) {
+          s.push(j);
+        }
+      }
+    }
+    this._changeSelection(s);
+  },
   _parseCell : function(node,cell) {
     var variant = node.getAttribute('variant');
-    if (variant!=null && variant!='') {
+    if (variant) {
       cell = hui.build('div',{parent:cell,className : 'hui_list_cell_'+variant});
     }
-    var icon = node.getAttribute('icon');
-    if (icon!=null && icon!='') {
-      cell.appendChild(hui.ui.createIcon(icon,16));
+    var iconName = node.getAttribute('icon');
+    if (iconName) {
+      cell.appendChild(hui.ui.createIcon(iconName, 16));
       cell = hui.build('div',{parent:cell,style:'margin-left: 21px; padding-top: 1px;'});
     }
     for (var i=0; i < node.childNodes.length; i++) {
@@ -521,7 +523,7 @@ hui.ui.List.prototype = {
         cell.appendChild(icons);
       } else if (hui.dom.isElement(child,'button')) {
         var button = hui.ui.Button.create({text:child.getAttribute('text'),small:true,rounded:true,data:this._getData(child)});
-        button.click(this._buttonClick.bind(this))
+        button.click(this._buttonClick.bind(this));
         cell.appendChild(button.getElement());
       } else if (hui.dom.isElement(child,'wrap')) {
         if (hui.browser.wordbreak) {
@@ -555,7 +557,7 @@ hui.ui.List.prototype = {
   $objectsLoaded : function(data) {
     var hadSelection = this.selected.length>0 || this.checked.length>0;
     this._setError(false);
-    if (data==null) {
+    if (data === null || data === undefined) {
       // NOOP
     } else if (data.constructor == Array) {
       this.setObjects(data);
@@ -570,12 +572,10 @@ hui.ui.List.prototype = {
   },
   /** @private */
   $sourceIsBusy : function() {
-    this._debug('$sourceIsBusy');
     this._setBusy(true);
   },
   /** @private */
   $sourceIsNotBusy : function() {
-    this._debug('$sourceIsNotBusy');
     this._setBusy(false);
   },
   /** @private */
@@ -677,10 +677,7 @@ hui.ui.List.prototype = {
           var a = document.createElement('a');
           a.appendChild(document.createTextNode(index+1));
           a.setAttribute('data-index',index);
-          a.onmousedown = function() {
-            self._onPageClick(this);
-            return false;
-          }
+          hui.on(a, 'mousedown', this._onPageClick, this);
           if (index == self.window.page) {
             a.className='hui_list_selected';
           }
@@ -717,7 +714,7 @@ hui.ui.List.prototype = {
     this._buildNavigation();
     this._buildHeaders(data.headers);
     this._buildRows(data.rows);
-    this._setEmpty(!data.rows || data.rows.length==0);
+    this._setEmpty(!data.rows || data.rows.length === 0);
   },
   /** @private */
   _buildHeaders : function(headers) {
@@ -798,17 +795,17 @@ hui.ui.List.prototype = {
             cell.appendChild(this._createObject(value[j]));
           } else {
             hui.dom.addText(cell,value);
-            title = title==null ? value : title;
+            title = title === null ? value : title;
           }
         }
         row.appendChild(cell);
-      };
+      }
       var info = {id:obj.id,kind:obj.kind,title:title};
       row.dragDropInfo = info;
       this.body.appendChild(row);
       this._addRowBehavior(row,i);
       this.rows.push(obj);
-    };
+    }
   },
   /** @private */
   _createObject : function(object) {
@@ -816,14 +813,14 @@ hui.ui.List.prototype = {
     if (object.icon) {
       node.appendChild(hui.ui.createIcon(object.icon,16));
     }
-    hui.dom.addText(node,object.text || object.name || '')
+    hui.dom.addText(node,object.text || object.name || '');
     return node;
   },
   /** @private */
   _addRowBehavior : function(row,index) {
     var self = this;
     row.onmousedown = function(e) {
-      if (self.busy) {return};
+      if (self.busy) {return;}
       var event = hui.event(e);
       var action = event.findByClass('hui_list_icon_action');
       if (!action) {
@@ -839,23 +836,23 @@ hui.ui.List.prototype = {
           return false;
         }
       }
-    }
+    };
     row.ondblclick = function(e) {
-      if (self.busy) {return};
+      if (self.busy) {return;}
       self._onRowDoubleClick(index,e);
       hui.selection.clear();
       return false;
-    }
+    };
     row.onclick = function(e) {
-      if (self.busy) {return};
+      if (self.busy) {return;}
       self._onRowClick(index,e);
       return false;
-    }
+    };
   },
   _checkAll : function() {
     for (var i=0; i < this.rows.length; i++) {
       hui.array.flip(this.checked,i);
-    };
+    }
     this._drawChecks();
     this._changeSelection([]);
   },
@@ -868,7 +865,7 @@ hui.ui.List.prototype = {
     var rows = this.body.getElementsByTagName('tr');
     for (var i=0; i < rows.length; i++) {
       hui.cls.set(rows[i],'hui_list_checked',hui.array.contains(this.checked,i));
-    };
+    }
   },
   _clearChecked : function() {
     this.checked = [];
@@ -927,7 +924,8 @@ hui.ui.List.prototype = {
     }
   },
   /** @private */
-  _onPageClick : function(tag) {
+  _onPageClick : function(e) {
+    var tag = hui.event(e).getElement();
     var index = parseInt(tag.getAttribute('data-index'));
     this.window.page = index;
     hui.ui.firePropertyChange(this,'window',this.window);
@@ -935,6 +933,6 @@ hui.ui.List.prototype = {
     var as = this.windowPageBody.getElementsByTagName('a');
     for (var i = as.length - 1; i >= 0; i--){
       as[i].className = as[i]==tag ? 'hui_list_selected' : '';
-    };
+    }
   }
 };

@@ -4,7 +4,7 @@ hui.test = {
   busy : 0,
   run : function(recipe) {
     this.errorHandler = hui.listen(window,'error',function(e) {
-      hui.log(e)
+      hui.log(e);
       hui.ui.showMessage({text:'Error ('+e.message+') ['+e.lineno+']',icon:'common/warning'});
       throw e;
     });
@@ -24,7 +24,9 @@ hui.test = {
       recipe[num]();
       this._next(num+1,recipe);
     } else {
-      window.setTimeout(function(){this._next(num+1,recipe)}.bind(this),recipe[num]);
+      window.setTimeout(function(){
+        this._next(num + 1, recipe);
+      }.bind(this), recipe[num]);
     }
   },
   _stop : function() {
@@ -42,14 +44,14 @@ hui.test = {
   click : function(node,func) {
     this.busy++;
     Syn.click(node,function() {
-      if (func) {func()};
+      if (func) {func();}
       this.busy--;
     }.bind(this));
   },
   type : function(node,text,func) {
     this.busy++;
     Syn.type(node,text,function() {
-      if (func) {func()};
+      if (func) {func();}
       this.busy--;
     }.bind(this));
   },
@@ -101,13 +103,13 @@ hui.test = {
       return hui.test.assertNotEquals(obj1,obj2,msg);
     },
     'false' : function(value,msg) {
-      return hui.test.assertFalse(value,msg)
+      return hui.test.assertFalse(value,msg);
     },
     'true' : function(value,msg) {
-      return hui.test.assertTrue(value,msg)
+      return hui.test.assertTrue(value,msg);
     },
     'defined' : function(value,msg) {
-      return hui.test.assertDefined(value,msg)
+      return hui.test.assertDefined(value,msg);
     }
   },
 

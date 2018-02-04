@@ -21,7 +21,7 @@ hui.ui.Tiles.prototype = {
     for (var i=0; i < this.tiles.length; i++) {
       var tile = this.tiles[i];
       this._bounce(tile);
-    };
+    }
   },
   _bounce : function(tile) {
     hui.effect.fadeIn({element:tile,delay:Math.random()*500});
@@ -39,7 +39,7 @@ hui.ui.Tile = function(options) {
     height : this.element.style.height,
     top : this.element.style.top,
     left : this.element.style.left
-  }
+  };
   this._addBehavior();
 };
 
@@ -53,7 +53,7 @@ hui.ui.Tile.prototype = {
         var key = e.element.getAttribute('data-hui-key');
         this.fire('clickIcon',{key:key,tile:this});
       }
-    }.bind(this))
+    }.bind(this));
   },
   isFullScreen : function() {
     return this.fullScreen;
@@ -66,7 +66,7 @@ hui.ui.Tile.prototype = {
         duration : 1000,
         ease : hui.ease.elastic,
         onComplete : function() {
-          hui.ui.reLayout()
+          hui.ui.reLayout();
         }
       });
     } else {
@@ -78,7 +78,7 @@ hui.ui.Tile.prototype = {
         duration : 1000,
         ease : hui.ease.elastic,
         onComplete : function() {
-          hui.ui.reLayout()
+          hui.ui.reLayout();
         }
       });
     }

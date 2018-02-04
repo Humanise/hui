@@ -161,9 +161,9 @@ hui.ui.NumberField.prototype = {
     }
     if (!this.sliderPanel) {
       this.sliderPanel = hui.ui.BoundPanel.create({variant:'light'});
-      this.slider = hui.ui.Slider.create({width:200})
+      this.slider = hui.ui.Slider.create({width:200});
       this.slider.element.style.margin='0 3px';
-      this.slider.listen({$valueChanged : this._onSliderChange.bind(this)})
+      this.slider.listen({$valueChanged : this._onSliderChange.bind(this)});
       this.sliderPanel.add(this.slider);
     }
     this.sliderPanel.position({element:this.element,position:'vertical'});
@@ -171,7 +171,7 @@ hui.ui.NumberField.prototype = {
   },
   _updateSlider : function() {
     if (this.slider) {
-      this.slider.setValue((this.value -this.options.min) / (this.options.max-this.options.min))
+      this.slider.setValue((this.value -this.options.min) / (this.options.max-this.options.min));
     }
   },
   /** @private */

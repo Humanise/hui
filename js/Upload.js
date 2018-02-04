@@ -72,7 +72,7 @@ hui.ui.Upload.prototype = {
       if (this.items[i]) {
         this.items[i].destroy();
       }
-    };
+    }
     this.items = [];
     this.itemContainer.style.display='none';
     this.status.style.display='none';
@@ -120,7 +120,7 @@ hui.ui.Upload.prototype = {
           break;
         }
       }
-    };
+    }
     if (!this.impl) {
       hui.log('No implementation found, using frame');
       this.impl = new hui.ui.Upload.Frame(this);
@@ -128,7 +128,7 @@ hui.ui.Upload.prototype = {
   },
   _addBehavior : function() {
     if (!this.impl.initialize) {
-      alert(this.impl)
+      alert(this.impl);
       return;
     }
     hui.ui.onReady(function() {
@@ -173,12 +173,12 @@ hui.ui.Upload.prototype = {
         for (var i=0; i < files.length; i++) {
           var file = files[i];
           this._transferFile(file);
-        };
+        }
       }
     }
   },
   _transferFile : function(file) {
-    hui.log(file)
+    hui.log(file);
     var item = this.$_addItem({name:file.name,size:file.size});
     hui.request({
       method : 'post',
@@ -193,7 +193,7 @@ hui.ui.Upload.prototype = {
       },
       $abort : function() {
         this.$_itemFail(item);
-        item.setError('Afbrudt')
+        item.setError('Afbrudt');
       }.bind(this),
       $success : function(t) {
         hui.log('transferFile: success');
@@ -204,7 +204,7 @@ hui.ui.Upload.prototype = {
         hui.log('transferFile: fail');
         this.$_itemFail(item);
       }.bind(this)
-    })
+    });
   },
 
   /////////////////////// Implementation ///////////////////////////
@@ -226,10 +226,10 @@ hui.ui.Upload.prototype = {
     item.setSuccess();
     this.fire('uploadDidComplete',item.getInfo());
     this._checkQueue();
-    var move = first!=null || this.items.length>1;
-    move = move && item.element.nextSibling!=null;
+    var move = first !== null || this.items.length>1;
+    move = move && !!item.element.nextSibling;
 
-    if (move && (first==null || first!=item.element.nextSibling)) {
+    if (move && (first === null || first != item.element.nextSibling)) {
       var parent = item.element.parentNode;
       var height = item.element.clientHeight;
       hui.animate({node:item.element,css:{height:'0px'},ease:hui.ease.slowFastSlow,duration:500,onComplete:function() {
@@ -292,7 +292,7 @@ hui.ui.Upload.prototype = {
       if (!this.items[i].isFinished()) {
         return;
       }
-    };
+    }
     this.busy = false;
     this._setWidgetEnabled(true);
     this.fire('uploadDidCompleteQueue');
@@ -323,7 +323,7 @@ hui.ui.Upload.prototype = {
     }
     return item;
   }
-}
+};
 
 
 
@@ -350,7 +350,7 @@ hui.ui.Upload.Item = function(info,rearrange) {
   }
   this.finished = false;
   this.error = false;
-}
+};
 
 hui.ui.Upload.Item.prototype = {
   getInfo : function() {
@@ -398,7 +398,7 @@ hui.ui.Upload.Item.prototype = {
       this._status = text;
     }
   }
-}
+};
 
 //// Util ////
 
@@ -425,7 +425,7 @@ hui.ui.Upload._buildForm = function(widget) {
     }
   }
   return form;
-}
+};
 
 
 
@@ -445,11 +445,11 @@ hui.ui.Upload._buildForm = function(widget) {
  */
 hui.ui.Upload.Frame = function(parent) {
   this.parent = parent;
-}
+};
 
 hui.ui.Upload.Frame.support = function() {
   return {supported:true,multiple:false};
-}
+};
 
 hui.ui.Upload.Frame.prototype = {
 
@@ -459,16 +459,17 @@ hui.ui.Upload.Frame.prototype = {
     var form = this.form = hui.ui.Upload._buildForm(this.parent);
     var frameName = form.getAttribute('target');
 
-    var iframe = this.iframe = hui.build(
-            'iframe',{
-                name : frameName,
-                id : frameName,
-                src : hui.ui.getURL('html/blank.html'),
-                style : 'display:none'
-            });
+    var iframe = this.iframe = hui.build('iframe', {
+      name : frameName,
+      id : frameName,
+      src : hui.ui.getURL('html/blank.html'),
+      style : 'display:none'
+    });
     this.parent.element.appendChild(iframe);
-        var self = this;
-    hui.listen(iframe,'load',function() {self._uploadComplete()});
+    var self = this;
+    hui.listen(iframe,'load',function() {
+      self._uploadComplete();
+    });
 
     this.fileInput = hui.build('input',{'type':'file','name':options.fieldName});
     hui.listen(this.fileInput,'change',this._onSubmit.bind(this));
@@ -486,7 +487,7 @@ hui.ui.Upload.Frame.prototype = {
         existing[i].value = value;
         return;
       }
-    };
+    }
     hui.build('input',{'type':'hidden','name':name,'value':value,parent:this.form});
   },
 
@@ -546,7 +547,7 @@ hui.ui.Upload.Frame.prototype = {
     var doc = hui.frame.getDocument(this.iframe);
     return doc.body.innerHTML.indexOf('SUCCESS')!==-1;
   }
-}
+};
 
 //////////////////// HTML5 //////////////////////
 
@@ -557,7 +558,7 @@ hui.ui.Upload.Frame.prototype = {
  */
 hui.ui.Upload.HTML5 = function(parent) {
   this.parent = parent;
-}
+};
 
 hui.ui.Upload.HTML5.support = function() {
   var supported = window.File!==undefined && (hui.browser.webkit || hui.browser.gecko || hui.browser.msie10 || hui.browser.msie11);//(window.File!==undefined && window.FileReader!==undefined && window.FileList!==undefined && window.Blob!==undefined);
@@ -567,7 +568,7 @@ hui.ui.Upload.HTML5.support = function() {
     supported : supported,
     multiple : true
   };
-}
+};
 
 hui.ui.Upload.HTML5.prototype = {
   initialize : function() {

@@ -682,8 +682,8 @@
       url:'<xsl:value-of select="@url"/>',
       <xsl:if test="@source">source:<xsl:value-of select="@source"/>,</xsl:if>
       <xsl:if test="@selectable">selectable:<xsl:value-of select="@selectable"/>,</xsl:if>
-      state:'<xsl:value-of select="@state"/>',
-      windowSize:'<xsl:value-of select="gui:window/@size"/>'
+      state:'<xsl:value-of select="@state"/>'
+      <xsl:if test="gui:window/@size">,windowSize:<xsl:value-of select="gui:window/@size"/></xsl:if>
       <xsl:if test="@drop-files='true'">,dropFiles:true</xsl:if>
       <xsl:if test="@indent">,indent:<xsl:value-of select="@indent"/></xsl:if>
       <xsl:if test="@remember='true'">,rememberSelection:true</xsl:if>
@@ -1297,7 +1297,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
         </xsl:if>
       </xsl:attribute>
       <xsl:for-each select="gui:item | gui:option"> <!-- TODO item is deprecated -->
-        <a href="javascript:void(0)" rel="{@value}">
+        <a href="#" rel="{@value}">
           <xsl:if test="@value=../@value">
             <xsl:attribute name="class">hui_segmented_selected</xsl:attribute>
           </xsl:if>

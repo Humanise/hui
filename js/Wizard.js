@@ -27,7 +27,7 @@ hui.ui.Wizard.prototype = {
     hui.each(this.anchors,function(node,i) {
       hui.listen(node,'mousedown',function(e) {
         hui.stop(e);
-        self.goToStep(i)
+        self.goToStep(i);
       });
       hui.listen(node,'click',function(e) {
         hui.stop(e);
@@ -54,7 +54,7 @@ hui.ui.Wizard.prototype = {
     this.fire('stepChanged',this.selected);
   },
   isFirst : function() {
-    return this.selected==0;
+    return this.selected === 0;
   },
   isLast : function() {
     return this.selected==this.steps.length-1;

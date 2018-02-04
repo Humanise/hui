@@ -6,8 +6,8 @@
  */
 hui.ui.MediaSimulator = function(options) {
   hui.ui.Component.call(this, options);
-  this.base = hui.find('.hui_mediasimulator_base',this.element)
-  this.left = hui.find('.hui_mediasimulator_base',this.element)
+  this.base = hui.find('.hui_mediasimulator_base',this.element);
+  this.left = hui.find('.hui_mediasimulator_base',this.element);
   this._attach();
 };
 
@@ -57,10 +57,10 @@ hui.ui.MediaSimulator.prototype = {
   $$childSizeChanged : function() {
   },
   $$layout : function() {
-    hui.log('Layout changed')
+    hui.log('Layout changed');
   },
   $$draw : function() {
-    hui.log('Draw!')
+    hui.log('Draw!');
   }
 };
 

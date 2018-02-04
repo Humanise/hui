@@ -11,7 +11,7 @@ hui.ui.SearchField = function(options) {
   this._addBehavior();
 
   if (this.value!=='') {
-    this._updateClass()
+    this._updateClass();
   }
 };
 
@@ -30,19 +30,23 @@ hui.ui.SearchField.prototype = {
     hui.listen(this.field,'keyup',this._onKeyUp.bind(this));
     var reset = hui.get.firstByTag(this.element,'a');
     reset.tabIndex=-1;
+    var focus;
     if (!hui.browser.ipad) {
-      var focus = function() {self.field.focus();self.field.select()};
+      focus = function() {
+        self.field.focus();
+        self.field.select();
+      };
       hui.listen(this.element,'mousedown',focus);
       hui.listen(this.element,'mouseup',focus);
       hui.listen(hui.get.firstByTag(this.element,'em'),'mousedown',focus);
     } else {
-      var focus = function() {self.field.focus();};
+      focus = function() {self.field.focus();};
       hui.listen(hui.get.firstByTag(this.element,'em'),'click',focus);
     }
     hui.listen(reset,'mousedown',function(e) {
       hui.stop(e);
       self.reset();
-      focus()
+      focus();
     });
     hui.listen(this.field,'focus',this._onFocus.bind(this));
     hui.listen(this.field,'blur',this._onBlur.bind(this));
@@ -52,7 +56,7 @@ hui.ui.SearchField.prototype = {
     this.focused = true;
     this._updateClass();
     if (this.options.expandedWidth > 0) {
-      if (this.initialWidth==null) {
+      if (this.initialWidth === null) {
         this.initialWidth = parseInt(hui.style.get(this.element,'width'));
       }
       hui.animate(this.element,'width',this.options.expandedWidth+'px',500,{ease:hui.ease.slowFastSlow});
@@ -83,7 +87,7 @@ hui.ui.SearchField.prototype = {
     return this.field.value;
   },
   isEmpty : function() {
-    return this.field.value=='';
+    return this.field.value === '';
   },
   isBlank : function() {
     return hui.isBlank(this.field.value);
@@ -101,8 +105,8 @@ hui.ui.SearchField.prototype = {
     if (this.focused) {
       className+=' hui_searchfield-focus';
     }
-    if (this.value!='') {
-      className+=' hui_searchfield-dirty';
+    if (this.value !== '') {
+      className += ' hui_searchfield-dirty';
     }
     this.element.className=className;
   },

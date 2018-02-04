@@ -29,7 +29,7 @@ hui.ui.Overflow.create = function(options) {
 
 hui.ui.Overflow.prototype = {
   _checkShadows : function() {
-    if (hui.browser.msie) {return}
+    if (hui.browser.msie) {return;}
     if (this.element.scrollTop > 0) {
       this.topShadow.style.display = 'block';
       this.topShadow.style.top = this.element.scrollTop+'px';
@@ -65,7 +65,7 @@ hui.ui.Overflow.prototype = {
   $$layout : function() {
     if (!this.options.dynamic) {
       this._checkShadows();
-      return
+      return;
     }
     this.element.style.height = hui.position.getRemainingHeight(this.element)+'px';
     this._checkShadows();

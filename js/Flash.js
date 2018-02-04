@@ -20,7 +20,7 @@ hui.ui.Flash = {
     // NS/Opera version >= 3 check for Flash plugin in plugin array
     var flashVer = null;
 
-    if (navigator.plugins != null && navigator.plugins.length > 0) {
+    if (navigator.plugins && navigator.plugins.length > 0) {
       if (navigator.plugins["Shockwave Flash 2.0"] || navigator.plugins["Shockwave Flash"]) {
         var swVer2 = navigator.plugins["Shockwave Flash 2.0"] ? " 2.0" : "";
         var flashDescription = navigator.plugins["Shockwave Flash" + swVer2].description;
@@ -29,7 +29,7 @@ hui.ui.Flash = {
         var versionMajor = tempArrayMajor[0];
         var versionMinor = tempArrayMajor[1];
         var versionRevision = descArray[3];
-        if (versionRevision == "") {
+        if (versionRevision === "") {
           versionRevision = descArray[4];
         }
         if (versionRevision[0] == "d") {
@@ -67,8 +67,7 @@ hui.ui.Flash = {
       // version will be set for 7.X or greater players
       axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.7");
       version = axo.GetVariable("$version");
-    } catch (e) {
-    }
+    } catch (ignore) {}
 
     if (!version)
     {
@@ -89,7 +88,7 @@ hui.ui.Flash = {
         // safe to call for 6.0r47 or greater
         version = axo.GetVariable("$version");
 
-      } catch (e) {
+      } catch (ignore) {
       }
     }
 
@@ -99,7 +98,7 @@ hui.ui.Flash = {
         // version will be set for 4.X or 5.X player
         axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.3");
         version = axo.GetVariable("$version");
-      } catch (e) {
+      } catch (ignore) {
       }
     }
 
@@ -109,7 +108,7 @@ hui.ui.Flash = {
         // version will be set for 3.X player
         axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.3");
         version = "WIN 3,0,18,0";
-      } catch (e) {
+      } catch (ignore) {
       }
     }
 
@@ -119,13 +118,11 @@ hui.ui.Flash = {
         // version will be set for 2.X player
         axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
         version = "WIN 2,0,0,11";
-      } catch (e) {
+      } catch (ignore) {
         version = -1;
       }
     }
 
     return version;
   }
-}
-
-/* EOF */
+};

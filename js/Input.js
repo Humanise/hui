@@ -42,7 +42,7 @@ hui.ui.Input.prototype = {
   },
   _onFocus : function() {
     var e = this.element,p = this.options.placeholderElement;
-    if (p && e.value=='') {
+    if (p && e.value === '') {
       hui.style.set(p,{opacity:0,display:'none'});
     }
   },

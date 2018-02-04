@@ -37,8 +37,8 @@ hui.ui.Structure.prototype = {
     var b = hui.get.firstByClass(this.element,'hui_structure_bottom');
     var m = hui.get.firstByClass(this.element,'hui_structure_middle');
     if (m) {
-      m.style.top = (t ? t.clientHeight+2 : 0)+'px'
-      m.style.bottom = (b ? b.clientHeight+2 : 0)+'px'
+      m.style.top = (t ? t.clientHeight+2 : 0)+'px';
+      m.style.bottom = (b ? b.clientHeight+2 : 0)+'px';
     }
   }
 };

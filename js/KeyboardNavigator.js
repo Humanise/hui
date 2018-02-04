@@ -70,7 +70,7 @@ hui.ui.KeyboardNavigator.prototype = {
     hui.cls.add(this.listNodes[this.index],'hui_keyboardnavigator_selected');
   },
   _selectNext : function() {
-    if (this.items.length==0) {
+    if (this.items.length === 0) {
       return;
     }
     if (this.index===null) {

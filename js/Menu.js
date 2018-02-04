@@ -23,7 +23,7 @@ hui.ui.Menu.create = function(options) {
 hui.ui.Menu.prototype = {
   _addBehavior : function() {
     this.hider = function() {
-      this.hide()
+      this.hide();
       this.fire('cancel');
     }.bind(this);
     if (this.options.autoHide) {
@@ -63,18 +63,18 @@ hui.ui.Menu.prototype = {
           self.hide();
           self.fire('select',value);
         }
-      })
+      });
     }
     this.element.appendChild(element);
   },
   addItems : function(items) {
     for (var i=0; i < items.length; i++) {
-      if (items[i]==null) {
+      if (items[i] === null) {
         this.addDivider();
       } else {
         this.addItem(items[i]);
       }
-    };
+    }
   },
   getValue : function() {
     return this.value;
@@ -125,7 +125,7 @@ hui.ui.Menu.prototype = {
     }
   },
   hide : function(options) {
-    if (!this.visible) {return};
+    if (!this.visible) {return;}
     if (true || options && options.immediate) {
       this.element.style.display='none';
     } else {
@@ -138,7 +138,7 @@ hui.ui.Menu.prototype = {
     this._removeHider();
     for (var i=0; i < this.subMenus.length; i++) {
       this.subMenus[i].hide();
-    };
+    }
     this.visible = false;
     this.fire('hide');
   },
@@ -148,7 +148,7 @@ hui.ui.Menu.prototype = {
   _isSubMenuVisible : function() {
     for (var i=0; i < this.subMenus.length; i++) {
       if (this.subMenus[i].visible) return true;
-    };
+    }
     return false;
   },
   _addHider : function() {

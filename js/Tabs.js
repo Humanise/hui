@@ -15,7 +15,7 @@ hui.ui.Tabs = function(o) {
       hui.get.firstByTag(nodes[i],'a').removeAttribute('href');
     }
     this.tabs.push(nodes[i]);
-  };
+  }
   this.contents = hui.get.byClass(this.element,'hui_tabs_tab');
   this.addBehavior();
   hui.ui.extend(this);
@@ -41,13 +41,13 @@ hui.ui.Tabs.prototype = {
   addBehavior : function() {
     for (var i=0; i < this.tabs.length; i++) {
       this.addTabBehavior(this.tabs[i],i);
-    };
+    }
   },
   /** @private */
   addTabBehavior : function(tab,index) {
     hui.listen(tab,'click',function() {
       this.tabWasClicked(index);
-    }.bind(this))
+    }.bind(this));
   },
   /** @private */
   registerTab : function(obj) {
@@ -65,7 +65,7 @@ hui.ui.Tabs.prototype = {
     for (var i=0; i < this.tabs.length; i++) {
       hui.cls.set(this.tabs[i],'hui_tabs_selected',i==this.activeTab);
       this.contents[i].style.display = i==this.activeTab ? 'block' : 'none';
-    };
+    }
   },
   createTab : function(options) {
     options = options || {};

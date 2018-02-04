@@ -32,10 +32,10 @@
         if (query) {
           self.editQuery(parseInt(query.getAttribute('data-index'), 10));
         }
-      })
+      });
       var button = hui.ui.Button.create({text:'Add', small:true});
       this.element.appendChild(button.element);
-      button.listen({$click:this.add.bind(this)})
+      button.listen({$click:this.add.bind(this)});
     },
     editQuery : function(index) {
       var query = this.value.queries[index];
@@ -67,7 +67,7 @@
           type : 'StyleLength', label: 'Max width:', options : {key:'max-width', value:''}
         },{
           type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
-        }])
+        }]);
         overflow.add(hui.build('div',{text:component.description}));
         form.setValues(self._getComponentValues(query, component));
         overflow.add(form);
@@ -81,27 +81,29 @@
                 rule.value = values[rule.name];
                 values[rule.name] = undefined;
               }
-            })
+            });
             hui.each(values,function(key,value) {
               // TODO We filter out unnamed (could be text filed inside color or other stuff)
               if (key.indexOf('unnamed')!==0 && !hui.isBlank(value)) {
                 rules.push({name:key, value:value});
               }
-            })
+            });
             self.fireValueChange();
           }
-        })
-      })
+        });
+      });
       win.show();
     },
     _getComponentValues : function(query,component) {
       var values = {};
       if (query.components) {
-        var found = query.components.find(function(other) {return other.name == component.name});
+        var found = query.components.find(function(other) {
+          return other.name == component.name;
+        });
         if (found) {
           found.rules.forEach(function(rule) {
             values[rule.name] = rule.value;
-          })
+          });
         }
       }
       return values;
@@ -126,7 +128,7 @@
         }
       }
       var rules = [];
-      query.components.push({name:params.component, rules:rules})
+      query.components.push({name:params.component, rules:rules});
       return rules;
     },
     draw : function() {
@@ -134,7 +136,7 @@
       if (this.value && this.value.queries) {
         for (var i = 0; i < this.value.queries.length; i++) {
           var query = this.value.queries[i];
-          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.nodes.list, 'data-index':i})
+          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.nodes.list, 'data-index':i});
         }
       }
     },
@@ -148,7 +150,7 @@
         }
       }
       if (!text.length) {
-        text.push('Anything')
+        text.push('Anything');
       }
       return text.join(', ');
     },

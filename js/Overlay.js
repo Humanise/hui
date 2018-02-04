@@ -59,12 +59,12 @@ hui.ui.Overlay.prototype = {
   hideIcons : function(keys) {
     for (var i=0; i < keys.length; i++) {
       this.icons[keys[i]].style.display='none';
-    };
+    }
   },
   showIcons : function(keys) {
     for (var i=0; i < keys.length; i++) {
       this.icons[keys[i]].style.display='';
-    };
+    }
   },
   _iconWasClicked : function(key,e) {
     hui.ui.callDelegates(this,'iconWasClicked',key,e);
@@ -103,11 +103,11 @@ hui.ui.Overlay.prototype = {
           hui.unListen(document.body,'mousemove',this._hider);
           hui.cls.remove(element,'hui_overlay_bound');
           this.hide();
-        } catch (e) {
+        } catch (ignore) {
           hui.log('unable to stop listening: document='+document);
         }
       }
-    }.bind(this)
+    }.bind(this);
     hui.listen(document.body,'mousemove',this._hider);
   },
   show : function(options) {
@@ -117,8 +117,8 @@ hui.ui.Overlay.prototype = {
     }
     if (options.element) {
       hui.position.place({
-        source : {element:this.element,vertical:0,horizontal:.5},
-        target : {element:options.element,vertical:.5,horizontal:.5},
+        source : {element:this.element,vertical:0,horizontal:0.5},
+        target : {element:options.element,vertical:0.5,horizontal:0.5},
         insideViewPort : true,
         viewPortMargin : 9
       });

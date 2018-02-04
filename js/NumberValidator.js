@@ -1,6 +1,6 @@
 /** @constructor */
 hui.ui.NumberValidator = function(options) {
-  hui.override({allowNull:false,min:0,max:10},options)
+  hui.override({allowNull:false,min:0,max:10},options);
   this.min = options.min;
   this.max = options.max;
   this.allowNull = options.allowNull;

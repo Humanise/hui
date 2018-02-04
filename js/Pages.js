@@ -31,15 +31,15 @@ hui.ui.Pages.prototype = {
     this.pages = hui.get.children(this.element);
   },
   next : function() {
-    if (this.expanded) {return}
+    if (this.expanded) {return;}
     var current = this.pages[this.index];
     this.index = this.pages.length <= this.index+1 ? 0 : this.index+1;
     this._transition({hide:current,show:this.pages[this.index]});
   },
   previous : function() {
-    if (this.expanded) {return}
+    if (this.expanded) {return;}
     var current = this.pages[this.index];
-    this.index = this.index == 0 ? this.pages.length-1 : this.index-1;
+    this.index = this.index === 0 ? this.pages.length-1 : this.index-1;
     this._transition({hide:current,show:this.pages[this.index]});
   },
   goTo : function(key) {
@@ -50,7 +50,7 @@ hui.ui.Pages.prototype = {
         this._transition({hide:current,show:this.pages[i]});
         return;
       }
-    };
+    }
   },
   getPageKey : function() {
     return this.pages[this.index].getAttribute('data-key');
@@ -72,7 +72,7 @@ hui.ui.Pages.prototype = {
           'float' : ''
         });
       }
-    };
+    }
     hui.ui.callVisible(this);
     this.expanded = !this.expanded;
   },
@@ -106,7 +106,7 @@ hui.ui.Pages.prototype = {
                 css : {height:show.offsetHeight+'px'},
                 duration : duration,
                 ease : hui.ease.slowFastSlow
-            })
+            });
     }
     hui.ui.reLayout();
 
@@ -117,7 +117,7 @@ hui.ui.Pages.prototype = {
                 hui.style.set(hide,{width : '',position:'',height:''});
                 window.setTimeout(function() {
                     hide.style.display = 'none';
-                })
+                });
             }
         });
 

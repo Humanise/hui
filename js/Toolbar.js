@@ -32,7 +32,7 @@ hui.ui.Toolbar.prototype = {
       if (widget.setSelected) {
         widget.setSelected(widget.key==key);
       }
-    };
+    }
   },
   getByKey : function(key) {
     var desc = hui.ui.getDescendants(this);
@@ -41,7 +41,7 @@ hui.ui.Toolbar.prototype = {
       if (widget.key==key) {
         return widget;
       }
-    };
+    }
   }
 };
 
@@ -80,7 +80,7 @@ hui.ui.Toolbar.Icon.prototype = {
     var self = this;
     this.element.onclick = function() {
       self._click();
-    }
+    };
   },
   /** Sets wether the icon should be enabled */
   setEnabled : function(enabled) {

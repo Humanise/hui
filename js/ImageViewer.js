@@ -502,7 +502,11 @@ hui.ui.ImageViewer.prototype = {
     var guiLoader = new hui.Preloader();
     guiLoader.addImages(hui.ui.getURL('gfx/imageviewer_controls.png'));
     var self = this;
-    guiLoader.setDelegate({allImagesDidLoad:function() {self._preloadImages()}});
+    guiLoader.setDelegate({
+      allImagesDidLoad: function() {
+        self._preloadImages();
+      }
+    });
     guiLoader.load();
   },
   _preloadImages : function() {

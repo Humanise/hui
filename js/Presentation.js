@@ -13,14 +13,16 @@
     this.items = [];
     this.images = [];
     hui.cls.add(this.element,'hui-is-light');
-    this.nativeScroll = !!navigator.userAgent.match('iPhone|iPad|iPod|Safari') && !window['chrome'] && hui.browser.webkitVersion > 603;
+    this.nativeScroll = !!navigator.userAgent.match('iPhone|iPad|iPod|Safari') && !window.chrome && hui.browser.webkitVersion > 603;
     //this.nativeScroll = false;
     this._attach();
   };
 
   hui.ui.Presentation.create = function(options) {
     options = options || {};
-    var makeIcon = function(body, size) {return '<svg class="' + ns + '_icon" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '">' + body + '</svg>';}
+    var makeIcon = function(body, size) {
+      return '<svg class="' + ns + '_icon" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '">' + body + '</svg>';
+    };
     var close = makeIcon(
       '<line class="' + ns + '_line" x1="1" y1="1" x2="31" y2="31"/>' +
       '<line class="' + ns + '_line" x1="1" y1="31" x2="31" y2="1"/>'
@@ -70,7 +72,7 @@
       }
     },
     close : function(e) {
-      e && hui.event(e).stop();
+      if (e) hui.event(e).stop();
       hui.cls.remove(this.element,'hui-is-open');
       this._lockScroll(false);
     },
@@ -82,8 +84,8 @@
       }.bind(this));
       hui.listen(this.element,'touchmove',function(e) {
         if (e.touches && e.touches.length == 2) {
-          if (x===undefined) {x = e.pageX};
-          if (y===undefined) {y = e.pageY};
+          if (x===undefined) {x = e.pageX;}
+          if (y===undefined) {y = e.pageY;}
           var img = this.images[this.index];
           var newX = e.pageX - x + img.x;
           var newY = e.pageY - y + img.y;
@@ -114,7 +116,7 @@
             img.y = img.newY;
             img.newY = undefined;
           }
-        })
+        });
         if (!moved && hui.dom.isDescendantOrSelf(e.target, this.nodes.viewer)) {
           var img = this.images[this.index];
           if (img.scale != 1) {
@@ -122,9 +124,9 @@
             img.node.style.transform = 'scale(1) translate(0px,0px)';
             setTimeout(function() {
               img.node.style.transition = '';
-            },350)
+            },350);
             img.scale = 1;
-            img.x = img.y = 0
+            img.x = img.y = 0;
           } else {
             this._toggleThumbs();
           }
@@ -135,7 +137,7 @@
         var width = this.nodes.viewer.clientWidth;
         var scrl = this.nodes.viewer.scrollLeft;
         this.index = Math.round(scrl / width);
-      }.bind(this)
+      }.bind(this);
       hui.listen(this.nodes.viewer,'scroll',function(e) {
         //console.log('Scroll', e);
         clearTimeout(timer);
@@ -147,7 +149,7 @@
       if (lock) {
         this._originalScroll = document.body.scrollTop;
       }
-      lock = lock ? 'hidden' : ''
+      lock = lock ? 'hidden' : '';
       document.body.parentNode.style.overflow = lock;
       document.body.style.overflow = lock;
       if (!lock) {
@@ -158,7 +160,7 @@
      * @param {Boolean} user If it is initiated by the user
      */
     previous : function(e) {
-      e && hui.stop(e);
+      if (e) hui.stop(e);
       this.index--;
       var num = 1;
       if (this.index < 0) {
@@ -171,7 +173,7 @@
      * @param {Boolean} user If it is initiated by the user
      */
     next : function(e) {
-      e && hui.stop(e);
+      if (e) hui.stop(e);
       this.index++;
       var num = 1;
       if (this.index==this.items.length) {
@@ -212,17 +214,17 @@
       this.nodes.thumbs.innerHTML = '';
       for (var i = 0; i < this.items.length; i++) {
         var url = hui.ui.callDelegates(this,'getPreview',{item: this.items[i], index: i});
-        var item = hui.build('div',{parent : this.nodes.items, 'class' : ns+'_item'})
-        var image = hui.build('div',{parent : item, 'class' : ns+'_image'})
-        var content = hui.build('div',{parent : image, 'class' : ns+'_image_content'})
-        var thumb = hui.build('div',{parent : this.nodes.thumbs, 'class' : ns+'_thumbnail', data:i})
+        var item = hui.build('div',{parent : this.nodes.items, 'class' : ns+'_item'});
+        var image = hui.build('div',{parent : item, 'class' : ns+'_image'});
+        var content = hui.build('div',{parent : image, 'class' : ns+'_image_content'});
+        var thumb = hui.build('div',{parent : this.nodes.thumbs, 'class' : ns+'_thumbnail', data:i});
         if (url) {
           content.style.backgroundImage = 'url(' + url + ')';
           thumb.style.backgroundImage = 'url(' + url + ')';
         }
         this.images.push({node:content,scale:1,x:0,y:0});
       }
-      hui.cls.set(this.element, 'hui-is-multiple', this.items.length > 1)
+      hui.cls.set(this.element, 'hui-is-multiple', this.items.length > 1);
       this._updateImages();
     },
     _updateImages : function() {
@@ -237,10 +239,10 @@
           node.style.backgroundImage = "url('" + url + "')";
         };
         img.src = url;
-      }
+      };
       var ratio = window.devicePixelRatio > 1 ? 2 : 1;
       for (var i = 0; i < this.items.length; i++) {
-        var item = this.items[i]
+        var item = this.items[i];
         var url = hui.ui.callDelegates(this,'getImage',{item: item, width: width * ratio, height: height * ratio});
         load(url, this.images[i].node);
         //images[i].style.backgroundImage = "url('" + url + "')";
@@ -248,11 +250,6 @@
         load(thmbUrl, thumbs[i]);
         //thumbs[i].style.backgroundImage = "url('" + url + "')";
       }
-    },
-    _load : function(url,callback) {
-      var img = new Image();
-      img.onload = callback;
-      img.url;
     },
     _calculateSize : function() {
       this.width = this.nodes.viewer.clientWidth;
@@ -322,7 +319,7 @@
           this._goToImage(true,num,false,true, Math.abs(speed));
         }.bind(this),
         $notMoved : this._toggleThumbs.bind(this)
-      })
+      });
     },
     _toggleThumbs : function() {
       if (this.items.length > 1) {
@@ -348,12 +345,12 @@
             property: 'scrollLeft',
             value: scrl,
             ease: hui.ease.fastSlow
-          })
+          });
         } else {
           if (hui.browser.webkitVersion < 603) {
             setTimeout(function() {
               viewer.scrollTo(scrl,0);
-            })
+            });
           } else {
             this.nodes.viewer.scrollLeft = scrl;
           }
@@ -368,13 +365,13 @@
         if (drag) {
           duration = 300 / speed;
           ease = hui.ease.quadOut;
-          duration = Math.min(800,Math.max(200, duration))
+          duration = Math.min(800,Math.max(200, duration));
         }
         else if (num > 1) {
-          duration = Math.min(num * 500, 2000)
+          duration = Math.min(num * 500, 2000);
           ease = hui.ease.fastSlow;
         } else {
-          var end = this.index == 0 || this.index == this.items.length - 1;
+          var end = this.index === 0 || this.index === this.items.length - 1;
           ease = (end ? hui.ease.elastic : hui.ease.fastSlow);
           if (!user) {
             ease = hui.ease.fastSlow;

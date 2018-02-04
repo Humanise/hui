@@ -8,7 +8,7 @@ hui.onReady(function() {
       new hui.ui[type](options);
     }
   }
-})
+});
 
 hui.onReady(function() {
   var configs = document.querySelectorAll('*[data-hui]');
@@ -32,7 +32,7 @@ hui.onReady(function() {
       new hui.ui[type](options);
     }
   }
-})
+});
 
 hui.onReady(function() {
   var configs = document.querySelectorAll('script[type=hui]');
@@ -41,4 +41,4 @@ hui.onReady(function() {
     data.element = configs[i].parentNode;
     new hui.ui[configs[i].getAttribute('data-type')](data);
   }
-})
+});

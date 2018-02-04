@@ -74,8 +74,8 @@ hui.animation = {
 
 
 hui.animation._lengthUpater = function(element,v,work) {
-  element.style[work.property] = (work.from+(work.to-work.from)*v)+(work.unit!=null ? work.unit : '');
-}
+  element.style[work.property] = (work.from + (work.to - work.from) * v) + (work.unit ? work.unit : '');
+};
 
 hui.animation._transformUpater = function(element, v, work) {
   var t = work.transform;
@@ -103,7 +103,7 @@ hui.animation._colorUpater = function(element, v, work) {
 
 hui.animation._propertyUpater = function(element, v, work) {
   element[work.property] = Math.round(work.from+(work.to-work.from)*v);
-}
+};
 
 hui.animation._ieOpacityUpdater = function(element, v, work) {
   var opacity = (work.from + (work.to - work.from) * v);
@@ -125,11 +125,11 @@ hui.animation._render = function() {
       for (var i=0; i < obj.work.length; i++) {
         var work = obj.work[i];
         if (work.finished) {
-          continue
-        };
+          continue;
+        }
         var place = (stamp-work.start)/(work.end-work.start);
-        if (place<0) {
-          next=true;
+        if (place < 0) {
+          next = true;
           continue;
         }
         else if (isNaN(place) || place>1) {
@@ -160,7 +160,7 @@ hui.animation._render = function() {
             element.style.display='none';
           }
         }
-      };
+      }
     }
   }
   if (next) {
@@ -175,13 +175,20 @@ hui.animation._parseStyle = function(value) {
   var match;
   if (!hui.isDefined(value)) {
     return parsed;
-  } else if (!isNaN(value)) {
+  }
+  if (!isNaN(value)) {
     parsed.value=parseFloat(value);
-  } else if (match=value.match(/([\-]?[0-9\.]+)(px|pt|%)/)) {
+    return parsed;
+  }
+  match = value.match(/([\-]?[0-9\.]+)(px|pt|%)/);
+  if (match) {
     parsed.type = 'length';
     parsed.value = parseFloat(match[1]);
     parsed.unit = match[2];
-  } else if (match=value.match(/rgb\(([0-9]+),[ ]?([0-9]+),[ ]?([0-9]+)\)/)) {
+    return parsed;
+  }
+  match = match=value.match(/rgb\(([0-9]+),[ ]?([0-9]+),[ ]?([0-9]+)\)/);
+  if (match) {
     parsed.type = 'color';
     parsed.value = {
       red:parseInt(match[1]),
@@ -189,7 +196,10 @@ hui.animation._parseStyle = function(value) {
       blue:parseInt(match[3]),
       alpha:1
     };
-  } else if (match=value.match(/rgba\(([0-9]+),[ ]?([0-9]+),[ ]?([0-9]+),[ ]?([\.0-9]+)\)/)) {
+    return parsed;
+  }
+  match=value.match(/rgba\(([0-9]+),[ ]?([0-9]+),[ ]?([0-9]+),[ ]?([\.0-9]+)\)/);
+  if (match) {
     parsed.type = 'color';
     parsed.value = {
       red:parseInt(match[1]),
@@ -197,17 +207,17 @@ hui.animation._parseStyle = function(value) {
       blue:parseInt(match[3]),
       alpha:parseFloat(match[4]),
     };
-  } else {
-    var color = new hui.Color(value);
-    if (color.ok) {
-      parsed.type = 'color';
-      parsed.value = {
-        red:color.r,
-        green:color.g,
-        blue:color.b,
-        alpha:1
-      };
-    }
+    return parsed;
+  }
+  var color = new hui.Color(value);
+  if (color.ok) {
+    parsed.type = 'color';
+    parsed.value = {
+      red:color.r,
+      green:color.g,
+      blue:color.b,
+      alpha:1
+    };
   }
   return parsed;
 };
@@ -227,7 +237,7 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
   var work = this.getWork(hui.string.camelize(property));
   work.delegate = delegate;
   work.finished = false;
-  var css = !(property=='scrollLeft' || property=='scrollTop' || property=='');
+  var css = !(property=='scrollLeft' || property=='scrollTop' || property==='');
   if (from!==null) {
     work.from = from;
   } else if (property=='transform') {
@@ -271,7 +281,7 @@ hui.animation.TRANSFORM = (function() {
   var agent = navigator.userAgent;
   var gecko = agent.indexOf('Gecko') !== -1 && agent.indexOf('WebKit') === -1;
   return gecko ? 'MozTransform' : 'WebkitTransform';
-})()
+})();
 
 hui.animation.Item.parseTransform = function(value,element) {
   var result = {};
@@ -305,8 +315,8 @@ hui.animation.Item.parseTransform = function(value,element) {
 
 hui.animation.Item.prototype._getIEOpacity = function(element) {
   var filter = hui.style.get(element,'filter').toLowerCase();
-  var match;
-  if (match = filter.match(/opacity=([0-9]+)/)) {
+  var match = filter.match(/opacity=([0-9]+)/);
+  if (match) {
     return parseFloat(match[1])/100;
   } else {
     return 1;
@@ -318,7 +328,7 @@ hui.animation.Item.prototype.getWork = function(property) {
     if (this.work[i].property===property) {
       return this.work[i];
     }
-  };
+  }
   var work = {property:property};
   this.work[this.work.length] = work;
   return work;
@@ -349,7 +359,7 @@ hui.animation.Loop.prototype.next = function() {
   if (item.wait!==undefined) {
     time = item.wait;
   }
-  window.setTimeout(function() {self.next()},time);
+  window.setTimeout(function() {self.next();},time);
 };
 
 hui.animation.Loop.prototype.start = function() {
@@ -365,8 +375,8 @@ hui.ease = {
     return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
   },
   fastSlow : function(val) {
-    var a = .5;
-    var b = .7
+    var a = 0.5;
+    var b = 0.7;
     return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
   },
   elastic : function(t) {
@@ -389,11 +399,11 @@ hui.ease = {
     if (t < (1/2.75)) {
       return 7.5625*t*t;
     } else if (t < (2/2.75)) {
-      return (7.5625*(t-=(1.5/2.75))*t + .75);
+      return (7.5625*(t-=(1.5/2.75))*t + 0.75);
     } else if (t < (2.5/2.75)) {
-      return (7.5625*(t-=(2.25/2.75))*t + .9375);
+      return (7.5625*(t-=(2.25/2.75))*t + 0.9375);
     } else {
-      return (7.5625*(t-=(2.625/2.75))*t + .984375);
+      return (7.5625*(t-=(2.625/2.75))*t + 0.984375);
     }
   },
   flicker : function(value) {
@@ -455,7 +465,7 @@ hui.ease = {
 
   quintInOut: function(/* Decimal? */n){
     n=n*2;
-    if(n<1){ return Math.pow(n, 5) / 2; };
+    if(n<1){ return Math.pow(n, 5) / 2; }
     n-=2;
     return (Math.pow(n, 5) + 2) / 2;
   },
@@ -473,7 +483,7 @@ hui.ease = {
   },
 
   expoIn: function(/* Decimal? */n){
-    return (n==0) ? 0 : Math.pow(2, 10 * (n - 1));
+    return (n===0) ? 0 : Math.pow(2, 10 * (n - 1));
   },
 
   expoOut: function(/* Decimal? */n){
@@ -481,10 +491,10 @@ hui.ease = {
   },
 
   expoInOut: function(/* Decimal? */n){
-    if(n==0){ return 0; }
-    if(n==1){ return 1; }
+    if (n===0) { return 0; }
+    if (n===1) { return 1; }
     n = n*2;
-    if(n<1){ return Math.pow(2, 10 * (n-1)) / 2; }
+    if (n<1) { return Math.pow(2, 10 * (n-1)) / 2; }
     --n;
     return (-1 * Math.pow(2, -10 * n) + 2) / 2;
   },
@@ -527,9 +537,9 @@ hui.ease = {
   },
 
   elasticIn: function(/* Decimal? */n){
-    if(n==0){ return 0; }
+    if(n===0){ return 0; }
     if(n==1){ return 1; }
-    var p = .3;
+    var p = 0.3;
     var s = p/4;
     n = n - 1;
     return -1 * Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p);
@@ -537,26 +547,26 @@ hui.ease = {
 
   elasticOut: function(/* Decimal? */n){
     // summary: An easing function that elasticly snaps around the target value, near the end of the Animation
-    if(n==0) return 0;
+    if(n===0) return 0;
     if(n==1) return 1;
-    var p = .3;
+    var p = 0.3;
     var s = p/4;
     return Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p) + 1;
   },
 
   elasticInOut: function(/* Decimal? */n){
     // summary: An easing function that elasticly snaps around the value, near the beginning and end of the Animation
-    if(n==0) return 0;
+    if(n===0) return 0;
     n = n*2;
     if(n==2) return 1;
-    var p = .3*1.5;
+    var p = 0.3*1.5;
     var s = p/4;
     if(n<1){
       n-=1;
-      return -.5*(Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p));
+      return -0.5*(Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p));
     }
     n-=1;
-    return .5*(Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p)) + 1;
+    return 0.5 * (Math.pow(2, -10 * n) * Math.sin((n - s) * ( 2 * Math.PI) / p)) + 1;
   },
 
   bounceIn: function(/* Decimal? */n){
@@ -573,13 +583,13 @@ hui.ease = {
       l = s*Math.pow(n, 2);
     }else if(n < (2 / p)){
       n -= (1.5 / p);
-      l = s * Math.pow(n, 2) + .75;
+      l = s * Math.pow(n, 2) + 0.75;
     }else if(n < (2.5 / p)){
       n -= (2.25 / p);
-      l = s * Math.pow(n, 2) + .9375;
+      l = s * Math.pow(n, 2) + 0.9375;
     }else{
       n -= (2.625 / p);
-      l = s * Math.pow(n, 2) + .984375;
+      l = s * Math.pow(n, 2) + 0.984375;
     }
     return l;
   },
@@ -598,4 +608,4 @@ if (!Date.now) {
 
 hui.onReady(function() {
   hui.define('hui.animation',hui.animation);
-})
+});

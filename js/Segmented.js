@@ -8,27 +8,27 @@ hui.ui.Segmented = function(options) {
   this.name = options.name;
   this.value = this.options.value;
   hui.ui.extend(this);
-  hui.listen(this.element,'mousedown',this._click.bind(this));
+  hui.listen(this.element,'click',this._click.bind(this));
 };
 
 hui.ui.Segmented.create = function(options) {
-    var e = options.element = hui.build('span',{'class':'hui_segmented hui_segmented_standard'});
-    if (options.items) {
-        for (var i = 0; i < options.items.length; i++) {
-            var item = options.items[i];
-            var a = hui.build('a',{parent:e,href:'javascript://','rel':item.value});
-            if (item.icon) {
-                a.appendChild(hui.ui.createIcon(item.icon,16));
-            }
-            if (item.text) {
-                hui.build('span',{'class':'hui_segmented_text',text:item.text,parent:a});
-            }
-            if (options.value!==undefined && options.value == item.value) {
-                hui.cls.add(a,'hui_segmented_selected');
-            }
-        }
+  var e = options.element = hui.build('span',{'class':'hui_segmented hui_segmented_standard'});
+  if (options.items) {
+    for (var i = 0; i < options.items.length; i++) {
+      var item = options.items[i];
+      var a = hui.build('a',{parent:e,href:'#','rel':item.value});
+      if (item.icon) {
+        a.appendChild(hui.ui.createIcon(item.icon,16));
+      }
+      if (item.text) {
+        hui.build('span',{'class':'hui_segmented_text',text:item.text,parent:a});
+      }
+      if (options.value!==undefined && options.value == item.value) {
+        hui.cls.add(a,'hui_segmented_selected');
+      }
     }
-    return new hui.ui.Segmented(options);
+  }
+  return new hui.ui.Segmented(options);
 };
 
 hui.ui.Segmented.prototype = {
@@ -36,12 +36,13 @@ hui.ui.Segmented.prototype = {
     e = new hui.Event(e);
     var a = e.findByTag('a');
     if (a) {
+      e.stop();
       var changed = false;
       var value = a.getAttribute('rel');
       var x = hui.get.byClass(this.element,'hui_segmented_selected');
       for (var i=0; i < x.length; i++) {
         hui.cls.remove(x[i],'hui_segmented_selected');
-      };
+      }
       if (value===this.value && this.options.allowNull) {
         changed=true;
         this.value = null;
@@ -68,7 +69,7 @@ hui.ui.Segmented.prototype = {
       } else {
         hui.cls.remove(as[i],'hui_segmented_selected');
       }
-    };
+    }
   },
   getValue : function() {
     return this.value;

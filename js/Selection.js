@@ -9,7 +9,7 @@ hui.ui.Selection = function(options) {
   this.items = [];
   this.subItems = [];
   this.busy = 0;
-  this.selection=null;
+  this.selection = null;
   if (options.items && options.items.length>0) {
     for (var i=0; i < options.items.length; i++) {
       var item = options.items[i];
@@ -17,10 +17,10 @@ hui.ui.Selection = function(options) {
       var element = hui.get(item.id);
       item.element = element;
       this.addItemBehavior(element,item);
-    };
+    }
     this.selection = this._getSelectionWithValue(this.options.value);
     this._updateUI();
-  } else if (this.options.value!=null) {
+  } else if (this.options.value !== null) {
     this.selection = {value:this.options.value};
   }
   hui.ui.extend(this);
@@ -72,15 +72,15 @@ hui.ui.Selection.prototype = {
       if (this.items[i].value==value) {
         return this.items[i];
       }
-    };
+    }
     for (i=0; i < this.subItems.length; i++) {
       var items = this.subItems[i].items;
       for (var j=0; j < items.length; j++) {
         if (items[j].value==value) {
           return items[j];
         }
-      };
-    };
+      }
+    }
     return null;
   },
   /** Changes selection to the first item */
@@ -89,14 +89,14 @@ hui.ui.Selection.prototype = {
     for (i=0; i < this.items.length; i++) {
       this.changeSelection(this.items[i]);
       return;
-    };
+    }
     for (i=0; i < this.subItems.length; i++) {
       var items = this.subItems[i].items;
       for (var j=0; j < items.length; j++) {
         this.changeSelection(items[j]);
         return;
-      };
-    };
+      }
+    }
   },
   /** Set the value to null */
   reset : function() {
@@ -114,16 +114,16 @@ hui.ui.Selection.prototype = {
     var i;
     for (i=0; i < this.items.length; i++) {
       hui.cls.set(this.items[i].element,'hui_selected',this.isSelection(this.items[i]));
-    };
+    }
     for (i=0; i < this.subItems.length; i++) {
       this.subItems[i]._updateUI();
-    };
+    }
   },
   /** @private */
   changeSelection : function(item) {
     for (var i=0; i < this.subItems.length; i++) {
       this.subItems[i].selectionChanged(this.selection,item);
-    };
+    }
     this.selection = item;
     this._updateUI();
     this.fireChange();
@@ -135,7 +135,7 @@ hui.ui.Selection.prototype = {
     this.fireProperty('kind',this.selection ? this.selection.kind : null);
     for (var i=0; i < this.subItems.length; i++) {
       this.subItems[i].parentValueChanged();
-    };
+    }
   },
   /** @private */
   registerItems : function(items) {
@@ -191,11 +191,11 @@ hui.ui.Selection.prototype = {
 
   /** @private */
   itemWasClicked : function(item) {
-    if (this.busy>0) {return}
+    if (this.busy>0) {return;}
     this.changeSelection(item);
   },
   _onDoubleClick : function(item) {
-    if (this.busy>0) {return}
+    if (this.busy>0) {return;}
     this.fire('open',item);
   },
   _setBusy : function(busy) {
@@ -212,7 +212,7 @@ hui.ui.Selection.prototype = {
     }
   },
   _checkValue : function() {
-    if (!this.selection) {return}
+    if (!this.selection) {return;}
     var item = this._getSelectionWithValue(this.selection.value);
     if (!item) {
       hui.log('Value not found: '+this.selection.value);
@@ -229,7 +229,7 @@ hui.ui.Selection.prototype = {
   hide : function() {
     this.element.style.display='none';
   }
-}
+};
 
 /////////////////////////// Items ///////////////////////////
 
@@ -250,7 +250,7 @@ hui.ui.Selection.Items = function(options) {
   if (this.options.source) {
     this.options.source.listen(this);
   }
-}
+};
 
 hui.ui.Selection.Items.prototype = {
   /**
@@ -321,7 +321,7 @@ hui.ui.Selection.Items.prototype = {
       var subOpen = false;
       if (hierarchical && hasChildren) {
         var self = this;
-        subOpen = this.disclosed[item.value]
+        subOpen = this.disclosed[item.value];
         var cls = this.disclosed[item.value] ? 'hui_disclosure hui_disclosure_open' : 'hui_disclosure';
         var disc = hui.build('span',{'class':cls,parent:node});
         hui.listen(disc,'click',function(e) {
@@ -364,31 +364,31 @@ hui.ui.Selection.Items.prototype = {
   },
   /** @private */
   isHierarchy : function(items) {
-    if (!items) {return false};
+    if (!items) {return false;}
     for (var i=0; i < items.length; i++) {
       if (items[i]!==null && items[i].children && items[i].children.length>0) {
         return true;
       }
-    };
+    }
     return false;
   },
   /** Get the selection of this items group
    * @returns {Object} The selected item or null */
   getValue : function() {
-    if (this.parent.selection==null) {
+    if (this.parent.selection === null) {
       return null;
     }
     for (var i=0; i < this.items.length; i++) {
       if (this.items[i].value == this.parent.selection.value) {
         return this.items[i];
       }
-    };
+    }
     return null;
   },
   _updateUI : function() {
     for (var i=0; i < this.items.length; i++) {
       hui.cls.set(this.items[i].element,'hui_selected',this.parent.isSelection(this.items[i]));
-    };
+    }
   },
   /** @private */
   selectionChanged : function(oldSelection,newSelection) {
@@ -398,7 +398,7 @@ hui.ui.Selection.Items.prototype = {
         this.fireProperty('value',newSelection.value);
         return;
       }
-    };
+    }
     this.fireProperty('value',null);
   },
   /**
@@ -411,7 +411,7 @@ hui.ui.Selection.Items.prototype = {
         this.fireProperty('value',this.items[i].value);
         return;
       }
-    };
+    }
     this.fireProperty('value',null);
   }
 };

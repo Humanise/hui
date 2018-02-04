@@ -253,5 +253,5 @@ hui.Color.rgb2hex = function(rgbary) {
 };
 
 hui.onReady(function() {
-  hui.define('hui.Color',hui.Color)
-})
+  hui.define('hui.Color',hui.Color);
+});

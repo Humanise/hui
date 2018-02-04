@@ -34,7 +34,7 @@ hui.ui.TokenField.prototype = {
       if (value.length>0) {
         out.push(value);
       }
-    })
+    });
     return out;
   },
   getLabel : function() {
@@ -49,7 +49,7 @@ hui.ui.TokenField.prototype = {
       }
       input.value = value;
       hui.listen(input,'keyup',function() {
-        this._inputChanged(input,i)
+        this._inputChanged(input,i);
       }.bind(this));
     }.bind(this));
   },
@@ -70,7 +70,7 @@ hui.ui.TokenField.prototype = {
     var inputs = hui.findAll('input',this.element);
     for (var i=0; i < inputs.length; i++) {
       inputs[i].style.width = Math.min(Math.max(inputs[i].value.length*7+3,50),150)+'px';
-    };
+    }
   },
   _addField : function() {
     var input = hui.build('input',{'class':'hui_textinput',style:{width:'50px'}});
@@ -81,6 +81,8 @@ hui.ui.TokenField.prototype = {
     this.value.push('');
     this.element.appendChild(input);
     var self = this;
-    hui.listen(input,'keyup',function() {self._inputChanged(input,i)});
+    hui.listen(input,'keyup',function() {
+      self._inputChanged(input,i);
+    });
   }
 };

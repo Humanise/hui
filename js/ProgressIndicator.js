@@ -31,7 +31,7 @@ hui.ui.ProgressIndicator.prototype = {
         innerRadius : this.size/4,
       outerRadius : this.size/2,
       fill : 'rgba(0,0,0,.1)'
-    })
+    });
   },
   setValue : function(value) {
     if (value==this.value) {
@@ -59,7 +59,7 @@ hui.ui.ProgressIndicator.prototype = {
         innerRadius : this.size/4,
       outerRadius : this.size/2,
       fill : '#eee'
-    })
+    });
   },
   destroy : function() {
     hui.dom.remove(this.element);
@@ -80,7 +80,7 @@ hui.ui.ProgressIndicator.prototype = {
             innerRadius : this.size/4 * x,
           outerRadius : this.size/2 * x,
           fill : '#eee'
-        })
+        });
       }.bind(this)
     });
   }

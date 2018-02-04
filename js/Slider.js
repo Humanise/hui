@@ -8,7 +8,7 @@ hui.ui.Slider = function(options) {
 
   this.element = hui.get(options.element);
   this.handler = hui.get.firstByTag(options.element,'a');
-  hui.ui.extend(this)
+  hui.ui.extend(this);
   this.position = 0;
   this.value = 0;
   this.setValue(this.options.value);
@@ -31,7 +31,7 @@ hui.ui.Slider.prototype = {
       onBeforeMove : this._onBeforeMove.bind(this),
       onMove : this._onMove.bind(this),
       onAfterMove : this._onAfterMove.bind(this)
-    })
+    });
   },
   _onBeforeMove : function(event) {
     this.dragging = true;
@@ -45,11 +45,11 @@ hui.ui.Slider.prototype = {
     hui.cls.add(this.handler,'hui_slider-grabbing');
   },
   _onMove : function(event) {
-    var left = event.getLeft()-this.dragInfo.left
+    var left = event.getLeft()-this.dragInfo.left;
     left = (left-this.dragInfo.diff);
     left = Math.max(left,5);
     left = Math.min(left,this.dragInfo.max);
-    this.handler.style.left = left+'px'
+    this.handler.style.left = left+'px';
     this._setPosition((left-5)/(this.dragInfo.max-5));
   },
   _onAfterMove : function() {
@@ -72,7 +72,7 @@ hui.ui.Slider.prototype = {
         css : { left: (pos*width+5)+'px'},
         duration : 200,
         ease : hui.ease.fastSlow
-      })
+      });
     }
     this.position = this.value = pos;
   }

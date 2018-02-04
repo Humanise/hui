@@ -19,33 +19,34 @@ hui.ui.Split = function(options) {
     if (i>0) {
       this.handles.push(hui.build('div',{'class':'hui_split_handle',parent:this.element}));
     }
-  };
+  }
   this._buildSizes();
   hui.ui.extend(this);
-  this._attach()
+  this._attach();
 };
 
 hui.ui.Split.prototype = {
-    _attach : function() {
-        hui.each(this.handles,function(handle) {
-        hui.drag.register({
-          element : handle,
-          //onStart : this._onDragStart.bind(this) ,
-          onBeforeMove : function(e) {
-              hui.log('before')
-          },
-          onMove : function(e) {
-              hui.log('moving')
-          }
-          //onMove : this._onMove.bind(this),
-          //onAfterMove : this._onAfterMove.bind(this)
-        });
-        })
-    },
+  _attach : function() {
+    hui.each(this.handles,function(handle) {
+      hui.drag.register({
+        element : handle,
+        //onStart : this._onDragStart.bind(this) ,
+        onBeforeMove : function(e) {
+          hui.log('before');
+        },
+        onMove : function(e) {
+          hui.log('moving');
+        }
+        //onMove : this._onMove.bind(this),
+        //onAfterMove : this._onAfterMove.bind(this)
+      });
+    });
+  },
 
   _buildSizes : function() {
     this.sizes = [];
-    for (var i=0; i < this.rows.length; i++) {
+    var i;
+    for (i=0; i < this.rows.length; i++) {
       var row = this.rows[i],
         str = row.getAttribute('data-height');
       if (str) {
@@ -53,16 +54,16 @@ hui.ui.Split.prototype = {
       } else {
         this.sizes.push(0);
       }
-    };
+    }
     var total = 0,
       unspecified = 0;
-    for (var i=0; i < this.sizes.length; i++) {
-      total+=this.sizes[i];
-      unspecified+=this.sizes[i]==0 ? 1 : 0;
-    };
-    var rest = (1-total)/unspecified;
-    for (var i=0; i < this.sizes.length; i++) {
-      if (this.sizes[i]==0) {
+    for (i=0; i < this.sizes.length; i++) {
+      total += this.sizes[i];
+      unspecified += this.sizes[i] === 0 ? 1 : 0;
+    }
+    var rest = (1 - total) / unspecified;
+    for (i=0; i < this.sizes.length; i++) {
+      if (this.sizes[i] === 0) {
         this.sizes[i] = rest;
       }
     }
@@ -86,7 +87,7 @@ hui.ui.Split.prototype = {
           height-=sib.offsetHeight;
         }
       }
-    };
+    }
     return height;
   },
   _layout : function() {
@@ -103,6 +104,6 @@ hui.ui.Split.prototype = {
       if (i<this.rows.length-1) {
         this.handles[i].style.top = (pos*full)+'px';
       }
-    };
+    }
   }
 };

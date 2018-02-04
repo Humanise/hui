@@ -65,7 +65,7 @@ hui.ui.TextField.create = function(options) {
   }
   options.element = input;
   return new hui.ui.TextField(options);
-}
+};
 
 hui.ui.TextField.prototype = {
   _attach : function() {
@@ -95,7 +95,7 @@ hui.ui.TextField.prototype = {
         window.setTimeout(function() {
           this.input.focus();
           this.input.select();
-        }.bind(this))
+        }.bind(this));
       }.bind(this));
       hui.listen(p, 'mouseup', function() {
         this.input.focus();
@@ -176,7 +176,7 @@ hui.ui.TextField.prototype = {
    * @returns {Boolean} True if the value the empty string
    */
   isEmpty : function() {
-    return this.input.value=='';
+    return this.input.value === '';
   },
   /** Check if the value has any non-white-space characters
    * @returns {Boolean} True if the value is blank
@@ -209,8 +209,8 @@ hui.ui.TextField.prototype = {
   },
   _expand : function(animate) {
     if (!this.multiline || !hui.dom.isVisible(this.element)) {
-      return
-    };
+      return;
+    }
     var textHeight = this._getTextAreaHeight(this.input);
     textHeight = Math.max(38,textHeight);
     textHeight = Math.min(textHeight,this.options.maxHeight);

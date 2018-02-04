@@ -103,14 +103,16 @@ hui.ui.Formula.prototype = {
   buildGroup : function(options,recipe) {
     var g = this.createGroup(options);
     hui.each(recipe,function(item) {
+      var w;
       if (hui.ui.Formula[item.type]) {
-        var w = hui.ui.Formula[item.type].create(item.options);
+        w = hui.ui.Formula[item.type].create(item.options);
         g.add(w,item.label);
       }
       else if (hui.ui[item.type]) {
-        var w = hui.ui[item.type].create(item.options);
+        w = hui.ui[item.type].create(item.options);
         g.add(w,item.label);
-      } else {
+      }
+      else {
         hui.log('buildGroup: Unable to find type: '+item.type);
       }
     });

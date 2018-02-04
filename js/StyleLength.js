@@ -18,7 +18,9 @@ hui.ui.StyleLength = function(o) {
 };
 
 hui.ui.StyleLength.create = function(options) {
-  options.element = hui.build('span',{'class':'hui_style_length hui_numberinput',html:'<input class="hui_textinput" type="text"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'})
+  options.element = hui.build('span',{
+    'class' : 'hui_style_length hui_numberinput',
+    html : '<input class="hui_textinput" type="text"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'});
   return new hui.ui.StyleLength(options);
 };
 
@@ -47,7 +49,7 @@ hui.ui.StyleLength.prototype = {
         parsed.unit = unit;
         break;
       }
-    };
+    }
     parsed.number = Math.max(this.options.min,Math.min(this.options.max,parsed.number));
     return parsed;
   },
@@ -75,7 +77,7 @@ hui.ui.StyleLength.prototype = {
     var changed = false;
     if (old===null && value===null) {
       // nothing
-    } else if (old!=null && value!=null && old.number===value.number && old.unit===value.unit) {
+    } else if (old!==null && value!==null && old.number===value.number && old.unit===value.unit) {
       // nothing
     } else {
       changed = true;

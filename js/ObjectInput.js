@@ -15,7 +15,7 @@
       this.finder = hui.ui.get(options.finder);
       this.finder.listen({
         $select: this._found.bind(this)
-      })
+      });
     }
     this.nodes = {
       text : '.hui_objectinput_text',
@@ -50,7 +50,7 @@
         );
         this.finder.listen({
           $select: this._found.bind(this)
-        })
+        });
       }
       this.finder.show();
     },
@@ -76,9 +76,11 @@
       for (var i = 0; i < this.value.length; i++) {
         var item = this.value[i];
         item = this.fire('render',item) || item;
-        var html = ''
+        var html = '';
         var obj = hui.build('div',{'class':'hui_objectinput_object',parent:this.nodes.list,'data-index':i});
-        item.icon && obj.appendChild(hui.ui.createIcon(item.icon,16));
+        if (item.icon) {
+          obj.appendChild(hui.ui.createIcon(item.icon,16));
+        }
         obj.appendChild(hui.build('span',{'class':'hui_objectinput_title',text:item.text || item.title}));
         var del = hui.ui.createIcon('monochrome/delete',16,'a');
         hui.cls.add(del,'hui_objectinput_delete');

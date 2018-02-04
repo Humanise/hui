@@ -126,7 +126,7 @@ module.exports = function(grunt) {
         }
       },
       "jsbeautifier" : {
-          files : ["js/Alert.js", "js/Bar.js", "js/BoundPanel.js", "js/DropDown.js"],
+          files : ["js/Alert.js", "js/Bar.js", "js/BoundPanel.js", "js/DropDown.js", "js/VideoPlayer.js"],
           options : {
             js: {
               indentSize: 2
