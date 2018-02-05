@@ -8,7 +8,7 @@ module.exports = function(grunt) {
           options: {
               reporterOutput: ''
           },
-          src: ['js/*.js']
+          src: ['js/*.js', '!js/compatibility.js', '!js/hui_require.js']
         }
     },
     watch: {

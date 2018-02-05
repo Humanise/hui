@@ -70,7 +70,7 @@ hui.ui.get = function(nameOrComponent) {
 };
 
 hui.ui.is = function(component, constructor) {
-  return component.__proto__ == constructor.prototype;
+  return constructor.prototype.isPrototypeOf(component);
 };
 
 /**

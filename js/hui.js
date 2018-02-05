@@ -667,10 +667,12 @@ hui.dom = {
   runScripts : function(node) {
     if (hui.dom.isElement(node)) {
       if (hui.dom.isElement(node,'script')) {
+        /*jshint evil:true */
         eval(node.innerHTML);
       } else {
         var scripts = node.getElementsByTagName('script');
         for (var i=0; i < scripts.length; i++) {
+          /*jshint evil:true */
           eval(scripts[i].innerHTML);
         }
       }
