@@ -1,10 +1,8 @@
-/////////////////////////// Date time /////////////////////////
-
 /**
  * A date and time field
  * @constructor
  */
-hui.ui.DateTimeField = function(o) {
+hui.ui.DateTimeInput = function(o) {
   this.inputFormats = ['d-m-Y','d/m-Y','d/m/Y','d-m-Y H:i:s','d/m-Y H:i:s','d/m/Y H:i:s','d-m-Y H:i','d/m-Y H:i','d/m/Y H:i','d-m-Y H','d/m-Y H','d/m/Y H','d-m','d/m','d','Y','m-d-Y','m-d','m/d'];
   this.outputFormat = 'd-m-Y H:i:s';
   this.name = o.name;
@@ -17,16 +15,18 @@ hui.ui.DateTimeField = function(o) {
   this._updateUI();
 };
 
-hui.ui.DateTimeField.create = function(options) {
+hui.ui.DateTimeField = hui.ui.DateTimeInput
+
+hui.ui.DateTimeInput.create = function(options) {
   options = options || {};
   var node = hui.build('span',{'class':'hui_datetime'});
   hui.build('input',{'class':'hui_textinput',parent:node});
   hui.build('a',{'class':'hui_datetime_selector',href:'#',tabIndex:'-1',parent:node});
   options.element = node;
-  return new hui.ui.DateTimeField(options);
+  return new hui.ui.DateTimeInput(options);
 };
 
-hui.ui.DateTimeField.prototype = {
+hui.ui.DateTimeInput.prototype = {
   _addBehavior : function() {
     hui.listen(this.input,'blur',this._onBlur.bind(this));
     hui.listen(this.input,'keyup',this._parse.bind(this));

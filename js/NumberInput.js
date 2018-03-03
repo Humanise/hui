@@ -2,7 +2,7 @@
  * A number field
  * @constructor
  */
-hui.ui.NumberField = function(o) {
+hui.ui.NumberInput = function(o) {
   this.options = hui.override({min:0,max:undefined,value:null,tickSize:1,decimals:0,allowNull:false},o);
   this.name = o.name;
   var e = this.element = hui.get(o.element);
@@ -21,16 +21,19 @@ hui.ui.NumberField = function(o) {
   this._addBehavior();
 };
 
+// TODO Alias for legacy code
+hui.ui.NumberField = hui.ui.NumberInput;
+
 /** Creates a new number field */
-hui.ui.NumberField.create = function(o) {
+hui.ui.NumberInput.create = function(o) {
   o.element = hui.build('span',{
     'class':'hui_numberinput',
     html:'<input class="hui_textinput" type="text" value="'+(o.value!==undefined ? o.value : '0')+'"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'
   });
-  return new hui.ui.NumberField(o);
+  return new hui.ui.NumberInput(o);
 };
 
-hui.ui.NumberField.prototype = {
+hui.ui.NumberInput.prototype = {
   _addBehavior : function() {
     var e = this.element;
     hui.listen(this.input,'focus',this._onFocus.bind(this));

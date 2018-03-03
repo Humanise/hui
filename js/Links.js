@@ -106,7 +106,7 @@ hui.ui.Links.prototype = {
       var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:5});
       var form = this.editForm = hui.ui.Formula.create();
       var g = form.buildGroup({above:false},[
-        {label:'Tekst',type:'TextField',options:{key:'text'}}
+        {label:'Tekst',type:'TextInput',options:{key:'text'}}
       ]);
 
       var url = hui.ui.TextInput.create({key:'url'});

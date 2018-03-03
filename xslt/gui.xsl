@@ -1290,17 +1290,20 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:attribute name="class">
         <xsl:text>hui_segmented</xsl:text>
         <xsl:if test="@variant">
-          <xsl:text> hui_segmented_</xsl:text><xsl:value-of select="@variant"/>
+          <xsl:text> hui_segmented-</xsl:text><xsl:value-of select="@variant"/>
         </xsl:if>
         <xsl:if test="not(@variant)">
-          <xsl:text> hui_segmented_standard</xsl:text>
+          <xsl:text> hui_segmented-standard</xsl:text>
         </xsl:if>
       </xsl:attribute>
       <xsl:for-each select="gui:item | gui:option"> <!-- TODO item is deprecated -->
         <a href="#" rel="{@value}">
-          <xsl:if test="@value=../@value">
-            <xsl:attribute name="class">hui_segmented_selected</xsl:attribute>
-          </xsl:if>
+          <xsl:attribute name="class">
+            <xsl:text>hui_segmented_item</xsl:text>
+            <xsl:if test="@value=../@value">
+              <xsl:text> hui-is-selected</xsl:text>
+            </xsl:if>
+          </xsl:attribute>
           <xsl:if test="@icon">
             <span class="hui_icon_16" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></span>
           </xsl:if>
@@ -2838,7 +2841,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
 
 
-  <!--doc title:'Text input' class:'hui.ui.TextField' module:'input'
+  <!--doc title:'Text input' class:'hui.ui.TextInput' module:'input'
   <text-input name="«name»" multiline="«boolean»" value="«text»"/>
   -->
   <xsl:template name="gui:text" match="gui:textfield | gui:text-input">
@@ -2877,7 +2880,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:otherwise>
     </xsl:choose>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.TextField({
+      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.TextInput({
         element : '<xsl:value-of select="generate-id()"/>',
         name : '<xsl:value-of select="@name"/>',
         key : '<xsl:value-of select="@key"/>'
@@ -2903,7 +2906,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <a class="hui_datetime_selector" href="javascript://" tabindex="-1"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DateTimeField({
+      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DateTimeInput({
         element:'<xsl:value-of select="generate-id()"/>',
         name:'<xsl:value-of select="@name"/>',
         key:'<xsl:value-of select="@key"/>',
@@ -2941,7 +2944,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <a class="hui_numberinput_down"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.NumberField({
+      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.NumberInput({
         element:'<xsl:value-of select="generate-id()"/>',
         name:'<xsl:value-of select="@name"/>',
         key:'<xsl:value-of select="@key"/>'

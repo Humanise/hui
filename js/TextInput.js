@@ -15,7 +15,7 @@
  * $valueChanged(value) - When the value of the field is changed by the user
  * @constructor
  */
-hui.ui.TextField = function(options) {
+hui.ui.TextInput = function(options) {
   this.options = hui.override({label:null,key:null,lines:1,maxHeight:100,animateUserChange:true},options);
   this.element = hui.get(options.element);
   this.name = options.name;
@@ -28,8 +28,8 @@ hui.ui.TextField = function(options) {
   this._attach();
 };
 
-// TODO: Temporarily until TextField is renamed to TextInput
-hui.ui.TextInput = hui.ui.TextField;
+// TODO: Support Legacy
+hui.ui.TextField = hui.ui.TextInput;
 
 
 /**
@@ -47,7 +47,7 @@ hui.ui.TextInput = hui.ui.TextField;
  * }
  * </pre>
  */
-hui.ui.TextField.create = function(options) {
+hui.ui.TextInput.create = function(options) {
   options = hui.override({lines:1},options);
   var node,input;
   if (options.lines>1 || options.multiline) {
@@ -64,10 +64,10 @@ hui.ui.TextField.create = function(options) {
     input.value=options.value;
   }
   options.element = input;
-  return new hui.ui.TextField(options);
+  return new hui.ui.TextInput(options);
 };
 
-hui.ui.TextField.prototype = {
+hui.ui.TextInput.prototype = {
   _attach : function() {
     if (this.placeholder || this.input.type=='password') {
       var self = this;

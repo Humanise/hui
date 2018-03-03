@@ -7,6 +7,7 @@
  * @param {Object} options.listen A listener
  */
 hui.ui.Component = function(options) {
+  options = options || {};
   this.name = options.name;
   if (!this.name) {
     hui.ui.latestObjectIndex++;

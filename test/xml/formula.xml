@@ -93,7 +93,7 @@
     <div class="abc"></div>
     <script>
       function createDateInput() {
-        var f = hui.ui.DateTimeField.create();
+        var f = hui.ui.DateTimeInput.create();
         hui.find('.abc').appendChild(f.element);
       }
     </script>
