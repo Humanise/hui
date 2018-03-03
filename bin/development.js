@@ -53,13 +53,13 @@ document.write('<script type="text/javascript" src="'+_context+'/js/MarkupEditor
 document.write('<script type="text/javascript" src="'+_context+'/js/ColorPicker.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/LocationInput.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/StyleLength.js"></script>');
-document.write('<script type="text/javascript" src="'+_context+'/js/DateTimeField.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/DateTimeInput.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/TokenField.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Checkbox.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Checkboxes.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Radiobuttons.js"></script>');
-document.write('<script type="text/javascript" src="'+_context+'/js/NumberField.js"></script>');
-document.write('<script type="text/javascript" src="'+_context+'/js/TextField.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/NumberInput.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/TextInput.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Rendering.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Icon.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/ColorInput.js"></script>');

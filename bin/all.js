@@ -667,10 +667,12 @@ hui.dom = {
   runScripts : function(node) {
     if (hui.dom.isElement(node)) {
       if (hui.dom.isElement(node,'script')) {
+        /*jshint evil:true */
         eval(node.innerHTML);
       } else {
         var scripts = node.getElementsByTagName('script');
         for (var i=0; i < scripts.length; i++) {
+          /*jshint evil:true */
           eval(scripts[i].innerHTML);
         }
       }
@@ -4285,7 +4287,7 @@ hui.ui.get = function(nameOrComponent) {
 };
 
 hui.ui.is = function(component, constructor) {
-  return component.__proto__ == constructor.prototype;
+  return constructor.prototype.isPrototypeOf(component);
 };
 
 /**
@@ -5320,6 +5322,7 @@ hui.onReady(function() {
  * @param {Object} options.listen A listener
  */
 hui.ui.Component = function(options) {
+  options = options || {};
   this.name = options.name;
   if (!this.name) {
     hui.ui.latestObjectIndex++;
@@ -13128,11 +13131,11 @@ hui.ui.Segmented = function(options) {
 };
 
 hui.ui.Segmented.create = function(options) {
-  var e = options.element = hui.build('span',{'class':'hui_segmented hui_segmented_standard'});
+  var e = options.element = hui.build('span',{'class':'hui_segmented hui_segmented-standard'});
   if (options.items) {
     for (var i = 0; i < options.items.length; i++) {
       var item = options.items[i];
-      var a = hui.build('a',{parent:e,href:'#','rel':item.value});
+      var a = hui.build('a.hui_segmented_item',{parent:e,href:'#','rel':item.value});
       if (item.icon) {
         a.appendChild(hui.ui.createIcon(item.icon,16));
       }
@@ -13140,7 +13143,7 @@ hui.ui.Segmented.create = function(options) {
         hui.build('span',{'class':'hui_segmented_text',text:item.text,parent:a});
       }
       if (options.value!==undefined && options.value == item.value) {
-        hui.cls.add(a,'hui_segmented_selected');
+        hui.cls.add(a,'hui-is-selected');
       }
     }
   }
@@ -13155,15 +13158,15 @@ hui.ui.Segmented.prototype = {
       e.stop();
       var changed = false;
       var value = a.getAttribute('rel');
-      var x = hui.get.byClass(this.element,'hui_segmented_selected');
+      var x = hui.get.byClass(this.element,'hui-is-selected');
       for (var i=0; i < x.length; i++) {
-        hui.cls.remove(x[i],'hui_segmented_selected');
+        hui.cls.remove(x[i],'hui-is-selected');
       }
       if (value===this.value && this.options.allowNull) {
         changed=true;
         this.value = null;
       } else {
-        hui.cls.add(a,'hui_segmented_selected');
+        hui.cls.add(a,'hui-is-selected');
         changed=this.value!== value;
         this.value = value;
       }
@@ -13180,10 +13183,10 @@ hui.ui.Segmented.prototype = {
     this.value = null;
     for (var i=0; i < as.length; i++) {
       if (as[i].getAttribute('rel')===value) {
-        hui.cls.add(as[i],'hui_segmented_selected');
+        hui.cls.add(as[i],'hui-is-selected');
         this.value=value;
       } else {
-        hui.cls.remove(as[i],'hui_segmented_selected');
+        hui.cls.remove(as[i],'hui-is-selected');
       }
     }
   },
@@ -13454,7 +13457,7 @@ hui.ui.Links.prototype = {
       var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:5});
       var form = this.editForm = hui.ui.Formula.create();
       var g = form.buildGroup({above:false},[
-        {label:'Tekst',type:'TextField',options:{key:'text'}}
+        {label:'Tekst',type:'TextInput',options:{key:'text'}}
       ]);
 
       var url = hui.ui.TextInput.create({key:'url'});
@@ -13754,7 +13757,7 @@ hui.ui.MarkupEditor.prototype = {
       this.linkForm = hui.ui.Formula.create();
       this.linkEditor.add(this.linkForm);
       var group = this.linkForm.buildGroup({},[
-        {type : 'TextField', options:{key:'url',label:'Address:'}}
+        {type : 'TextInput', options:{key:'url',label:'Address:'}}
       ]);
       var buttons = group.createButtons();
       var ok = hui.ui.Button.create({text:'OK',submit:true});
@@ -14804,13 +14807,11 @@ hui.ui.StyleLength.prototype = {
   }
 };
 ;
-/////////////////////////// Date time /////////////////////////
-
 /**
  * A date and time field
  * @constructor
  */
-hui.ui.DateTimeField = function(o) {
+hui.ui.DateTimeInput = function(o) {
   this.inputFormats = ['d-m-Y','d/m-Y','d/m/Y','d-m-Y H:i:s','d/m-Y H:i:s','d/m/Y H:i:s','d-m-Y H:i','d/m-Y H:i','d/m/Y H:i','d-m-Y H','d/m-Y H','d/m/Y H','d-m','d/m','d','Y','m-d-Y','m-d','m/d'];
   this.outputFormat = 'd-m-Y H:i:s';
   this.name = o.name;
@@ -14823,16 +14824,16 @@ hui.ui.DateTimeField = function(o) {
   this._updateUI();
 };
 
-hui.ui.DateTimeField.create = function(options) {
+hui.ui.DateTimeInput.create = function(options) {
   options = options || {};
   var node = hui.build('span',{'class':'hui_datetime'});
   hui.build('input',{'class':'hui_textinput',parent:node});
   hui.build('a',{'class':'hui_datetime_selector',href:'#',tabIndex:'-1',parent:node});
   options.element = node;
-  return new hui.ui.DateTimeField(options);
+  return new hui.ui.DateTimeInput(options);
 };
 
-hui.ui.DateTimeField.prototype = {
+hui.ui.DateTimeInput.prototype = {
   _addBehavior : function() {
     hui.listen(this.input,'blur',this._onBlur.bind(this));
     hui.listen(this.input,'keyup',this._parse.bind(this));
@@ -15453,7 +15454,7 @@ hui.ui.Radiobuttons.prototype = {
  * A number field
  * @constructor
  */
-hui.ui.NumberField = function(o) {
+hui.ui.NumberInput = function(o) {
   this.options = hui.override({min:0,max:undefined,value:null,tickSize:1,decimals:0,allowNull:false},o);
   this.name = o.name;
   var e = this.element = hui.get(o.element);
@@ -15473,15 +15474,15 @@ hui.ui.NumberField = function(o) {
 };
 
 /** Creates a new number field */
-hui.ui.NumberField.create = function(o) {
+hui.ui.NumberInput.create = function(o) {
   o.element = hui.build('span',{
     'class':'hui_numberinput',
     html:'<input class="hui_textinput" type="text" value="'+(o.value!==undefined ? o.value : '0')+'"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'
   });
-  return new hui.ui.NumberField(o);
+  return new hui.ui.NumberInput(o);
 };
 
-hui.ui.NumberField.prototype = {
+hui.ui.NumberInput.prototype = {
   _addBehavior : function() {
     var e = this.element;
     hui.listen(this.input,'focus',this._onFocus.bind(this));
@@ -15651,7 +15652,7 @@ hui.ui.NumberField.prototype = {
  * $valueChanged(value) - When the value of the field is changed by the user
  * @constructor
  */
-hui.ui.TextField = function(options) {
+hui.ui.TextInput = function(options) {
   this.options = hui.override({label:null,key:null,lines:1,maxHeight:100,animateUserChange:true},options);
   this.element = hui.get(options.element);
   this.name = options.name;
@@ -15663,10 +15664,6 @@ hui.ui.TextField = function(options) {
   this.modified = false;
   this._attach();
 };
-
-// TODO: Temporarily until TextField is renamed to TextInput
-hui.ui.TextInput = hui.ui.TextField;
-
 
 /**
  * Creates a new text field
@@ -15683,7 +15680,7 @@ hui.ui.TextInput = hui.ui.TextField;
  * }
  * </pre>
  */
-hui.ui.TextField.create = function(options) {
+hui.ui.TextInput.create = function(options) {
   options = hui.override({lines:1},options);
   var node,input;
   if (options.lines>1 || options.multiline) {
@@ -15700,10 +15697,10 @@ hui.ui.TextField.create = function(options) {
     input.value=options.value;
   }
   options.element = input;
-  return new hui.ui.TextField(options);
+  return new hui.ui.TextInput(options);
 };
 
-hui.ui.TextField.prototype = {
+hui.ui.TextInput.prototype = {
   _attach : function() {
     if (this.placeholder || this.input.type=='password') {
       var self = this;
@@ -21237,6 +21234,49 @@ hui.ui.Matrix.prototype = {
   };
 
   hui.extend(hui.ui.Editable, _super);
+
+})(hui.ui.Component);
+;
+(function (_super) {
+
+  /**
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.ModelEditor = function(options) {
+    this.options = options;
+    _super.call(this, options);
+    this._build();
+  };
+
+  hui.ui.ModelEditor.prototype = {
+    _build : function() {
+      var form = this._form = hui.ui.Formula.create();
+      var group = form.createGroup();
+      var model = this.options.model;
+      hui.each(model.properties, function(prop) {
+        var widget, label;
+        if (prop.type == 'text') {
+          widget = hui.ui.TextInput.create({key: prop.name});
+          label = prop.name;
+        }
+        else if (prop.type == 'number') {
+          widget = hui.ui.NumberInput.create({key: prop.name});
+          label = prop.name;
+        }
+        if (widget) {
+          group.add(widget, label);
+        }
+      })
+      document.body.appendChild(form.getElement());
+    },
+    setValues : function(values) {
+      this._form.setValues(values);
+    }
+  };
+
+  hui.extend(hui.ui.ModelEditor, _super);
 
 })(hui.ui.Component);
 ;
