@@ -2,8 +2,8 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Bar">
   <style>
-    .type {margin: 30px}
-    .type > h2 {margin-bottom: 10px; border-bottom: 1px solid #eee}
+    .type {margin: 30px; font-size: 0}
+    .type > h2 {margin-bottom: 10px; font-size: 24px; border-bottom: 1px solid #eee}
   </style>
   <style url="nowhere.css"/>
 
@@ -11,6 +11,34 @@
     <bar>
       <button icon="common/edit" text="Edit"/>
       <button icon="common/delete" text="Delete" selected="true"/>
+      <button icon="common/color" text="Color"/>
+      <button icon="common/internet"/>
+      <button text="Only text"/>
+      <checkbox text="djslkfjksdjl"/>
+      <searchfield/>
+      <dropdown value="1">
+        <option value="1" text="My option"/>
+      </dropdown>
+      <button text="Only text"/>
+      <segmented value="2">
+        <option value="1" text="H1"/>
+        <option value="2" text="H2"/>
+        <option value="3" text="H3"/>
+        <option value="4" icon="common/color"/>
+      </segmented>
+      <right>
+        <button icon="common/delete" text="Hep hey!"/>
+        <button icon="common/info" text="Hep hey!"/>
+      </right>
+    </bar>
+  </div>
+
+  <div class="type"><h2>Toolbar</h2>
+    <toolbar>
+      <icon icon="common/edit" text="Edit"/>
+      <item label="Hep hey">
+        <button icon="common/delete" text="Delete" selected="true"/>
+      </item>
       <button icon="common/color" text="Color"/>
       <button icon="common/internet"/>
       <button text="Only text"/>
@@ -29,7 +57,7 @@
         <button icon="common/delete" text="Hep hey!"/>
         <button icon="common/info" text="Hep hey!"/>
       </right>
-    </bar>
+    </toolbar>
   </div>
 
   <div class="type"><h2>Button</h2>
@@ -48,7 +76,19 @@
     <dropdown>
       <option text="dsjhakj"/>
     </dropdown>
-
+    <searchfield/>
+    <segmented value="2">
+      <option value="1" text="H1"/>
+      <option value="2" text="H2"/>
+      <option value="3" text="H3"/>
+      <option value="4" icon="common/color"/>
+    </segmented>
+    <segmented value="2" variant="inset">
+      <option value="1" text="H1"/>
+      <option value="2" text="H2"/>
+      <option value="3" text="H3"/>
+      <option value="4" icon="common/color"/>
+    </segmented>
   </div>
 
 
