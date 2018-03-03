@@ -15,8 +15,6 @@ hui.ui.DateTimeInput = function(o) {
   this._updateUI();
 };
 
-hui.ui.DateTimeField = hui.ui.DateTimeInput
-
 hui.ui.DateTimeInput.create = function(options) {
   options = options || {};
   var node = hui.build('span',{'class':'hui_datetime'});

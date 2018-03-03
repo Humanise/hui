@@ -28,10 +28,6 @@ hui.ui.TextInput = function(options) {
   this._attach();
 };
 
-// TODO: Support Legacy
-hui.ui.TextField = hui.ui.TextInput;
-
-
 /**
  * Creates a new text field
  * <pre><strong>options:</strong> {
