@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>HUI</title>
+  <link charset="utf-8" media="screen" type="text/css" href="../../bin/development.css" rel="stylesheet" />
+  <script data-hui-context="../../..">
+    hui = {_:[],onReady:function() {hui._.push(arguments)}}
+  </script>
+  <script charset="utf-8" type="text/javascript" src="../../js/hui.js"></script>
+  <script charset="utf-8" type="text/javascript" src="../../js/hui_animation.js"></script>
+  <script charset="utf-8" type="text/javascript" src="../../js/hui_color.js"></script>
+  <script charset="utf-8" type="text/javascript" src="../../js/ui.js"></script>
+  <script charset="utf-8" type="text/javascript" src="../../js/Component.js"></script>
+  <script charset="utf-8" type="text/javascript" src="../../js/ModelEditor.js"></script>
+  <script charset="utf-8" type="text/javascript" src="../../js/Formula.js"></script>
+  <script charset="utf-8" type="text/javascript" src="../../js/TextInput.js"></script>
+  <script charset="utf-8" type="text/javascript" src="../../js/NumberInput.js"></script>
+</head>
+
+<body>
+
+  <script>
+    hui.onReady(function() {
+      var model = {
+        properties : [
+          {type: 'text', name: 'firstName'},
+          {type: 'text', name: 'lastName'},
+          {type: 'number', name: 'age'},
+          {type: 'relation', name: 'photo'},
+        ]
+      };
+
+      var values = {
+        firstName : 'Barack',
+        lastName : 'Obama',
+        age: 54,
+        photo : 456685
+      }
+      var modelEditor = new hui.ui.ModelEditor({
+        model : model,
+        listen : {
+          $valuesChanged : function(e) {
+            console.info('valuesChanged', e);
+          }
+        }
+      });
+      modelEditor.setValues(values);
+      console.log(modelEditor);
+    })
+  </script>
+
+</body>
+</html>
