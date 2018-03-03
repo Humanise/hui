@@ -1,0 +1,90 @@
+@import 'tools';
+
+.hui_segmented {
+  display: inline-block;
+  vertical-align: middle;
+
+  &_item {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    vertical-align: top;
+    text-decoration: none;
+    color: #333;
+    padding: 0 3px;
+    outline: none;
+
+    &:focus {
+      outline: 4px auto $focus-color;
+    }
+
+    &:hover {
+      background: #eee;
+    }
+
+    &:first-child {
+      border-top-left-radius: 2px;
+      border-bottom-left-radius: 2px;
+    };
+    &:last-child {
+      border-top-right-radius: 2px;
+      border-bottom-right-radius: 2px;
+    };
+  }
+
+  &_text {
+    font-size: $standard-font-size;
+    padding: 0 4px;
+  }
+
+  /* Standard variant */
+
+  &-standard {
+    border-radius: 3px;
+    background: #fff;
+    border: 1px solid #AAAAAA;
+    border-color: #ddd #ccc #aaa;
+    font-size: 0;
+    height: 20px;
+    @include vertical-gradient(#fff, #eee);
+  }
+
+  &-standard &_item.hui-is-selected {
+    &,&:hover {
+      background: #ddd;
+      @include vertical-gradient(#EFF2F4, #C0C9CF);
+    }
+  }
+
+  /* Inset variant */
+
+  &-inset {
+    font-size: 0;
+    height: 20px;
+  }
+
+  &-inset &_item {
+    height: 18px;
+    line-height: 18px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    border-color: #ccc #ccc #ddd;
+    @include vertical-gradient(#fff, #eee);
+    margin: 0 2px;
+  }
+
+  &-inset &_text {
+    line-height: 18px;
+    padding: 0 7px;
+  }
+
+  &-inset &_item.hui-is-selected {
+    &, &:hover {
+      border-color: #555 #666 #888;
+      background: #ddd;
+      @include vertical-gradient(#777, #99a);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.2);
+      color: #fff;
+    }
+  }
+}
