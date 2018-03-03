@@ -7,6 +7,8 @@ $font: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 
 $bar-height: 28px;
 
+$standard-font-size: 12px;
+
 @mixin border-box {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
