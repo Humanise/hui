@@ -18,6 +18,7 @@ QUnit.test( "Class", function( assert ) {
   var node = hui.get('hasClass');
 
   assert.ok(hui.cls.has(node,'myclass'), 'Node should have class');
+  assert.ok(hui.matches(node,'.myclass'), 'Node should have class');
   assert.notOk(hui.cls.has(node,'dsjadha'), 'Node should not have class');
 
   node = hui.get('alsoHasClass');

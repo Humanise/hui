@@ -636,7 +636,7 @@ hui.ui.List.prototype = {
     return null;
   },
   _buttonClick : function(button) {
-    var row = hui.get.firstParentByTag(button.getElement(),'tr');
+    var row = hui.closest('tr', button.getElement());
     var obj = this.rows[parseInt(row.getAttribute('data-index'),10)];
     this.fire('clickButton',{row:obj,button:button});
   },

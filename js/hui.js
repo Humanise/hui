@@ -790,29 +790,6 @@ hui.get.children = function(node) {
   return children;
 };
 
-hui.get.ancestors = function(element) {
-  var ancestors = [];
-  var parent = element.parentNode;
-  while (parent) {
-    ancestors[ancestors.length] = parent;
-    parent = parent.parentNode;
-  }
-  return ancestors;
-};
-
-/**
- * Find the first ancestor with a given class (including self)
- */
-hui.get.firstAncestorByClass = function(element,className) {
-  while (element) {
-    if (hui.cls.has(element,className)) {
-      return element;
-    }
-    element = element.parentNode;
-  }
-  return null;
-};
-
 hui.get.next = function(element) {
   if (!element) {
     return null;
@@ -917,20 +894,6 @@ hui.get.byClass = function(parentElement,className,tag) {
   }
 };
 
-/**
- * Get array of descendants of «node» with the name «name»
- * @param node The node to start from
- * @param name The name of the nodes to find
- * @returns An array of nodes (not NodeList)
- * @deprecated
- */
-hui.get.byTag = function(node,name) {
-  var nl = node.getElementsByTagName(name),
-    l=[];
-  for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
-  return l;
-};
-
 hui.get.byId = function(e,id) {
   var children = e.childNodes;
   for (var i = children.length - 1; i >= 0; i--) {
@@ -942,28 +905,6 @@ hui.get.byId = function(e,id) {
         return found;
       }
     }
-  }
-  return null;
-};
-
-hui.get.firstParentByTag = function(node,tag) {
-  var parent = node;
-  while (parent) {
-    if (parent.tagName && parent.tagName.toLowerCase()==tag) {
-      return parent;
-    }
-    parent = parent.parentNode;
-  }
-  return null;
-};
-
-hui.get.firstParentByClass = function(node,tag) {
-  var parent = node;
-  while (parent) {
-    if (hui.cls.has(parent)) {
-      return parent;
-    }
-    parent = parent.parentNode;
   }
   return null;
 };
@@ -995,14 +936,20 @@ hui.findAll = function(selector,context) {
   return Array.prototype.slice.call(nl);
 };
 
-hui.closest = function(selector,context) {
+hui.closest = function(selector, context) {
   var parent = context;
-  while (parent) {
-    if (parent.matches && parent.matches(selector)) {
+  while (parent && parent.nodeType === 1) {
+    if (hui.matches(parent, selector)) {
       return parent;
     }
     parent = parent.parentNode;
   }
+};
+
+hui.matches = function(node, selector) {
+  var docEl = document.documentElement,
+    matches = docEl.matches || docEl.webkitMatchesSelector || docEl.mozMatchesSelector || docEl.msMatchesSelector || docEl.oMatchesSelector;
+  return matches.call(node, selector);
 };
 
 if (!document.querySelector) {
@@ -1605,21 +1552,14 @@ hui.Event.prototype = {
    * @returns {Element} The found element or null
    */
   findByClass : function(cls) {
-    return hui.get.firstAncestorByClass(this.element,cls);
+    return hui.closest('.' + cls, this.element);
   },
   /** Finds the nearest ancester with a certain tag name
    * @param tag The tag name
    * @returns {Element} The found element or null
    */
   findByTag : function(tag) {
-    var parent = this.element;
-    while (parent) {
-      if (parent.tagName && parent.tagName.toLowerCase()==tag) {
-        return parent;
-      }
-      parent = parent.parentNode;
-    }
-    return null;
+    return hui.closest(tag, this.element);
   },
   find : function(func) {
     var parent = this.element;
@@ -1693,52 +1633,16 @@ hui._onReady = function(delegate) {
   if (document.readyState == 'interactive') {
     window.setTimeout(delegate);
   }
-  else if(window.addEventListener) {
+  else if (window.addEventListener) {
     window.addEventListener('DOMContentLoaded',delegate,false);
   }
-  else if(typeof document.addEventListener != 'undefined')
-  {
-    //.. opera 7
-    document.addEventListener('load', delegate, false);
-  }
-  else if(typeof window.attachEvent != 'undefined')
-  {
+  else if (window.attachEvent) {
     document.attachEvent("onreadystatechange", function(){
-      // check if the DOM is fully loaded
       if(document.readyState === "complete"){
-        // remove the listener, to make sure it isn't fired in future
         document.detachEvent("onreadystatechange", arguments.callee);
         delegate();
       }
     });
-  }
-
-  //** remove this condition to degrade older browsers
-  else
-  {
-    //.. mac/ie5 and anything else that gets this far
-
-    //if there's an existing onload function
-    if(typeof window.onload == 'function')
-    {
-      //store it
-      var existing = window.onload;
-
-      //add new onload handler
-      window.onload = function()
-      {
-        //call existing onload function
-        existing();
-
-        //call delegate onload function
-        delegate();
-      };
-    }
-    else
-    {
-      //setup onload function
-      window.onload = delegate;
-    }
   }
 };
 

@@ -200,23 +200,21 @@ hui.ui.remove = function(widget) {
   @returns {Array} An array of all ancestors
 */
 hui.ui.getAncestors = function(widget) {
-  var desc = [];
-  var e = widget.element;
-  if (e) {
-    var a = hui.get.ancestors(e);
-    var o = [];
-    for (var key in hui.ui.objects) {
-      o.push(hui.ui.objects[key]);
-    }
-    for (var i=0; i < a.length; i++) {
-      for (var j=0; j < o.length; j++) {
-        if (o[j].element==a[i]) {
-          desc.push(o[j]);
+  var ancestors = [];
+  var element = widget.element;
+  if (element) {
+    var parent = element.parentNode;
+    while (parent) {
+      for (var key in hui.ui.objects) {
+        var widget = hui.ui.objects[key];
+        if (widget.element === parent) {
+          ancestors.push(widget);
         }
       }
+      parent = parent.parentNode;
     }
   }
-  return desc;
+  return ancestors;
 };
 
 hui.ui.getDescendants = function(widgetOrElement) {
