@@ -4,6 +4,7 @@ document.write('<script type="text/javascript" src="'+_context+'/js/hui_color.js
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_require.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_parallax.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_store.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/hui_cookie.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_xml.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_preloader.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/lib/date.js"></script>');

@@ -49,6 +49,7 @@ jsFiles = [
     'js/hui_require.js',
     'js/hui_parallax.js',
     'js/hui_store.js',
+    'js/hui_cookie.js',
     'js/hui_xml.js',
     'js/hui_preloader.js',
     'lib/date.js',

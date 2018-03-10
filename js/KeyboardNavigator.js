@@ -14,9 +14,6 @@ hui.ui.KeyboardNavigator = function(options) {
 
 hui.ui.KeyboardNavigator.prototype = {
   _onKeyDown : function(e) {
-    if (hui.ui.keyboardTarget) {
-      return;
-    }
     e = hui.event(e.key);
     if (e.metaKey || e.altKey || e.shiftKey || e.leftKey || e.rightKey) {
       return;

@@ -53,10 +53,10 @@ hui.ui.NumberInput.prototype = {
   },
   _onKey : function(e) {
     e = e || window.event;
-    if (e.keyCode==hui.KEY_UP) {
+    if (e.keyCode == 38) {
       hui.stop(e);
       this.upEvent();
-    } else if (e.keyCode==hui.KEY_DOWN) {
+    } else if (e.keyCode == 40) {
       this.downEvent();
     } else {
       var parsed = parseFloat(this.input.value,10);

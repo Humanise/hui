@@ -643,24 +643,11 @@ hui.ui.addFocusClass = function(options) {
   var ce = options.classElement || options.element, c = options['class'];
   hui.listen(options.element,'focus',function() {
     hui.cls.add(ce,c);
-    if (options.widget) {
-      hui.ui.setKeyboardTarget(options.widget);
-    }
   });
   hui.listen(options.element,'blur',function() {
     hui.cls.remove(ce,c);
-    if (options.widget) {
-      hui.ui.setKeyboardTarget(null);
-    }
   });
 };
-
-hui.ui.keyboardTarget = null; // The widget currently accepting keyboard input
-
-hui.ui.setKeyboardTarget = function(widget) {
-  hui.ui.keyboardTarget = widget;
-};
-
 
 /**
  * Make a widget draw attention to itself
@@ -748,9 +735,9 @@ hui.ui.extend = function(obj,options) {
   }
   if (!obj.destroy) {
     obj.destroy = function() {
-            if (this.element) {
-                hui.dom.remove(this.element);
-            }
+      if (this.element) {
+        hui.dom.remove(this.element);
+      }
     };
   }
   if (!obj.valueForProperty) {

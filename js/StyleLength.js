@@ -59,10 +59,10 @@ hui.ui.StyleLength.prototype = {
   /** @private */
   keyEvent : function(e) {
     e = e || window.event;
-    if (e.keyCode==hui.KEY_UP) {
+    if (e.keyCode == 38) {
       hui.stop(e);
       this._upEvent();
-    } else if (e.keyCode==hui.KEY_DOWN) {
+    } else if (e.keyCode == 40) {
       this._downEvent();
     } else {
       this._checkAndSetValue(this.parseValue(this.input.value));

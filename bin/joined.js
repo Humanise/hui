@@ -5,20 +5,6 @@
 hui = window.hui || {};
 
 (function(hui,agent,window) {
-  hui.KEY_BACKSPACE = 8;
-  hui.KEY_TAB = 9;
-  hui.KEY_RETURN = 13;
-  hui.KEY_ESC = 27;
-  hui.KEY_LEFT = 37;
-  hui.KEY_UP = 38;
-  hui.KEY_RIGHT = 39;
-  hui.KEY_DOWN = 40;
-  hui.KEY_DELETE = 46;
-  hui.KEY_HOME = 36;
-  hui.KEY_END = 35;
-  hui.KEY_PAGEUP = 33;
-  hui.KEY_PAGEDOWN = 34;
-  hui.KEY_INSERT = 45;
 
   /**
    * @namespace
@@ -210,20 +196,20 @@ hui.override = function(original,subject) {
  * @param {Object | Array} items The object or array to loop through
  * @param {Function} func The callback to handle each item
  */
-hui.each = function(items,func) {
-    var i;
+hui.each = function(items, func) {
+  var i;
   if (hui.isArray(items)) {
     for (i = 0; i < items.length; i++) {
-      func(items[i],i);
+      func(items[i], i);
     }
   } else if (items instanceof NodeList) {
     for (i = 0; i < items.length; i++) {
-      func(items.item(i),i);
+      func(items.item(i), i);
     }
   } else if (hui.isDefined(items)) {
     for (var key in items) {
       if (items.hasOwnProperty(key)) {
-        func(key,items[key]);
+        func(key, items[key]);
       }
     }
   }
@@ -246,9 +232,9 @@ hui.when = function(condition,text) {
 hui.intOrString = function(str) {
   if (hui.isDefined(str)) {
     var result = /[0-9]+/.exec(str);
-    if (result!==null && result[0]==str) {
-      if (parseInt(str,10)==str) {
-        return parseInt(str,10);
+    if (result !== null && result[0] == str) {
+      if (parseInt(str,10) == str) {
+        return parseInt(str, 10);
       }
     }
   }
@@ -258,8 +244,8 @@ hui.intOrString = function(str) {
 /**
  * Make sure a number is between a min / max
  */
-hui.between = function(min,value,max) {
-  var result = Math.min(max,Math.max(min,value));
+hui.between = function(min, value, max) {
+  var result = Math.min(max, Math.max(min, value));
   return isNaN(result) ? min : result;
 };
 
@@ -351,11 +337,11 @@ hui.string = {
    * @param {String} start The string to look for at the start
    * @returns {Boolean} True if «str» starts with «start»
    */
-  startsWith : function(str,start) {
+  startsWith : function(str, start) {
     if (typeof(str) !== 'string' || typeof(start) !== 'string') {
       return false;
     }
-    return (str.match("^"+start)==start);
+    return str.match("^"+start) == start;
   },
   /**
    * Test that a string ends with another string
@@ -363,11 +349,11 @@ hui.string = {
    * @param {String} end The string to look for at the end
    * @returns {Boolean} True if «str» ends with «end»
    */
-  endsWith : function(str,end) {
+  endsWith : function(str, end) {
     if (typeof(str) !== 'string' || typeof(end) !== 'string') {
       return false;
     }
-    return (str.match(end+"$")==end);
+    return str.match(end+"$") == end;
   },
 
   /**
@@ -377,18 +363,18 @@ hui.string = {
    */
   camelize : function(str) {
     if (str.indexOf('-')==-1) {
-            return str;
-        }
-      var oStringList = str.split('-');
+      return str;
+    }
+    var oStringList = str.split('-');
 
-      var camelizedString = str.indexOf('-') === 0 ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1) : oStringList[0];
+    var camelizedString = str.indexOf('-') === 0 ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1) : oStringList[0];
 
-      for (var i = 1, len = oStringList.length; i < len; i++) {
-        var s = oStringList[i];
-        camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
-      }
+    for (var i = 1, len = oStringList.length; i < len; i++) {
+      var s = oStringList[i];
+      camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
+    }
 
-      return camelizedString;
+    return camelizedString;
   },
   /**
    * Trim whitespace including unicode chars
@@ -438,7 +424,7 @@ hui.string = {
    */
   escapeHTML : function(str) {
     if (str===null || str===undefined) {return '';}
-      return hui.build('div',{text:str}).innerHTML;
+    return hui.build('div',{text:str}).innerHTML;
   },
   /**
    * Escape the html in a string (fast)
@@ -500,8 +486,8 @@ hui.array = {
    * @param {Array} arr The array
    * @param {Object} value The object to add
    */
-  add : function(arr,value) {
-    if (value.constructor==Array) {
+  add : function(arr, value) {
+    if (value.constructor == Array) {
       for (var i=0; i < value.length; i++) {
         if (!hui.array.contains(arr,value[i])) {
           arr.push(value);
@@ -1516,30 +1502,30 @@ hui.Event.prototype = {
    * @type {Number}
    */
   getLeft : function() {
-      var left = 0;
+    var left = 0;
     if (this.event) {
-        if (this.event.pageX) {
-          left = this.event.pageX;
-        } else if (this.event.clientX) {
-          left = this.event.clientX + hui.window.getScrollLeft();
-        }
+      if (this.event.pageX) {
+        left = this.event.pageX;
+      } else if (this.event.clientX) {
+        left = this.event.clientX + hui.window.getScrollLeft();
+      }
     }
-      return left;
+    return left;
   },
   /**
    * Get the top coordinate
    * @returns {Number} The top coordinate
    */
   getTop : function() {
-      var top = 0;
+    var top = 0;
     if (this.event) {
-        if (this.event.pageY) {
-          top = this.event.pageY;
-        } else if (this.event.clientY) {
-          top = this.event.clientY + hui.window.getScrollTop();
-        }
+      if (this.event.pageY) {
+        top = this.event.pageY;
+      } else if (this.event.clientY) {
+        top = this.event.clientY + hui.window.getScrollTop();
+      }
     }
-      return top;
+    return top;
   },
   /** Get the node the event originates from
    * @returns {ELement} The originating element
@@ -1572,7 +1558,6 @@ hui.Event.prototype = {
     return null;
   },
   isDescendantOf : function(node) {
-
     var parent = this.element;
     while (parent) {
       if (parent===node) {
@@ -1597,7 +1582,7 @@ hui.stop = function(event) {
   if (event.stopPropagation) {event.stopPropagation();}
   if (event.preventDefault) {event.preventDefault();}
   event.cancelBubble = true;
-    event.stopped = true;
+  event.stopped = true;
 };
 
 hui._ = hui._ || [];
@@ -1894,12 +1879,12 @@ hui.style = {
       element.style.opacity = opacity;
     }
   },
-    length : function(value) {
-        if (typeof(value) === 'number') {
-            return value + 'px';
-        }
-        return value;
+  length : function(value) {
+    if (typeof(value) === 'number') {
+      return value + 'px';
     }
+    return value;
+  }
 };
 
 
@@ -1916,24 +1901,24 @@ hui.frame = {
    * @param frame The frame to get the document from
    */
   getDocument : function(frame) {
-      if (frame.contentDocument) {
-          return frame.contentDocument;
-      } else if (frame.contentWindow) {
-          return frame.contentWindow.document;
-      } else if (frame.document) {
-          return frame.document;
-      }
+    if (frame.contentDocument) {
+      return frame.contentDocument;
+    } else if (frame.contentWindow) {
+      return frame.contentWindow.document;
+    } else if (frame.document) {
+      return frame.document;
+    }
   },
   /**
    * Get the window object of a frame
    * @param frame The frame to get the window from
    */
   getWindow : function(frame) {
-      if (frame.defaultView) {
-          return frame.defaultView;
-      } else if (frame.contentWindow) {
-          return frame.contentWindow;
-      }
+    if (frame.defaultView) {
+      return frame.defaultView;
+    } else if (frame.contentWindow) {
+      return frame.contentWindow;
+    }
   }
 };
 
@@ -2338,47 +2323,6 @@ hui.drag = {
     });
   }
 };
-
-///////////////// Cookies //////////////////
-
-/** @namespace */
-hui.cookie = {
-  /** Adds a cookie value by name */
-  set : function(name,value,days) {
-    var expires;
-    if (days) {
-      var date = new Date();
-      date.setTime(date.getTime()+(days*24*60*60*1000));
-      expires = "; expires="+date.toGMTString();
-    } else {
-      expires = "";
-    }
-    document.cookie = name+"="+value+expires+"; path=/";
-  },
-  /** Gets a cookie value by name */
-  get : function(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-      var c = ca[i];
-      while (c.charAt(0)==' ') {
-        c = c.substring(1,c.length);
-      }
-      if (c.indexOf(nameEQ) === 0) {
-        return c.substring(nameEQ.length,c.length);
-      }
-    }
-    return null;
-  },
-  /** Clears a cookie by name */
-  clear : function(name) {
-    this.set(name,"",-1);
-  }
-};
-
-
-
-
 
 
 ///////////////////////// Location /////////////////////
@@ -3579,6 +3523,43 @@ hui.store = {
   }
 };
 
+hui = window.hui || {};
+
+/** @namespace */
+hui.cookie = {
+  /** Adds a cookie value by name */
+  set : function(name,value,days) {
+    var expires;
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime()+(days*24*60*60*1000));
+      expires = "; expires="+date.toGMTString();
+    } else {
+      expires = "";
+    }
+    document.cookie = name+"="+value+expires+"; path=/";
+  },
+  /** Gets a cookie value by name */
+  get : function(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+      var c = ca[i];
+      while (c.charAt(0)==' ') {
+        c = c.substring(1,c.length);
+      }
+      if (c.indexOf(nameEQ) === 0) {
+        return c.substring(nameEQ.length,c.length);
+      }
+    }
+    return null;
+  },
+  /** Clears a cookie by name */
+  clear : function(name) {
+    this.set(name,"",-1);
+  }
+};
+
 hui.xml = {
 /*  transform : function(xml,xsl) {
     if (window.ActiveXObject) {
@@ -4764,24 +4745,11 @@ hui.ui.addFocusClass = function(options) {
   var ce = options.classElement || options.element, c = options['class'];
   hui.listen(options.element,'focus',function() {
     hui.cls.add(ce,c);
-    if (options.widget) {
-      hui.ui.setKeyboardTarget(options.widget);
-    }
   });
   hui.listen(options.element,'blur',function() {
     hui.cls.remove(ce,c);
-    if (options.widget) {
-      hui.ui.setKeyboardTarget(null);
-    }
   });
 };
-
-hui.ui.keyboardTarget = null; // The widget currently accepting keyboard input
-
-hui.ui.setKeyboardTarget = function(widget) {
-  hui.ui.keyboardTarget = widget;
-};
-
 
 /**
  * Make a widget draw attention to itself
@@ -4869,9 +4837,9 @@ hui.ui.extend = function(obj,options) {
   }
   if (!obj.destroy) {
     obj.destroy = function() {
-            if (this.element) {
-                hui.dom.remove(this.element);
-            }
+      if (this.element) {
+        hui.dom.remove(this.element);
+      }
     };
   }
   if (!obj.valueForProperty) {
@@ -12280,7 +12248,6 @@ hui.ui.SearchField.prototype = {
     hui.listen(this.field,'blur',this._onBlur.bind(this));
   },
   _onFocus : function() {
-    hui.ui.setKeyboardTarget(this);
     this.focused = true;
     this._updateClass();
     if (this.options.expandedWidth > 0) {
@@ -12291,7 +12258,6 @@ hui.ui.SearchField.prototype = {
     }
   },
   _onBlur : function() {
-    hui.ui.setKeyboardTarget(null);
     this.focused = false;
     this._updateClass();
     if (this.initialWidth!==null) {
@@ -12300,7 +12266,7 @@ hui.ui.SearchField.prototype = {
   },
   _onKeyUp : function(e) {
     this._fieldChanged();
-    if (e.keyCode===hui.KEY_RETURN) {
+    if (e.keyCode === 13) {
       this.fire('submit');
     }
   },
@@ -14634,10 +14600,10 @@ hui.ui.StyleLength.prototype = {
   /** @private */
   keyEvent : function(e) {
     e = e || window.event;
-    if (e.keyCode==hui.KEY_UP) {
+    if (e.keyCode == 38) {
       hui.stop(e);
       this._upEvent();
-    } else if (e.keyCode==hui.KEY_DOWN) {
+    } else if (e.keyCode == 40) {
       this._downEvent();
     } else {
       this._checkAndSetValue(this.parseValue(this.input.value));
@@ -15407,10 +15373,10 @@ hui.ui.NumberInput.prototype = {
   },
   _onKey : function(e) {
     e = e || window.event;
-    if (e.keyCode==hui.KEY_UP) {
+    if (e.keyCode == 38) {
       hui.stop(e);
       this.upEvent();
-    } else if (e.keyCode==hui.KEY_DOWN) {
+    } else if (e.keyCode == 40) {
       this.downEvent();
     } else {
       var parsed = parseFloat(this.input.value,10);
@@ -15642,7 +15608,7 @@ hui.ui.TextInput.prototype = {
     hui.cls.set(this.element,'hui_field_dirty',this.value.length>0);
   },
   _onKeyDown : function(e) {
-    if (!this.multiline && e.keyCode===hui.KEY_RETURN) {
+    if (!this.multiline && e.keyCode === 13) {
       hui.stop(e);
       this.fire('submit');
       var form = hui.ui.getAncestor(this,'hui_formula');

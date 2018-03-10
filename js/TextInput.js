@@ -103,7 +103,7 @@ hui.ui.TextInput.prototype = {
     hui.cls.set(this.element,'hui_field_dirty',this.value.length>0);
   },
   _onKeyDown : function(e) {
-    if (!this.multiline && e.keyCode===hui.KEY_RETURN) {
+    if (!this.multiline && e.keyCode === 13) {
       hui.stop(e);
       this.fire('submit');
       var form = hui.ui.getAncestor(this,'hui_formula');

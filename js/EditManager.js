@@ -1,4 +1,4 @@
-(function(_super, _) {
+(function(_super, hui) {
 
   hui.ui.EditManager = function(options) {
     _super.call(this, options);
@@ -16,20 +16,20 @@
   hui.ui.EditManager.prototype = {
     _collect : function() {
       var root = this.root;
-      var desc = _.findAll('*',root);
+      var desc = hui.findAll('*',root);
       desc.push(root);
-      var components = _.ui.getComponents(function(c) {
+      var components = hui.ui.getComponents(function(c) {
         return (c.getElement && desc.indexOf(c.getElement()) !== -1);
       });
       for (var i = 0; i < components.length; i++) {
         var cmp = components[i];
-        if (_.ui.is(cmp,hui.ui.Window)) {
+        if (hui.ui.is(cmp,hui.ui.Window)) {
           this.window = cmp;
         }
-        else if (_.ui.is(cmp,hui.ui.Formula)) {
+        else if (hui.ui.is(cmp,hui.ui.Formula)) {
           this.formula = cmp;
         }
-        else if (_.ui.is(cmp,hui.ui.Button)) {
+        else if (hui.ui.is(cmp,hui.ui.Button)) {
           var role = cmp.getRole();
           if (role=='save') {
             this.saveButton = cmp;
