@@ -1,0 +1,70 @@
+@font-face {
+  font-family: 'HUI';
+  src:
+    url('fonts/HUI.ttf?4k393m') format('truetype'),
+    url('fonts/HUI.woff?4k393m') format('woff'),
+    url('fonts/HUI.svg?4k393m#HUI') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="hui_symbol-"], [class*=" hui_symbol-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'HUI' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.hui_symbol-search:before {
+  content: "\e90c";
+}
+.hui_symbol-menu:before {
+  content: "\e916";
+}
+.hui_symbol-close:before {
+  content: "\e917";
+}
+.hui_symbol-left:before {
+  content: "\e912";
+}
+.hui_symbol-right:before {
+  content: "\e913";
+}
+.hui_symbol-up:before {
+  content: "\e914";
+}
+.hui_symbol-down:before {
+  content: "\e911";
+}
+.hui_symbol-info:before {
+  content: "\27";
+}
+.hui_symbol-more:before {
+  content: "\e907";
+}
+.hui_symbol-follow:before {
+  content: "\e905";
+}
+.hui_symbol-add:before {
+  content: "\e60c";
+}
+.hui_symbol-trash:before {
+  content: "\e900";
+}
+.hui_symbol-gear:before {
+  content: "\e607";
+}
+.hui_symbol-delete:before {
+  content: "\e60e";
+}
+.hui_symbol-view:before {
+  content: "\e60d";
+}

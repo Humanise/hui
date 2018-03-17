@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'HUI';
+  src: url("../symbols/font/fonts/HUI.ttf?4k393m") format("truetype"), url("../symbols/font/fonts/HUI.woff?4k393m") format("woff"), url("../symbols/font/fonts/HUI.svg?4k393m#HUI") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+.hui_symbol {
+  width: 16px;
+  height: 16px;
+  display: inline-block; }

@@ -135,6 +135,7 @@ cssFiles = [
     'tooltip',
     'disclosure',
     'icon',
+    'symbol',
     'button',
     'tabbox',
     'formula',

@@ -4,6 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:gui="uri:hui"
   xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
   version="1.0"
   exclude-result-prefixes="gui"
 >
@@ -1493,7 +1494,20 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </script>
   </xsl:template>
 
+  <xsl:template name="gui:symbol">
+    <xsl:param name="name"/>
+    <span class="hui_symbol">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <use xlink:href="{$context}/hui/symbols/all.svg#icon-{$name}"><xsl:comment/></use>
+    </svg>
+    </span>
+  </xsl:template>
 
+  <xsl:template match="gui:symbol">
+    <xsl:call-template name="gui:symbol">
+      <xsl:with-param name="name"><xsl:value-of select="@name"/></xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
 
 
 
