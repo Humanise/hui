@@ -9,6 +9,25 @@ $bar-height: 30px;
 
 $standard-font-size: 12px;
 
+
+$search-symbol: "\e90c";
+$menu-symbol: "\e916";
+$close-symbol: "\e917";
+$left-symbol: "\e912";
+$right-symbol: "\e913";
+$up-symbol: "\e914";
+$down-symbol: "\e911";
+$info-symbol: "\27";
+$more-symbol: "\e907";
+$follow-symbol: "\e905";
+$add-symbol: "\e60c";
+$trash-symbol: "\e900";
+$gear-symbol: "\e607";
+$delete-symbol: "\e60e";
+$view-symbol: "\e60d";
+
+
+
 @mixin border-box {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -53,4 +72,20 @@ $standard-font-size: 12px;
   background: linear-gradient(#f1f2f3, #d1d4d6);
   box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
   text-shadow: none;
+}
+
+@mixin symbol-before($symbol) {
+  &:before {
+    font-family: 'HUI' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: $symbol;
+    @content;
+  }
 }
