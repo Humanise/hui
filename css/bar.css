@@ -1,41 +1,32 @@
 .hui_bar {
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
-  background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -moz-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -ms-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -o-linear-gradient(top, #fff, #f0f0f0);
-  background-image: linear-gradient(top, #fff, #f0f0f0);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
   height: 30px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
-  font-size: 0; }
-
-.hui_bar_body {
-  height: 30px;
-  font-size: 0; }
-
-.hui_bar_right {
-  float: right;
-  height: 30px;
+  font-size: 0;
   display: flex;
-  align-items: center; }
-
-.hui_bar_left {
-  height: 30px;
-  display: flex;
-  align-items: center; }
-
-.hui_bar_absolute {
-  position: absolute;
-  visibility: hidden;
-  left: -1000px;
-  top: -1000px; }
-
-.gui_bar_space {
-  display: inline-block;
-  width: 5px; }
+  justify-content: space-between; }
+  .hui_bar_right {
+    float: right;
+    height: 30px;
+    display: flex;
+    align-items: center; }
+    .hui_bar_right > *:not(script) {
+      margin-right: 4px; }
+  .hui_bar_left {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-right: 4px; }
+    .hui_bar_left > *:not(script) {
+      margin-left: 4px; }
+  .hui_bar_space {
+    display: inline-block;
+    width: 5px; }
+  .hui_bar-absolute {
+    position: absolute;
+    visibility: hidden;
+    left: -1000px;
+    top: -1000px; }
 
 /*************** Button **************/
 .hui_bar_button {
@@ -46,41 +37,23 @@
   text-decoration: none;
   vertical-align: middle;
   cursor: pointer;
-  border-right: 1px solid #ddd; }
+  color: #444; }
   .hui_bar_button:focus {
     outline: none; }
+  .hui_bar_button_text {
+    vertical-align: middle;
+    font-size: 13px;
+    margin-left: 5px;
+    text-shadow: 0 1px 0 #eee;
+    font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif; }
+  .hui_bar_button .hui_icon_16 {
+    vertical-align: middle; }
+  .hui_bar_button:hover {
+    color: #000; }
+  .hui_bar_button:hover .hui_icon_16 {
+    background-position: 0 -16px; }
 
-.hui_bar_right .hui_bar_button {
-  background-position: left -30px; }
-
-.hui_bar_button_text {
-  color: #444;
-  vertical-align: middle;
-  font-size: 13px;
-  margin-left: 5px;
-  text-shadow: 0 1px 0 #eee;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif; }
-
-.hui_bar .hui_bar_button:hover {
-  background-color: #eee;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#c8c8c8));
-  background-image: -webkit-linear-gradient(top, #eee, #c8c8c8);
-  background-image: -moz-linear-gradient(top, #eee, #c8c8c8);
-  background-image: -ms-linear-gradient(top, #eee, #c8c8c8);
-  background-image: -o-linear-gradient(top, #eee, #c8c8c8);
-  background-image: linear-gradient(top, #eee, #c8c8c8);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eee', endColorstr='#c8c8c8'); }
-
-.hui_bar_button .hui_icon_16 {
-  vertical-align: middle; }
-
-.hui_bar_button:hover .hui_icon_16 {
-  background-position: 0 -16px; }
-
-.hui_bar_button:hover .hui_bar_button_text {
-  color: #000; }
-
-.hui_bar .hui_bar_button_selected, .hui_bar .hui_bar_button_selected:hover {
+.hui_bar .hui_bar_button-selected, .hui_bar .hui_bar_button-selected:hover {
   background-color: #bdbdbd;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#bdbdbd), to(#ebebeb));
   background-image: -webkit-linear-gradient(top, #bdbdbd, #ebebeb);
@@ -90,30 +63,20 @@
   background-image: linear-gradient(top, #bdbdbd, #ebebeb);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bdbdbd', endColorstr='#ebebeb'); }
 
-.hui_bar_button_selected .hui_icon_16 {
+.hui_bar_button-selected .hui_icon_16 {
   background-position: 0 -32px; }
 
-.hui_bar_button_selected .hui_bar_button_text {
+.hui_bar_button-selected .hui_bar_button_text {
   color: #0054a6; }
 
 /******************* window variant ***************/
-.hui_bar_window, .hui_bar_window .hui_bar_body, .hui_bar_window .hui_bar_left, .hui_bar_window .hui_bar_right {
-  background: none;
-  height: 25px; }
-
-.hui_bar_window {
+.hui_bar-window {
   border-top: 1px solid #D6D6D6;
-  border-bottom: 1px solid #D6D6D6; }
-
-.hui_bar_window .hui_bar_body {
-  border-top: 1px solid #F3F3F3;
-  border-bottom: 1px solid #F3F3F3; }
-
-.hui_bar_window .hui_segmented {
-  margin-top: 1px; }
+  border-bottom: 1px solid #F3F3F3;
+  box-shadow: inset 0 1px 0 #F3F3F3, inset 0 -1px 0 #D6D6D6; }
 
 /******************* window mini variant ***************/
-.hui_bar_window_mini {
+.hui_bar-window_mini {
   background-color: #fff;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
   background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
@@ -124,24 +87,20 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
   height: 24px; }
 
-.hui_window_light .hui_bar_window_mini {
+.hui_window_light .hui_bar-window_mini {
   background: #fafafa;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   padding: 0 5px; }
 
-.hui_bar_window_mini .hui_bar_body {
-  background: none;
-  height: 24px; }
-
-.hui_bar_window_mini .hui_bar_right {
+.hui_bar-window_mini .hui_bar_right {
   height: 24px;
   background: none; }
 
-.hui_bar_window_mini .hui_bar_left {
+.hui_bar-window_mini .hui_bar_left {
   height: 24px; }
 
-.hui_bar_window_mini .hui_bar_button {
+.hui_bar-window_mini .hui_bar_button {
   height: 24px;
   line-height: 24px;
   background: none;
@@ -149,11 +108,11 @@
   border-width: 0 1px;
   padding: 0 4px; }
 
-.hui_bar_window_mini .hui_bar_button:hover {
+.hui_bar-window_mini .hui_bar_button:hover {
   background: #eee;
   border-color: #ddd; }
 
-.hui_bar_window_mini .hui_bar_button_selected, .hui_bar_window_mini .hui_bar_button_selected:hover {
+.hui_bar-window_mini .hui_bar_button-selected, .hui_bar-window_mini .hui_bar_button-selected:hover {
   background-color: #bbb;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#bbb), to(#ddd));
   background-image: -webkit-linear-gradient(top, #bbb, #ddd);
@@ -164,14 +123,14 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bbb', endColorstr='#ddd');
   border-color: #bbb; }
 
-.hui_bar_window_mini_top {
+.hui_bar-window_mini_top {
   border-top: 1px solid #ddd; }
 
-.hui_bar_window_mini_bottom {
+.hui_bar-window_mini_bottom {
   border-top: 1px solid #ddd; }
 
 /******************* layout variant ***************/
-.hui_bar_layout {
+.hui_bar-layout {
   background-color: #fff;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
   background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
@@ -180,31 +139,9 @@
   background-image: -o-linear-gradient(top, #fff, #f0f0f0);
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-  height: 28px;
-  border: none;
   border-bottom: 1px solid #ddd; }
 
-.hui_bar_layout .hui_bar_body {
-  height: 28px;
-  background: none;
-  padding: 0 3px; }
-
-.hui_bar_layout .hui_bar_button {
-  height: 28px;
-  line-height: 28px;
-  background: none;
-  padding: 0 4px;
-  border: none; }
-
-.hui_bar_layout .hui_bar_button:hover {
-  background: none; }
-
-.hui_bar_layout .hui_bar_right, .hui_bar_layout .hui_bar_left {
-  height: 28px;
-  border: none;
-  background: none; }
-
-.hui_bar_layout .hui_bar_text {
+.hui_bar-layout .hui_bar_text {
   color: #666;
   display: inline-block;
   font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
@@ -214,42 +151,35 @@
   text-shadow: 0 1px 0 #FFFFFF;
   vertical-align: top; }
 
-.hui_bar_layout .hui_bar_text_header {
+.hui_bar-layout .hui_bar_text_header {
   color: #445566;
   font-weight: bold; }
 
 /******************* Mini variant *****************/
-.hui_bar_mini {
+.hui_bar-mini {
   height: 22px;
   background: #fafafa;
   border: 1px solid #ddd;
   border-radius: 3px; }
+  .hui_bar-mini .hui_bar_left, .hui_bar-mini .hui_bar_right {
+    height: 22px; }
+  .hui_bar-mini .hui_bar_button {
+    height: 22px;
+    line-height: 22px;
+    padding: 0 2px; }
+    .hui_bar-mini .hui_bar_button:hover {
+      background: #ddd; }
+    .hui_bar-mini .hui_bar_button_text {
+      font-size: 11px; }
 
-.hui_bar_mini .hui_bar_body {
-  height: 22px;
-  background: none;
-  padding: 0 3px; }
-
-.hui_bar_mini .hui_bar_button {
-  height: 22px;
-  line-height: 22px;
-  background: none;
-  padding: 0 2px; }
-
-.hui_bar_mini .hui_bar_button_text {
-  font-size: 11px; }
-
-.hui_bar_mini .hui_bar_button:hover {
-  background: #ddd; }
-
-.hui_bar_mini .hui_bar_divider {
+.hui_bar-mini .hui_bar_divider {
   display: inline-block;
   height: 22px;
   border-left: 1px solid #ddd;
   margin: 0 3px; }
 
 /******************* Layout mini variant ***************/
-.hui_bar_layout_mini {
+.hui_bar-layout_mini {
   background-color: #fff;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
   background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
@@ -260,27 +190,23 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
   height: 22px;
   border-bottom: 1px solid #ddd; }
-  .hui_bar_layout_mini .hui_bar_body {
-    background: none;
-    height: 22px;
-    overflow: hidden; }
-  .hui_bar_layout_mini .hui_bar_right {
+  .hui_bar-layout_mini .hui_bar_right {
     height: 22px;
     background: none; }
-  .hui_bar_layout_mini .hui_bar_left {
+  .hui_bar-layout_mini .hui_bar_left {
     height: 22px; }
-  .hui_bar_layout_mini .hui_bar_button {
+  .hui_bar-layout_mini .hui_bar_button {
     height: 22px;
     line-height: 22px;
     background: none;
     border: 1px solid transparent;
     border-width: 0 1px;
     padding: 0 5px; }
-    .hui_bar_layout_mini .hui_bar_button:hover {
+    .hui_bar-layout_mini .hui_bar_button:hover {
       background: #eee;
       border-color: #ddd; }
 
-.hui_bar_layout_mini .hui_bar_button_selected, .hui_bar_layout_mini .hui_bar_button_selected:hover {
+.hui_bar-layout_mini .hui_bar_button-selected, .hui_bar-layout_mini .hui_bar_button-selected:hover {
   background-color: #bbb;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#bbb), to(#ddd));
   background-image: -webkit-linear-gradient(top, #bbb, #ddd);
@@ -291,11 +217,11 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bbb', endColorstr='#ddd');
   border-color: #bbb; }
 
-.hui_bar_layout_mini .hui_bar_button_selected .hui_icon_16 {
+.hui_bar-layout_mini .hui_bar_button-selected .hui_icon_16 {
   background-position: 0 -16px; }
 
-.hui_bar_layout_mini_top {
+.hui_bar-layout_mini_top {
   border-top: 1px solid #ddd; }
 
-.hui_bar_layout_mini_bottom {
+.hui_bar-layout_mini_bottom {
   border-top: 1px solid #ddd; }

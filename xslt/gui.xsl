@@ -2524,19 +2524,17 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:attribute name="class">
         <xsl:text>hui_bar</xsl:text>
         <xsl:if test="@variant">
-          <xsl:text> hui_bar_</xsl:text><xsl:value-of select="@variant"/>
+          <xsl:text> hui_bar-</xsl:text><xsl:value-of select="@variant"/>
         </xsl:if>
       </xsl:attribute>
       <xsl:if test="(@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)) or @visible='false'">
         <xsl:attribute name="style">display:none;</xsl:attribute>
       </xsl:if>
-      <div class="hui_bar_body">
-        <xsl:apply-templates select="gui:right"/>
-        <div class="hui_bar_left">
-          <xsl:apply-templates select="child::*[not(name()='right')]"/>
-          <xsl:comment/>
-        </div>
+      <div class="hui_bar_left">
+        <xsl:apply-templates select="child::*[not(name()='right')]"/>
+        <xsl:comment/>
       </div>
+      <xsl:apply-templates select="gui:right"/>
     </div>
     <script type="text/javascript">
       var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Bar({
@@ -2566,7 +2564,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:bar//gui:button[@icon]">
     <xsl:variable name="class">
       <xsl:text>hui_bar_button</xsl:text>
-      <xsl:if test="@selected='true'"><xsl:text> hui_bar_button_selected</xsl:text></xsl:if>
+      <xsl:if test="@selected='true'"><xsl:text> hui_bar_button-selected</xsl:text></xsl:if>
     </xsl:variable>
     <a id="{generate-id()}" class="{$class}">
       <xsl:if test="@icon">

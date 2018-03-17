@@ -34,21 +34,17 @@ hui.ui.Bar.create = function(options) {
   options = options || {};
   var cls = 'hui_bar';
   if (options.variant) {
-    cls += ' hui_bar_' + options.variant;
+    cls += ' hui_bar-' + options.variant;
   }
   if (options.absolute) {
-    cls += ' hui_bar_absolute';
+    cls += ' hui_bar-absolute';
   }
   options.element = hui.build('div', {
     'class': cls
   });
-  var body = hui.build('div', {
-    'class': 'hui_bar_body',
-    parent: options.element
-  });
   hui.build('div', {
     'class': 'hui_bar_left',
-    parent: body
+    parent: options.element
   });
   return new hui.ui.Bar(options);
 };
@@ -137,12 +133,11 @@ hui.ui.Bar.prototype = {
   },
   _getRight: function() {
     if (!this.right) {
-      this.right = hui.get.firstByClass(this.element, 'hui_bar_right');
+      this.right = hui.find('.hui_bar_right', this.element);
       if (!this.right) {
-        var body = hui.get.firstByClass(this.element, 'hui_bar_body');
         this.right = hui.build('div', {
           'class': 'hui_bar_right',
-          parentFirst: body
+          parent: this.element
         });
       }
     }
@@ -225,7 +220,7 @@ hui.ui.Bar.Button.prototype = {
    * @param {Boolean} selected If it should be marked selected
    */
   setSelected: function(selected) {
-    hui.cls.set(this.element, 'hui_bar_button_selected', selected);
+    hui.cls.set(this.element, 'hui_bar_button-selected', selected);
   },
   getKey: function() {
     return this.options.key;
