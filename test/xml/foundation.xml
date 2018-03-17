@@ -7,14 +7,26 @@
 
   <style>
     .article {
-      padding: 15px; font-family: Georgia;
+      padding: 15px;
+      font-family: Georgia;
+    }
+    .article_header {
+      font-weight: normal; margin: 0;
     }
     .header {
-      font-weight: normal; margin: 0;
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .header_title {
+      overflow: hidden;
+      font-family: Georgia;
+      font-size: 24px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   </style>
 
-  <foundation name="foundation">
+  <foundation name="foundation" selection="selector">
     <navigation>
       <overflow>
       <selection value="user" name="selector">
@@ -41,22 +53,32 @@
       </overflow>
     </results>
     <actions>
-      <bar variant="layout">
-        <button text="Click me" small="true"/>
+      <bar>
+        <button text="Add page" small="true"/>
         <segmented>
-          <option text="List"/>
-          <option text="Grid"/>
+          <option text="Text"/>
+          <option text="Formatted"/>
+          <option text="Web"/>
         </segmented>
-        <dropdown>
+        <dropdown small="true">
           <option text="Hello"/>
         </dropdown>
         <button icon="common/new"/>
+        <symbol name="info"/>
+        <symbol name="gear"/>
+        <symbol name="more"/>
       </bar>
     </actions>
     <content>
+      <div class="header">
+        <div class="header_title">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+      </div>
       <overflow shadow-variant="white">
         <div class="article">
-          <h1 class="header">This is the content</h1>
+          <h1 class="article_header">This is the content</h1>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>

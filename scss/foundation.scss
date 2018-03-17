@@ -6,152 +6,379 @@
   overflow: hidden;
   @include border-box;
 
+  &_overlay {
+    position: absolute;
+    top: 0;
+    left: -80%;
+    transition-property: left, width;
+    transition-duration: .3s;
+    bottom: 0;
+    width: 80%;
+    z-index: 2;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: #fff;
+
+    &_toggle {
+      position: absolute;
+      left: 0;
+      width: $bar-height;
+      height: $bar-height;
+      top: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #888;
+
+      @include symbol-before($menu-symbol) {
+        font-size: 16px;
+      }
+      &:hover {
+        color: #000;
+      }
+    }
+
+    &_title {
+      @include vertical-gradient(#fff, rgb(240,240,240));
+      border-bottom: 1px solid #ddd;
+      height: $bar-height;
+      top: 0;
+      position: absolute;
+      left: 0;
+      right: 0;
+      font-size: 14px;
+      z-index: 4;
+      display: block;
+    }
+
+    &_close {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: $bar-height;
+      height: $bar-height;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      @include symbol-before($close-symbol) {
+        font-size: 16px;
+        color: #888;
+      }
+      &:hover:before {
+        color: #000;
+      }
+    }
+  }
+
+  &_back {
+    line-height: $bar-height;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0 10px 0 25px;
+    font-size: 14px;
+    font-family: $font;
+    opacity: 0;
+    transition: opacity .3s;
+    cursor: pointer;
+    color: #888;
+    @include symbol-before($left-symbol) {
+      font-size: 16px;
+      position: absolute;
+      left: 5px;
+      top: 0;
+      line-height: inherit;
+    }
+    &:hover {
+      color: #000;
+    };
+  }
+
+  &_navigation {
+    position: absolute;
+    width: 100%;
+    top: $bar-height + 1px;
+    left: 0;
+    bottom: 0;
+    //background: $sidebar-color;
+    @include border-box;
+    overflow: hidden;
+    transition-property: left, width;
+    transition-duration: .3s;
+  }
+
+  &_results {
+    position: absolute;
+    width: 100%;
+    top: $bar-height + 1px;
+    left: 100%;
+    bottom: 0;
+    background: #fff;
+    overflow: hidden;
+    @include border-box;
+    transition-property: left, width;
+    transition-duration: .3s;
+  }
+
+  &_main {
+    position: absolute;
+    top: 0;
+    background: #fff;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    transition: left .3s, right .3s;
+  }
+
+  &_actions {
+    @include vertical-gradient(#fff, rgb(240,240,240));
+    position: absolute;
+    top: 0;
+    height: $bar-height;
+    border-bottom: 1px solid #ddd;
+    right: 0;
+    left: 0;
+    padding: 0 $bar-height;
+
+    .hui_button, .hui_dropdown {
+      box-shadow: none;
+    }
+  }
+
+  &_content {
+    top: $bar-height + 1px;
+    left: 0;
+    position: absolute;
+    background: #fff;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+
+  &_resize {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 5px;
+    z-index: 1;
+    cursor: col-resize;
+    &:hover {
+      background: rgba(0,0,0,.1);
+    }
+  }
+
   &_details {
     position: absolute;
     top: 0;
-    right: -40%;
+    right: -300px;
     transition: right .3s;
     bottom: 0;
-    width: 40%;
+    width: 300px;
     z-index: 1;
     background: #fff;
     border-left: 1px solid $border-color;
     margin-right: -1px;
+    padding-top: $bar-height;
 
     &_toggle {
       position: absolute;
-      left: -29px;
-      width: 29px;
-      height: 29px;
+      left: $bar-height * -1;
+      width: $bar-height;
+      height: $bar-height;
       top: 0;
-      background: rgba(0, 0, 0, 0.1);
-    }
-    &.hui-is-open {
-      right: 0;
-    }
-  }
-}
-
-.hui_foundation_navigation {
-  position: absolute;
-  width: 20%;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  background: $sidebar-color;
-  @include border-box;
-  border-right: 1px solid $border-color;
-  overflow: hidden;
-}
-
-.hui_foundation_resize {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 5px;
-  z-index: 1;
-  cursor: col-resize;
-  &:hover {
-    background: rgba(0,0,0,.1);
-  }
-}
-
-.hui_foundation_results {
-  position: absolute;
-  width: 20%;
-  top: 0;
-  left: 20%;
-  bottom: 0;
-  background: #fff;
-  overflow: hidden;
-  border-right: 1px solid $border-color;
-  @include border-box;
-}
-
-.hui_foundation_actions {
-  position: absolute;
-  top: 0;
-  background: #fff;
-  right: 0;
-  left: 40%;
-}
-
-.hui_foundation_content {
-  position: absolute;
-  top: 41px;
-  background: #fff;
-  right: 0;
-  left: 40%;
-  bottom: 0;
-  z-index: 1;
-}
-
-.hui_foundation_overlay {
-  &_title {
-    display: none;
-  }
-}
-
-@media screen and (max-width: 800px) {
-  .hui_foundation {
-    &_overlay {
-      position: absolute;
-      top: 0;
-      left: -80%;
       transition: left .3s;
-      bottom: 0;
-      width: 80%;
-      z-index: 2;
-      border-top: 28px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #888;
+
+      @include symbol-before($menu-symbol) {
+        font-size: 16px;
+      }
+      &:hover {
+        color: #000;
+      }
+    }
+  }
+
+  &.hui-is-details-open & {
+    &_details {
+      right: 0;
+      box-shadow: -10px 0 20px rgba(0, 0, 0, 0.1);
 
       &_toggle {
-        position: absolute;
-        right: -29px;
-        width: 29px;
-        height: 29px;
-        top: 0;
-        background: rgba(0, 0, 0, 0.1);
-      }
-      &_title {
-        height: $bar-height;
-        top: $bar-height * -1;
-        height: 28px;
-        background: #fff;
-        position: absolute;
         left: 0;
-        right: 0;
-        font-size: 14px;
-        z-index: 4;
-        display: block;
+        &:before {
+          content: $close-symbol;
+        }
       }
     }
-    &.hui-is-open {
-      .hui_foundation_overlay {
-        left: 0;
-      }
+  }
+
+  &.hui-is-open & {
+    &_overlay {
+      left: 0;
+      box-shadow: 10px 0 20px rgba(0, 0, 0, 0.1)
     }
+  }
+
+  &.hui-is-submerged & {
     &_navigation {
-      width: 50%;
+      left: -100%;
     }
     &_results {
-      left: 50%;
-      width: 50%;
+      left: 0%;
     }
-    &_content {
-      left: 0;
-    }
-    &_actions {
-      left: 29px;
+    &_back {
+      opacity: 1;
     }
   }
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (min-width: 600px) {
   .hui_foundation {
-    &_details {
-      width: 280px;
-      right: -280px;
+    &_navigation {
+      left: 0%;
+      width: 40%;
+      border-right: 1px solid $border-color;
+    }
+
+    &_results {
+      left: 40%;
+      width: 60%;
+    }
+
+    &_back {
+      display: none;
+    }
+
+    &.hui-is-submerged & {
+      &_navigation {
+        left: 0%;
+      }
+      &_results {
+        left: 40%;
+      }
+    }
+  }
+}
+
+
+
+
+@media screen and (min-width: 800px) {
+
+  .hui_foundation {
+
+    &_overlay {
+      left: 0;
+      width: 250px;
+      box-shadow: none !important;
+      &_toggle,
+      &_close {
+        display: none;
+      }
+      border-right: 1px solid $border-color;
+    }
+
+    &_main {
+      left: 250px;
+    }
+
+    &_navigation {
+      left: 0%;
+      width: 100%;
+      border: none;
+    }
+
+    &_results {
+      left: 100%;
+      width: 100%;
+    }
+
+    &.hui-is-submerged & {
+      &_navigation {
+        left: -100%;
+      }
+      &_results {
+        left: 0%;
+      }
+    }
+
+    &_back {
+      display: block;
+    }
+
+    &_actions {
+      padding-left: 0;
+    }
+
+  }
+}
+
+@media screen and (min-width: 1100px) {
+
+  .hui_foundation {
+
+    &_main {
+      left: 500px;
+    }
+
+    &_overlay {
+      width: 500px;
+    }
+
+    &_navigation {
+      left: 0%;
+      width: 40%;
+      border-right: 1px solid $border-color;
+    }
+
+    &_results {
+      left: 40%;
+      width: 60%;
+    }
+
+    &.hui-is-submerged & {
+      &_navigation {
+        left: 0%;
+      }
+      &_results {
+        left: 40%;
+      }
+    }
+
+    &_results,
+    &_navigation {
+      top: 0;
+    }
+
+    &_overlay_title {
+      display: none;
+    }
+  }
+}
+
+@media screen and (min-width: 1400px) {
+
+  .hui_foundation {
+
+    &.hui-is-details-open & {
+
+      &_details {
+        width: 20%;
+        box-shadow: none;
+      }
+
+      &_main {
+        right: 20%;
+      }
     }
   }
 }

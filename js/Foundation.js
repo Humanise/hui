@@ -9,6 +9,14 @@
   hui.ui.Foundation = function(options) {
     _super.call(this, options);
     this._attach();
+    if (options.selection) {
+      var selection = hui.ui.get(options.selection);
+      selection.listen({
+        $select : function(e) {
+          this.submerge();
+        }.bind(this)
+      })
+    }
   };
 
   hui.ui.Foundation.prototype = {
@@ -18,10 +26,14 @@
       navigation : '.hui_foundation_navigation',
       results : '.hui_foundation_results',
       content : '.hui_foundation_content',
+      main : '.hui_foundation_main',
       actions : '.hui_foundation_actions',
+      overlay : '.hui_foundation_overlay',
       toggle : '.hui_foundation_overlay_toggle',
+      close : '.hui_foundation_overlay_close',
       details : '.hui_foundation_details',
-      detailsToggle : '.hui_foundation_details_toggle'
+      detailsToggle : '.hui_foundation_details_toggle',
+      back : '.hui_foundation_back'
     },
     _attach : function() {
       var initial = 0,
@@ -29,57 +41,82 @@
         results = this.nodes.results,
         content = this.nodes.content,
         actions = this.nodes.actions,
-        navWidth, fullWidth, resultsWidth,
+        overlay = this.nodes.overlay,
+        main = this.nodes.main,
+        navWidth, fullWidth, resultsWidth, overlayWidth,
         self = this;
 
       hui.on(this.nodes.toggle,'tap',this._toggleOverlay,this);
+      hui.on(this.nodes.close,'tap',this._toggleOverlay,this);
       hui.on(this.nodes.detailsToggle,'tap',this._toggleDetails,this);
+      hui.on(this.nodes.back,'tap',this._back,this);
 
-      hui.drag.register({
+      hui.drag.attach({
         element : this.nodes.resizeNavigation,
         $startMove : function(e) {
           initial = e.getLeft();
           navWidth = navigation.clientWidth;
-          resultsWidth = results.clientWidth;
+          overlayWidth = overlay.clientWidth;
           fullWidth = self.element.clientWidth;
+          navigation.style.transition = 'none';
+          results.style.transition = 'none';
         },
         $move : function(e) {
           var diff = e.getLeft() - initial;
-          navigation.style.width = ((navWidth + diff) / fullWidth * 100) + '%';
-          results.style.left = ((navWidth + diff) / fullWidth * 100) + '%';
-          content.style.left = ((navWidth + resultsWidth + diff + 1) / fullWidth * 100) + '%';
-          actions.style.left = ((navWidth + resultsWidth + diff + 1) / fullWidth * 100) + '%';
+          navigation.style.width = ((navWidth + diff) / overlayWidth * 100) + '%';
+          results.style.left = ((navWidth + diff) / overlayWidth * 100) + '%';
+          results.style.width = (100 - (navWidth + diff) / overlayWidth * 100) + '%';
+        },
+        $finally : function() {
+          navigation.style.transition = '';
+          results.style.transition = '';
         }
       });
 
-      hui.drag.register({
+      hui.drag.attach({
         element : this.nodes.resizeResults,
         $startMove : function(e) {
           initial = e.getLeft();
-          navWidth = navigation.clientWidth;
-          resultsWidth = results.clientWidth;
           fullWidth = self.element.clientWidth;
+          overlayWidth = overlay.clientWidth;
+          overlay.style.transition = 'none'
+          main.style.transition = 'none'
         },
         $move : function(e) {
           var diff = e.getLeft() - initial;
-          results.style.width = ((resultsWidth + diff) / fullWidth * 100) + '%';
-          content.style.left = ((navWidth + resultsWidth + diff + 1) / fullWidth * 100) + '%';
-          actions.style.left = ((navWidth + resultsWidth + diff + 1) / fullWidth * 100) + '%';
+          var ratio = (overlayWidth + diff) / fullWidth;
+          overlay.style.width = (ratio * 100) + '%';
+          main.style.left = (ratio * 100) + '%';
+        },
+        $finally : function() {
+          overlay.style.transition = ''
+          main.style.transition = ''
         }
       });
     },
     _toggleOverlay : function() {
-      hui.cls.toggle(this.element,'hui-is-open');
+      hui.cls.toggle(this.element, 'hui-is-open');
     },
     _toggleDetails : function() {
-      hui.cls.toggle(this.nodes.details,'hui-is-open');
+      hui.cls.toggle(this.element, 'hui-is-details-open');
+    },
+    _back : function() {
+      hui.cls.remove(this.element, 'hui-is-submerged');
     },
     $$layout : function() {
-      var h = this.nodes.actions.clientHeight;
-      this.nodes.content.style.top = h + 'px';
+      var w = this.element.clientWidth;
+      if (w < 800) {
+        this.nodes.main.style.left = ''
+        this.nodes.overlay.style.width = ''
+      }
+      //this.nodes.content.style.top = h + 'px';
+      //console.log('layout')
     },
     disposeOverlay : function() {
-      hui.cls.remove(this.element,'hui-is-open');
+      hui.cls.remove(this.element, 'hui-is-open');
+    },
+    submerge : function() {
+      hui.cls.add(this.element,'hui-is-submerged');
     }
   };
 

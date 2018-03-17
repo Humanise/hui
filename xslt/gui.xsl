@@ -2247,10 +2247,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
   <xsl:template match="gui:foundation">
     <div class="hui_foundation" id="{generate-id()}">
+      <div class="hui_foundation_overlay_toggle"></div>
       <div class="hui_foundation_overlay">
-        <div class="hui_foundation_overlay_title">Back</div>
-        <div class="hui_foundation_overlay_toggle"></div>
-        <div class="hui_foundation_navigation hui_context_sidebar">
+        <div class="hui_foundation_overlay_title">
+          <span class="hui_foundation_back">Back</span>
+          <span class="hui_foundation_overlay_close"></span>
+        </div>
+        <div class="hui_foundation_navigation">
           <div class="hui_foundation_resize hui_foundation_resize_navigation"></div>
           <xsl:apply-templates select="gui:navigation"/>
         </div>
@@ -2259,11 +2262,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
           <xsl:apply-templates select="gui:results"/>
         </div>
       </div>
-      <div class="hui_foundation_actions">
-        <xsl:apply-templates select="gui:actions"/>
-      </div>
-      <div class="hui_foundation_content">
-        <xsl:apply-templates select="gui:content"/>
+      <div class="hui_foundation_main">
+        <div class="hui_foundation_actions">
+          <xsl:apply-templates select="gui:actions"/>
+        </div>
+        <div class="hui_foundation_content">
+          <xsl:apply-templates select="gui:content"/>
+        </div>
       </div>
       <div class="hui_foundation_details">
         <div class="hui_foundation_details_toggle"></div>
@@ -2275,6 +2280,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
         var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Foundation({
           element : '<xsl:value-of select="generate-id()"/>'
           <xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
+          <xsl:if test="@selection">,selection : '<xsl:value-of select="@selection"/>'</xsl:if>
         });
         <xsl:call-template name="gui:createobject"/>
       })()
@@ -3130,7 +3136,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <xsl:attribute name="class">
       <xsl:text>hui_dropdown</xsl:text>
       <xsl:if test="@adaptive='true'"> hui_dropdown-adaptive</xsl:if>
-      <xsl:if test="@size='small' or ancestor::gui:cell"> hui_is_small</xsl:if>
+      <xsl:if test="@size='small' or @small='true' or ancestor::gui:cell"> hui_is_small</xsl:if>
     </xsl:attribute>
     <span class="hui_dropdown_text"><xsl:comment/></span>
     </a>
