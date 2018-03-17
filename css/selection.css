@@ -18,6 +18,7 @@ div.hui_selection
 	overflow: hidden;
 	word-break: break-word;
 	word-wrap: break-word;
+	cursor: pointer;
 }
 
 div.hui_selection span.hui_disclosure
@@ -67,13 +68,11 @@ div.hui_selection div.hui_selected strong.hui_selection_badge
 .hui_selection_item:hover
 {
 	background-color: #eee;
-	cursor: pointer;
 }
 
 .hui_context_sidebar .hui_selection_item:hover
 {
 	background-color: #d4dce9;
-	cursor: pointer;
 }
 
 .hui_selection_item:hover .icon
