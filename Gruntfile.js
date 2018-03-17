@@ -154,7 +154,7 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask('default', 'Watch', ['sass','watch']);
 
-  grunt.registerTask('build', 'Build', ['shell:join','uglify:joined','cssmin']);
+  grunt.registerTask('build', 'Build', ['sass', 'shell:join', 'uglify:joined', 'cssmin']);
 
   //grunt.registerTask('test', ['qunit']);
   grunt.registerTask('test', 'Run tests', function(testname) {
