@@ -1,0 +1,173 @@
+@import 'tools';
+
+.hui_window {
+  position: absolute;
+  top: 50px;
+  left: 300px;
+  display: none;
+  opacity: 0;
+  &_front {
+    background: rgba(239, 239, 239, 0.95);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    border-color: #e6e6e6 #ddd #ccc;
+  }
+
+  &_titlebar {
+    font-family: 'Lucida Grande','Verdana',sans-serif;
+    font-size: 0;
+    height: 26px;
+    cursor: default;
+    text-align: center;
+    cursor: move;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+    background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 50%);
+    line-height: 26px;
+    font-size: 10pt;
+    color: #333;
+    text-shadow: 0 1px white;
+    border-radius: 2px;
+
+    .hui_window_dragging & {
+      cursor: -webkit-grabbing;
+      cursor: -moz-grabbing;
+    }
+  }
+
+  &_icon {
+    font-size: 0;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    vertical-align: top;
+    margin-top: 5px;
+  }
+
+  &_body {
+    overflow: hidden;
+  }
+
+  &_close {
+    font-size: 0;
+    position: absolute;
+    cursor: pointer;
+    left: 0;
+    top: 0;
+    padding: 5px;
+    border-radius: 2px;
+    color: #666;
+    @include symbol-before($close-symbol) {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+    }
+    &:hover:before {
+      background: #ddd;
+      color: #000;
+    };
+  }
+
+  &_back {
+    position: absolute;
+    width: 100%;
+    background: #333 url('../gfx/backgrounds/brushed.png');
+    border-radius: 8px;
+    -webkit-box-sizing: border-box;
+    border: 1px solid #555;
+  }
+
+  &_busy {
+    position: absolute;
+    top: 26px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(241, 241, 241, 0.7);
+    z-index: 1;
+    border-radius: 3px;
+
+    &_text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 30%;
+      background:  url('../gfx/progress/spinner_white_32.gif') center top no-repeat;
+      padding-top: 35px;
+      font-size: 12px;
+      text-shadow: 0 1px white;
+    }
+  }
+}
+
+// Light
+
+.hui_window_light {
+
+  .hui_window {
+
+    &_front {
+      border: 1px solid #ddd;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 3px 20px rgba(0,0,0,.1);
+    }
+
+    &_titlebar {
+      background: none;
+    }
+
+    &_close {
+      &:hover:before {
+        background: #eee;
+        color: #000;
+      }
+    }
+
+    &_busy {
+      top: 26px;
+      background: rgba(255, 255, 255, .7);
+    }
+  }
+}
+
+// Dark
+
+.hui_window_dark {
+
+  .hui_window {
+
+    &_front {
+      background: rgba(19, 19, 19, 0.9);
+      border: none;
+    }
+
+    &_titlebar {
+      background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 50%);
+      color: #fff;
+      text-shadow: 0 -1px #000;
+    }
+
+    &_close {
+      color: #fff;
+      &:hover:before {
+        background: #666;
+        color: #fff;
+      }
+    }
+
+    &_busy {
+      background: rgba(42, 42, 42, 0.7);
+
+      &_text {
+        color: #fff;
+        text-shadow: 0 -1px #000;
+        background-image: url('../gfx/progress/spinner_black_32.gif');
+      }
+    }
+  }
+
+}

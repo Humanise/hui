@@ -1,13 +1,13 @@
 .hui_overlay
 {
-	display: none;
-	position: absolute;
-	height: 38px;
+  display: none;
+  position: absolute;
+  height: 38px;
   background: #222;
   background: linear-gradient(rgba(30, 30, 30, 0.7) 0%,rgba(30, 30, 30, 0.8) 50%,rgba(30, 30, 30,.9) 50%,rgba(30, 30, 30, 1));
   border-radius: 4px;
   border: 1px solid #222;
-	font-size: 0;
+  font-size: 0;
   padding: 0 5px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,.3);
   z-index: 1;
@@ -17,48 +17,48 @@
 
 .hui_overlay_icon
 {
-	width: 32px;
-	height: 32px;
-	display: inline-block;
-	margin: 3px 3px 0px;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  margin: 3px 3px 0px;
 }
 
 .hui_overlay .hui_button
 {
-	vertical-align: top;
-	margin-top: 6px;
-	margin-left: 4px;
+  vertical-align: top;
+  margin-top: 6px;
+  margin-left: 4px;
 }
 
 
 
 .hui_overlay_text
 {
-	display: inline-block;
-	line-height: 33px;
-	vertical-align: top;
-	height: 30px;
-	padding: 0 5px;
-	color: #fff;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-	font-size: 12px;
-	margin-top: 2px;
-	cursor: default;
+  display: inline-block;
+  line-height: 33px;
+  vertical-align: top;
+  height: 30px;
+  padding: 0 5px;
+  color: #fff;
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-size: 12px;
+  margin-top: 2px;
+  cursor: default;
 }
 
 /*** Light variant ***/
 
 .hui_overlay_light
 {
-	background: #fafafa;
-	border: 1px solid #eee;
-	border-radius: 4px;
-	padding: 0 3px;
-	height: 36px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 0 3px;
+  height: 36px;
   box-shadow: none;
 }
 
 .hui_overlay_light .hui_overlay_icon
 {
-	margin-top: 2px;
+  margin-top: 2px;
 }

@@ -1,176 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Windows">
-	<controller name="controller" url="windows.js"/>
+  <controller name="controller" url="windows.js"/>
 
-	<structure>
-		<top>
-			<toolbar>
-				<icon icon="common/folder" text="Mørk" overlay="new" click="dark.toggle()"/>
-				<icon icon="common/folder" text="Standard" click="standard.toggle()"/>
-				<icon icon="common/folder" text="Lys" click="light.toggle()"/>
-				<icon icon="common/folder" text="News" click="news.toggle()"/>
-			</toolbar>
-		</top>
-		<middle>
-		</middle>
-		<bottom/>
-	</structure>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/folder" text="Mørk" overlay="new" click="dark.toggle()"/>
+        <icon icon="common/folder" text="Standard" click="standard.toggle()"/>
+        <icon icon="common/folder" text="Lys" click="light.toggle()"/>
+      </toolbar>
+    </top>
+    <middle>
+    </middle>
+    <bottom/>
+  </structure>
 
-	<window name="dark" width="300" title="Bruger" padding="5" variant="dark">
-		<formula>
-			<fields>
-				<field label="Brugernavn:">
-					<text-input/>
-				</field>
-				<field label="Kodeord:">
-					<text-input/>
-				</field>
-				<field label="Notat:">
-					<text-input breaks="true"/>
-				</field>
-				<field label="Intern adgang:">
-					<checkbox/>
-				</field>
-				<field label="Ekstern adgang:">
-					<checkbox/>
-				</field>
-				<field label="Tokens:">
-					<tokens/>
-				</field>
-			</fields>
-			<buttons top="10">
-				<button text="Gem" highlighted="true"/>
-				<button text="Slet"/>
-				<button text="Annuller"/>
-			</buttons>
-		</formula>
-	</window>
+  <window name="dark" width="300" title="Bruger" padding="5" variant="dark">
+    <formula>
+      <fields>
+        <field label="Brugernavn:">
+          <text-input/>
+        </field>
+        <field label="Kodeord:">
+          <text-input/>
+        </field>
+        <field label="Notat:">
+          <text-input breaks="true"/>
+        </field>
+        <field label="Intern adgang:">
+          <checkbox/>
+        </field>
+        <field label="Ekstern adgang:">
+          <checkbox/>
+        </field>
+        <field label="Tokens:">
+          <tokens/>
+        </field>
+      </fields>
+      <buttons top="10">
+        <button text="Gem" highlighted="true"/>
+        <button text="Slet" click="dark.setBusy('Lorem ipsum')"/>
+        <button text="Annuller"/>
+      </buttons>
+    </formula>
+  </window>
 
-	<window name="standard" width="300" title="Bruger" padding="5">
-		<formula>
-			<fields>
-				<field label="Brugernavn:">
-					<text-input/>
-				</field>
-				<field label="Kodeord:">
-					<text-input/>
-				</field>
-				<field label="Notat:">
-					<text-input breaks="true"/>
-				</field>
-				<field label="Intern adgang:">
-					<checkbox/>
-				</field>
-				<field label="Ekstern adgang:">
-					<checkbox/>
-				</field>
-				<field label="Tokens:">
-					<tokens/>
-				</field>
-			</fields>
-			<buttons top="10">
-				<button text="Gem" highlighted="true"/>
-				<button text="Slet"/>
-				<button text="Annuller"/>
-			</buttons>
-		</formula>
-	</window>
+  <window name="standard" width="300" title="Bruger" icon="common/info" padding="5">
+    <formula>
+      <fields>
+        <field label="Brugernavn:">
+          <text-input/>
+        </field>
+        <field label="Kodeord:">
+          <text-input/>
+        </field>
+        <field label="Notat:">
+          <text-input breaks="true"/>
+        </field>
+        <field label="Intern adgang:">
+          <checkbox/>
+        </field>
+        <field label="Ekstern adgang:">
+          <checkbox/>
+        </field>
+        <field label="Tokens:">
+          <tokens/>
+        </field>
+      </fields>
+      <buttons top="10">
+        <button text="Gem" highlighted="true"/>
+        <button text="Slet" click="standard.setBusy('Lorem ipsum')"/>
+        <button text="Annuller"/>
+      </buttons>
+    </formula>
+  </window>
 
-	<window name="light" width="300" title="Bruger" padding="5" variant="light">
-		<formula>
-			<fields>
-				<field label="Brugernavn:">
-					<text-input/>
-				</field>
-				<field label="Kodeord:">
-					<text-input/>
-				</field>
-				<field label="Notat:">
-					<text-input breaks="true"/>
-				</field>
-				<field label="Intern adgang:">
-					<checkbox/>
-				</field>
-				<field label="Ekstern adgang:">
-					<checkbox/>
-				</field>
-				<field label="Tokens:">
-					<tokens/>
-				</field>
-			</fields>
-			<buttons top="10">
-				<button text="Gem" highlighted="true"/>
-				<button text="Slet"/>
-				<button text="Annuller"/>
-			</buttons>
-		</formula>
-	</window>
+  <window name="light" width="300" title="Bruger" padding="5" variant="light">
+    <formula>
+      <fields>
+        <field label="Brugernavn:">
+          <text-input/>
+        </field>
+        <field label="Kodeord:">
+          <text-input/>
+        </field>
+        <field label="Notat:">
+          <text-input breaks="true"/>
+        </field>
+        <field label="Intern adgang:">
+          <checkbox/>
+        </field>
+        <field label="Ekstern adgang:">
+          <checkbox/>
+        </field>
+        <field label="Tokens:">
+          <tokens/>
+        </field>
+      </fields>
+      <buttons top="10">
+        <button text="Gem" highlighted="true"/>
+        <button text="Slet" click="light.setBusy('Lorem ipsum')"/>
+        <button text="Annuller"/>
+      </buttons>
+    </formula>
+  </window>
 
-	<window name="flipper" width="300" title="Flipper" padding="5">
-		<button click="flipper.flip()" text="Flip"/>
-		<back>
-			<formula>
-				<fields>
-					<field label="Brugernavn:">
-						<text-input/>
-					</field>
-					<field label="Kodeord:">
-						<text-input/>
-					</field>
-					<field label="Notat:">
-						<text-input breaks="true"/>
-					</field>
-					<field label="Intern adgang:">
-						<checkbox/>
-					</field>
-					<field label="Ekstern adgang:">
-						<checkbox/>
-					</field>
-					<field label="Tokens:">
-						<tokens/>
-					</field>
-				</fields>
-				<buttons top="10">
-					<button text="Gem" highlighted="true"/>
-					<button text="Slet"/>
-					<button text="Annuller" click="flipper.flip()"/>
-				</buttons>
-			</formula>
-		</back>
-	</window>
+  <window name="flipper" width="300" title="Flipper" padding="5">
+    <button click="flipper.flip()" text="Flip"/>
+    <back>
+      <formula>
+        <fields>
+          <field label="Brugernavn:">
+            <text-input/>
+          </field>
+          <field label="Kodeord:">
+            <text-input/>
+          </field>
+          <field label="Notat:">
+            <text-input breaks="true"/>
+          </field>
+          <field label="Intern adgang:">
+            <checkbox/>
+          </field>
+          <field label="Ekstern adgang:">
+            <checkbox/>
+          </field>
+          <field label="Tokens:">
+            <tokens/>
+          </field>
+        </fields>
+        <buttons top="10">
+          <button text="Gem" highlighted="true"/>
+          <button text="Slet"/>
+          <button text="Annuller" click="flipper.flip()"/>
+        </buttons>
+      </formula>
+    </back>
+  </window>
 
-	<window name="news" width="300" title="Nyhed" padding="5" variant="news">
-		<formula>
-			<fields>
-				<field label="Brugernavn:">
-					<text-input/>
-				</field>
-				<field label="Kodeord:">
-					<text-input/>
-				</field>
-				<field label="Notat:">
-					<text-input breaks="true"/>
-				</field>
-				<field label="Intern adgang:">
-					<checkbox/>
-				</field>
-				<field label="Ekstern adgang:">
-					<checkbox/>
-				</field>
-				<field label="Tokens:">
-					<tokens/>
-				</field>
-			</fields>
-			<buttons top="10">
-				<button text="Gem" highlighted="true"/>
-				<button text="Slet"/>
-				<button text="Annuller"/>
-			</buttons>
-		</formula>
-	</window>
-
-	<window name="nonClosable" width="300" title="I cannot be closed" padding="50" closable="false">
+  <window name="nonClosable" width="300" title="I cannot be closed" padding="50" closable="false">
   </window>
 
 </gui>

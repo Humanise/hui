@@ -860,20 +860,19 @@
       <xsl:if test="not(@close='false') and not(@closable='false')"> <!-- TODO close is deprecated -->
         <div class="hui_window_close"><xsl:comment/></div>
       </xsl:if>
-      <div class="hui_window_titlebar"><div><div>
+      <div class="hui_window_titlebar">
         <xsl:if test="@icon">
-          <span class="hui_window_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"></span>
+          <span class="hui_window_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png');"></span>
         </xsl:if>
         <span class="hui_window_title"><xsl:value-of select="@title"/></span>
-      </div></div></div>
-      <div class="hui_window_content"><div class="hui_window_content"><div class="hui_window_body">
+      </div>
+      <div class="hui_window_body">
         <xsl:attribute name="style">
           <xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
           <xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if>
         </xsl:attribute>
         <xsl:apply-templates select="child::*[not(name()='back')]"/>
-      </div></div></div>
-      <div class="hui_window_bottom"><div class="hui_window_bottom"><div class="hui_window_bottom"><xsl:comment/></div></div></div>
+      </div>
     </div>
   </div>
   <script type="text/javascript">

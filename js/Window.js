@@ -24,19 +24,19 @@ hui.ui.Window = function(options) {
 hui.ui.Window.create = function(options) {
   options = hui.override({title:'Window',close:true},options);
   var html = '<div class="hui_window_front">'+(options.close ? '<div class="hui_window_close"></div>' : '')+
-    '<div class="hui_window_titlebar"><div><div>';
+    '<div class="hui_window_titlebar">';
     if (options.icon) {
       html+='<span class="hui_window_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,16)+')"></span>';
     }
-  html+='<span class="hui_window_title">'+hui.ui.getTranslated(options.title)+'</span></div></div></div>'+
-    '<div class="hui_window_content"><div class="hui_window_content"><div class="hui_window_body" style="'+
+  html+='<span class="hui_window_title">'+hui.ui.getTranslated(options.title)+'</span></div>'+
+    '<div class="hui_window_body" style="'+
     (options.width ? 'width:'+options.width+'px;':'')+
     (options.height ? 'height:'+options.height+'px;':'')+
     (options.padding ? 'padding:'+options.padding+'px;':'')+
     (options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
     '">'+
-    '</div></div></div>'+
-    '<div class="hui_window_bottom"><div class="hui_window_bottom"><div class="hui_window_bottom"></div></div></div></div>';
+    '</div>'+
+    '</div>';
   var cls = 'hui_window'+(options.variant ? ' hui_window_'+options.variant : '');
   if (options.variant=='dark') {
     cls+=' hui_context_dark';
@@ -175,9 +175,10 @@ hui.ui.Window.prototype = {
     this._busyTimer = window.setTimeout(function() {
       var curtain = this._busyCurtain;
       if (!curtain) {
-        curtain = this._busyCurtain = hui.build('div',{'class':'hui_window_busy',parentFirst:hui.get.firstByClass(this.element,'hui_window_content')});
+        curtain = this._busyCurtain = hui.build('div',{'class':'hui_window_busy',parentFirst:this.content});
       }
-      curtain.innerHTML = hui.isString(stringOrBoolean) ? '<span>'+stringOrBoolean+'</span>' : '<span></span>';
+      var text = hui.isString(stringOrBoolean) ? hui.string.escape(stringOrBoolean) : '';
+      curtain.innerHTML = '<span class="hui_window_busy_text">' + text + '</span>';
       curtain.style.display = '';
     }.bind(this),300);
   },

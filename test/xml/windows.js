@@ -1,10 +1,9 @@
 var controller = {
-	$ready : function() {
-/*		dark.show();
-		standard.show();
-		light.show();
-		flipper.show();*/
-		news.show();
-    nonClosable.show()
-	}
+  $ready : function() {
+    //dark.show();
+    //standard.show();
+    //light.show();
+    flipper.show();
+    //nonClosable.show()
+  }
 }
