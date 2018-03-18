@@ -499,24 +499,23 @@ hui.ui.showMessage = function(options) {
   }
   window.clearTimeout(hui.ui.messageDelayTimer);
   if (!hui.ui.message) {
-    hui.ui.message = hui.build('div',{'class':'hui_message',html:'<div><div></div></div>'});
+    hui.ui.message = hui.build('div',{'class':'hui_message'});
     if (!hui.browser.msie) {
       hui.style.setOpacity(hui.ui.message,0);
     }
     document.body.appendChild(hui.ui.message);
   }
   var text = hui.ui.getTranslated(options.text) || '';
-  var inner = hui.ui.message.getElementsByTagName('div')[1];
   if (options.icon) {
-    hui.dom.clear(inner);
-    inner.appendChild(hui.ui.createIcon(options.icon,24));
-    hui.dom.addText(inner,text);
+    hui.dom.clear(hui.ui.message);
+    hui.ui.message.appendChild(hui.ui.createIcon(options.icon, 24));
+    hui.dom.addText(hui.ui.message, text);
   }
   else if (options.busy) {
-    inner.innerHTML='<span class="hui_message_busy"></span>';
-    hui.dom.addText(inner,text);
+    hui.ui.message.innerHTML='<span class="hui_message_busy"></span>';
+    hui.dom.addText(hui.ui.message, text);
   } else {
-    hui.dom.setText(inner,text);
+    hui.dom.setText(hui.ui.message, text);
   }
   hui.ui.message.style.display = 'block';
   hui.ui.message.style.zIndex = hui.ui.nextTopIndex();
