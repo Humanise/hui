@@ -4601,24 +4601,23 @@ hui.ui.showMessage = function(options) {
   }
   window.clearTimeout(hui.ui.messageDelayTimer);
   if (!hui.ui.message) {
-    hui.ui.message = hui.build('div',{'class':'hui_message',html:'<div><div></div></div>'});
+    hui.ui.message = hui.build('div',{'class':'hui_message'});
     if (!hui.browser.msie) {
       hui.style.setOpacity(hui.ui.message,0);
     }
     document.body.appendChild(hui.ui.message);
   }
   var text = hui.ui.getTranslated(options.text) || '';
-  var inner = hui.ui.message.getElementsByTagName('div')[1];
   if (options.icon) {
-    hui.dom.clear(inner);
-    inner.appendChild(hui.ui.createIcon(options.icon,24));
-    hui.dom.addText(inner,text);
+    hui.dom.clear(hui.ui.message);
+    hui.ui.message.appendChild(hui.ui.createIcon(options.icon, 24));
+    hui.dom.addText(hui.ui.message, text);
   }
   else if (options.busy) {
-    inner.innerHTML='<span class="hui_message_busy"></span>';
-    hui.dom.addText(inner,text);
+    hui.ui.message.innerHTML='<span class="hui_message_busy"></span>';
+    hui.dom.addText(hui.ui.message, text);
   } else {
-    hui.dom.setText(inner,text);
+    hui.dom.setText(hui.ui.message, text);
   }
   hui.ui.message.style.display = 'block';
   hui.ui.message.style.zIndex = hui.ui.nextTopIndex();
@@ -5617,19 +5616,19 @@ hui.ui.Window = function(options) {
 hui.ui.Window.create = function(options) {
   options = hui.override({title:'Window',close:true},options);
   var html = '<div class="hui_window_front">'+(options.close ? '<div class="hui_window_close"></div>' : '')+
-    '<div class="hui_window_titlebar"><div><div>';
+    '<div class="hui_window_titlebar">';
     if (options.icon) {
       html+='<span class="hui_window_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,16)+')"></span>';
     }
-  html+='<span class="hui_window_title">'+hui.ui.getTranslated(options.title)+'</span></div></div></div>'+
-    '<div class="hui_window_content"><div class="hui_window_content"><div class="hui_window_body" style="'+
+  html+='<span class="hui_window_title">'+hui.ui.getTranslated(options.title)+'</span></div>'+
+    '<div class="hui_window_body" style="'+
     (options.width ? 'width:'+options.width+'px;':'')+
     (options.height ? 'height:'+options.height+'px;':'')+
     (options.padding ? 'padding:'+options.padding+'px;':'')+
     (options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
     '">'+
-    '</div></div></div>'+
-    '<div class="hui_window_bottom"><div class="hui_window_bottom"><div class="hui_window_bottom"></div></div></div></div>';
+    '</div>'+
+    '</div>';
   var cls = 'hui_window'+(options.variant ? ' hui_window_'+options.variant : '');
   if (options.variant=='dark') {
     cls+=' hui_context_dark';
@@ -5768,9 +5767,10 @@ hui.ui.Window.prototype = {
     this._busyTimer = window.setTimeout(function() {
       var curtain = this._busyCurtain;
       if (!curtain) {
-        curtain = this._busyCurtain = hui.build('div',{'class':'hui_window_busy',parentFirst:hui.get.firstByClass(this.element,'hui_window_content')});
+        curtain = this._busyCurtain = hui.build('div',{'class':'hui_window_busy',parentFirst:this.content});
       }
-      curtain.innerHTML = hui.isString(stringOrBoolean) ? '<span>'+stringOrBoolean+'</span>' : '<span></span>';
+      var text = hui.isString(stringOrBoolean) ? hui.string.escape(stringOrBoolean) : '';
+      curtain.innerHTML = '<span class="hui_window_busy_text">' + text + '</span>';
       curtain.style.display = '';
     }.bind(this),300);
   },
