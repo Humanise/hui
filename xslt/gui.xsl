@@ -799,26 +799,18 @@
     <xsl:attribute name="class">
       <xsl:text>hui_boundpanel</xsl:text>
       <xsl:if test="@variant">
-        <xsl:text> hui_boundpanel_</xsl:text><xsl:value-of select="@variant"/>
+        <xsl:text> hui_boundpanel-</xsl:text><xsl:value-of select="@variant"/>
       </xsl:if>
     </xsl:attribute>
     <div class="hui_boundpanel_arrow"><xsl:comment/></div>
-    <div class="hui_boundpanel_top"><div><div><xsl:comment/></div></div></div>
-    <div class="hui_boundpanel_body">
-      <div class="hui_boundpanel_body">
-        <div class="hui_boundpanel_body">
-          <div class="hui_boundpanel_content">
-            <xsl:attribute name="style">
-              <xsl:if test="@width">width:<xsl:value-of select="@width"/>px;</xsl:if>
-              <xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
-            </xsl:attribute>
-            <xsl:apply-templates/>
-            <xsl:comment/>
-          </div>
-        </div>
-      </div>
+    <div class="hui_boundpanel_content">
+      <xsl:attribute name="style">
+        <xsl:if test="@width">width:<xsl:value-of select="@width"/>px;</xsl:if>
+        <xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+      <xsl:comment/>
     </div>
-    <div class="hui_boundpanel_bottom"><div><div><xsl:comment/></div></div></div>
   </div>
   <script type="text/javascript">
     var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.BoundPanel({
