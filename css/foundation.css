@@ -184,6 +184,8 @@
     cursor: col-resize; }
     .hui_foundation_resize:hover {
       background: rgba(0, 0, 0, 0.1); }
+    .hui_foundation_resize_navigation {
+      display: none; }
   .hui_foundation_details {
     position: absolute;
     top: 0;
@@ -252,7 +254,11 @@
   .hui_foundation.hui-is-submerged .hui_foundation_navigation {
     left: 0%; }
   .hui_foundation.hui-is-submerged .hui_foundation_results {
-    left: 40%; } }
+    left: 40%; }
+  .hui_foundation_resize_navigation {
+    display: block; }
+  .hui_foundation_resize_overlay {
+    display: none; } }
 @media screen and (min-width: 800px) {
   .hui_foundation_overlay {
     left: 0;
@@ -277,7 +283,11 @@
   .hui_foundation_back {
     display: block; }
   .hui_foundation_actions {
-    padding-left: 0; } }
+    padding-left: 0; }
+  .hui_foundation_resize_navigation {
+    display: none; }
+  .hui_foundation_resize_overlay {
+    display: block; } }
 @media screen and (min-width: 1100px) {
   .hui_foundation_main {
     left: 500px; }
@@ -297,7 +307,9 @@
   .hui_foundation_results, .hui_foundation_navigation {
     top: 0; }
   .hui_foundation_overlay_title {
-    display: none; } }
+    display: none; }
+  .hui_foundation_resize_navigation {
+    display: block; } }
 @media screen and (min-width: 1400px) {
   .hui_foundation.hui-is-details-open .hui_foundation_details {
     width: 20%;

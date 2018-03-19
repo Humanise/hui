@@ -22,7 +22,7 @@
   hui.ui.Foundation.prototype = {
     nodes : {
       resizeNavigation : '.hui_foundation_resize_navigation',
-      resizeResults : '.hui_foundation_resize_results',
+      resizeResults : '.hui_foundation_resize_overlay',
       navigation : '.hui_foundation_navigation',
       results : '.hui_foundation_results',
       content : '.hui_foundation_content',
@@ -53,6 +53,7 @@
 
       hui.drag.attach({
         element : this.nodes.resizeNavigation,
+        touch: true,
         $startMove : function(e) {
           initial = e.getLeft();
           navWidth = navigation.clientWidth;
@@ -63,9 +64,11 @@
         },
         $move : function(e) {
           var diff = e.getLeft() - initial;
-          navigation.style.width = ((navWidth + diff) / overlayWidth * 100) + '%';
-          results.style.left = ((navWidth + diff) / overlayWidth * 100) + '%';
-          results.style.width = (100 - (navWidth + diff) / overlayWidth * 100) + '%';
+          var ratio = (navWidth + diff) / overlayWidth;
+          ratio = hui.between(.3, ratio, .7);
+          navigation.style.width = (ratio * 100) + '%';
+          results.style.left = (ratio * 100) + '%';
+          results.style.width = (100 - ratio * 100) + '%';
         },
         $finally : function() {
           navigation.style.transition = '';
@@ -75,6 +78,7 @@
 
       hui.drag.attach({
         element : this.nodes.resizeResults,
+        touch: true,
         $startMove : function(e) {
           initial = e.getLeft();
           fullWidth = self.element.clientWidth;
@@ -85,6 +89,7 @@
         $move : function(e) {
           var diff = e.getLeft() - initial;
           var ratio = (overlayWidth + diff) / fullWidth;
+          ratio = hui.between(.2, ratio, .7);
           overlay.style.width = (ratio * 100) + '%';
           main.style.left = (ratio * 100) + '%';
         },
@@ -103,14 +108,24 @@
     _back : function() {
       hui.cls.remove(this.element, 'hui-is-submerged');
     },
+    _break : -1,
     $$layout : function() {
+      var breaks = [0, 600, 800, 1100, 1400];
       var w = this.element.clientWidth;
-      if (w < 800) {
-        this.nodes.main.style.left = ''
-        this.nodes.overlay.style.width = ''
+      var curr = -1;
+      for (var i = 0; i < breaks.length; i++) {
+        if (breaks[i] > w) { break; }
+        curr = breaks[i];
       }
-      //this.nodes.content.style.top = h + 'px';
-      //console.log('layout')
+      if (curr !== this._break) {
+        console.log(curr);
+        this.nodes.main.style.left = '';
+        this.nodes.overlay.style.width = '';
+        this.nodes.results.style.width = '';
+        this.nodes.results.style.left = '';
+        this.nodes.navigation.style.width = '';
+        this._break = curr;
+      }
     },
     disposeOverlay : function() {
       hui.cls.remove(this.element, 'hui-is-open');

@@ -1695,7 +1695,7 @@ th.hui_toolbar_grid_label {
     cursor: pointer;
     left: 0;
     top: 0;
-    padding: 5px;
+    padding: 4px;
     border-radius: 2px;
     color: #666; }
     .hui_window_close:before {
@@ -1712,7 +1712,9 @@ th.hui_toolbar_grid_label {
       font-size: 16px;
       width: 16px;
       height: 16px;
-      display: inline-block; }
+      display: inline-block;
+      padding: 1px;
+      border-radius: 50%; }
     .hui_window_close:hover:before {
       background: #ddd;
       color: #000; }
@@ -2491,7 +2493,7 @@ div.hui_window_dark .hui_selection_item span
 
 .hui_boundpanel-light {
   background: #fff;
-  border: 1px solid #ccc; }
+  border-color: #ddd; }
   .hui_boundpanel-light .hui_boundpanel_arrow_left {
     height: 23px;
     width: 12px;

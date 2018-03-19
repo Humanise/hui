@@ -45,7 +45,7 @@
     cursor: pointer;
     left: 0;
     top: 0;
-    padding: 5px;
+    padding: 4px;
     border-radius: 2px;
     color: #666; }
     .hui_window_close:before {
@@ -62,7 +62,9 @@
       font-size: 16px;
       width: 16px;
       height: 16px;
-      display: inline-block; }
+      display: inline-block;
+      padding: 1px;
+      border-radius: 50%; }
     .hui_window_close:hover:before {
       background: #ddd;
       color: #000; }

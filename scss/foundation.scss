@@ -167,8 +167,13 @@
     width: 5px;
     z-index: 1;
     cursor: col-resize;
+
     &:hover {
       background: rgba(0,0,0,.1);
+    }
+
+    &_navigation {
+      display: none;
     }
   }
 
@@ -266,6 +271,15 @@
         left: 40%;
       }
     }
+
+    &_resize {
+      &_navigation {
+        display: block;
+      }
+      &_overlay {
+        display: none;
+      }
+    }
   }
 }
 
@@ -319,6 +333,15 @@
       padding-left: 0;
     }
 
+    &_resize {
+      &_navigation {
+        display: none;
+      }
+      &_overlay {
+        display: block;
+      }
+    }
+
   }
 }
 
@@ -361,6 +384,12 @@
 
     &_overlay_title {
       display: none;
+    }
+
+    &_resize {
+      &_navigation {
+        display: block;
+      }
     }
   }
 }

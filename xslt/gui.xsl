@@ -2238,20 +2238,22 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
   <xsl:template match="gui:foundation">
     <div class="hui_foundation" id="{generate-id()}">
-      <div class="hui_foundation_overlay_toggle"></div>
+      <div class="hui_foundation_overlay_toggle"><xsl:comment/></div>
       <div class="hui_foundation_overlay">
         <div class="hui_foundation_overlay_title">
           <span class="hui_foundation_back">Back</span>
           <span class="hui_foundation_overlay_close"></span>
         </div>
         <div class="hui_foundation_navigation">
-          <div class="hui_foundation_resize hui_foundation_resize_navigation"></div>
+          <div class="hui_foundation_resize hui_foundation_resize_navigation"><xsl:comment/></div>
           <xsl:apply-templates select="gui:navigation"/>
+          <xsl:comment/>
         </div>
         <div class="hui_foundation_results">
-          <div class="hui_foundation_resize hui_foundation_resize_results"></div>
           <xsl:apply-templates select="gui:results"/>
+          <xsl:comment/>
         </div>
+        <div class="hui_foundation_resize hui_foundation_resize_overlay"><xsl:comment/></div>
       </div>
       <div class="hui_foundation_main">
         <div class="hui_foundation_actions">
@@ -2262,7 +2264,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
         </div>
       </div>
       <div class="hui_foundation_details">
-        <div class="hui_foundation_details_toggle"></div>
+        <div class="hui_foundation_details_toggle"><xsl:comment/></div>
         <xsl:apply-templates select="gui:details"/>
       </div>
     </div>
