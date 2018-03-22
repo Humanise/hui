@@ -14227,9 +14227,9 @@ hui.ui.ColorPicker.create = function(options) {
   options.element = hui.build('div',{
     'class':'hui_colorpicker',
     html :
-      '<div class="hui_bar hui_bar_window_mini">'+
-        '<div class="hui_bar_body">'+
-          '<a class="hui_bar_button hui_bar_button_selected" href="javascript:void(0)" rel="0">'+
+      '<div class="hui_bar hui_bar-window_mini">'+
+        '<div class="hui_bar_left">'+
+          '<a class="hui_bar_button hui_bar_button-selected" href="javascript:void(0)" rel="0">'+
             '<span class="hui_icon_16" style="background: url('+hui.ui.getIconUrl('colorpicker/wheel_pastels',16)+')"></span>'+
           '</a>'+
           '<a class="hui_bar_button" href="javascript:void(0)" rel="1">'+
@@ -14241,8 +14241,10 @@ hui.ui.ColorPicker.create = function(options) {
           '<a class="hui_bar_button" href="javascript:void(0)" rel="3">'+
             '<span class="hui_icon_16" style="background: url('+hui.ui.getIconUrl('colorpicker/swatches',16)+')"></span>'+
           '</a>'+
-          '<input class="hui_colorpicker"/>'+
         '</div>'+
+        '<div class="hui_bar_right">'+
+          '<input class="hui_colorpicker"/>'+
+        '</div>' +
       '</div>'+
       '<div class="hui_colorpicker_pages">'+
         '<div class="hui_colorpicker_page hui_colorpicker_wheel1"></div>'+
