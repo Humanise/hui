@@ -333,7 +333,7 @@
     <xsl:choose>
       <xsl:when test="@on and @for">
         (function() {
-          hui.ui.listen({$<xsl:value-of select="@for"/>$<xsl:value-of select="@on"/>:function() {
+          hui.ui.listen({$<xsl:value-of select="@for"/>$<xsl:value-of select="@on"/>:function(event) {
           <xsl:for-each select="gui:set">
             <xsl:for-each select="@*[not(name()='on')]">
               <xsl:value-of select="../@on"/>
@@ -349,7 +349,7 @@
       </xsl:when>
       <xsl:when test="@for">
         (function() {
-          hui.ui.listen({$<xsl:value-of select="@for"/>:function() {
+          hui.ui.listen({$<xsl:value-of select="@for"/>:function(event) {
           <xsl:value-of select="."/>
           }})
         })()

@@ -18838,14 +18838,6 @@ hui.test = {
   hui.ui.Foundation = function(options) {
     _super.call(this, options);
     this._attach();
-    if (options.selection) {
-      var selection = hui.ui.get(options.selection);
-      selection.listen({
-        $select : function(e) {
-          this.submerge();
-        }.bind(this)
-      })
-    }
   };
 
   hui.ui.Foundation.prototype = {
@@ -18947,7 +18939,6 @@ hui.test = {
         curr = breaks[i];
       }
       if (curr !== this._break) {
-        console.log(curr);
         this.nodes.main.style.left = '';
         this.nodes.overlay.style.width = '';
         this.nodes.results.style.width = '';

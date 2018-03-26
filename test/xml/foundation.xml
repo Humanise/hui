@@ -25,8 +25,10 @@
       text-overflow: ellipsis;
     }
   </style>
-
-  <foundation name="foundation" selection="selector">
+  <listen for="select" on="selector">
+    foundation.submerge();
+  </listen>
+  <foundation name="foundation">
     <navigation>
       <overflow>
       <selection value="user" name="selector">
@@ -64,9 +66,11 @@
           <option text="Hello"/>
         </dropdown>
         <button icon="common/new"/>
+        <!--
         <symbol name="info"/>
         <symbol name="gear"/>
         <symbol name="more"/>
+        -->
       </bar>
     </actions>
     <content>

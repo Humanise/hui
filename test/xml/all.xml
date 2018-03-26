@@ -37,7 +37,7 @@
     <toolbar>
       <icon icon="common/edit" text="Edit"/>
       <item label="Hep hey">
-        <button icon="common/delete" text="Delete" selected="true"/>
+        <button icon="common/delete" text="Delete"/>
       </item>
       <button icon="common/color" text="Color"/>
       <button icon="common/internet"/>
