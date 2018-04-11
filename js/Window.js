@@ -176,6 +176,9 @@ hui.ui.Window.prototype = {
       var curtain = this._busyCurtain;
       if (!curtain) {
         curtain = this._busyCurtain = hui.build('div',{'class':'hui_window_busy',parentFirst:this.content});
+        if (hui.browser.msie) {
+          hui.cls.add(curtain,'hui_window_busy-legacy');
+        }
       }
       var text = hui.isString(stringOrBoolean) ? hui.string.escape(stringOrBoolean) : '';
       curtain.innerHTML = '<span class="hui_window_busy_text">' + text + '</span>';

@@ -5,15 +5,12 @@
   font-size: 0px;
   background: #fff;
   display: block; }
-
 .hui_dock_internals {
   height: 100%;
   position: relative; }
-
 .hui_dock_bar {
   position: absolute;
   width: 100%; }
-
 .hui_dock_body {
   position: absolute;
   width: 100%;

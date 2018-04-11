@@ -12,7 +12,7 @@
     border: 1px solid #ddd;
     border-color: #e6e6e6 #ddd #ccc; }
   .hui_window_titlebar {
-    font-family: 'Lucida Grande','Verdana',sans-serif;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     font-size: 0;
     height: 26px;
     cursor: default;
@@ -83,16 +83,20 @@
     right: 0;
     background: rgba(241, 241, 241, 0.7);
     z-index: 1;
-    border-radius: 3px; }
+    border-radius: 3px;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
     .hui_window_busy_text {
       position: absolute;
       width: 100%;
       text-align: center;
       top: 30%;
-      background: url("../gfx/progress/spinner_white_32.gif") center top no-repeat;
+      background: url("../gfx/progress/spinner_white.svg") center top no-repeat;
+      background-size: 32px;
       padding-top: 35px;
       font-size: 12px;
       text-shadow: 0 1px white; }
+    .hui_window_busy-legacy .hui_window_busy_text {
+      background-image: url("../gfx/progress/spinner_white_32.gif"); }
 
 .hui_window_light .hui_window_front {
   border: 1px solid #ddd;
@@ -125,4 +129,6 @@
   .hui_window_dark .hui_window_busy_text {
     color: #fff;
     text-shadow: 0 -1px #000;
+    background-image: url("../gfx/progress/spinner_black.svg"); }
+  .hui_window_dark .hui_window_busy-legacy .hui_window_busy_text {
     background-image: url("../gfx/progress/spinner_black_32.gif"); }

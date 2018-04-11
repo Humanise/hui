@@ -5768,6 +5768,9 @@ hui.ui.Window.prototype = {
       var curtain = this._busyCurtain;
       if (!curtain) {
         curtain = this._busyCurtain = hui.build('div',{'class':'hui_window_busy',parentFirst:this.content});
+        if (hui.browser.msie) {
+          hui.cls.add(curtain,'hui_window_busy-legacy');
+        }
       }
       var text = hui.isString(stringOrBoolean) ? hui.string.escape(stringOrBoolean) : '';
       curtain.innerHTML = '<span class="hui_window_busy_text">' + text + '</span>';
@@ -7347,29 +7350,22 @@ hui.ui.DropDown.prototype = {
   },
   _updateUI: function() {
     var selected = this.items[this.index];
+    this.nodes.text.innerHTML = '';
     if (selected) {
       var text = selected.label || selected.title || selected.text || '';
-      this.nodes.text.innerHTML = '';
       hui.dom.addText(this.nodes.text, text);
     } else if (this.options.placeholder) {
-      this.nodes.text.innerHTML = '';
       this.nodes.text.appendChild(hui.build('span', {
         'class': 'hui_dropdown_placeholder',
         text: hui.string.escape(this.options.placeholder)
       }));
-    } else {
-      this.nodes.text.innerHTML = '';
     }
     if (!this.selector) {
       return;
     }
-    var as = this.selector.getElementsByTagName('a');
+    var as = hui.findAll('.hui_dropdown_option', this.selector);
     for (var i = 0; i < as.length; i++) {
-      if (this.index == i) {
-        hui.cls.add(as[i], 'hui_selected');
-      } else {
-        as[i].className = '';
-      }
+      hui.cls.set(as[i], 'hui_selected', this.index == i);
     }
   },
   _click: function(e) {

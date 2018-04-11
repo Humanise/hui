@@ -58,14 +58,16 @@
 
     var toolWin = hui.ui.Window.create({width:300,top:50,left:300});
     var toolbar = hui.ui.Toolbar.create({labels:false});
-    var fldr = hui.ui.Toolbar.Icon.create({icon:'common/folder',title:'Test'});
+    var fldr = hui.ui.Toolbar.Icon.create({icon:'common/folder',title:'Flip'});
     fldr.listen({$click:function() {toolWin.flip()}});
     toolbar.add(fldr);
     toolbar.add(hui.ui.SearchField.create({title:'Test'}));
     toolbar.addDivider();
     toolbar.add(hui.ui.Button.create({icon:'monochrome/previous'}));
     toolbar.add(hui.ui.Button.create({icon:'monochrome/next'}));
-    toolbar.add(hui.ui.Button.create({icon:'common/delete',text:'Delete'}));
+    toolbar.add(hui.ui.Button.create({icon:'common/delete',text:'Delete',listen:{$click:function() {
+      toolWin.setBusy('Deleting')
+    }}}));
     toolWin.add(toolbar);
     toolWin.add(hui.ui.List.create({url:'../xml/data/list_users.xml'}));
     toolWin.addToBack(hui.ui.Button.create({icon:'monochrome/previous'}).click(function() {toolWin.flip()}));

@@ -6,6 +6,7 @@
   left: 300px;
   display: none;
   opacity: 0;
+
   &_front {
     background: rgba(239, 239, 239, 0.95);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
@@ -15,7 +16,7 @@
   }
 
   &_titlebar {
-    font-family: 'Lucida Grande','Verdana',sans-serif;
+    @include font;
     font-size: 0;
     height: 26px;
     cursor: default;
@@ -91,16 +92,21 @@
     background: rgba(241, 241, 241, 0.7);
     z-index: 1;
     border-radius: 3px;
+    @include font;
 
     &_text {
       position: absolute;
       width: 100%;
       text-align: center;
       top: 30%;
-      background:  url('../gfx/progress/spinner_white_32.gif') center top no-repeat;
+      background:  url('../gfx/progress/spinner_white.svg') center top no-repeat;
+      background-size: 32px;
       padding-top: 35px;
       font-size: 12px;
       text-shadow: 0 1px white;
+    }
+    &-legacy &_text {
+      background-image: url('../gfx/progress/spinner_white_32.gif');
     }
   }
 }
@@ -167,6 +173,10 @@
       &_text {
         color: #fff;
         text-shadow: 0 -1px #000;
+        background-image: url('../gfx/progress/spinner_black.svg');
+      }
+
+      &-legacy .hui_window_busy_text {
         background-image: url('../gfx/progress/spinner_black_32.gif');
       }
     }

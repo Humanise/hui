@@ -2,32 +2,32 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Drop down">
 
-	<controller name="controller" url="dropdown.js"/>
-	<source name="itemsSource" url="data/items_languages.xml"/>
+  <controller name="controller" url="dropdown.js"/>
+  <source name="itemsSource" url="data/items_languages.xml"/>
 
-	<box width="600" title="Drop down" variant="textured" padding="10">
-		<toolbar>
-			<icon icon="common/folder" text="Show values" name="showValues"/>
-			<icon icon="common/color" text="Refresh source" click="itemsSource.refresh()"/>
-			<icon icon="common/folder" text="Build" name="build"/>
-		</toolbar>
-		<formula name="formula">
-			<fields labels="above">
-				<field label="Predefined items:">
-					<dropdown name="predefined" value="2">
-						<option text="Lorem inpsum" value="1"/>
-						<option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
-						<option text="Ut enim ad minim veniam" value="3"/>
-						<option text="Excepteur sint occaecat" value="4"/>
-					</dropdown>
-				</field>
-				<field label="From source:">
-					<dropdown name="fromSource" value="en" source="itemsSource"/>
-				</field>
-				<field label="From url:">
-					<dropdown name="fromUrl" url="data/items_loremipsum.xml"/>
-				</field>
-			</fields>
-		</formula>
-	</box>
+  <box width="600" title="Drop down" variant="textured" padding="10">
+    <toolbar>
+      <icon icon="common/folder" text="Show values" name="showValues"/>
+      <icon icon="common/color" text="Refresh source" click="itemsSource.refresh()"/>
+      <icon icon="common/folder" text="Build" name="build"/>
+    </toolbar>
+    <formula name="formula">
+      <fields labels="above">
+        <field label="Predefined items:">
+          <dropdown name="predefined" value="2">
+            <option text="Lorem inpsum" value="1"/>
+            <option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+            <option text="Ut enim ad minim veniam" value="3"/>
+            <option text="Excepteur sint occaecat" value="4"/>
+          </dropdown>
+        </field>
+        <field label="From source:">
+          <dropdown name="fromSource" value="en" source="itemsSource"/>
+        </field>
+        <field label="From url:">
+          <dropdown name="fromUrl" placeholder="Select something" url="data/items_loremipsum.xml"/>
+        </field>
+      </fields>
+    </formula>
+  </box>
 </gui>

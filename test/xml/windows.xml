@@ -9,6 +9,8 @@
         <icon icon="common/folder" text="Mørk" overlay="new" click="dark.toggle()"/>
         <icon icon="common/folder" text="Standard" click="standard.toggle()"/>
         <icon icon="common/folder" text="Lys" click="light.toggle()"/>
+        <icon icon="common/refresh" text="Busy" name="makeBusy"/>
+        
       </toolbar>
     </top>
     <middle>

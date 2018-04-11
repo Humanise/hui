@@ -334,7 +334,7 @@ a.hui_icon_labeled:hover span.hui_icon_128
   line-height: 24px;
   cursor: pointer;
   text-decoration: none;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   -webkit-user-select: none;
   -moz-user-select: none;
   white-space: nowrap;
@@ -1662,7 +1662,7 @@ th.hui_toolbar_grid_label {
     border: 1px solid #ddd;
     border-color: #e6e6e6 #ddd #ccc; }
   .hui_window_titlebar {
-    font-family: 'Lucida Grande','Verdana',sans-serif;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     font-size: 0;
     height: 26px;
     cursor: default;
@@ -1733,16 +1733,20 @@ th.hui_toolbar_grid_label {
     right: 0;
     background: rgba(241, 241, 241, 0.7);
     z-index: 1;
-    border-radius: 3px; }
+    border-radius: 3px;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
     .hui_window_busy_text {
       position: absolute;
       width: 100%;
       text-align: center;
       top: 30%;
-      background: url("../gfx/progress/spinner_white_32.gif") center top no-repeat;
+      background: url("../gfx/progress/spinner_white.svg") center top no-repeat;
+      background-size: 32px;
       padding-top: 35px;
       font-size: 12px;
       text-shadow: 0 1px white; }
+    .hui_window_busy-legacy .hui_window_busy_text {
+      background-image: url("../gfx/progress/spinner_white_32.gif"); }
 
 .hui_window_light .hui_window_front {
   border: 1px solid #ddd;
@@ -1775,6 +1779,8 @@ th.hui_toolbar_grid_label {
   .hui_window_dark .hui_window_busy_text {
     color: #fff;
     text-shadow: 0 -1px #000;
+    background-image: url("../gfx/progress/spinner_black.svg"); }
+  .hui_window_dark .hui_window_busy-legacy .hui_window_busy_text {
     background-image: url("../gfx/progress/spinner_black_32.gif"); }
 
 
@@ -3831,15 +3837,12 @@ ul.hui_wizard a.hui_selected
   font-size: 0px;
   background: #fff;
   display: block; }
-
 .hui_dock_internals {
   height: 100%;
   position: relative; }
-
 .hui_dock_bar {
   position: absolute;
   width: 100%; }
-
 .hui_dock_body {
   position: absolute;
   width: 100%;
@@ -5876,7 +5879,6 @@ div.hui_markupeditor
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
   -webkit-appearance: none;
   box-sizing: border-box;
-  text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
   width: 100%; }
   .hui_textinput:focus {
     border: 1px solid #0069ff;
