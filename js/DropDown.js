@@ -94,13 +94,9 @@ hui.ui.DropDown.prototype = {
     if (!this.selector) {
       return;
     }
-    var as = this.selector.getElementsByTagName('a');
+    var as = hui.findAll('.hui_dropdown_option', this.selector);
     for (var i = 0; i < as.length; i++) {
-      if (this.index == i) {
-        hui.cls.add(as[i], 'hui_selected');
-      } else {
-        as[i].className = '';
-      }
+      hui.cls.set(as[i], 'hui_selected', this.index == i);
     }
   },
   _click: function(e) {
