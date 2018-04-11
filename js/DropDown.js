@@ -78,18 +78,15 @@ hui.ui.DropDown.prototype = {
   },
   _updateUI: function() {
     var selected = this.items[this.index];
+    this.nodes.text.innerHTML = '';
     if (selected) {
       var text = selected.label || selected.title || selected.text || '';
-      this.nodes.text.innerHTML = '';
       hui.dom.addText(this.nodes.text, text);
     } else if (this.options.placeholder) {
-      this.nodes.text.innerHTML = '';
       this.nodes.text.appendChild(hui.build('span', {
         'class': 'hui_dropdown_placeholder',
         text: hui.string.escape(this.options.placeholder)
       }));
-    } else {
-      this.nodes.text.innerHTML = '';
     }
     if (!this.selector) {
       return;
