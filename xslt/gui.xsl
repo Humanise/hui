@@ -375,75 +375,42 @@
     <tabs/> | <toolbar/>
 </dock>
 -->
-<xsl:template match="gui:dock">
-  <xsl:call-template name="gui:dock-internals"/>
-  <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Dock({
-      element:'<xsl:value-of select="generate-id()"/>',
-      name:'<xsl:value-of select="@name"/>'
-      <xsl:if test="gui:tabs">,tabs:true</xsl:if>
-      <xsl:if test="gui:sidebar/@collapsed='true'">,collapsed:true</xsl:if>
-    });
-    <xsl:call-template name="gui:createobject"/>
-  </script>
-</xsl:template>
 
-<xsl:template match="gui:dock[gui:sidebar]">
-  <div class="hui_dock" id="{generate-id()}">
+<xsl:template match="gui:dock">
+  <div id="{generate-id()}">
     <xsl:attribute name="class">
       <xsl:text>hui_dock</xsl:text>
-      <xsl:if test="gui:sidebar/@collapsed='true'"> hui_dock_sidebar_collapsed</xsl:if>
+      <xsl:if test="gui:sidebar/@collapsed='true'"> hui-is-collapsed</xsl:if>
+      <xsl:choose>
+        <xsl:when test="@position='top' or not(@position)">
+          <xsl:text> hui_dock-top</xsl:text>
+          <xsl:if test="gui:tabs">
+            <xsl:text> hui_dock-top-tabs</xsl:text>
+          </xsl:if>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text> hui_dock-bottom</xsl:text>
+          <xsl:if test="gui:tabs">
+            <xsl:text> hui_dock-bottom-tabs</xsl:text>
+          </xsl:if>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:attribute>
     <xsl:apply-templates select="gui:sidebar"/>
-    <div class="hui_dock_sidebar_main">
-      <xsl:call-template name="gui:dock-internals"/>
+    <div class="hui_dock_main">
+      <div class="hui_dock_bar">
+        <xsl:apply-templates select="child::*[not(name()='sidebar')]"/>
+      </div>
+      <div class="hui_dock_body">
+        <div class="hui_dock_progress"><xsl:comment/></div>
+        <iframe src="{@url}" frameborder="0" name="{@frame-name}" class="hui_dock_frame"><xsl:comment/></iframe>
+      </div>
     </div>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'<xsl:if test="gui:tabs">,tabs:true</xsl:if>});
+    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
     <xsl:call-template name="gui:createobject"/>
   </script>
-</xsl:template>
-
-<xsl:template name="gui:dock-internals">
-  <div>
-    <xsl:attribute name="class">
-      <xsl:text>hui_dock_internals</xsl:text>
-      <xsl:choose>
-        <xsl:when test="@position='top' or not(@position)">
-          <xsl:text> hui_dock_internals_top</xsl:text>
-          <xsl:if test="gui:tabs">
-            <xsl:text> hui_dock_internals_top_tabs</xsl:text>
-          </xsl:if>
-        </xsl:when>
-        <xsl:when test="@position='bottom'">
-          <xsl:text> hui_dock_internals_bottom</xsl:text>
-          <xsl:if test="gui:tabs">
-            <xsl:text> hui_dock_internals_bottom_tabs</xsl:text>
-          </xsl:if>
-        </xsl:when>
-      </xsl:choose>
-    </xsl:attribute>
-    <xsl:if test="not(gui:sidebar)">
-      <xsl:attribute name="id"><xsl:value-of select="generate-id()"/></xsl:attribute>
-    </xsl:if>
-    <div class="hui_dock_bar">
-      <xsl:apply-templates select="child::*[not(name()='sidebar')]"/>
-    </div>
-    <div class="hui_dock_body">
-      <div class="hui_dock_progress"><xsl:comment/></div>
-      <xsl:choose>
-        <xsl:when test="@devices='true'">
-        <div class="hui_dock_devices">
-          <iframe src="{@url}" frameborder="0" name="{@frame-name}" class="hui_dock_frame"><xsl:comment/></iframe>
-        </div>
-        </xsl:when>
-        <xsl:otherwise>
-      <iframe src="{@url}" frameborder="0" name="{@frame-name}" class="hui_dock_frame"><xsl:comment/></iframe>
-        </xsl:otherwise>
-      </xsl:choose>
-    </div>
-  </div>
 </xsl:template>
 
 <xsl:template match="gui:dock/gui:sidebar">
