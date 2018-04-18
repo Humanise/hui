@@ -2,39 +2,39 @@
 
 body.hui
 {
-	margin: 0px;
-	font-size: 11pt;
-	background: #fff;
-	overflow: auto;
-	min-height: 100%;
+  margin: 0px;
+  font-size: 11pt;
+  background: #fff;
+  overflow: auto;
+  min-height: 100%;
 }
 
 body.hui, textarea
 {
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 td
 {
-	padding: 0px;
+  padding: 0px;
 }
 
 table
 {
-	border-spacing: 0px 0px;
+  border-spacing: 0px 0px;
 }
 
 tr.view_toolbar
 {
-	display: none;
+  display: none;
 }
 
 div.hui_calendar_bar
 {
-	display: none;
+  display: none;
 }
 
 table.hui_view
 {
-	width: 100%;
+  width: 100%;
 }
