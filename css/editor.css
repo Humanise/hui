@@ -31,7 +31,6 @@ div.hui_overlay_icon:hover
 
 .hui_editor_part_hover
 {
-	/*background: url('../gfx/hover_bg.png');*/
 	outline: 1px dashed rgba(0,0,0,.2);
   outline-offset: -1px;
 }
