@@ -1,41 +1,41 @@
 @import 'tools';
 
 .hui_numberinput {
-	display: inline-block;
+  display: inline-block;
   vertical-align: middle;
   width: 100%;
-	position: relative;
+  position: relative;
 
-	&_up, &_down {
-		position: absolute;
-		right: 0;
-		width: 18px;
-		height: 13px;
-		background: no-repeat;
-		background-size: 6px;
-		opacity: .5;
-		cursor: pointer;
+  &_up, &_down {
+    position: absolute;
+    right: 0;
+    width: 18px;
+    height: 13px;
+    background: no-repeat;
+    background-size: 6px;
+    opacity: .5;
+    cursor: pointer;
 
-		&:hover {
-			opacity: .8;
-		}
-	}
+    &:hover {
+      opacity: .8;
+    }
+  }
 
-	&_up {
-		top: 0;
-		background-image: url("../gfx/up.svg");
-		background-position: 50% 5px;
-	}
+  &_up {
+    top: 0;
+    background-image: url("../gfx/up.svg");
+    background-position: 50% 5px;
+  }
 
-	&_down {
-		bottom: 0;
-		background-image: url("../gfx/down.svg");
-		background-position: 50% 2px;
-	}
+  &_down {
+    bottom: 0;
+    background-image: url("../gfx/down.svg");
+    background-position: 50% 2px;
+  }
   &.hui_is_small &_up {
-		background-position: 50% 4px;
+    background-position: 50% 4px;
   }
   &.hui_is_small &_down {
-		background-position: 50% 4px;
+    background-position: 50% 4px;
   }
 }

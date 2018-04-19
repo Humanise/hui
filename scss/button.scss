@@ -2,9 +2,9 @@
 
 .hui_buttons
 {
-	font-size: 0;
-	line-height: 0;
-	white-space: nowrap;
+  font-size: 0;
+  line-height: 0;
+  white-space: nowrap;
 
   .hui_button {
     margin-left: 4px;
@@ -132,22 +132,22 @@
 
 .hui_button_icon
 {
-	padding: 0px;
-	margin: 4px 5px 0px -2px;
-	width: 16px;
-	height: 16px;
-	display: inline-block;
-	vertical-align: top;
+  padding: 0px;
+  margin: 4px 5px 0px -2px;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .hui_button_icon_notext
 {
-	margin: 4px -3px 0px -3px;
+  margin: 4px -3px 0px -3px;
 }
 
 .hui_button:hover .hui_button_icon
 {
-	background-position: 0 -16px;
+  background-position: 0 -16px;
 }
 
 
@@ -155,10 +155,10 @@
 
 .hui_button_light
 {
-	border: 1px solid #ddd;
-	border-radius: 3px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
   @include vertical-gradient(#ffffff, #f6f6f6);
-	color: #333;
+  color: #333;
   box-shadow: none;
 
   &:focus {
@@ -182,7 +182,7 @@
 
 a.hui_button_light em.hui_button_icon
 {
-	margin-left: -6px;
+  margin-left: -6px;
     margin-right: 5px;
     margin-top: 5px;
 }
@@ -242,12 +242,12 @@ a.hui_button_light em.hui_button_icon_notext
     }
 
     &.hui_is_disabled {
-			&, &:hover {
-				border-color: #111;
-				background: #333;
-				color: #999;
-				box-shadow: none;
-			}
+      &, &:hover {
+        border-color: #111;
+        background: #333;
+        color: #999;
+        box-shadow: none;
+      }
     }
   }
 }
@@ -260,35 +260,35 @@ a.hui_button_light em.hui_button_icon_notext
 
 a.hui_button_bar
 {
-	border: 1px solid #ddd;
-	border-radius: 3px;
-	background: none;
-	height: 26px;
-	line-height: 26px;
-	font-family: Georgia,serif;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-	font-size: 14px;
-	border-color: #ccc #d7d7d7 #ccc;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background: none;
+  height: 26px;
+  line-height: 26px;
+  font-family: Georgia,serif;
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-size: 14px;
+  border-color: #ccc #d7d7d7 #ccc;
   @include vertical-gradient(#fdfdfd, #e6e6e6);
 }
 
 a.hui_button_bar span
 {
-	background: none;
-	color: #333;
+  background: none;
+  color: #333;
 }
 
 a.hui_button_small_bar, a.hui_button_small_bar span
 {
-	height: 20px;
-	line-height: 20px;
+  height: 20px;
+  line-height: 20px;
 }
 
 a.hui_button_small_bar span span
 {
-	margin: 0;
-	padding: 0 7px;
-	font-size: 11px;
-	line-height: 17px;
-	text-shadow: 0 1px 0 #fff;
+  margin: 0;
+  padding: 0 7px;
+  font-size: 11px;
+  line-height: 17px;
+  text-shadow: 0 1px 0 #fff;
 }
