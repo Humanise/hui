@@ -206,7 +206,7 @@ hui.ui.getAncestors = function(widget) {
     var parent = element.parentNode;
     while (parent) {
       for (var key in hui.ui.objects) {
-        var widget = hui.ui.objects[key];
+        widget = hui.ui.objects[key];
         if (widget.element === parent) {
           ancestors.push(widget);
         }

@@ -57,7 +57,7 @@
         $move : function(e) {
           var diff = e.getLeft() - initial;
           var ratio = (navWidth + diff) / overlayWidth;
-          ratio = hui.between(.3, ratio, .7);
+          ratio = hui.between(0.3, ratio, 0.7);
           navigation.style.width = (ratio * 100) + '%';
           results.style.left = (ratio * 100) + '%';
           results.style.width = (100 - ratio * 100) + '%';
@@ -75,19 +75,19 @@
           initial = e.getLeft();
           fullWidth = self.element.clientWidth;
           overlayWidth = overlay.clientWidth;
-          overlay.style.transition = 'none'
-          main.style.transition = 'none'
+          overlay.style.transition = 'none';
+          main.style.transition = 'none';
         },
         $move : function(e) {
           var diff = e.getLeft() - initial;
           var ratio = (overlayWidth + diff) / fullWidth;
-          ratio = hui.between(.2, ratio, .7);
+          ratio = hui.between(0.2, ratio, 0.7);
           overlay.style.width = (ratio * 100) + '%';
           main.style.left = (ratio * 100) + '%';
         },
         $finally : function() {
-          overlay.style.transition = ''
-          main.style.transition = ''
+          overlay.style.transition = '';
+          main.style.transition = '';
         }
       });
     },

@@ -29,7 +29,7 @@
         if (widget) {
           group.add(widget, label);
         }
-      })
+      });
       document.body.appendChild(form.getElement());
     },
     setValues : function(values) {
