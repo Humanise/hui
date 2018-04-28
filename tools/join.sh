@@ -131,7 +131,6 @@ cssFiles = [
     'link',
     'text',
     'bg',
-    'curtain',
     'tooltip',
     'disclosure',
     'icon',

@@ -325,7 +325,7 @@ hui.ui.nextTopIndex = function() {
 hui.ui.showCurtain = function(options) {
   var widget = options.widget;
   if (!widget.curtain) {
-    widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
+    widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none;background-color:#000'});
 
     var body = hui.get.firstByClass(document.body,'hui_body');
     if (!body) {

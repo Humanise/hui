@@ -124,16 +124,6 @@ div.hui_text p
 }
 
 
-div.hui_curtain
-{
-  width: 100%;
-  background: #000;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-}
-
-
 div.hui_tooltip
 {
   position: absolute;
