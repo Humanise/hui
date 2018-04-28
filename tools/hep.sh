@@ -1,22 +1,33 @@
 #!/usr/bin/env ruby
 require 'pathname'
+require 'json'
 
 
 class Component
-  attr_accessor :name, :modern, :sass_path
+  attr_accessor :name, :modern, :sass_path, :css_path
 end
 
-class Thing
-  def run
-    file_path = Pathname.new($0).realpath()
-    hui_path = file_path.parent.dirname
+class Inspector
+
+  def inspect(hui_path)
 
     components = list_dir hui_path
     check_graphics hui_path
     components.each { |component|
       puts component.name + (component.modern ? "+" : "")
-      puts "  " + (component.sass_path || "none")
+      puts "  " + (component.sass_path ? component.sass_path.to_s : "none")
     }
+    json = JSON.pretty_generate(components.map {|component|
+      obj = {name: component.name}
+      if component.sass_path
+        obj[:sass] = component.sass_path.basename.to_s
+      end
+      if component.css_path
+        obj[:css] = component.css_path.basename.to_s
+      end
+      obj
+    })
+    File.write(hui_path.join("info/components.json"), json)
   end
 
   def list_dir directory
@@ -30,9 +41,9 @@ class Thing
         component.name = name
         component.modern = data.match?(/hui\.ui\.Component/)
         sass_path = directory.join("scss/" + name.downcase + ".scss")
-        if sass_path.exist?
-          component.sass_path = sass_path.to_s
-        end
+        component.sass_path = sass_path if sass_path.exist?
+        css_path = directory.join("css/" + name.downcase + ".css")
+        component.css_path = css_path if css_path.exist?
         components.push component
       end
     }
@@ -51,4 +62,6 @@ class Thing
 
 end
 
-Thing.new.run
+file_path = Pathname.new($0).realpath()
+
+Inspector.new.inspect(file_path.parent.dirname)
