@@ -3527,36 +3527,42 @@ hui = window.hui || {};
 
 /** @namespace */
 hui.cookie = {
-  /** Adds a cookie value by name */
-  set : function(name,value,days) {
+  /**
+   * Adds a cookie value by name
+   */
+  set : function(name, value, days) {
     var expires;
     if (days) {
       var date = new Date();
-      date.setTime(date.getTime()+(days*24*60*60*1000));
-      expires = "; expires="+date.toGMTString();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      expires = "; expires=" + date.toGMTString();
     } else {
       expires = "";
     }
-    document.cookie = name+"="+value+expires+"; path=/";
+    document.cookie = name + "=" + value + expires + "; path=/";
   },
-  /** Gets a cookie value by name */
+  /**
+   * Gets a cookie value by name
+   */
   get : function(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++) {
       var c = ca[i];
-      while (c.charAt(0)==' ') {
-        c = c.substring(1,c.length);
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1, c.length);
       }
       if (c.indexOf(nameEQ) === 0) {
-        return c.substring(nameEQ.length,c.length);
+        return c.substring(nameEQ.length, c.length);
       }
     }
     return null;
   },
-  /** Clears a cookie by name */
+  /**
+   * Clears a cookie by name
+   */
   clear : function(name) {
-    this.set(name,"",-1);
+    this.set(name, "", -1);
   }
 };
 
@@ -4308,7 +4314,7 @@ hui.ui.getAncestors = function(widget) {
     var parent = element.parentNode;
     while (parent) {
       for (var key in hui.ui.objects) {
-        var widget = hui.ui.objects[key];
+        widget = hui.ui.objects[key];
         if (widget.element === parent) {
           ancestors.push(widget);
         }

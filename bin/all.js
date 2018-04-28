@@ -3527,36 +3527,42 @@ hui = window.hui || {};
 
 /** @namespace */
 hui.cookie = {
-  /** Adds a cookie value by name */
-  set : function(name,value,days) {
+  /**
+   * Adds a cookie value by name
+   */
+  set : function(name, value, days) {
     var expires;
     if (days) {
       var date = new Date();
-      date.setTime(date.getTime()+(days*24*60*60*1000));
-      expires = "; expires="+date.toGMTString();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      expires = "; expires=" + date.toGMTString();
     } else {
       expires = "";
     }
-    document.cookie = name+"="+value+expires+"; path=/";
+    document.cookie = name + "=" + value + expires + "; path=/";
   },
-  /** Gets a cookie value by name */
+  /**
+   * Gets a cookie value by name
+   */
   get : function(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++) {
       var c = ca[i];
-      while (c.charAt(0)==' ') {
-        c = c.substring(1,c.length);
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1, c.length);
       }
       if (c.indexOf(nameEQ) === 0) {
-        return c.substring(nameEQ.length,c.length);
+        return c.substring(nameEQ.length, c.length);
       }
     }
     return null;
   },
-  /** Clears a cookie by name */
+  /**
+   * Clears a cookie by name
+   */
   clear : function(name) {
-    this.set(name,"",-1);
+    this.set(name, "", -1);
   }
 };
 ;
@@ -4308,7 +4314,7 @@ hui.ui.getAncestors = function(widget) {
     var parent = element.parentNode;
     while (parent) {
       for (var key in hui.ui.objects) {
-        var widget = hui.ui.objects[key];
+        widget = hui.ui.objects[key];
         if (widget.element === parent) {
           ancestors.push(widget);
         }
@@ -18881,7 +18887,7 @@ hui.test = {
         $move : function(e) {
           var diff = e.getLeft() - initial;
           var ratio = (navWidth + diff) / overlayWidth;
-          ratio = hui.between(.3, ratio, .7);
+          ratio = hui.between(0.3, ratio, 0.7);
           navigation.style.width = (ratio * 100) + '%';
           results.style.left = (ratio * 100) + '%';
           results.style.width = (100 - ratio * 100) + '%';
@@ -18899,19 +18905,19 @@ hui.test = {
           initial = e.getLeft();
           fullWidth = self.element.clientWidth;
           overlayWidth = overlay.clientWidth;
-          overlay.style.transition = 'none'
-          main.style.transition = 'none'
+          overlay.style.transition = 'none';
+          main.style.transition = 'none';
         },
         $move : function(e) {
           var diff = e.getLeft() - initial;
           var ratio = (overlayWidth + diff) / fullWidth;
-          ratio = hui.between(.2, ratio, .7);
+          ratio = hui.between(0.2, ratio, 0.7);
           overlay.style.width = (ratio * 100) + '%';
           main.style.left = (ratio * 100) + '%';
         },
         $finally : function() {
-          overlay.style.transition = ''
-          main.style.transition = ''
+          overlay.style.transition = '';
+          main.style.transition = '';
         }
       });
     },
@@ -21169,7 +21175,7 @@ hui.ui.Matrix.prototype = {
         if (widget) {
           group.add(widget, label);
         }
-      })
+      });
       document.body.appendChild(form.getElement());
     },
     setValues : function(values) {
