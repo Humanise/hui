@@ -1666,10 +1666,9 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:text>display:none;</xsl:text>
       </xsl:if>
     </xsl:attribute>
-    <div class="hui_overflow_top">
-      <xsl:comment/></div>
+    <div class="hui_overflow_body">
     <xsl:apply-templates/>
-    <div class="hui_overflow_bottom"><xsl:comment/></div>
+    </div>
   </div>
   <script type="text/javascript">
     var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Overflow({

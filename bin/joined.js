@@ -4433,7 +4433,7 @@ hui.ui.nextTopIndex = function() {
 hui.ui.showCurtain = function(options) {
   var widget = options.widget;
   if (!widget.curtain) {
-    widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none;background:#000'});
+    widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none;background-color:#000'});
 
     var body = hui.get.firstByClass(document.body,'hui_body');
     if (!body) {
@@ -12122,41 +12122,32 @@ hui.ui.InfoView.prototype = {
 hui.ui.Overflow = function(options) {
   this.options = options;
   this.element = hui.get(options.element);
-  this.topShadow = hui.get.firstByClass(this.element,'hui_overflow_top');
-  this.bottomShadow = hui.get.firstByClass(this.element,'hui_overflow_bottom');
-  hui.listen(this.element,'scroll',this._checkShadows.bind(this));
+  this.body = hui.find('.hui_overflow_body', this.element);
   this.name = options.name;
   hui.ui.extend(this);
+  this._attach();
 };
 
 hui.ui.Overflow.create = function(options) {
   options = options || {};
   var attributes = {
-    'class' : 'hui_overflow',
-    html : '<div class="hui_overflow_top"></div><div class="hui_overflow_bottom"></div>'
+    html : '<div class="hui_overflow_body"></div>'
   };
   if (options.height) {
     attributes.style = {height:options.height+'px'};
   }
-  options.element = hui.build('div',attributes);
+  options.element = hui.build('div.hui_overflow',attributes);
   return new hui.ui.Overflow(options);
 };
 
 hui.ui.Overflow.prototype = {
+  _attach : function() {
+    hui.listen(this.body,'scroll',this._checkShadows.bind(this));
+  },
   _checkShadows : function() {
     if (hui.browser.msie) {return;}
-    if (this.element.scrollTop > 0) {
-      this.topShadow.style.display = 'block';
-      this.topShadow.style.top = this.element.scrollTop+'px';
-    } else {
-      this.topShadow.style.display = 'none';
-    }
-    if(this.element.scrollHeight-this.element.scrollTop-this.element.clientHeight > 0) {
-      this.bottomShadow.style.display = 'block';
-      this.bottomShadow.style.top = (this.element.scrollTop+this.element.clientHeight-this.bottomShadow.clientHeight)+'px';
-    } else {
-      this.bottomShadow.style.display = 'none';
-    }
+    hui.cls.set(this.element, 'hui-is-top', this.body.scrollTop > 0);
+    hui.cls.set(this.element, 'hui-is-bottom', this.body.scrollHeight-this.body.scrollTop-this.body.clientHeight > 0);
   },
   show : function() {
     this.element.style.display='';
@@ -12167,11 +12158,7 @@ hui.ui.Overflow.prototype = {
     hui.ui.callVisible(this);
   },
   add : function(widgetOrNode) {
-    if (widgetOrNode.getElement) {
-      this.element.appendChild(widgetOrNode.getElement());
-    } else {
-      this.element.appendChild(widgetOrNode);
-    }
+    this.body.appendChild(widgetOrNode.getElement ? widgetOrNode.getElement() : widgetOrNode);
     return this;
   },
   $$childSizeChanged : function() {
@@ -16304,11 +16291,11 @@ hui.ui.Structure.create = function(options) {
   options = hui.override({},options);
 
   options.element = hui.dom.parse('<div class="hui_structure">'+
-      '<div class="hui_structure_middle">'+
-      '<div class="hui_structure_left"></div>'+
-      '<div class="hui_structure_center"></div>'+
-      '</div>'+
-      '</div>');
+    '<div class="hui_structure_middle">'+
+    '<div class="hui_structure_left hui_context_sidebar"></div>'+
+    '<div class="hui_structure_center"></div>'+
+    '</div>'+
+    '</div>');
   return new hui.ui.Structure(options);
 };
 

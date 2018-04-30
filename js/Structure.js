@@ -13,11 +13,11 @@ hui.ui.Structure.create = function(options) {
   options = hui.override({},options);
 
   options.element = hui.dom.parse('<div class="hui_structure">'+
-      '<div class="hui_structure_middle">'+
-      '<div class="hui_structure_left"></div>'+
-      '<div class="hui_structure_center"></div>'+
-      '</div>'+
-      '</div>');
+    '<div class="hui_structure_middle">'+
+    '<div class="hui_structure_left hui_context_sidebar"></div>'+
+    '<div class="hui_structure_center"></div>'+
+    '</div>'+
+    '</div>');
   return new hui.ui.Structure(options);
 };
 
