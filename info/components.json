@@ -222,6 +222,7 @@
   },
   {
     "name": "Overflow",
+    "sass": "overflow.scss",
     "css": "overflow.css"
   },
   {
