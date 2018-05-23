@@ -156,3 +156,65 @@ hui.ui.Alert.prototype = {
     this.buttons.add(button);
   }
 };
+
+hui.ui.Alert.confirm = function(options) {
+  if (!options.name) {
+    options.name = 'huiConfirm';
+  }
+  var alert = hui.ui.get(options.name);
+  var ok;
+  if (!alert) {
+    alert = hui.ui.Alert.create(options);
+    var cancel = hui.ui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
+    cancel.listen({$click:function(){
+      alert.hide();
+      if (options.onCancel) {
+        options.onCancel();
+      }
+      hui.ui.callDelegates(alert,'cancel');
+    }});
+    alert.addButton(cancel);
+
+    ok = hui.ui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
+    alert.addButton(ok);
+  } else {
+    alert.update(options);
+    ok = hui.ui.get(name+'_ok');
+    ok.setText(options.ok || 'OK');
+    ok.setHighlighted(options.highlighted=='ok');
+    ok.clearListeners();
+    hui.ui.get(name+'_cancel').setText(options.ok || 'Cancel');
+    hui.ui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
+    if (options.cancel) {hui.ui.get(name+'_cancel').setText(options.cancel);}
+  }
+  ok.listen({$click:function(){
+    alert.hide();
+    if (options.onOK) {
+      options.onOK();
+    }
+    hui.ui.callDelegates(alert,'ok');
+  }});
+  alert.show();
+};
+
+hui.ui.Alert.alert = function(options) {
+  if (!this.alertBox) {
+    this.alertBox = hui.ui.Alert.create(options);
+    this.alertBoxButton = hui.ui.Button.create({name:'huiAlertBoxButton',text : 'OK'});
+    this.alertBoxButton.listen({
+      $click$huiAlertBoxButton : function() {
+        hui.ui.alertBox.hide();
+        if (hui.ui.alertBoxCallBack) {
+          hui.ui.alertBoxCallBack();
+          hui.ui.alertBoxCallBack = null;
+        }
+      }
+    });
+    this.alertBox.addButton(this.alertBoxButton);
+  } else {
+    this.alertBox.update(options);
+  }
+  this.alertBoxCallBack = options.onOK;
+  this.alertBoxButton.setText(options.button ? options.button : 'OK');
+  this.alertBox.show();
+};

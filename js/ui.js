@@ -325,12 +325,9 @@ hui.ui.nextTopIndex = function() {
 hui.ui.showCurtain = function(options) {
   var widget = options.widget;
   if (!widget.curtain) {
-    widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none;background-color:#000'});
+    widget.curtain = hui.build('div',{style:'position:fixed;top:0;left:0;bottom:0;right:0'});
+    var body = hui.find('.hui_body', document.body) || document.body;
 
-    var body = hui.get.firstByClass(document.body,'hui_body');
-    if (!body) {
-      body=document.body;
-    }
     body.appendChild(widget.curtain);
     hui.listen(widget.curtain,'click',function() {
       if (widget.$curtainWasClicked) {
@@ -339,35 +336,23 @@ hui.ui.showCurtain = function(options) {
     });
   }
   var curtain = widget.curtain;
+  var color = options.color || '#000';
   if (options.transparent) {
-    curtain.style.background='none';
+    color = 'none';
   }
-  else if (options.color) {
-    if (options.color=='auto') {
-      var color = hui.style.get(document.body,'background-color');
-      if (color=='transparent' || color=='rgba(0, 0, 0, 0)') {
-        color='#fff';
-      }
-      curtain.style.backgroundColor=color;
-    } else {
-      curtain.style.backgroundColor=options.color;
+  else if (options.color == 'auto') {
+    color = hui.style.get(document.body,'background-color');
+    if (color=='transparent' || color=='rgba(0, 0, 0, 0)') {
+      color='#fff';
     }
   }
-  if (hui.browser.msie) {
-    curtain.style.height=hui.document.getHeight()+'px';
-  } else {
-    curtain.style.position='fixed';
-    curtain.style.top='0';
-    curtain.style.left='0';
-    curtain.style.bottom='0';
-    curtain.style.right='0';
-  }
-  curtain.style.zIndex=options.zIndex;
+  curtain.style.backgroundColor = color;
+  curtain.style.zIndex = options.zIndex;
   if (options.transparent) {
-    curtain.style.display='block';
+    curtain.style.display = 'block';
   } else {
     hui.style.setOpacity(curtain,0);
-    curtain.style.display='block';
+    curtain.style.display = 'block';
     hui.animate(curtain,'opacity',0.7,1000,{ease:hui.ease.slowFastSlow});
   }
 };
@@ -424,65 +409,11 @@ hui.ui.getLanguage = function() {
 //////////////////////////////// Message //////////////////////////////
 
 hui.ui.confirm = function(options) {
-  if (!options.name) {
-    options.name = 'huiConfirm';
-  }
-  var alert = hui.ui.get(options.name);
-  var ok;
-  if (!alert) {
-    alert = hui.ui.Alert.create(options);
-    var cancel = hui.ui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
-    cancel.listen({$click:function(){
-      alert.hide();
-      if (options.onCancel) {
-        options.onCancel();
-      }
-      hui.ui.callDelegates(alert,'cancel');
-    }});
-    alert.addButton(cancel);
-
-    ok = hui.ui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
-    alert.addButton(ok);
-  } else {
-    alert.update(options);
-    ok = hui.ui.get(name+'_ok');
-    ok.setText(options.ok || 'OK');
-    ok.setHighlighted(options.highlighted=='ok');
-    ok.clearListeners();
-    hui.ui.get(name+'_cancel').setText(options.ok || 'Cancel');
-    hui.ui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
-    if (options.cancel) {hui.ui.get(name+'_cancel').setText(options.cancel);}
-  }
-  ok.listen({$click:function(){
-    alert.hide();
-    if (options.onOK) {
-      options.onOK();
-    }
-    hui.ui.callDelegates(alert,'ok');
-  }});
-  alert.show();
+  hui.ui.Alert.confirm(options);
 };
 
 hui.ui.alert = function(options) {
-  if (!this.alertBox) {
-    this.alertBox = hui.ui.Alert.create(options);
-    this.alertBoxButton = hui.ui.Button.create({name:'huiAlertBoxButton',text : 'OK'});
-    this.alertBoxButton.listen({
-      $click$huiAlertBoxButton : function() {
-        hui.ui.alertBox.hide();
-        if (hui.ui.alertBoxCallBack) {
-          hui.ui.alertBoxCallBack();
-          hui.ui.alertBoxCallBack = null;
-        }
-      }
-    });
-    this.alertBox.addButton(this.alertBoxButton);
-  } else {
-    this.alertBox.update(options);
-  }
-  this.alertBoxCallBack = options.onOK;
-  this.alertBoxButton.setText(options.button ? options.button : 'OK');
-  this.alertBox.show();
+  hui.ui.Alert.alert(options);
 };
 
 hui.ui.showMessage = function(options) {
