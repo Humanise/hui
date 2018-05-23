@@ -111,5 +111,3 @@ hui.ui.Input.prototype = {
     }
   }
 };
-
-/* EOF */

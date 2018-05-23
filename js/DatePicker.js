@@ -159,5 +159,3 @@ Date.dayNames =
     "Torsdag",
     "Fredag",
     "Lørdag"];
-
-/* EOF */

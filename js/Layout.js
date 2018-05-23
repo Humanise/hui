@@ -73,5 +73,3 @@ hui.ui.Layout.prototype = {
     cell.style.height = height+'px';
   }
 };
-
-/* EOF */

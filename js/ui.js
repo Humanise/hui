@@ -1008,5 +1008,3 @@ hui.onReady(function() {
   hui.ui.callSuperDelegates(this,'ready');
   hui.define('hui.ui',hui.ui);
 });
-
-/* EOF */

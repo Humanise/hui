@@ -228,4 +228,3 @@ hui.ui.Buttons.prototype = {
 hui.onReady(['hui.ui'],function() {
   hui.define('hui.ui.Button',hui.ui.Button);
 });
-/* EOF */
