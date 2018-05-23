@@ -176,17 +176,13 @@
           <xsl:text> hui_bg_</xsl:text><xsl:value-of select="@background"/>
         </xsl:if>
       </xsl:attribute>
+      <xsl:if test="@padding">
+        <xsl:attribute name="style">padding:<xsl:value-of select="@padding"/>px;</xsl:attribute>
+      </xsl:if>
       <xsl:if test="gui:dock">
         <xsl:attribute name="style">overflow:hidden;</xsl:attribute>
       </xsl:if>
-      <xsl:choose>
-        <xsl:when test="@padding">
-          <div style="padding: {@padding}px;" class="hui_body"><xsl:apply-templates select="child::*[not(name()='style') and not(name()='script')]"/></div>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:apply-templates select="child::*[not(name()='style') and not(name()='script')]"/>
-        </xsl:otherwise>
-      </xsl:choose>
+      <xsl:apply-templates select="child::*[not(name()='style') and not(name()='script')]"/>
     </body>
   </html>
 </xsl:template>
