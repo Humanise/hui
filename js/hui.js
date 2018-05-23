@@ -1347,15 +1347,15 @@ hui.cls = {
 
 
 
-
-
-
-
-
-
 ///////////////////// Events //////////////////
 
 hui.on = function(node,event,func,bind) {
+  if (arguments.length == 1 && typeof(node) == 'function') {
+    return hui.onReady(node);
+  }
+  if (arguments.length == 2 && typeof(event) == 'function' && hui.isArray(node)) {
+    return hui._runOrPostpone.apply(hui, arguments);
+  }
   if (event=='tap') {
     if (bind) {
       func = func.bind(bind);

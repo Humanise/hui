@@ -52,7 +52,7 @@
     text-align: left;
   }
   </style>
-  <script>hui={_:[],onReady:function(){this._.push(arguments)}};</script>
+  <script>hui={_:[],on:function(){this._.push(arguments)}};</script>
 </head>
 <body>
   <h1><span>Humanise</span> <span>User</span> <span>Interface</span></h1>
@@ -64,14 +64,14 @@
     <li><a href="api/xml/index.html" class="hui_button">XML api</a>
   </ul>
   <script>
-  hui.onReady(function() {
+  hui.on(function() {
     hui.build('link',{
       href : 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800',
       rel : 'stylesheet',
       type : 'text/css',
       parent : document.head
     });
-    hui.onReady(['hui.animation','hui.Color'],function() {
+    hui.on(['hui.animation','hui.Color'],function() {
       hui.animate({
         node : hui.find('h1'),
         css : { 'letter-spacing' : '0px', color: '#ddd' },
