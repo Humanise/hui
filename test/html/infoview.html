@@ -1,36 +1,31 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<title>HUI</title>
-	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../bin/development.css" rel="stylesheet" />
-	<!--[if lt IE 7]>
-		<link rel="stylesheet" type="text/css" href="../../css/msie6.css"> </link>
-	<![endif]-->
-	<!--[if IE 7]>
-		<link rel="stylesheet" type="text/css" href="../../css/msie7.css"> </link>
-	<![endif]-->
-	<script charset="utf-8" type="text/javascript" src="../../js/hui.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/hui_animation.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/hui_color.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/ui.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/Window.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/Alert.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/Button.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/Tabs.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/InfoView.js"></script>
+  <title>HUI</title>
+  <link type="text/css" href="../../bin/development.css" rel="stylesheet" />
+  <script data-hui-context="../../..">hui={_:[],on:function(){this._.push(arguments)}};</script>
+  <script src="../../js/hui.js"></script>
+  <script src="../../js/hui_animation.js"></script>
+  <script src="../../js/hui_color.js"></script>
+  <script src="../../js/ui.js"></script>
+  <script src="../../js/Window.js"></script>
+  <script src="../../js/Alert.js"></script>
+  <script src="../../js/Button.js"></script>
+  <script src="../../js/Tabs.js"></script>
+  <script src="../../js/InfoView.js"></script>
 </head>
 
 <body>
-	<script type="text/javascript" charset="utf-8">
-		var win = hui.ui.Window.create({width:300,padding:5});
-		var info = hui.ui.InfoView.create();
-		info.addHeader('Image properties');
-		info.addProperty('Type','JPEG');
-		info.addProperty('Size','48 Kbytes');
-		info.addProperty('ID','6786');
-		win.add(info);
-		win.show();
-	</script>
+  <script type="text/javascript" charset="utf-8">
+    var win = hui.ui.Window.create({width:300,padding:5});
+    var info = hui.ui.InfoView.create();
+    info.addHeader('Image properties');
+    info.addProperty('Type','JPEG');
+    info.addProperty('Size','48 Kbytes');
+    info.addProperty('ID','6786');
+    win.add(info);
+    win.show();
+  </script>
 
 </body>
 </html>

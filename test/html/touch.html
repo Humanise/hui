@@ -1,17 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<title>HUI</title>
+  <title>HUI</title>
   <meta name="viewport" content="user-scalable=yes, initial-scale = 1, maximum-scale = 1, minimum-scale = 1"/>
-	<script charset="utf-8" type="text/javascript" src="../../js/hui.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/hui_animation.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/ui.js"></script>
-	<script type="text/javascript" charset="utf-8">
-		hui.ui.context='../../..';
-	</script>
+  <script data-hui-context="../../..">hui={_:[],on:function(){this._.push(arguments)}};</script>
+  <script src="../../js/hui.js"></script>
+  <script src="../../js/hui_animation.js"></script>
+  <script src="../../js/ui.js"></script>
   <style type="text/css" media="screen">
   html,body {height: 100%;}
-  
+
   .circle {
     width: 80px;
     height: 80px;
@@ -21,11 +19,11 @@
     margin: -40px 0 0 -40px;
   }
   </style>
-    
-	<script>
+
+  <script>
     hui.onReady(function() {
       var touches = {};
-      
+
       function getCircle(id) {
         if (touches[id]) {
           return touches[id];
@@ -34,8 +32,8 @@
         touches[id] = circle;
         return circle;
       }
-            
-			hui.listen(document.body,'touchmove',function(ev) {
+
+      hui.listen(document.body,'touchmove',function(ev) {
         ev.preventDefault();
         for (var i = 0; i < ev.targetTouches.length; i++) {
           var touch = ev.targetTouches[i];
@@ -45,9 +43,9 @@
             left: touch.clientX + 'px'
           });
         }
-			  console.log(ev);
-			});
-      
+        console.log(ev);
+      });
+
       hui.listen(document.body,'touchend',function(ev) {
         console.log('end');
         console.log(ev)
@@ -56,7 +54,7 @@
           var circle = touches[touch.identifier];
           if (circle) {
             hui.dom.remove(circle);
-            delete touches[touch.identifier];            
+            delete touches[touch.identifier];
           }
         }
       });
@@ -67,7 +65,7 @@
         touches = {};
       })
     })
-	</script>
+  </script>
 </head>
 
 <body>

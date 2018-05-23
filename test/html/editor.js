@@ -6,19 +6,19 @@ hui.ui.listen({
     editor.ignite();
     editor.activate();
   },
-	$partWasMoved : function(info) {
-		hui.ui.showMessage({text:'Moving',busy:true});
-		window.setTimeout(function() {
-			if (hui.cls.has(info.dragged,'nodrag')) {
-				hui.ui.showMessage({text:'I could not move it',duration:2000});
-				info.$failure()
-			} else {
-				hui.ui.hideMessage();
-				info.$success();
-			}
-		}
-		,Math.random()*1500);
-	},
+  $partWasMoved : function(info) {
+    hui.ui.showMessage({text:'Moving',busy:true});
+    window.setTimeout(function() {
+      if (hui.cls.has(info.dragged,'nodrag')) {
+        hui.ui.showMessage({text:'I could not move it',duration:2000});
+        info.$failure()
+      } else {
+        hui.ui.hideMessage();
+        info.$success();
+      }
+    }
+    ,Math.random()*1500);
+  },
   $editRow : function(info) {
     var win = hui.ui.Window.create({padding:10});
     var form = hui.ui.Formula.create();

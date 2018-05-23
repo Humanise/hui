@@ -1,24 +1,16 @@
 <!DOCTYPE html">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<title>HUI</title>
-	<link charset="utf-8" title="front" media="screen" type="text/css" href="style.css" rel="stylesheet" />
-	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../bin/development.css" rel="stylesheet" />
-	<!--[if lt IE 7]>
-		<link rel="stylesheet" type="text/css" href="../../css/msie6.css"> </link>
-	<![endif]-->
-	<!--[if IE 7]>
-		<link rel="stylesheet" type="text/css" href="../../css/msie7.css"> </link>
-	<![endif]-->
-  <script data-hui-context="../../..">
-    hui = {_:[],onReady:function() {hui._.push(arguments)}}
-  </script>
+  <title>HUI</title>
+  <link type="text/css" href="style.css" rel="stylesheet" />
+  <link type="text/css" href="../../bin/development.css" rel="stylesheet" />
+  <script data-hui-context="../../..">hui={_:[],on:function(){this._.push(arguments)}};</script>
 </head>
 
 <body>
-	<div class="description">
-		<h1>Annotated configuration</h1>
-	</div>
+  <div class="description">
+    <h1>Annotated configuration</h1>
+  </div>
 
   <a href="#" class="hui_button"><span><span>This is a button</span></span><noscript data-type="Button">{"confirm":{"text":"It works!"}}</noscript></a>
 
@@ -37,7 +29,7 @@
   </a>
 
   <script>
-    hui.onReady(['hui.ui','hui.Color'],function() {
+    hui.on(['hui.ui','hui.Color'],function() {
       hui.log('UI is ready: ' + hui.ui.getContext());
       hui.ui.listen({
         $click$myButton : function() {
@@ -47,17 +39,17 @@
     })
   </script>
 
-	<script src="../../js/hui.js"></script>
+  <script src="../../js/hui.js"></script>
   <script>
-    hui.onReady(['hui.ui','hui.ui.Overlay','hui.ui.Button'],function() {
+    hui.on(['hui.ui','hui.ui.Overlay','hui.ui.Button'],function() {
       console.log(hui.ui.Overlay, hui.ui.Button)
     });
   </script>
-	<script src="../../js/hui_animation.js"></script>
-	<script src="../../js/hui_auto.js"></script>
-	<script src="../../js/hui_color.js"></script>
-	<script src="../../js/ui.js"></script>
-	<script src="../../js/Button.js"></script>
-	<script src="../../js/Overlay.js"></script>
+  <script src="../../js/hui_animation.js"></script>
+  <script src="../../js/hui_auto.js"></script>
+  <script src="../../js/hui_color.js"></script>
+  <script src="../../js/ui.js"></script>
+  <script src="../../js/Button.js"></script>
+  <script src="../../js/Overlay.js"></script>
 </body>
 </html>
