@@ -4,13 +4,8 @@
   <title>HUI</title>
   <link type="text/css" href="../../bin/development.css" rel="stylesheet" />
   <link type="text/css" href="../../css/chart.css" rel="stylesheet" />
-  <script data-hui-context="../../..">hui={_:[],on:function(){this._.push(arguments)}};</script>
-  <script src="../../js/hui.js"></script>
-  <script src="../../js/hui_animation.js"></script>
-  <script src="../../js/hui_color.js"></script>
-  <script src="../../js/ui.js"></script>
-  <script src="../../js/Source.js"></script>
-  <script src="../../js/Button.js"></script>
+  <link type="text/css" href="style.css" rel="stylesheet" />
+  <script data-hui-context="../../.." src="../../bin/development.js"></script>
   <script src="../../js/Chart.js"></script>
 </head>
 
@@ -22,98 +17,92 @@
   <div id="columnChart" style="height: 300px;"></div>
   <div id="chartUsingSource" style="height: 300px;"></div>
 
-
-
   <script>
-        (function(_) {
+      hui.ui.listen({
+        $ready : function() {
+          this.buildTimeBased();
+          this.buildLineChart();
+          this.buildPieChart();
+          this.buildColumnChart();
+          this.buildChartUsingSource();
+        },
+        buildTimeBased : function() {
+          var chart = new hui.ui.Chart.create({parent:'chartTime'});
+          chart.setData({
+            axis : {
+              x : {time:true}
+            },
+            sets : [
+              {type:'line',entries:[
+                {key:12345,value:10},{key:12350,value:12},{key:12550,value:12435252354}
+              ]}
+            ]
+          })
+          chart.render();
+        },
 
-        _.listen({
-          $ready : function() {
-            this.buildTimeBased();
-            this.buildLineChart();
-            this.buildPieChart();
-            this.buildColumnChart();
-            this.buildChartUsingSource();
-          },
-          buildTimeBased : function() {
-            var chart = new _.Chart.create({parent:'chartTime'});
-            chart.setData({
-              axis : {
-                x : {time:true}
+        buildLineChart : function() {
+
+          var chart = new hui.ui.Chart.create({parent:'chart'});
+          var data = new hui.ui.Chart.Data({
+            xAxis : {labels:[{key:'A',label:'Aber'},{key:'B',label:'Banditter'},{key:'C',label:'Citroner'},{key:'D',label:'Dalmatinere'}]}
+          });
+          data.addDataSet(new hui.ui.Chart.DataSet({
+            type : 'line',
+            entries : [{key:'A', value:150}, {key:'B', value:20000}, {key:'C', value:80}]
+          }));
+          data.addDataSet(new hui.ui.Chart.DataSet({
+            type : 'line',
+            entries : [{key:'A', value:50}, {key:'B', value:-20000}, {key:'C', value:50580}]
+          }));
+          data.addDataSet(new hui.ui.Chart.DataSet({
+            type : 'line',
+            entries : [{key:'A', value:1050}, {key:'B', value:100200}, {key:'C', value:80}]
+          }));
+
+          chart.setData(data);
+
+          chart.render();
+        },
+        buildColumnChart : function() {
+
+          var chart = new hui.ui.Chart.create({parent:'columnChart'});
+
+          chart.setData({
+            sets : [
+              {type:'column', entries:[
+                {key:'January',value:10},{key:'February',value:20},{key:'March',value:15},{key:'April',value:45},{key:'May',value:56}]
               },
-              sets : [
-                {type:'line',entries:[
-                  {key:12345,value:10},{key:12350,value:12},{key:12550,value:12435252354}
-                ]}
-              ]
-            })
-            chart.render();
-          },
+              {type:'column', entries:{'January':24,'February':5,'March':59,'April':30,'June':56}},
+              {type:'column', entries:{'January':Math.random()*100,'February':Math.random()*100,'March':Math.random()*100,'April':Math.random()*100,'June':Math.random()*100}}
+            ]
+          });
 
-          buildLineChart : function() {
+          chart.render();
+        },
+        buildPieChart : function() {
 
-            var chart = new _.Chart.create({parent:'chart'});
-            var data = new _.Chart.Data({
-              xAxis : {labels:[{key:'A',label:'Aber'},{key:'B',label:'Banditter'},{key:'C',label:'Citroner'},{key:'D',label:'Dalmatinere'}]}
-            });
-            data.addDataSet(new _.Chart.DataSet({
-              type : 'line',
-              entries : [{key:'A', value:150}, {key:'B', value:20000}, {key:'C', value:80}]
-            }));
-            data.addDataSet(new _.Chart.DataSet({
-              type : 'line',
-              entries : [{key:'A', value:50}, {key:'B', value:-20000}, {key:'C', value:50580}]
-            }));
-            data.addDataSet(new _.Chart.DataSet({
-              type : 'line',
-              entries : [{key:'A', value:1050}, {key:'B', value:100200}, {key:'C', value:80}]
-            }));
+          var chart = new hui.ui.Chart.create({parent:'pieChart'});
 
-            chart.setData(data);
+          var data = new hui.ui.Chart.Data({
+            xAxis : {labels:[{key:'A',label:'Safari'},{key:'B',label:'IE'},{key:'C',label:'Chrome'}]}
+          });
 
-            chart.render();
-          },
-          buildColumnChart : function() {
+          data.addDataSet(new hui.ui.Chart.DataSet({
+            type : 'pie',
+            entries : [{key:'A', value:50}, {key:'B', value:20}, {key:'C', value:80}]
+          }));
 
-            var chart = new _.Chart.create({parent:'columnChart'});
+          chart.setData(data);
 
-            chart.setData({
-              sets : [
-                {type:'column', entries:[
-                  {key:'January',value:10},{key:'February',value:20},{key:'March',value:15},{key:'April',value:45},{key:'May',value:56}]
-                },
-                {type:'column', entries:{'January':24,'February':5,'March':59,'April':30,'June':56}},
-                {type:'column', entries:{'January':Math.random()*100,'February':Math.random()*100,'March':Math.random()*100,'April':Math.random()*100,'June':Math.random()*100}}
-              ]
-            });
-
-            chart.render();
-          },
-          buildPieChart : function() {
-
-            var chart = new _.Chart.create({parent:'pieChart'});
-
-            var data = new _.Chart.Data({
-              xAxis : {labels:[{key:'A',label:'Safari'},{key:'B',label:'IE'},{key:'C',label:'Chrome'}]}
-            });
-
-            data.addDataSet(new _.Chart.DataSet({
-              type : 'pie',
-              entries : [{key:'A', value:50}, {key:'B', value:20}, {key:'C', value:80}]
-            }));
-
-            chart.setData(data);
-
-            chart.render();
-          },
-          buildChartUsingSource : function() {
-            var src = new _.Source({url:'data/chart_stats_small.json'});
-            var chart = new _.Chart.create({parent:'chartUsingSource',source:src});
-            src.refresh();
-          },
-        })
-        })(hui.ui);
-
+          chart.render();
+        },
+        buildChartUsingSource : function() {
+          var src = new hui.ui.Source({url:'data/chart_stats_small.json'});
+          var chart = new hui.ui.Chart.create({parent:'chartUsingSource',source:src});
+          src.refresh();
+        },
+      })
   </script>
 </body>
 </html>

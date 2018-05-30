@@ -28,7 +28,19 @@ def joinScript(files,more='') :
 
     destination = codecs.open(base+'/bin/joined'+more+'.js', mode='w')
     dev = codecs.open(base+'/bin/development'+more+'.js', mode='w')
-
+    dev.write("""_context = (function() {
+      var scripts = document.getElementsByTagName('script');
+      var find = 'bin/development.js'
+      for (var i = 0; i < scripts.length; i++) {
+        var src = scripts[i].getAttribute('src');
+        if (!src) continue
+        var idx = src.indexOf(find)
+        if (idx !== -1) {
+          return src.substring(0, idx);
+        }
+      }
+    })();
+    """)
     #destination.write('"use strict";\n\n')
     for name in files :
         path = base + '/' + name

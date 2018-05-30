@@ -1,17 +1,20 @@
 [
   {
     "name": "Alert",
-    "css": "alert.css"
+    "css": "alert.css",
+    "htmlSample": "alert.html"
   },
   {
     "name": "Bar",
     "sass": "bar.scss",
-    "css": "bar.css"
+    "css": "bar.css",
+    "htmlSample": "bar.html"
   },
   {
     "name": "BoundPanel",
     "sass": "boundpanel.scss",
-    "css": "boundpanel.css"
+    "css": "boundpanel.css",
+    "htmlSample": "boundpanel.html"
   },
   {
     "name": "Box",
@@ -21,7 +24,8 @@
   {
     "name": "Button",
     "sass": "button.scss",
-    "css": "button.css"
+    "css": "button.css",
+    "htmlSample": "button.html"
   },
   {
     "name": "Calendar",
@@ -29,7 +33,8 @@
   },
   {
     "name": "Chart",
-    "css": "chart.css"
+    "css": "chart.css",
+    "htmlSample": "chart.html"
   },
   {
     "name": "Checkbox",
@@ -51,7 +56,8 @@
   },
   {
     "name": "ColorPicker",
-    "css": "colorpicker.css"
+    "css": "colorpicker.css",
+    "htmlSample": "colorpicker.html"
   },
   {
     "name": "Columns",
@@ -69,7 +75,8 @@
   },
   {
     "name": "Diagram",
-    "css": "diagram.css"
+    "css": "diagram.css",
+    "htmlSample": "diagram.html"
   },
   {
     "name": "Dock",
@@ -80,7 +87,8 @@
     "name": "DragDrop"
   },
   {
-    "name": "Drawing"
+    "name": "Drawing",
+    "htmlSample": "drawing.html"
   },
   {
     "name": "DropDown",
@@ -95,10 +103,12 @@
   },
   {
     "name": "Editor",
-    "css": "editor.css"
+    "css": "editor.css",
+    "htmlSample": "editor.html"
   },
   {
-    "name": "Finder"
+    "name": "Finder",
+    "htmlSample": "finder.html"
   },
   {
     "name": "Flash"
@@ -109,11 +119,13 @@
   },
   {
     "name": "FontPicker",
-    "css": "fontpicker.css"
+    "css": "fontpicker.css",
+    "htmlSample": "fontpicker.html"
   },
   {
     "name": "Formula",
-    "css": "formula.css"
+    "css": "formula.css",
+    "htmlSample": "formula.html"
   },
   {
     "name": "Foundation",
@@ -144,11 +156,13 @@
   },
   {
     "name": "ImageViewer",
-    "css": "imageviewer.css"
+    "css": "imageviewer.css",
+    "htmlSample": "imageviewer.html"
   },
   {
     "name": "InfoView",
-    "css": "infoview.css"
+    "css": "infoview.css",
+    "htmlSample": "infoview.html"
   },
   {
     "name": "Input"
@@ -184,11 +198,13 @@
     "css": "locationinput.css"
   },
   {
-    "name": "LocationPicker"
+    "name": "LocationPicker",
+    "htmlSample": "locationpicker.html"
   },
   {
     "name": "MarkupEditor",
-    "css": "markupeditor.css"
+    "css": "markupeditor.css",
+    "htmlSample": "markupeditor.html"
   },
   {
     "name": "Matrix"
@@ -200,10 +216,12 @@
   },
   {
     "name": "Menu",
-    "css": "menu.css"
+    "css": "menu.css",
+    "htmlSample": "menu.html"
   },
   {
-    "name": "ModelEditor"
+    "name": "ModelEditor",
+    "htmlSample": "modeleditor.html"
   },
   {
     "name": "NumberInput",
@@ -227,7 +245,8 @@
   },
   {
     "name": "Overlay",
-    "css": "overlay.css"
+    "css": "overlay.css",
+    "htmlSample": "overlay.html"
   },
   {
     "name": "Pages",
@@ -236,23 +255,28 @@
   {
     "name": "Panel",
     "sass": "panel.scss",
-    "css": "panel.css"
+    "css": "panel.css",
+    "htmlSample": "panel.html"
   },
   {
     "name": "Picker",
-    "css": "picker.css"
+    "css": "picker.css",
+    "htmlSample": "picker.html"
   },
   {
     "name": "Presentation",
     "sass": "presentation.scss",
-    "css": "presentation.css"
+    "css": "presentation.css",
+    "htmlSample": "presentation.html"
   },
   {
     "name": "ProgressBar",
-    "css": "progressbar.css"
+    "css": "progressbar.css",
+    "htmlSample": "progressbar.html"
   },
   {
-    "name": "ProgressIndicator"
+    "name": "ProgressIndicator",
+    "htmlSample": "progressindicator.html"
   },
   {
     "name": "Radiobuttons"
@@ -283,12 +307,14 @@
   },
   {
     "name": "Selection",
-    "css": "selection.css"
+    "css": "selection.css",
+    "htmlSample": "selection.html"
   },
   {
     "name": "Slider",
     "sass": "slider.scss",
-    "css": "slider.css"
+    "css": "slider.css",
+    "htmlSample": "slider.html"
   },
   {
     "name": "Source"
@@ -304,7 +330,8 @@
   {
     "name": "StyleEditor",
     "sass": "styleeditor.scss",
-    "css": "styleeditor.css"
+    "css": "styleeditor.css",
+    "htmlSample": "styleeditor.html"
   },
   {
     "name": "StyleLength"
@@ -340,7 +367,8 @@
   },
   {
     "name": "Upload",
-    "css": "upload.css"
+    "css": "upload.css",
+    "htmlSample": "upload.html"
   },
   {
     "name": "VideoPlayer",
@@ -349,7 +377,8 @@
   {
     "name": "Window",
     "sass": "window.scss",
-    "css": "window.css"
+    "css": "window.css",
+    "htmlSample": "window.html"
   },
   {
     "name": "Wizard",

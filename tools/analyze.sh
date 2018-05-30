@@ -4,7 +4,7 @@ require 'json'
 
 
 class Component
-  attr_accessor :name, :modern, :sass_path, :css_path
+  attr_accessor :name, :modern, :sass_path, :css_path, :html_example_path
 end
 
 class Inspector
@@ -25,6 +25,9 @@ class Inspector
       if component.css_path
         obj[:css] = component.css_path.basename.to_s
       end
+      if component.html_example_path
+        obj[:htmlSample] = component.html_example_path.basename.to_s
+      end
       obj
     })
     File.write(hui_path.join("info/components.json"), json)
@@ -44,6 +47,8 @@ class Inspector
         component.sass_path = sass_path if sass_path.exist?
         css_path = directory.join("css/" + name.downcase + ".css")
         component.css_path = css_path if css_path.exist?
+        html_test_path = directory.join("test/html/" + name.downcase + ".html")
+        component.html_example_path = html_test_path if html_test_path.exist?
         components.push component
       end
     }
