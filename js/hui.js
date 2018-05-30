@@ -886,7 +886,7 @@ hui.get.byId = function(e,id) {
     if (children[i].nodeType===1 && children[i].getAttribute('id')===id) {
       return children[i];
     } else {
-      var found = hui.find('#' + id,children[i]);
+      var found = hui.get.byId(children[i],id);
       if (found) {
         return found;
       }
