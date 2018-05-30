@@ -5,10 +5,8 @@
    * @constructor
    */
   hui.ui.Panel = function(options) {
-    this.element = hui.get(options.element);
-    this.name = options.name;
+    _super.call(this, options);
     this.visible = false;
-    hui.ui.extend(this);
     this._attach();
     if (options.listener) {
       this.listen(options.listener);

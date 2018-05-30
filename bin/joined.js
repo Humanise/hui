@@ -5117,8 +5117,6 @@ hui.onReady(function() {
   hui.define('hui.ui',hui.ui);
 });
 
-/* EOF */
-
 /**
  * A component
  * @constructor
@@ -7633,10 +7631,11 @@ hui.ui.Alert.prototype = {
       zIndex++;
     }
     this.element.style.zIndex = zIndex;
+    this.element.style.transform = 'scale(0.5)';
     this.element.style.display = 'block';
     this.element.style.top = (hui.window.getScrollTop() + 100) + 'px';
     hui.animate(this.element, 'opacity', 1, 200);
-    hui.animate(this.element, 'margin-top', '40px', 600, {
+    hui.animate(this.element, 'transform', 'scale(1)', 600, {
       ease: hui.ease.elastic
     });
   },
@@ -7760,10 +7759,9 @@ hui.ui.Alert.alert = function(options) {
     this.alertBoxButton = hui.ui.Button.create({name:'huiAlertBoxButton',text : 'OK'});
     this.alertBoxButton.listen({
       $click$huiAlertBoxButton : function() {
-        hui.ui.alertBox.hide();
-        if (hui.ui.alertBoxCallBack) {
-          hui.ui.alertBoxCallBack();
-          hui.ui.alertBoxCallBack = null;
+        hui.ui.Alert.alertBox.hide();
+        if (options.onOK) {
+          options.onOK();
         }
       }
     });
@@ -7771,7 +7769,6 @@ hui.ui.Alert.alert = function(options) {
   } else {
     this.alertBox.update(options);
   }
-  this.alertBoxCallBack = options.onOK;
   this.alertBoxButton.setText(options.button ? options.button : 'OK');
   this.alertBox.show();
 };
@@ -8006,7 +8003,6 @@ hui.ui.Buttons.prototype = {
 hui.onReady(['hui.ui'],function() {
   hui.define('hui.ui.Button',hui.ui.Button);
 });
-/* EOF */
 
 /**
  * @constructor
@@ -11528,8 +11524,6 @@ Date.dayNames =
     "Fredag",
     "Lørdag"];
 
-/* EOF */
-
 /**
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
@@ -11605,8 +11599,6 @@ hui.ui.Layout.prototype = {
     cell.style.height = height+'px';
   }
 };
-
-/* EOF */
 
 (function (_super) {
 
@@ -12037,8 +12029,6 @@ hui.ui.Input.prototype = {
     }
   }
 };
-
-/* EOF */
 
 /** @constructor */
 hui.ui.InfoView = function(options) {
@@ -17434,10 +17424,8 @@ hui.ui.Pages.prototype = {
    * @constructor
    */
   hui.ui.Panel = function(options) {
-    this.element = hui.get(options.element);
-    this.name = options.name;
+    _super.call(this, options);
     this.visible = false;
-    hui.ui.extend(this);
     this._attach();
     if (options.listener) {
       this.listen(options.listener);

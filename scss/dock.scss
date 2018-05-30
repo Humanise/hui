@@ -14,11 +14,6 @@
     display: block;
   }
 
-  &_internals {
-    height: 100%;
-    position: relative;
-  }
-
   &_bar {
     position: absolute;
     width: 100%;
@@ -54,6 +49,10 @@
     top: 0;
     right: 0;
     bottom: 0;
+    left: 0;
+  }
+
+  &-sidebar &_main {
     left: 200px;
   }
 

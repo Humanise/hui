@@ -1,4 +1,16 @@
-document.write('<script type="text/javascript" src="'+_context+'/js/hui.js"></script>');
+_context = (function() {
+      var scripts = document.getElementsByTagName('script');
+      var find = 'bin/development.js'
+      for (var i = 0; i < scripts.length; i++) {
+        var src = scripts[i].getAttribute('src');
+        if (!src) continue
+        var idx = src.indexOf(find)
+        if (idx !== -1) {
+          return src.substring(0, idx);
+        }
+      }
+    })();
+    document.write('<script type="text/javascript" src="'+_context+'/js/hui.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_animation.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_color.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_require.js"></script>');
