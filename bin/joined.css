@@ -3771,9 +3771,6 @@ ul.hui_wizard a.hui_selected
     font-size: 0px;
     background: #fff;
     display: block; }
-  .hui_dock_internals {
-    height: 100%;
-    position: relative; }
   .hui_dock_bar {
     position: absolute;
     width: 100%; }
@@ -3799,6 +3796,8 @@ ul.hui_wizard a.hui_selected
     top: 0;
     right: 0;
     bottom: 0;
+    left: 0; }
+  .hui_dock-sidebar .hui_dock_main {
     left: 200px; }
   .hui_dock_progress {
     position: absolute;

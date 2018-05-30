@@ -375,8 +375,8 @@
 <xsl:template match="gui:dock">
   <div id="{generate-id()}">
     <xsl:attribute name="class">
-      <xsl:text>hui_dock</xsl:text>
-      <xsl:if test="gui:sidebar/@collapsed='true'"> hui-is-collapsed</xsl:if>
+      <xsl:text>hui_dock </xsl:text>
+      <xsl:if test="gui:sidebar"> hui_dock-sidebar hui-is-collapsed</xsl:if>
       <xsl:choose>
         <xsl:when test="@position='top' or not(@position)">
           <xsl:text> hui_dock-top</xsl:text>

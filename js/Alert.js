@@ -76,10 +76,11 @@ hui.ui.Alert.prototype = {
       zIndex++;
     }
     this.element.style.zIndex = zIndex;
+    this.element.style.transform = 'scale(0.5)';
     this.element.style.display = 'block';
     this.element.style.top = (hui.window.getScrollTop() + 100) + 'px';
     hui.animate(this.element, 'opacity', 1, 200);
-    hui.animate(this.element, 'margin-top', '40px', 600, {
+    hui.animate(this.element, 'transform', 'scale(1)', 600, {
       ease: hui.ease.elastic
     });
   },
@@ -203,10 +204,9 @@ hui.ui.Alert.alert = function(options) {
     this.alertBoxButton = hui.ui.Button.create({name:'huiAlertBoxButton',text : 'OK'});
     this.alertBoxButton.listen({
       $click$huiAlertBoxButton : function() {
-        hui.ui.alertBox.hide();
-        if (hui.ui.alertBoxCallBack) {
-          hui.ui.alertBoxCallBack();
-          hui.ui.alertBoxCallBack = null;
+        hui.ui.Alert.alertBox.hide();
+        if (options.onOK) {
+          options.onOK();
         }
       }
     });
@@ -214,7 +214,6 @@ hui.ui.Alert.alert = function(options) {
   } else {
     this.alertBox.update(options);
   }
-  this.alertBoxCallBack = options.onOK;
   this.alertBoxButton.setText(options.button ? options.button : 'OK');
   this.alertBox.show();
 };
