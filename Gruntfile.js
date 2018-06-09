@@ -136,14 +136,11 @@ module.exports = function(grunt) {
   });
 
   // Load plugins.
-  //grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -155,7 +152,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', 'Build', ['sass', 'shell:join', 'uglify:joined', 'cssmin']);
 
-  //grunt.registerTask('test', ['qunit']);
+  grunt.registerTask('doc', 'Build', ['jsdoc']);
+
   grunt.registerTask('test', 'Run tests', function(testname) {
     var tests = grunt.file.expand('test/unittests/*.html');
     if (!!testname) {
