@@ -252,6 +252,6 @@ hui.Color.rgb2hex = function(rgbary) {
   return c;
 };
 
-hui.onReady(function() {
+hui.on(function() {
   hui.define('hui.Color',hui.Color);
 });

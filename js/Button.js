@@ -225,6 +225,6 @@ hui.ui.Buttons.prototype = {
   }
 };
 
-hui.onReady(['hui.ui'],function() {
+hui.on(['hui.ui'],function() {
   hui.define('hui.ui.Button',hui.ui.Button);
 });

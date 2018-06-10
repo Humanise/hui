@@ -88,6 +88,7 @@ hui.define = function(name, obj) {
   var postponed = hui._postponed;
   for (var i = postponed.length - 1; i >= 0; i--) {
     var item = postponed[i];
+    if (!item) continue;
     var deps = [];
     for (var j = 0; j < item.requirements.length; j++) {
       var path = item.requirements[j];
@@ -99,8 +100,8 @@ hui.define = function(name, obj) {
       }
     }
     if (item.requirements.length == deps.length) {
+      hui.array.remove(postponed, item);
       item.callback.apply(null, deps);
-      postponed.splice(i,1);
     }
   }
 };
@@ -2428,11 +2429,6 @@ hui.location = {
     return parsed;
   }
 };
-
-
-if (window.define) {
-  define('hui',hui);
-}
 
 /**
  * Run through all postponed actions in "_" and remove it afterwards

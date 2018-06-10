@@ -376,7 +376,8 @@
   <div id="{generate-id()}">
     <xsl:attribute name="class">
       <xsl:text>hui_dock </xsl:text>
-      <xsl:if test="gui:sidebar"> hui_dock-sidebar hui-is-collapsed</xsl:if>
+      <xsl:if test="gui:sidebar"> hui_dock-sidebar</xsl:if>
+      <xsl:if test="gui:sidebar[@collapsed='true']"> hui-is-collapsed</xsl:if>
       <xsl:choose>
         <xsl:when test="@position='top' or not(@position)">
           <xsl:text> hui_dock-top</xsl:text>
@@ -1410,7 +1411,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:icon">
     <span id="{generate-id()}">
       <xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="@icon"/><xsl:value-of select="@size"/>.png');</xsl:attribute>
-      <xsl:attribute name="class">hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
+      <xsl:attribute name="class">hui_icon hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
       <xsl:comment/>
     </span>
     <script type="text/javascript">
@@ -2190,7 +2191,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
   <xsl:template match="gui:structure/gui:bottom">
     <div class="hui_structure_bottom">
-      <xsl:apply-templates/>
+      <xsl:apply-templates/><xsl:comment/>
     </div>
   </xsl:template>
 

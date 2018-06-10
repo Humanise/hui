@@ -24,7 +24,7 @@ QUnit.test( "Clicking",
     var done = assert.async();
     // Create a button
     var button = hui.ui.Button.create({text:'My other button',name:'benjamin',small:true});
-    document.body.appendChild(button.element);
+    document.body.appendChild(button.getElement());
 
     button.listen({
       $click : function() {

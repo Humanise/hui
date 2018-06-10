@@ -104,7 +104,7 @@ hui.ui.Source.prototype = {
       this.busy = true;
       hui.ui.callDelegates(this,'sourceIsBusy');
       this.transport = hui.request({
-        method : 'GET',
+        method : 'POST',
         url : this.options.url,
         parameters : prms,
         $success : this._parse.bind(this),

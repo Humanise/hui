@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:hui" title="Layout" padding="10">
+  <controller name="controller" url="list.js"/>
+  <source name="itemsSource" url="data/source_items.xml"/>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/refresh" text="128" click="userManual.setSize(128)"/>
+        <icon icon="common/refresh" text="64" click="userManual.setSize(64)"/>
+      </toolbar>
+    </top>
+    <middle>
+      <left>
+      </left>
+      <center>
+        <columns flexible="true">
+          <column>
+            <icon icon="common/lifebuoy" size="64" text="User manual" name="userManual"/>
+          </column>
+          <column>
+            <icon icon="common/stamp" size="64" text="Contact the developers" name="contact"/>
+          </column>
+        </columns>
+      </center>
+    </middle>
+    <bottom>
+      <toolbar>
+        <button text="Opret" small="true"/>
+      </toolbar>
+    </bottom>
+  </structure>
+</gui>

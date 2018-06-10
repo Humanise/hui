@@ -17,7 +17,10 @@ hui.ui.Component = function(options) {
   this.delegates = [];
   if (this.nodes) {
     this.nodes = hui.collect(this.nodes,this.element);
+  } else {
+    this.nodes = [];
   }
+  this.nodes.root = this.element
   if (options.listen) {
     this.listen(options.listen);
   }
@@ -30,6 +33,9 @@ hui.ui.Component.prototype = {
    * @param {Object} listener An object with methods for different events
    */
   listen : function(listener) {
+    this.delegates.push(listener);
+  },
+  on : function(listener) {
     this.delegates.push(listener);
   },
   /**

@@ -61,6 +61,6 @@ hui.parallax = {
   }
 };
 
-hui.onReady(function() {
+hui.on(function() {
   hui.define('hui.parallax', hui.parallax);
 });

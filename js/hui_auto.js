@@ -1,4 +1,4 @@
-hui.onReady(function() {
+hui.on(function() {
   var configs = document.getElementsByTagName('noscript');
   for (var i = 0; i < configs.length; i++) {
     var type = configs[i].getAttribute('data-type');
@@ -10,7 +10,7 @@ hui.onReady(function() {
   }
 });
 
-hui.onReady(function() {
+hui.on(function() {
   var configs = document.querySelectorAll('*[data-hui]');
   for (var i = 0; i < configs.length; i++) {
     var type = configs[i].getAttribute('data-hui');
@@ -34,7 +34,7 @@ hui.onReady(function() {
   }
 });
 
-hui.onReady(function() {
+hui.on(function() {
   var configs = document.querySelectorAll('script[type=hui]');
   for (var i = 0; i < configs.length; i++) {
     var data = hui.string.fromJSON(configs[i].textContent);

@@ -41,15 +41,11 @@
     text-transform: uppercase;
   }
 
-  ul {
-    display: inline-block;
-    padding: 0;
-    list-style: none;
-  }
-
-  li {
-    margin: 5px 0;
-    text-align: left;
+  .result {
+    display: block;
+    line-height: 1;
+    padding: 5px;
+    color: inherit;
   }
   </style>
   <script>hui={_:[],on:function(){this._.push(arguments)}};</script>
@@ -57,12 +53,14 @@
 <body>
   <h1><span>Humanise</span> <span>User</span> <span>Interface</span></h1>
   <p>The common language of humans and machines</p>
-  <ul>
-    <li><a href="demo/index.html" class="hui_button">Demonstration</a></li>
-    <li><a href="test/index.xml" class="hui_button">Test site</a></li>
-    <li><a href="api/index.html" class="hui_button">JavaScript API</a></li>
-    <li><a href="api/xml/index.html" class="hui_button">XML api</a>
-  </ul>
+  <div class="js-search"></div>
+  <div class="js-results"></div>
+  <p>
+    <a href="demo/index.html" class="hui_button">Demonstration</a>
+    <a href="test/index.xml" class="hui_button">Test site</a>
+    <a href="api/index.html" class="hui_button">JavaScript API</a>
+    <a href="api/xml/index.html" class="hui_button">XML api</a>
+  </p>
   <script>
   hui.on(function() {
     hui.build('link',{
@@ -85,10 +83,62 @@
         }
       });
     })
+    hui.on(['hui.ui.SearchField'],function() {
+      var field = hui.ui.SearchField.create({expandedWidth:300, name:'search'});
+      hui.find('.js-search').appendChild(field.getElement());
+    })
+    hui.on(['hui.ui'],function() {
+      hui.ui.listen({
+        _ensureInfo : function() {
+          if (!this._loaded) {
+            this._loaded = true;
+            hui.ui.request({
+              url: 'info/components.json',
+              $object : function(obj) {
+                this.info = obj;
+                this._updateResults();
+              }.bind(this)
+            })
+          }
+        },
+        $valueChanged$search : function() {
+          this._ensureInfo();
+          this._updateResults();
+        },
+        _updateResults : function() {
+          if (!this.info) return;
+          var str = hui.ui.get('search').getValue();
+          var words = str.split(/\W+/).filter(function(str) {return str.length>0});
+          console.log(words)
+          var found = [];
+          this.info.forEach(function(obj) {
+            var index = 1000;
+            for (var i = 0; i < words.length; i++) {
+              var x = obj.name.toLowerCase().indexOf(words[i]);
+              if (x > -1) {
+                index = Math.min(index, x);
+              } else {
+                return;
+              }
+            }
+            if (index < 1000) {
+              found.push({index: index, component: obj})
+            }
+          });
+          var out = hui.find('.js-results');
+          out.innerHTML = ''
+          found.forEach(function(obj) {
+            hui.build('a.result', {text: obj.component.name, parent: out, href: 'api/hui.ui.'+obj.component.name+'.html'})
+          })
+        }
+      })
+    });
   })
   </script>
   <script type="text/javascript" src="js/hui.js" async="async"></script>
   <script type="text/javascript" src="js/hui_animation.js" async="async"></script>
   <script type="text/javascript" src="js/hui_color.js" async="async"></script>
+  <script type="text/javascript" src="js/ui.js" async="async"></script>
+  <script type="text/javascript" src="js/SearchField.js" async="async"></script>
 </body>
 </html>
