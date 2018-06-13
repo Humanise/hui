@@ -5800,7 +5800,7 @@ hui.ui.Formula = function(options) {
 /** @static Creates a new formula */
 hui.ui.Formula.create = function(o) {
   o = o || {};
-  var atts = {'class':'hui_formula hui_formula'};
+  var atts = {'class':'hui_formula'};
   if (o.action) {
     atts.action=o.action;
   }
@@ -21272,31 +21272,6 @@ hui.on(function() {
     new hui.ui[configs[i].getAttribute('data-type')](data);
   }
 });
-;
-hui.ui.Icon = function(options) {
-  this.options = options;
-  this.name = options.name;
-  this.icon = this.options.icon;
-  this.size = this.options.size;
-  this.element = hui.get(options.element);
-  hui.ui.extend(this);
-  this._addBehavior();
-};
-
-hui.ui.Icon.prototype = {
-  _addBehavior : function() {
-    hui.listen(this.element,'click',function() {
-      this.fire('click');
-    }.bind(this));
-  },
-  setSize : function(size) {
-    this.size = size;
-    this.element.className = 'hui_icon_labeled hui_icon_labeled_'+this.size;
-    var inner = hui.get.firstByTag(this.element,'span');
-    inner.className = 'hui_icon_'+this.size;
-    inner.style.backgroundImage = 'url('+hui.ui.getIconUrl(this.options.icon,this.size)+')';
-  }
-};
 ;
 /** A diagram
  * @constructor

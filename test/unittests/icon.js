@@ -1,6 +1,6 @@
 QUnit.test( "Basics", function( assert ) {
 
-    assert.expect(2);
+    assert.expect(3);
     var icon = new hui.ui.Icon({
       icon : 'common/info',
       size: 32
@@ -17,6 +17,7 @@ QUnit.test( "Basics", function( assert ) {
     assert.ok(hui.find('span.hui_icon') != null);
     syn.click({}, icon.getElement(), function() {});
     icon.setSize(16);
+    assert.ok(hui.ui.is(icon, hui.ui.Icon));
   }
 
 )

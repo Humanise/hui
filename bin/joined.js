@@ -5800,7 +5800,7 @@ hui.ui.Formula = function(options) {
 /** @static Creates a new formula */
 hui.ui.Formula.create = function(o) {
   o = o || {};
-  var atts = {'class':'hui_formula hui_formula'};
+  var atts = {'class':'hui_formula'};
   if (o.action) {
     atts.action=o.action;
   }

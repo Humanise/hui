@@ -81,18 +81,10 @@ label.hui_formula_field
   color: #004A80;
   font-size: 12px;
   font-weight: normal;
-  line-height: 16px;
+  line-height: 18px;
   display: inline-block;
-  padding-left: 2px;
 }
 
-
-table.hui_formula_fields_above label.hui_formula_field
-{
-  line-height: 13px;
-  display: inline-block;
-  padding-left: 2px;
-}
 
 table.hui_formula_fields th label.hui_formula_field
 {
