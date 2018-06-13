@@ -3,31 +3,25 @@
   display: inline-block;
   vertical-align: middle;
   line-height: 16px;
-  padding-left: 2px;
-}
+  padding-left: 2px; }
 
 .hui_objectinput_object {
   font-size: 12px;
   line-height: 1;
   margin-bottom: 3px;
-  padding-left: 2px;
-}
+  padding-left: 2px; }
 
 .hui_objectinput_title {
   margin: 0 3px;
   cursor: default;
-  vertical-align: middle;
-}
+  vertical-align: middle; }
 
 .hui_objectinput_delete {
   visibility: hidden;
-  margin-left: 5px;
-}
+  margin-left: 5px; }
 
 .hui_objectinput_object:hover .hui_objectinput_delete {
-  visibility: visible;
-}
+  visibility: visible; }
 
 .hui_objectinput_actions .hui_button {
-  margin: 0;
-}
+  margin: 0; }

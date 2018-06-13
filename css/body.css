@@ -1,10 +1,7 @@
-html.hui
-{
-  height: 100%;
-}
+html.hui {
+  height: 100%; }
 
-body.hui
-{
+body.hui {
   margin: 0px;
   background: #f3f5f7;
   overflow: auto;
@@ -13,5 +10,4 @@ body.hui
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-}
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif; }

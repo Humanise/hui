@@ -1,15 +1,11 @@
-.hui_codeinput
-{
+.hui_codeinput {
   box-sizing: border-box;
-  height: 200px;
-}
+  height: 200px; }
 
 .hui_codeinput-full {
-  height: 100%;
-}
+  height: 100%; }
 
-.hui_codeinput_input
-{
+.hui_codeinput_input {
   display: block;
   width: 100%;
   height: 100%;
@@ -23,13 +19,13 @@
   color: #333;
   line-height: 16px;
   border-radius: 2px;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,.15);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
   font-size: 11px;
-  -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; 
-}
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  -webkit-tab-size: 4;
+  tab-size: 4; }
 
-.hui_codeinput_input:focus
-{
+.hui_codeinput_input:focus {
   border-color: #2678ff;
-  outline: 4px auto #2678ff;
-}
+  outline: 4px auto #2678ff; }

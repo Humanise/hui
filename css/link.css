@@ -1,16 +1,10 @@
-a.hui_link
-{
+a.hui_link {
   color: #ccc;
   text-decoration: underline;
-  cursor: pointer;
-}
+  cursor: pointer; }
 
-a.hui_link span
-{
-  color: #3366FF;
-}
+a.hui_link span {
+  color: #3366FF; }
 
-a.hui_link:hover, a.hui_link:hover span
-{
-  color: #0033aa;
-}
+a.hui_link:hover, a.hui_link:hover span {
+  color: #0033aa; }

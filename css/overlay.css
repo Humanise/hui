@@ -1,39 +1,30 @@
-.hui_overlay
-{
+.hui_overlay {
   display: none;
   position: absolute;
   height: 38px;
   background: #222;
-  background: linear-gradient(rgba(30, 30, 30, 0.7) 0%,rgba(30, 30, 30, 0.8) 50%,rgba(30, 30, 30,.9) 50%,rgba(30, 30, 30, 1));
+  background: linear-gradient(rgba(30, 30, 30, 0.7) 0%, rgba(30, 30, 30, 0.8) 50%, rgba(30, 30, 30, 0.9) 50%, #1e1e1e);
   border-radius: 4px;
   border: 1px solid #222;
   font-size: 0;
   padding: 0 5px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,.3);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   z-index: 1;
   white-space: nowrap;
-  font-size: 0;
-}
+  font-size: 0; }
 
-.hui_overlay_icon
-{
+.hui_overlay_icon {
   width: 32px;
   height: 32px;
   display: inline-block;
-  margin: 3px 3px 0px;
-}
+  margin: 3px 3px 0px; }
 
-.hui_overlay .hui_button
-{
+.hui_overlay .hui_button {
   vertical-align: top;
   margin-top: 6px;
-  margin-left: 4px;
-}
+  margin-left: 4px; }
 
-
-
-.hui_overlay_text
-{
+.hui_overlay_text {
   display: inline-block;
   line-height: 33px;
   vertical-align: top;
@@ -43,22 +34,16 @@
   font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
   font-size: 12px;
   margin-top: 2px;
-  cursor: default;
-}
+  cursor: default; }
 
 /*** Light variant ***/
-
-.hui_overlay_light
-{
+.hui_overlay_light {
   background: #fafafa;
   border: 1px solid #eee;
   border-radius: 4px;
   padding: 0 3px;
   height: 36px;
-  box-shadow: none;
-}
+  box-shadow: none; }
 
-.hui_overlay_light .hui_overlay_icon
-{
-  margin-top: 2px;
-}
+.hui_overlay_light .hui_overlay_icon {
+  margin-top: 2px; }

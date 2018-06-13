@@ -1,12 +1,8 @@
-div.hui_imagepaster
-{
-  font-size: 0;
-}
+div.hui_imagepaster {
+  font-size: 0; }
 
-div.hui_imagepaster_preview
-{
+div.hui_imagepaster_preview {
   border: 1px solid #ddd;
   overflow: auto;
   height: 200px;
-  font-size: 0;
-}
+  font-size: 0; }

@@ -65,8 +65,19 @@ class Inspector
     }
   end
 
+  def check_css dir
+    css_dir = dir.join("css")
+    scss_dir = dir.join("scss")
+    css_dir.children.sort.each do |file|
+      scss_file = "#{file.basename.to_s.split('.').first}.scss"
+      found = scss_dir.join(scss_file).exist?
+      puts file.basename if !found
+    end
+  end
 end
 
 file_path = Pathname.new($0).realpath()
 
 Inspector.new.inspect(file_path.parent.dirname)
+
+Inspector.new.check_css(file_path.parent.dirname)

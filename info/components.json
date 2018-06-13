@@ -1,6 +1,7 @@
 [
   {
     "name": "Alert",
+    "sass": "alert.scss",
     "css": "alert.css",
     "htmlSample": "alert.html"
   },
@@ -29,10 +30,12 @@
   },
   {
     "name": "Calendar",
+    "sass": "calendar.scss",
     "css": "calendar.css"
   },
   {
     "name": "Chart",
+    "sass": "chart.scss",
     "css": "chart.css",
     "htmlSample": "chart.html"
   },
@@ -43,10 +46,12 @@
   },
   {
     "name": "Checkboxes",
+    "sass": "checkboxes.scss",
     "css": "checkboxes.css"
   },
   {
     "name": "CodeInput",
+    "sass": "codeinput.scss",
     "css": "codeinput.css"
   },
   {
@@ -56,11 +61,13 @@
   },
   {
     "name": "ColorPicker",
+    "sass": "colorpicker.scss",
     "css": "colorpicker.css",
     "htmlSample": "colorpicker.html"
   },
   {
     "name": "Columns",
+    "sass": "columns.scss",
     "css": "columns.css"
   },
   {
@@ -68,6 +75,7 @@
   },
   {
     "name": "DatePicker",
+    "sass": "datepicker.scss",
     "css": "datepicker.css"
   },
   {
@@ -75,6 +83,7 @@
   },
   {
     "name": "Diagram",
+    "sass": "diagram.scss",
     "css": "diagram.css",
     "htmlSample": "diagram.html"
   },
@@ -103,6 +112,7 @@
   },
   {
     "name": "Editor",
+    "sass": "editor.scss",
     "css": "editor.css",
     "htmlSample": "editor.html"
   },
@@ -115,15 +125,18 @@
   },
   {
     "name": "FontInput",
+    "sass": "fontinput.scss",
     "css": "fontinput.css"
   },
   {
     "name": "FontPicker",
+    "sass": "fontpicker.scss",
     "css": "fontpicker.css",
     "htmlSample": "fontpicker.html"
   },
   {
     "name": "Formula",
+    "sass": "formula.scss",
     "css": "formula.css",
     "htmlSample": "formula.html"
   },
@@ -137,14 +150,17 @@
   },
   {
     "name": "Gallery",
+    "sass": "gallery.scss",
     "css": "gallery.css"
   },
   {
     "name": "Graph",
+    "sass": "graph.scss",
     "css": "graph.css"
   },
   {
     "name": "Icon",
+    "sass": "icon.scss",
     "css": "icon.css"
   },
   {
@@ -152,15 +168,18 @@
   },
   {
     "name": "ImageInput",
+    "sass": "imageinput.scss",
     "css": "imageinput.css"
   },
   {
     "name": "ImageViewer",
+    "sass": "imageviewer.scss",
     "css": "imageviewer.css",
     "htmlSample": "imageviewer.html"
   },
   {
     "name": "InfoView",
+    "sass": "infoview.scss",
     "css": "infoview.css",
     "htmlSample": "infoview.html"
   },
@@ -169,22 +188,27 @@
   },
   {
     "name": "KeyboardNavigator",
+    "sass": "keyboardnavigator.scss",
     "css": "keyboardnavigator.css"
   },
   {
     "name": "Layout",
+    "sass": "layout.scss",
     "css": "layout.css"
   },
   {
     "name": "Link",
+    "sass": "link.scss",
     "css": "link.css"
   },
   {
     "name": "LinkInput",
+    "sass": "linkinput.scss",
     "css": "linkinput.css"
   },
   {
     "name": "Links",
+    "sass": "links.scss",
     "css": "links.css"
   },
   {
@@ -203,6 +227,7 @@
   },
   {
     "name": "MarkupEditor",
+    "sass": "markupeditor.scss",
     "css": "markupeditor.css",
     "htmlSample": "markupeditor.html"
   },
@@ -216,6 +241,7 @@
   },
   {
     "name": "Menu",
+    "sass": "menu.scss",
     "css": "menu.css",
     "htmlSample": "menu.html"
   },
@@ -233,6 +259,7 @@
   },
   {
     "name": "ObjectInput",
+    "sass": "objectinput.scss",
     "css": "objectinput.css"
   },
   {
@@ -245,11 +272,12 @@
   },
   {
     "name": "Overlay",
-    "css": "overlay.css",
+    "sass": "overlay.scss",
     "htmlSample": "overlay.html"
   },
   {
     "name": "Pages",
+    "sass": "pages.scss",
     "css": "pages.css"
   },
   {
@@ -260,6 +288,7 @@
   },
   {
     "name": "Picker",
+    "sass": "picker.scss",
     "css": "picker.css",
     "htmlSample": "picker.html"
   },
@@ -271,6 +300,7 @@
   },
   {
     "name": "ProgressBar",
+    "sass": "progressbar.scss",
     "css": "progressbar.css",
     "htmlSample": "progressbar.html"
   },
@@ -283,6 +313,7 @@
   },
   {
     "name": "Rendering",
+    "sass": "rendering.scss",
     "css": "rendering.css"
   },
   {
@@ -307,6 +338,7 @@
   },
   {
     "name": "Selection",
+    "sass": "selection.scss",
     "css": "selection.css",
     "htmlSample": "selection.html"
   },
@@ -321,10 +353,12 @@
   },
   {
     "name": "Split",
+    "sass": "split.scss",
     "css": "split.css"
   },
   {
     "name": "Structure",
+    "sass": "structure.scss",
     "css": "structure.css"
   },
   {
@@ -338,6 +372,7 @@
   },
   {
     "name": "Tabs",
+    "sass": "tabs.scss",
     "css": "tabs.css"
   },
   {
@@ -350,14 +385,17 @@
   },
   {
     "name": "Tiles",
+    "sass": "tiles.scss",
     "css": "tiles.css"
   },
   {
     "name": "TimeLine",
+    "sass": "timeline.scss",
     "css": "timeline.css"
   },
   {
     "name": "TokenField",
+    "sass": "tokenfield.scss",
     "css": "tokenfield.css"
   },
   {
@@ -367,11 +405,13 @@
   },
   {
     "name": "Upload",
+    "sass": "upload.scss",
     "css": "upload.css",
     "htmlSample": "upload.html"
   },
   {
     "name": "VideoPlayer",
+    "sass": "videoplayer.scss",
     "css": "videoplayer.css"
   },
   {
@@ -382,6 +422,7 @@
   },
   {
     "name": "Wizard",
+    "sass": "wizard.scss",
     "css": "wizard.css"
   }
 ]
