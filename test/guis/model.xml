@@ -1,167 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
 <gui xmlns="uri:hui" title="System" padding="10">
-	<source name="hierarchySource" url="data/hierarchy.xml"/>
-	<source name="listSource" url="data/list_pages.xml"/>
-	<source name="languagesSource" url="data/languages.xml"/>
+  <source name="hierarchySource" url="data/hierarchy.xml"/>
+  <source name="listSource" url="data/list_pages.xml"/>
+  <source name="languagesSource" url="data/languages.xml"/>
 
-	<structure>
-		<top>
-			<toolbar>
-				<icon icon="common/page" text="Ny side" overlay="new" click="newPage.show()"/>
-				<more>
-					<icon icon="common/hierarchy_item" text="Nyt punkt" overlay="new" click="newPage.show()"/>
-					<icon icon="common/hierarchy" text="Nyt hierarki" overlay="new" click="box.show()"/>
-					<icon icon="common/template" text="Ny skabelon" overlay="new" click="newPage.show()"/>
-				</more>
-				<divider/>
-				<icon icon="common/edit" text="Edit" name="edit" disabled="true"/>
-				<icon icon="common/info" text="Info" name="info" disabled="true"/>
-				<icon icon="common/view" text="Show" name="view" disabled="true"/>
-				<icon icon="common/delete" text="Delete" name="delete" disabled="true">
-					<confirm text="Are you sure? It cannot be undone" ok="Yes, delete" cancel="Cancel"/>
-				</icon>
-				<icon icon="common/internet" overlay="upload" text="Udgiv ændringer" click="pages.next()"/>
-				<right>
-					<item label="Søgning">
-						<searchfield/>
-					</item>
-				</right>
-			</toolbar>
-		</top>
-		<middle>
-			<left>
-				<overflow>
-					<selection value="user" name="selector">
-						<option icon="common/page" text="Alle sider" value="all"/>
-						<option icon="common/time" text="Seneste" badge="10" value="latest"/>
-						<option icon="common/draft" text="Klader" badge="5" value="drafts"/>
-						<option icon="common/duplicate" text="Skabeloner" badge="2" value="templates"/>
-						<option icon="common/star" text="Favorites" badge="12" value="favorites"/>
-						<title>Hierarkier</title>
-						<options source="hierarchySource"/>
-						<title>Sprog</title>
-						<option icon="flag/dk" text="Dansk" value="da"/>
-						<option icon="flag/gb" text="Engelsk" value="en"/>
-						<title>Grupper</title>
-						<option icon="common/folder" text="Mine sider" value="warnings"/>
-						<title>Oversigter</title>
-						<option icon="monochrome/news" text="Nyheder" value="news"/>
-						<option icon="monochrome/warning" text="Advarsler" value="warnings"/>
-						<option icon="monochrome/edit" text="Ændret" value="changed"/>
-						<option icon="monochrome/delete" text="Uden menupunk" value="nomenu"/>
-						<option icon="monochrome/archive" text="Arkiveret" value="archive"/>
-					</selection>
-				</overflow>
-			</left>
-			<center>
-				<pages height="full" name="pages">
-					<page key="list">
-						<split>
-							<row height="40%">
-								<overflow>
-									<list name="list" source="listSource"/>
-								</overflow>
-							</row>
-							<row height="20%">
-								<overflow>
-									<list name="list" source="listSource"/>
-								</overflow>
-							</row>
-							<row>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/page" text="Ny side" overlay="new" click="newPage.show()"/>
+        <more>
+          <icon icon="common/hierarchy_item" text="Nyt punkt" overlay="new" click="newPage.show()"/>
+          <icon icon="common/hierarchy" text="Nyt hierarki" overlay="new" click="box.show()"/>
+          <icon icon="common/template" text="Ny skabelon" overlay="new" click="newPage.show()"/>
+        </more>
+        <divider/>
+        <icon icon="common/edit" text="Edit" name="edit" disabled="true"/>
+        <icon icon="common/info" text="Info" name="info" disabled="true"/>
+        <icon icon="common/view" text="Show" name="view" disabled="true"/>
+        <icon icon="common/delete" text="Delete" name="delete" disabled="true">
+          <confirm text="Are you sure? It cannot be undone" ok="Yes, delete" cancel="Cancel"/>
+        </icon>
+        <icon icon="common/internet" overlay="upload" text="Udgiv ændringer" click="pages.next()"/>
+        <right>
+          <item label="Søgning">
+            <searchfield/>
+          </item>
+        </right>
+      </toolbar>
+    </top>
+    <middle>
+      <left>
+        <overflow>
+          <selection value="user" name="selector">
+            <option icon="common/page" text="Alle sider" value="all"/>
+            <option icon="common/time" text="Seneste" badge="10" value="latest"/>
+            <option icon="common/draft" text="Klader" badge="5" value="drafts"/>
+            <option icon="common/duplicate" text="Skabeloner" badge="2" value="templates"/>
+            <option icon="common/star" text="Favorites" badge="12" value="favorites"/>
+            <title>Hierarkier</title>
+            <options source="hierarchySource"/>
+            <title>Sprog</title>
+            <option icon="flag/dk" text="Dansk" value="da"/>
+            <option icon="flag/gb" text="Engelsk" value="en"/>
+            <title>Grupper</title>
+            <option icon="common/folder" text="Mine sider" value="warnings"/>
+            <title>Oversigter</title>
+            <option icon="monochrome/news" text="Nyheder" value="news"/>
+            <option icon="monochrome/warning" text="Advarsler" value="warnings"/>
+            <option icon="monochrome/edit" text="Ændret" value="changed"/>
+            <option icon="monochrome/delete" text="Uden menupunk" value="nomenu"/>
+            <option icon="monochrome/archive" text="Arkiveret" value="archive"/>
+          </selection>
+        </overflow>
+      </left>
+      <center>
+        <pages height="full" name="pages">
+          <page key="list">
+            <split>
+              <row height="40%">
+                <overflow>
+                  <list name="list" source="listSource"/>
+                </overflow>
+              </row>
+              <row height="20%">
+                <overflow>
+                  <list name="list" source="listSource"/>
+                </overflow>
+              </row>
+              <row>
 
-								<bar variant="layout">
-									<text text="Jonas Munk"/>
-									<right>
-									<button text="Hey" small="true"/>
-									</right>
-								</bar>
-								<overflow>
-									<columns>
-										<column>
-											<bar variant="layout">
-											</bar>
-											<overflow>
-												<list source="listSource"/>
-											</overflow>
-										</column>
-										<column width="30%">
-											<split>
-												<row>
-													<bar variant="layout">
-														<text text="Parents"/>
-													</bar>
-													<overflow>
-														<list source="listSource"/>
-													</overflow>
-												</row>
-												<row>
-													<bar variant="layout">
-														<text text="Children"/>
-													</bar>
-													<overflow>
-														<list source="listSource"/>
-													</overflow>
-												</row>
-												<row>
-													<bar variant="layout">
-														<text text="Permissions"/>
-														<right>
-															<segmented variant="inset">
-																<option text="Hep"/>
-																<option text="Hey"/>
-															</segmented>
-															<button text="Add permission" small="true"/>
-														</right>
-													</bar>
-													<overflow>
-														<list source="listSource"/>
-													</overflow>
-												</row>
-											</split>
-										</column>
-									</columns>
-								</overflow>
+                <bar variant="layout">
+                  <text text="Jonas Munk"/>
+                  <right>
+                  <button text="Hey" small="true"/>
+                  </right>
+                </bar>
+                <overflow>
+                  <columns>
+                    <column>
+                      <bar variant="layout">
+                      </bar>
+                      <overflow>
+                        <list source="listSource"/>
+                      </overflow>
+                    </column>
+                    <column width="30%">
+                      <split>
+                        <row>
+                          <bar variant="layout">
+                            <text text="Parents"/>
+                          </bar>
+                          <overflow>
+                            <list source="listSource"/>
+                          </overflow>
+                        </row>
+                        <row>
+                          <bar variant="layout">
+                            <text text="Children"/>
+                          </bar>
+                          <overflow>
+                            <list source="listSource"/>
+                          </overflow>
+                        </row>
+                        <row>
+                          <bar variant="layout">
+                            <text text="Permissions"/>
+                            <right>
+                              <segmented variant="inset">
+                                <option text="Hep"/>
+                                <option text="Hey"/>
+                              </segmented>
+                              <button text="Add permission" small="true"/>
+                            </right>
+                          </bar>
+                          <overflow>
+                            <list source="listSource"/>
+                          </overflow>
+                        </row>
+                      </split>
+                    </column>
+                  </columns>
+                </overflow>
 
-							</row>
-						</split>
-					</page>
+              </row>
+            </split>
+          </page>
 
-					<page key="viewpage" background="wood">
-						<bar variant="layout">
-							<button text="Close" click="pages.next()" small="true"/>
-						</bar>
-						<box>
-						<formula>
-							<fields>
-								<field label="Beskrivelse:">
-									<text-input breaks="true"/>
-								</field>
-								<field label="Sti:">
-									<text-input/>
-								</field>
-								<field label="Sprog:">
-									<dropdown/>
-								</field>
-								<field label="Design:">
-									<dropdown/>
-								</field>
-								<field label="Opsætning:">
-									<dropdown/>
-								</field>
-								<field label="Inaktiv:">
-									<checkbox/>
-								</field>
-							</fields>
-						</formula>
-						</box>
-					</page>
-				</pages>
-			</center>
-		</middle>
-		<bottom>
+          <page key="viewpage" background="wood">
+            <bar variant="layout">
+              <button text="Close" click="pages.next()" small="true"/>
+            </bar>
+            <box>
+            <formula>
+              <fields>
+                <field label="Beskrivelse:">
+                  <text-input breaks="true"/>
+                </field>
+                <field label="Sti:">
+                  <text-input/>
+                </field>
+                <field label="Sprog:">
+                  <dropdown/>
+                </field>
+                <field label="Design:">
+                  <dropdown/>
+                </field>
+                <field label="Opsætning:">
+                  <dropdown/>
+                </field>
+                <field label="Inaktiv:">
+                  <checkbox/>
+                </field>
+              </fields>
+            </formula>
+            </box>
+          </page>
+        </pages>
+      </center>
+    </middle>
+    <bottom>
 
-		</bottom>
-	</structure>
+    </bottom>
+  </structure>
 
 </gui>

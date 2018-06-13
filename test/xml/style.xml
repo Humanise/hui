@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Style">
-	<controller name="controller" url="formula.js"/>
-	<source name="itemsSource" url="data/source_items.xml"/>
-	<box width="600" variant="textured">
-		<toolbar>
-			<item label="Number input:">
-				<number-input key="style" value="15"/>
-			</item>
-			<item label="Style length:">
-				<style-length-input key="style" value="15px"/>
-			</item>
-			<item label="Alignment">
-				<segmented value="left" name="segmentedBar">
-					<option icon="edit/text_align_left" value="left"/>
-					<option icon="edit/text_align_center" value="center"/>
-					<option icon="edit/text_align_right" value="right"/>
-				</segmented>
-			</item>
-			<item label="Alignment (allow null)">
-				<segmented value="left" name="segmentedBarNull" allow-null="true">
-					<option icon="edit/text_align_left" value="left"/>
-					<option icon="edit/text_align_center" value="center"/>
-					<option icon="edit/text_align_right" value="right"/>
-				</segmented>
-			</item>
-		</toolbar>
-		<tabs>
-			<tab title="Formula 1" padding="10">
-				<formula name="formula1">
-					<fields labels="above">
-						<field label="Style length:">
-							<style-length-input key="style" value="15px"/>
-						</field>
-						<field label="Color">
-							<color-input key="color" value="red"/>
-						</field>
-					</fields>
-					<buttons top="10">
-						<button text="Slet"/>
-						<button text="Annuller"/>
-						<button text="Gem" highlighted="true"/>
-					</buttons>
-				</formula>
-				<segmented value="left" name="segmented">
-					<option icon="edit/text_align_left" value="left"/>
-					<option icon="edit/text_align_right" value="right"/>
-					<option text="Click me!"/>
-				</segmented>
-				<button click="segmented.setValue('right')" text="Set right" small="true"/>
-				<button click="alert(segmented.getValue())" text="Alert value" small="true"/>
-			</tab>
-		</tabs>
-	</box>
+  <controller name="controller" url="formula.js"/>
+  <source name="itemsSource" url="data/source_items.xml"/>
+  <box width="600" variant="textured">
+    <toolbar>
+      <item label="Number input:">
+        <number-input key="style" value="15"/>
+      </item>
+      <item label="Style length:">
+        <style-length-input key="style" value="15px"/>
+      </item>
+      <item label="Alignment">
+        <segmented value="left" name="segmentedBar">
+          <option icon="edit/text_align_left" value="left"/>
+          <option icon="edit/text_align_center" value="center"/>
+          <option icon="edit/text_align_right" value="right"/>
+        </segmented>
+      </item>
+      <item label="Alignment (allow null)">
+        <segmented value="left" name="segmentedBarNull" allow-null="true">
+          <option icon="edit/text_align_left" value="left"/>
+          <option icon="edit/text_align_center" value="center"/>
+          <option icon="edit/text_align_right" value="right"/>
+        </segmented>
+      </item>
+    </toolbar>
+    <tabs>
+      <tab title="Formula 1" padding="10">
+        <formula name="formula1">
+          <fields labels="above">
+            <field label="Style length:">
+              <style-length-input key="style" value="15px"/>
+            </field>
+            <field label="Color">
+              <color-input key="color" value="red"/>
+            </field>
+          </fields>
+          <buttons top="10">
+            <button text="Slet"/>
+            <button text="Annuller"/>
+            <button text="Gem" highlighted="true"/>
+          </buttons>
+        </formula>
+        <segmented value="left" name="segmented">
+          <option icon="edit/text_align_left" value="left"/>
+          <option icon="edit/text_align_right" value="right"/>
+          <option text="Click me!"/>
+        </segmented>
+        <button click="segmented.setValue('right')" text="Set right" small="true"/>
+        <button click="alert(segmented.getValue())" text="Alert value" small="true"/>
+      </tab>
+    </tabs>
+  </box>
 </gui>

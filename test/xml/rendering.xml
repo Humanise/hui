@@ -2,27 +2,27 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Rendering">
 
-	<box width="600" title="Title with toolbars" padding="10">
-		<toolbar>
-			<icon icon="common/settings" text="Change contents" name="changeViaHTML"/>
-		</toolbar>
-		<rendering name="rendering">
-			<html>
-				<p><strong>Front page</strong></p>
-				<p class="hui_rendering_minor hui_rendering_dimmed">Page</p>
-				<p class="hui_rendering_minor">The link is only for this section</p>
-			</html>
-		</rendering>
-	</box>
+  <box width="600" title="Title with toolbars" padding="10">
+    <toolbar>
+      <icon icon="common/settings" text="Change contents" name="changeViaHTML"/>
+    </toolbar>
+    <rendering name="rendering">
+      <html>
+        <p><strong>Front page</strong></p>
+        <p class="hui_rendering_minor hui_rendering_dimmed">Page</p>
+        <p class="hui_rendering_minor">The link is only for this section</p>
+      </html>
+    </rendering>
+  </box>
 
-	<script>
+  <script>
     <![CDATA[
-		hui.ui.listen({
-			$click$changeViaHTML : function() {
-				rendering.setContent('<p>This is new content inserted</p>');
-			}
-		})
+    hui.ui.listen({
+      $click$changeViaHTML : function() {
+        rendering.setContent('<p>This is new content inserted</p>');
+      }
+    })
     ]]>
-	</script>
+  </script>
 
 </gui>

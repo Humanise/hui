@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Calendar">
-	<structure>
-		<top>
-			<toolbar>
-				<icon icon="common/folder" text="Ny gruppe" name="newGroup" overlay="new"/>
-				<icon icon="common/folder" text="Ny type" name="newType" overlay="new"/>
-			</toolbar>
-		</top>
-		<middle>
-			<left>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/folder" text="Ny gruppe" name="newGroup" overlay="new"/>
+        <icon icon="common/folder" text="Ny type" name="newType" overlay="new"/>
+      </toolbar>
+    </top>
+    <middle>
+      <left>
         <rows>
           <row>
             <selection value="all" name="selector">
@@ -22,15 +22,15 @@
             <datepicker/>
           </row>
         </rows>
-			</left>
-			<center>
-				<overflow>
-					<calendar name="calendar" end-hour="17" start-hour="7"/>
-				</overflow>
-			</center>
-		</middle>
-		<bottom>
+      </left>
+      <center>
+        <overflow>
+          <calendar name="calendar" end-hour="17" start-hour="7"/>
+        </overflow>
+      </center>
+    </middle>
+    <bottom>
 
-		</bottom>
-	</structure>
+    </bottom>
+  </structure>
 </gui>

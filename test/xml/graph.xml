@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Graph">
-	<controller url="graph.js"/>
-	<source url="data/graph_family.json" name="soirce"/>
-	<structure>
-		<top>
-			<toolbar>
-				<icon icon="common/refresh" text="Test"/>
-				<divider/>
-				<item label="View">
-					<segmented>
-						<option icon="view/list"/>
-						<option icon="view/calendar"/>
-						<option icon="view/graph"/>
-					</segmented>
-				</item>
-			</toolbar>
-		</top>
-		<middle>
-			<left></left>
-			<center>
-				<overflow>
+  <controller url="graph.js"/>
+  <source url="data/graph_family.json" name="soirce"/>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/refresh" text="Test"/>
+        <divider/>
+        <item label="View">
+          <segmented>
+            <option icon="view/list"/>
+            <option icon="view/calendar"/>
+            <option icon="view/graph"/>
+          </segmented>
+        </item>
+      </toolbar>
+    </top>
+    <middle>
+      <left></left>
+      <center>
+        <overflow>
           <graph name="graph" layout="d3" source="soirce"/>
-				</overflow>
-			</center>
-		</middle>
-		<bottom>
-		</bottom>
-	</structure>
+        </overflow>
+      </center>
+    </middle>
+    <bottom>
+    </bottom>
+  </structure>
 </gui>
 

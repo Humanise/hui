@@ -2,108 +2,108 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Bar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:noNamespaceSchemaLocation="../../xslt/schema.xsd">
-	<bar>
-		<button icon="common/edit" text="Edit"/>
-		<button icon="common/delete" text="Delete" selected="true"/>
-		<button icon="common/color" text="Color"/>
-		<button icon="common/internet"/>
-		<button text="Only text"/>
-		<checkbox text="djslkfjksdjl"/>
-		<searchfield/>
-		<dropdown value="1">
-			<option value="1" text="My option"/>
-		</dropdown>
-		<segmented value="2">
-			<option value="1" text="H1"/>
-			<option value="2" text="H2"/>
-			<option value="3" text="H3"/>
-			<option value="4" icon="common/color"/>
-		</segmented>
-		<right>
-			<button icon="common/delete" text="Hep hey!"/>
-			<button icon="common/delete" text="Hep hey!"/>
-			<button icon="common/delete" text="Hep hey!"/>
-		</right>
-	</bar>
+  <bar>
+    <button icon="common/edit" text="Edit"/>
+    <button icon="common/delete" text="Delete" selected="true"/>
+    <button icon="common/color" text="Color"/>
+    <button icon="common/internet"/>
+    <button text="Only text"/>
+    <checkbox text="djslkfjksdjl"/>
+    <searchfield/>
+    <dropdown value="1">
+      <option value="1" text="My option"/>
+    </dropdown>
+    <segmented value="2">
+      <option value="1" text="H1"/>
+      <option value="2" text="H2"/>
+      <option value="3" text="H3"/>
+      <option value="4" icon="common/color"/>
+    </segmented>
+    <right>
+      <button icon="common/delete" text="Hep hey!"/>
+      <button icon="common/delete" text="Hep hey!"/>
+      <button icon="common/delete" text="Hep hey!"/>
+    </right>
+  </bar>
 
-	<bar variant="layout">
-		<button icon="common/edit" text="Edit"/>
-		<button icon="common/delete" text="Delete" selected="true"/>
-		<button icon="common/color" text="Color"/>
-		<button icon="common/internet"/>
-		<button text="Only text" small="true"/>
-		<checkbox/>
-		<searchfield/>
-		<dropdown value="1">
-			<option value="1" text="My option"/>
-		</dropdown>
-		<segmented value="2">
-			<option value="1" text="H1"/>
-			<option value="2" text="H2"/>
-			<option value="3" text="H3"/>
-			<option value="4" icon="common/color"/>
-		</segmented>
-		<right>
-			<button icon="common/delete" text="Hep hey!"/>
-			<button icon="common/delete" text="Hep hey!"/>
-			<button icon="common/delete" text="Hep hey!"/>
-		</right>
-	</bar>
+  <bar variant="layout">
+    <button icon="common/edit" text="Edit"/>
+    <button icon="common/delete" text="Delete" selected="true"/>
+    <button icon="common/color" text="Color"/>
+    <button icon="common/internet"/>
+    <button text="Only text" small="true"/>
+    <checkbox/>
+    <searchfield/>
+    <dropdown value="1">
+      <option value="1" text="My option"/>
+    </dropdown>
+    <segmented value="2">
+      <option value="1" text="H1"/>
+      <option value="2" text="H2"/>
+      <option value="3" text="H3"/>
+      <option value="4" icon="common/color"/>
+    </segmented>
+    <right>
+      <button icon="common/delete" text="Hep hey!"/>
+      <button icon="common/delete" text="Hep hey!"/>
+      <button icon="common/delete" text="Hep hey!"/>
+    </right>
+  </bar>
 
-	<space all="50">
+  <space all="50">
 
-	<bar variant="mini">
-		<button icon="common/edit" text="Edit"/>
-		<button icon="common/delete" text="Delete"/>
-		<button icon="common/color" text="Color"/>
-		<button icon="common/internet"/>
-		<checkbox/>
-	</bar>
-	</space>
+  <bar variant="mini">
+    <button icon="common/edit" text="Edit"/>
+    <button icon="common/delete" text="Delete"/>
+    <button icon="common/color" text="Color"/>
+    <button icon="common/internet"/>
+    <checkbox/>
+  </bar>
+  </space>
 
-	<window name="win" width="400">
-		<bar variant="window_mini">
-			<button icon="common/delete" text="Delete" name="delete"/>
-			<button icon="colorpicker/wheel_saturated"/>
-			<button icon="colorpicker/wheel_pastels" name="wheelPastels" selected="true"/>
-			<button icon="colorpicker/wheel_brightness" name="wheelBrightness"/>
-		</bar>
-		<space all="20">
-			<text>
-				<h>Header</h>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-			</text>
-		</space>
-	</window>
+  <window name="win" width="400">
+    <bar variant="window_mini">
+      <button icon="common/delete" text="Delete" name="delete"/>
+      <button icon="colorpicker/wheel_saturated"/>
+      <button icon="colorpicker/wheel_pastels" name="wheelPastels" selected="true"/>
+      <button icon="colorpicker/wheel_brightness" name="wheelBrightness"/>
+    </bar>
+    <space all="20">
+      <text>
+        <h>Header</h>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </text>
+    </space>
+  </window>
 
-	<window name="win2" width="400">
-		<bar variant="window">
-			<searchfield/>
-			<button icon="common/delete" text="Delete"/>
-		</bar>
-		<space all="20">
-			<text>
-				<h>Header</h>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-			</text>
-		</space>
-	</window>
+  <window name="win2" width="400">
+    <bar variant="window">
+      <searchfield/>
+      <button icon="common/delete" text="Delete"/>
+    </bar>
+    <space all="20">
+      <text>
+        <h>Header</h>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </text>
+    </space>
+  </window>
 
-	<listen for="click" on="wheelBrightness">
+  <listen for="click" on="wheelBrightness">
     <set selected="false" on="wheelPastels"/>
     <set selected="true" on="wheelBrightness"/>
-	</listen>
-	<listen for="click" on="wheelPastels">
+  </listen>
+  <listen for="click" on="wheelPastels">
     <set selected="true" on="wheelPastels"/>
     <set selected="false" on="wheelBrightness"/>
     <set title="'Pastels!'" on="win"/>
-	</listen>
-	<script>
+  </listen>
+  <script>
     hui.ui.listen({
       $ready : function() {
         win.show();
         win2.show();
       }
     })
-	</script>
+  </script>
 </gui>

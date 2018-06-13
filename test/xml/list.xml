@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="List" padding="10">
-	<controller name="controller" url="list.js"/>
-  
-	<structure>
-		<top>
-		<toolbar>
-			<icon icon="common/refresh" text="Refresh" click="list.refresh()"/>
-			<divider/>
-		</toolbar>
-		</top>
-		<middle>
-			<left>
-				<selection value="data/list_mixed.xml" name="selector">
-					<title>XML</title>
-					<option icon="common/folder" text="Users" value="data/list_users.xml"/>
-					<option icon="common/folder" text="Buttons" value="data/list_buttons.xml"/>
-					<option icon="common/folder" text="Icons" value="data/list_icons.xml"/>
-					<option icon="common/folder" text="Hierarchy" value="data/list_hierarchy.xml"/>
-					<option icon="common/folder" text="Mixed" value="data/list_mixed.xml"/>
-					<option icon="common/folder" text="Checkboxes" value="data/list_checkboxes.xml"/>
-					<option icon="common/folder" text="Ordering" value="data/list_ordering.xml"/>
-					<title>JSON</title>
-					<option icon="common/folder" text="Icons" value="data/list_icons.json"/>
-					<title>Drop targets</title>
-					<option icon="common/folder" text="Folder" kind="folder"/>
-					<option icon="common/folder" text="Another folder" kind="folder"/>
-				</selection>
-			</left>
-			<center>
-				<overflow>
-					<list name="list" url="data/list_mixed.xml"/>
-				</overflow>
-			</center>
-		</middle>
-		<bottom/>
-	</structure>
+  <controller name="controller" url="list.js"/>
+
+  <structure>
+    <top>
+    <toolbar>
+      <icon icon="common/refresh" text="Refresh" click="list.refresh()"/>
+      <divider/>
+    </toolbar>
+    </top>
+    <middle>
+      <left>
+        <selection value="data/list_mixed.xml" name="selector">
+          <title>XML</title>
+          <option icon="common/folder" text="Users" value="data/list_users.xml"/>
+          <option icon="common/folder" text="Buttons" value="data/list_buttons.xml"/>
+          <option icon="common/folder" text="Icons" value="data/list_icons.xml"/>
+          <option icon="common/folder" text="Hierarchy" value="data/list_hierarchy.xml"/>
+          <option icon="common/folder" text="Mixed" value="data/list_mixed.xml"/>
+          <option icon="common/folder" text="Checkboxes" value="data/list_checkboxes.xml"/>
+          <option icon="common/folder" text="Ordering" value="data/list_ordering.xml"/>
+          <title>JSON</title>
+          <option icon="common/folder" text="Icons" value="data/list_icons.json"/>
+          <title>Drop targets</title>
+          <option icon="common/folder" text="Folder" kind="folder"/>
+          <option icon="common/folder" text="Another folder" kind="folder"/>
+        </selection>
+      </left>
+      <center>
+        <overflow>
+          <list name="list" url="data/list_mixed.xml"/>
+        </overflow>
+      </center>
+    </middle>
+    <bottom/>
+  </structure>
 </gui>

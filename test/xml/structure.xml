@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Structure" padding="10">
-	<controller name="controller" url="list.js"/>
-	<source name="itemsSource" url="data/source_items.xml"/>
-	<structure>
-		<top>
-			<toolbar>
-				<icon icon="common/refresh" text="Refresh" click="list.refresh()"/>
-				<divider/>
-				<icon icon="common/user" text="List users" click="list.setUrl('data/list_users.xml')"/>
-				<icon icon="common/color" text="List icons" click="list.setUrl('data/list_icons.xml')" selected="true"/>
-				<divider/>
-				<icon icon="common/color" text="List icons (json)" click="list.setUrl('data/list_icons.json')"/>
-				<icon icon="common/folder" text="List icons" click="hui.ui.showMessage({text:'hey',duration:2000})"/>
-				<divider/>
-				<icon icon="geo/map" text="Map"/>
-				<right>
-					<item label="Søgning">
-						<searchfield placeholder="Søg her..." expanded-width="200"/>
-					</item>
-				</right>
-			</toolbar>
-			<toolbar border="top">
-				<button text="Opret"/>
-				<button text="Rediger" highlighted="true"/>
-				<button text="Opret" small="true"/>
-				<button icon="common/delete"/>
-				<button icon="common/delete" text=""/>
-				<button icon="common/delete" text="Delete"/>
+  <controller name="controller" url="list.js"/>
+  <source name="itemsSource" url="data/source_items.xml"/>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/refresh" text="Refresh" click="list.refresh()"/>
+        <divider/>
+        <icon icon="common/user" text="List users" click="list.setUrl('data/list_users.xml')"/>
+        <icon icon="common/color" text="List icons" click="list.setUrl('data/list_icons.xml')" selected="true"/>
+        <divider/>
+        <icon icon="common/color" text="List icons (json)" click="list.setUrl('data/list_icons.json')"/>
+        <icon icon="common/folder" text="List icons" click="hui.ui.showMessage({text:'hey',duration:2000})"/>
+        <divider/>
+        <icon icon="geo/map" text="Map"/>
+        <right>
+          <item label="Søgning">
+            <searchfield placeholder="Søg her..." expanded-width="200"/>
+          </item>
+        </right>
+      </toolbar>
+      <toolbar border="top">
+        <button text="Opret"/>
+        <button text="Rediger" highlighted="true"/>
+        <button text="Opret" small="true"/>
+        <button icon="common/delete"/>
+        <button icon="common/delete" text=""/>
+        <button icon="common/delete" text="Delete"/>
         <item>
           <searchfield placeholder="Søg her..." expanded-width="200"/>
         </item>
-			</toolbar>
-		</top>
-		<middle>
-			<left>
-				<overflow>
-				<selection value="user" name="selector">
-					<option icon="common/person" text="Brugere" value="user"/>
-					<option icon="common/folder" text="Database" value="database" kind="folder"/>
-					<option icon="common/person" text="Alle objekter" value="object"/>
-					<title>Hey</title>
-					<options source="itemsSource"/>
-				</selection>
-				</overflow>
-			</left>
-			<center>
-				<toolbar border="bottom">
-					<button text="Opret"/>
-					<button text="Opret"/>
-					<button text="Opret"/>
-				</toolbar>
-				<overflow>
-					<list name="list" url="data/list_users.xml"/>
-				</overflow>
-				<toolbar border="top">
-					<button text="Opret"/>
-					<button text="Opret"/>
-					<button text="Opret"/>
-				</toolbar>
-			</center>
-		</middle>
-		<bottom>
-			<toolbar>
-				<button text="Opret" small="true"/>
-			</toolbar>
-		</bottom>
-	</structure>
+      </toolbar>
+    </top>
+    <middle>
+      <left>
+        <overflow>
+        <selection value="user" name="selector">
+          <option icon="common/person" text="Brugere" value="user"/>
+          <option icon="common/folder" text="Database" value="database" kind="folder"/>
+          <option icon="common/person" text="Alle objekter" value="object"/>
+          <title>Hey</title>
+          <options source="itemsSource"/>
+        </selection>
+        </overflow>
+      </left>
+      <center>
+        <toolbar border="bottom">
+          <button text="Opret"/>
+          <button text="Opret"/>
+          <button text="Opret"/>
+        </toolbar>
+        <overflow>
+          <list name="list" url="data/list_users.xml"/>
+        </overflow>
+        <toolbar border="top">
+          <button text="Opret"/>
+          <button text="Opret"/>
+          <button text="Opret"/>
+        </toolbar>
+      </center>
+    </middle>
+    <bottom>
+      <toolbar>
+        <button text="Opret" small="true"/>
+      </toolbar>
+    </bottom>
+  </structure>
 </gui>

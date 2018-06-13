@@ -3,7 +3,7 @@
 <gui xmlns="uri:hui" title="Animation">
   <controller url="animation.js"/>
 
-	<window name="settingsWindow" width="300" title="Settings">
+  <window name="settingsWindow" width="300" title="Settings">
     <formula name="settingsForm" padding="10">
       <fields>
         <field label="Easing">

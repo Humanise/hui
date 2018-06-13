@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Box">
-	<window title="Vælg billede" name="finder" width="600">
-		<structure height="500">
-			<middle>
-				<left>
-					<overflow height="400">
-					<selection value="latest">
-						<option text="Alle billeder" icon="common/image" value="all"/>
-						<option text="Seneste" icon="common/time" value="latest"/>
-						<title>Grupper</title>
-						<option text="Personer" icon="common/folder" value="1"/>
-					</selection>
-					</overflow>
-				</left>
-				<center>
-					<bar variant="layout">
-						<segmented>
-							<option icon="view/list" value="list"/>
-							<option icon="view/gallery" value="gallery"/>
-						</segmented>
-						<right>
-						<searchfield expanded-width="200"/>
-						</right>
-					</bar>
-					<overflow>
-						<list/>
-					</overflow>
-				</center>
-			</middle>
-		</structure>
-	</window>
-	<script>
-		finder.show()
-	</script>
+  <window title="Vælg billede" name="finder" width="600">
+    <structure height="500">
+      <middle>
+        <left>
+          <overflow height="400">
+          <selection value="latest">
+            <option text="Alle billeder" icon="common/image" value="all"/>
+            <option text="Seneste" icon="common/time" value="latest"/>
+            <title>Grupper</title>
+            <option text="Personer" icon="common/folder" value="1"/>
+          </selection>
+          </overflow>
+        </left>
+        <center>
+          <bar variant="layout">
+            <segmented>
+              <option icon="view/list" value="list"/>
+              <option icon="view/gallery" value="gallery"/>
+            </segmented>
+            <right>
+            <searchfield expanded-width="200"/>
+            </right>
+          </bar>
+          <overflow>
+            <list/>
+          </overflow>
+        </center>
+      </middle>
+    </structure>
+  </window>
+  <script>
+    finder.show()
+  </script>
 </gui>

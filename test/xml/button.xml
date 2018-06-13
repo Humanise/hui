@@ -9,7 +9,7 @@
     overlay.show();
 
   </script>
-	<box width="800" title="Buttons" variant="textured" padding="10">
+  <box width="800" title="Buttons" variant="textured" padding="10">
     <buttons>
       <button name="one" text="Simple button"/>
       <button name="disabledButton" text="Disabled button" disabled="true"/>
@@ -47,7 +47,7 @@
       <button text="Tiny disabled" disabled="true" tiny="true"/>
     </buttons>
 
-		<text top="10"><h>Light variant</h></text>
+    <text top="10"><h>Light variant</h></text>
 
     <buttons top="10">
       <button variant="light" text="Light"/>
@@ -71,16 +71,16 @@
       <button variant="light" text="Light (tiny + disabled)" tiny="true" disabled="true"/>
     </buttons>
 
-		<text top="10"><h>Actions</h></text>
-		<button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
-			<confirm text="Are you sure?" ok="Yes" cancel="No"/>
-		</button>
+    <text top="10"><h>Actions</h></text>
+    <button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
+      <confirm text="Are you sure?" ok="Yes" cancel="No"/>
+    </button>
 
-	</box>
+  </box>
   <style>
     .dark {background: #222; padding: 10px;}
   </style>
-	<box width="800" title="Buttons" variant="textured">
+  <box width="800" title="Buttons" variant="textured">
     <div class="hui_context_dark dark">
     <buttons>
       <button name="one" text="Simple button"/>
@@ -119,7 +119,7 @@
       <button text="Tiny disabled" disabled="true" tiny="true"/>
     </buttons>
 
-		<text top="10"><h>Light variant</h></text>
+    <text top="10"><h>Light variant</h></text>
 
     <buttons top="10">
       <button variant="light" text="Light"/>
@@ -143,11 +143,11 @@
       <button variant="light" text="Light (tiny + disabled)" tiny="true" disabled="true"/>
     </buttons>
 
-		<text top="10"><h>Actions</h></text>
+    <text top="10"><h>Actions</h></text>
 
-		<button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
-			<confirm text="Are you sure?" ok="Yes" cancel="No"/>
-		</button>
+    <button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
+      <confirm text="Are you sure?" ok="Yes" cancel="No"/>
+    </button>
     </div>
-	</box>
+  </box>
 </gui>

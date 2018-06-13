@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Columns" padding="10">
-	<columns flexible="true" space="20">
-		<column>
-			<div style="height: 100px; background: #abc;">Left</div>
-		</column>
-		<column width="300px">
-			<div style="height: 100px; background: #bcd;">Right (width=300px)</div>
-		</column>
-	</columns>
+  <columns flexible="true" space="20">
+    <column>
+      <div style="height: 100px; background: #abc;">Left</div>
+    </column>
+    <column width="300px">
+      <div style="height: 100px; background: #bcd;">Right (width=300px)</div>
+    </column>
+  </columns>
 </gui>

@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Calendar">
-	<controller name="controller" url="diagram.js"/>
+  <controller name="controller" url="diagram.js"/>
   <source name="diagramSource" url="data/diagram_model.json"/>
-	<structure>
-		<top>
-			<toolbar>
-				<icon icon="common/folder" text="Expand" name="newGroup" overlay="new" click="diagram.expand()"/>
-				<icon icon="common/folder" text="Contract" name="newType" overlay="new" click="diagram.contract()"/>
-				<right>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/folder" text="Expand" name="newGroup" overlay="new" click="diagram.expand()"/>
+        <icon icon="common/folder" text="Contract" name="newType" overlay="new" click="diagram.contract()"/>
+        <right>
           <item label="Søgning">
             <searchfield/>
           </item>
-				</right>
-			</toolbar>
-		</top>
-		<middle>
-			<left>
-				<overflow>
-					<selection value="all" name="selector">
-						<option icon="common/time" text="Altid" value="all"/>
-						<option icon="common/folder" text="Database" value="database"/>
-						<option icon="common/person" text="Alle objekter" value="object"/>
-					</selection>
-				</overflow>
-			</left>
-			<center>
-				<diagram name="diagram" source="diagramSource"/>
-			</center>
-		</middle>
-		<bottom>
+        </right>
+      </toolbar>
+    </top>
+    <middle>
+      <left>
+        <overflow>
+          <selection value="all" name="selector">
+            <option icon="common/time" text="Altid" value="all"/>
+            <option icon="common/folder" text="Database" value="database"/>
+            <option icon="common/person" text="Alle objekter" value="object"/>
+          </selection>
+        </overflow>
+      </left>
+      <center>
+        <diagram name="diagram" source="diagramSource"/>
+      </center>
+    </middle>
+    <bottom>
 
-		</bottom>
-	</structure>
+    </bottom>
+  </structure>
 </gui>

@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Timeline">
-	<controller name="controller" url="timeline.js"/>
-	<structure>
-		<top>
-			<toolbar>
-				<icon icon="common/folder" text="Ny gruppe" name="newGroup" overlay="new"/>
-				<icon icon="common/folder" text="Ny type" name="newType" overlay="new"/>
-				<right>
+  <controller name="controller" url="timeline.js"/>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/folder" text="Ny gruppe" name="newGroup" overlay="new"/>
+        <icon icon="common/folder" text="Ny type" name="newType" overlay="new"/>
+        <right>
           <item label="Søgning">
             <searchfield/>
           </item>
-				</right>
-			</toolbar>
-		</top>
-		<middle>
-			<left>
-				<selection value="all" name="selector">
-					<option icon="common/time" text="Altid" value="all"/>
-				</selection>
-			</left>
-			<center>
-				<overflow>
-					<timeline name="timeline"/>
-				</overflow>
-			</center>
-		</middle>
-		<bottom>
+        </right>
+      </toolbar>
+    </top>
+    <middle>
+      <left>
+        <selection value="all" name="selector">
+          <option icon="common/time" text="Altid" value="all"/>
+        </selection>
+      </left>
+      <center>
+        <overflow>
+          <timeline name="timeline"/>
+        </overflow>
+      </center>
+    </middle>
+    <bottom>
 
-		</bottom>
-	</structure>
+    </bottom>
+  </structure>
 </gui>

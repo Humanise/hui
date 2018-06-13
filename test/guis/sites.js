@@ -1,10 +1,10 @@
 hui.ui.listen({
-	$ready : function() {
-		newPage.show();
-	},
-	$select$hierarchySelection : function() {
-		window.setTimeout(function() {wizard.next()},300);
-	},
+  $ready : function() {
+    newPage.show();
+  },
+  $select$hierarchySelection : function() {
+    window.setTimeout(function() {wizard.next()},300);
+  },
     $click$noMenuItem : function() {
         wizard.next();
     },
@@ -17,7 +17,7 @@ hui.ui.listen({
             newPagePath.setValue('');
         } else {
             var path = text.replace(/[\s]+?/g, "-")
-            newPagePath.setValue('/'+path+'.html');            
+            newPagePath.setValue('/'+path+'.html');
         }
     }
 })
