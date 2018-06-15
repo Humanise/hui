@@ -18,6 +18,5 @@ document.write('<link charset="utf-8" title="front" media="screen" type="text/cs
   '<script charset="utf-8" type="text/javascript" src="../../lib/date.js"></script>'+
   '<script charset="utf-8" type="text/javascript" src="../../js/ui.js"></script>'+
   '<script charset="utf-8" type="text/javascript" src="../../js/Test.js"></script>'+
-  '<script charset="utf-8" type="text/javascript" src="../../tools/funcunit/funcunit/funcunit.js"></script>'+
   '<script>hui.ui.context="../../..";</script>'
 );
