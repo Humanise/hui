@@ -5,6 +5,7 @@ hui.on(['hui.ui'], function() { hui.ui.make(
     name : 'Icon',
     /**
      * @constructs hui.ui.Icon
+     * @extends hui.ui.Component
      * @param params
      * @param params.icon {String} The icon
      */

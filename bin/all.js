@@ -4398,11 +4398,6 @@ hui.ui.reLayout = function() {
 
 ///////////////////////////////// Indexes /////////////////////////////
 
-hui.ui.nextIndex = function() {
-  hui.ui.latestIndex++;
-  return hui.ui.latestIndex;
-};
-
 hui.ui.nextPanelIndex = function() {
   hui.ui.latestPanelIndex++;
   return hui.ui.latestPanelIndex;
@@ -15771,6 +15766,7 @@ hui.on(['hui.ui'], function() { hui.ui.make(
     name : 'Icon',
     /**
      * @constructs hui.ui.Icon
+     * @extends hui.ui.Component
      * @param params
      * @param params.icon {String} The icon
      */

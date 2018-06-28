@@ -294,11 +294,6 @@ hui.ui.reLayout = function() {
 
 ///////////////////////////////// Indexes /////////////////////////////
 
-hui.ui.nextIndex = function() {
-  hui.ui.latestIndex++;
-  return hui.ui.latestIndex;
-};
-
 hui.ui.nextPanelIndex = function() {
   hui.ui.latestPanelIndex++;
   return hui.ui.latestPanelIndex;
@@ -928,7 +923,12 @@ hui.ui.handleForbidden = function(widget) {
     });
   }
 };
-
+/**
+ * @param {Object} options
+ * @param {Object} options.message
+ * @param {String} options.message.start
+ * @param {String} options.message.success
+ */
 hui.ui.request = function(options) {
   options = hui.override({method:'post',parameters:{}},options);
   if (options.json) {
