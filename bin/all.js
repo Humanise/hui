@@ -5027,7 +5027,12 @@ hui.ui.handleForbidden = function(widget) {
     });
   }
 };
-
+/**
+ * @param {Object} options
+ * @param {Object} options.message
+ * @param {String} options.message.start
+ * @param {String} options.message.success
+ */
 hui.ui.request = function(options) {
   options = hui.override({method:'post',parameters:{}},options);
   if (options.json) {
@@ -12313,7 +12318,7 @@ hui.on(['hui.ui'],function() {
   };
 
   hui.define('hui.ui.SearchField',hui.ui.SearchField);
-})
+});
 ;
 /**
  * Simple container
