@@ -208,7 +208,6 @@ hui.ui.TextInput.prototype = {
       return;
     }
     var textHeight = this._getTextAreaHeight(this.input);
-    textHeight = Math.max(38,textHeight);
     textHeight = Math.min(textHeight,this.options.maxHeight);
     if (animate) {
       hui.animate({
