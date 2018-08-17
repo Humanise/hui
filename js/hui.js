@@ -339,7 +339,7 @@ hui.string = {
    * @returns {Boolean} True if «str» starts with «start»
    */
   startsWith : function(str, start) {
-    if (typeof(str) !== 'string' || typeof(start) !== 'string') {
+    if (!hui.isString(str) || !hui.isString(start)) {
       return false;
     }
     return str.match("^"+start) == start;
@@ -351,7 +351,7 @@ hui.string = {
    * @returns {Boolean} True if «str» ends with «end»
    */
   endsWith : function(str, end) {
-    if (typeof(str) !== 'string' || typeof(end) !== 'string') {
+    if (!hui.isString(str) || !hui.isString(end)) {
       return false;
     }
     return str.match(end+"$") == end;
@@ -383,10 +383,10 @@ hui.string = {
    * @returns {String} The trimmed text
    */
   trim : function(str) {
-    if (str===null || str===undefined) {
+    if (!hui.isDefined(str)) {
       return '';
     }
-    if (typeof(str) != 'string') {
+    if (!hui.isString(str)) {
       str = String(str);
     }
     return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
@@ -424,7 +424,7 @@ hui.string = {
    * @returns {String} The escaped text
    */
   escapeHTML : function(str) {
-    if (str===null || str===undefined) {return '';}
+    if (!hui.isDefined(str)) {return '';}
     return hui.build('div',{text:str}).innerHTML;
   },
   /**
@@ -2090,43 +2090,6 @@ hui.effect = {
     window.setTimeout(function() {
       hui.cls.remove(e,cls);
     },time);
-  }
-};
-
-
-
-
-
-/////////////////// Document /////////////////////
-
-/** @namespace */
-hui.document = {
-  /**
-   * Get the height of the document (including the invisble part)
-   */
-  getWidth : function() {
-    return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth);
-  },
-  /**
-   * Get the width of the document (including the invisble part)
-   */
-  getHeight : function() {
-    if (hui.browser.msie6) {
-      // In IE6 check the children too
-      var max = Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
-      var children = document.body.childNodes;
-      for (var i=0; i < children.length; i++) {
-        if (hui.dom.isElement(children[i])) {
-          max = Math.max(max,children[i].clientHeight);
-        }
-      }
-      return max;
-    }
-    if (window.scrollMaxY && window.innerHeight) {
-      return window.scrollMaxY+window.innerHeight;
-    } else {
-      return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
-    }
   }
 };
 

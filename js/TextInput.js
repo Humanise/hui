@@ -70,7 +70,6 @@ hui.ui.TextInput.prototype = {
       hui.ui.onReady(function() {
         window.setTimeout(function() {
           self.value = self.input.value;
-          console.log(self.value);
           self._updateClass();
         }, 500);
       });
@@ -83,6 +82,7 @@ hui.ui.TextInput.prototype = {
     });
     hui.listen(this.input, 'keyup', this._onKeyUp.bind(this));
     hui.listen(this.input, 'keydown', this._onKeyDown.bind(this));
+    hui.listen(this.input, 'input', this._onKeyUp.bind(this));
     hui.listen(this.input, 'change', this._onChange.bind(this));
     var p = this.element.getElementsByTagName('em')[0];
     if (p) {
@@ -224,9 +224,7 @@ hui.ui.TextInput.prototype = {
   _getTextAreaHeight : function(input) {
     var t = this.textAreaDummy;
     if (!t) {
-      t = this.textAreaDummy = document.createElement('div');
-      t.className='hui_textarea_dummy';
-      document.body.appendChild(t);
+      t = this.textAreaDummy = hui.build('div.hui_textinput_dummy', {parent: document.body});
     }
     var html = input.value;
     if (html[html.length-1]==='\n') {
@@ -234,7 +232,7 @@ hui.ui.TextInput.prototype = {
     }
     html = hui.string.escape(html).replace(/\n/g,'<br/>');
     t.innerHTML = html;
-    t.style.width=(input.clientWidth)+'px';
-    return t.clientHeight;
+    t.style.width = input.clientWidth + 'px';
+    return t.clientHeight + 2;
   }
 };

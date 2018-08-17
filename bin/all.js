@@ -339,7 +339,7 @@ hui.string = {
    * @returns {Boolean} True if «str» starts with «start»
    */
   startsWith : function(str, start) {
-    if (typeof(str) !== 'string' || typeof(start) !== 'string') {
+    if (!hui.isString(str) || !hui.isString(start)) {
       return false;
     }
     return str.match("^"+start) == start;
@@ -351,7 +351,7 @@ hui.string = {
    * @returns {Boolean} True if «str» ends with «end»
    */
   endsWith : function(str, end) {
-    if (typeof(str) !== 'string' || typeof(end) !== 'string') {
+    if (!hui.isString(str) || !hui.isString(end)) {
       return false;
     }
     return str.match(end+"$") == end;
@@ -383,10 +383,10 @@ hui.string = {
    * @returns {String} The trimmed text
    */
   trim : function(str) {
-    if (str===null || str===undefined) {
+    if (!hui.isDefined(str)) {
       return '';
     }
-    if (typeof(str) != 'string') {
+    if (!hui.isString(str)) {
       str = String(str);
     }
     return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
@@ -424,7 +424,7 @@ hui.string = {
    * @returns {String} The escaped text
    */
   escapeHTML : function(str) {
-    if (str===null || str===undefined) {return '';}
+    if (!hui.isDefined(str)) {return '';}
     return hui.build('div',{text:str}).innerHTML;
   },
   /**
@@ -2090,43 +2090,6 @@ hui.effect = {
     window.setTimeout(function() {
       hui.cls.remove(e,cls);
     },time);
-  }
-};
-
-
-
-
-
-/////////////////// Document /////////////////////
-
-/** @namespace */
-hui.document = {
-  /**
-   * Get the height of the document (including the invisble part)
-   */
-  getWidth : function() {
-    return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth);
-  },
-  /**
-   * Get the width of the document (including the invisble part)
-   */
-  getHeight : function() {
-    if (hui.browser.msie6) {
-      // In IE6 check the children too
-      var max = Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
-      var children = document.body.childNodes;
-      for (var i=0; i < children.length; i++) {
-        if (hui.dom.isElement(children[i])) {
-          max = Math.max(max,children[i].clientHeight);
-        }
-      }
-      return max;
-    }
-    if (window.scrollMaxY && window.innerHeight) {
-      return window.scrollMaxY+window.innerHeight;
-    } else {
-      return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
-    }
   }
 };
 
@@ -5027,7 +4990,12 @@ hui.ui.handleForbidden = function(widget) {
     });
   }
 };
-
+/**
+ * @param {Object} options
+ * @param {Object} options.message
+ * @param {String} options.message.start
+ * @param {String} options.message.success
+ */
 hui.ui.request = function(options) {
   options = hui.override({method:'post',parameters:{}},options);
   if (options.json) {
@@ -7361,7 +7329,7 @@ hui.ui.DropDown.prototype = {
       el.focus();
     }
     if (!this.items) return;
-    var docHeight = hui.document.getHeight();
+    var docHeight = hui.window.getViewHeight();
     if (docHeight < 200) {
       var left = hui.position.getLeft(this.element);
       hui.style.set(this.selector, {
@@ -15571,7 +15539,6 @@ hui.ui.TextInput.prototype = {
       hui.ui.onReady(function() {
         window.setTimeout(function() {
           self.value = self.input.value;
-          console.log(self.value);
           self._updateClass();
         }, 500);
       });
@@ -15584,6 +15551,7 @@ hui.ui.TextInput.prototype = {
     });
     hui.listen(this.input, 'keyup', this._onKeyUp.bind(this));
     hui.listen(this.input, 'keydown', this._onKeyDown.bind(this));
+    hui.listen(this.input, 'input', this._onKeyUp.bind(this));
     hui.listen(this.input, 'change', this._onChange.bind(this));
     var p = this.element.getElementsByTagName('em')[0];
     if (p) {
@@ -15725,9 +15693,7 @@ hui.ui.TextInput.prototype = {
   _getTextAreaHeight : function(input) {
     var t = this.textAreaDummy;
     if (!t) {
-      t = this.textAreaDummy = document.createElement('div');
-      t.className='hui_textarea_dummy';
-      document.body.appendChild(t);
+      t = this.textAreaDummy = hui.build('div.hui_textinput_dummy', {parent: document.body});
     }
     var html = input.value;
     if (html[html.length-1]==='\n') {
@@ -15735,8 +15701,8 @@ hui.ui.TextInput.prototype = {
     }
     html = hui.string.escape(html).replace(/\n/g,'<br/>');
     t.innerHTML = html;
-    t.style.width=(input.clientWidth)+'px';
-    return t.clientHeight;
+    t.style.width = input.clientWidth + 'px';
+    return t.clientHeight + 2;
   }
 };
 ;
@@ -15789,7 +15755,7 @@ hui.on(['hui.ui'], function() { hui.ui.make(
      * @param size {Number} The size in pixels: 16, 32 etc.
      */
     setSize : function(size) {
-      var iconNode = hui.find('span', this.element) || this.element;
+      var iconNode = hui.find('span', this.element) || this.element;
       this.size = size;
       hui.ui.setIconImage(iconNode, this.icon, size);
       iconNode.className = 'hui_icon hui_icon_' + size;
@@ -18509,6 +18475,7 @@ hui.ui.Tile.prototype = {
     _super.call(this, options);
     this.value = null;
     this.components = options.components;
+    this.queryEditors = [];
     this._attach();
   };
 
@@ -18538,11 +18505,17 @@ hui.ui.Tile.prototype = {
     },
     editQuery : function(index) {
       var query = this.value.queries[index];
-      var win = hui.ui.Window.create({
+      win = this.queryEditors[index];
+      if (win) {
+        win.show();
+        return;
+      }
+      win = hui.ui.Window.create({
         title : this._getQueryDescription(query),
         width: 400,
         padding: 10
       });
+      this.queryEditors[index] = win;
       var self = this;
       var overflow = hui.ui.Overflow.create({height: 400});
       win.add(overflow);
@@ -18567,7 +18540,7 @@ hui.ui.Tile.prototype = {
         },{
           type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
         }]);
-        overflow.add(hui.build('div',{text:component.description}));
+        overflow.add(hui.build('div',{text:component.description, style: 'text-transform: uppercase; font-size: 12px;'}));
         form.setValues(self._getComponentValues(query, component));
         overflow.add(form);
         var values = {};

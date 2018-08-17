@@ -123,7 +123,7 @@ hui.ui.DropDown.prototype = {
       el.focus();
     }
     if (!this.items) return;
-    var docHeight = hui.document.getHeight();
+    var docHeight = hui.window.getViewHeight();
     if (docHeight < 200) {
       var left = hui.position.getLeft(this.element);
       hui.style.set(this.selector, {

@@ -28,7 +28,7 @@ hui.on(['hui.ui'], function() { hui.ui.make(
      * @param size {Number} The size in pixels: 16, 32 etc.
      */
     setSize : function(size) {
-      var iconNode = hui.find('span', this.element) || this.element;
+      var iconNode = hui.find('span', this.element) || this.element;
       this.size = size;
       hui.ui.setIconImage(iconNode, this.icon, size);
       iconNode.className = 'hui_icon hui_icon_' + size;

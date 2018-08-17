@@ -637,17 +637,6 @@ form.hui_formula select {
   font-family: Verdana,sans-serif;
   outline: none; }
 
-div.hui_textarea_dummy {
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-  font-size: 9pt;
-  line-height: 16px;
-  position: absolute;
-  visibility: hidden;
-  left: -10000px;
-  top: -10000px;
-  word-wrap: break-word;
-  padding: 1px 0px; }
-
 input.hui_formula_text {
   height: 18px; }
 
@@ -4875,9 +4864,33 @@ input.hui_textinput {
     font-size: 11px; }
 
 textarea.hui_textinput {
-  height: 38px;
+  height: 40px;
+  line-height: 16px;
   padding: 3px 5px;
-  resize: vertical; }
+  resize: vertical;
+  white-space: pre-wrap;
+  word-break: break-word; }
+
+.hui_textinput_dummy {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  position: absolute;
+  visibility: hidden;
+  left: -10000px;
+  top: -10000px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 3px 5px;
+  border: 1px solid #000;
+  min-height: 40px;
+  box-sizing: border-box; }
+
+.hui_textinput_dummy {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  visibility: visible; }
 
 
 .hui_pages_full {

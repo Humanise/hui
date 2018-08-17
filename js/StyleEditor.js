@@ -10,6 +10,7 @@
     _super.call(this, options);
     this.value = null;
     this.components = options.components;
+    this.queryEditors = [];
     this._attach();
   };
 
@@ -39,11 +40,17 @@
     },
     editQuery : function(index) {
       var query = this.value.queries[index];
-      var win = hui.ui.Window.create({
+      win = this.queryEditors[index];
+      if (win) {
+        win.show();
+        return;
+      }
+      win = hui.ui.Window.create({
         title : this._getQueryDescription(query),
         width: 400,
         padding: 10
       });
+      this.queryEditors[index] = win;
       var self = this;
       var overflow = hui.ui.Overflow.create({height: 400});
       win.add(overflow);
@@ -68,7 +75,7 @@
         },{
           type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
         }]);
-        overflow.add(hui.build('div',{text:component.description}));
+        overflow.add(hui.build('div',{text:component.description, style: 'text-transform: uppercase; font-size: 12px;'}));
         form.setValues(self._getComponentValues(query, component));
         overflow.add(form);
         var values = {};

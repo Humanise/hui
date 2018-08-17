@@ -140,19 +140,6 @@ form.hui_formula select
   outline: none;
 }
 
-div.hui_textarea_dummy
-{
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-  font-size: 9pt;
-  line-height:16px;
-  position: absolute;
-  visibility: hidden;
-  left: -10000px;
-  top: -10000px;
-  word-wrap: break-word;
-  padding: 1px 0px;
-}
-
 input.hui_formula_text
 {
   height: 18px;

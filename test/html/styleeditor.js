@@ -14,7 +14,7 @@ hui.ui.listen({
 
     hui.build('div',{
       'class' : 'js-output',
-      style : 'white-space: pre',
+      style : 'white-space: pre; font-size: 11px; font-family: monospace;',
       parent: document.body
     });
 
