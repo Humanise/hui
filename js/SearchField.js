@@ -120,4 +120,4 @@ hui.on(['hui.ui'],function() {
   };
 
   hui.define('hui.ui.SearchField',hui.ui.SearchField);
-})
+});
