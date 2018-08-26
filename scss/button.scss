@@ -175,21 +175,21 @@
     border-color: #dadada;
     @include vertical-gradient(#fafafa, #eeeeee);
   }
-}
 
+  &.hui_is_highlighted {
+    box-shadow: inset 0 0 3px #6ede4a;
+    border-color: #adcaba;
+  }
 
-/** Icon **/
-
-a.hui_button_light em.hui_button_icon
-{
-  margin-left: -6px;
+  .hui_button_icon {
+    margin-left: -6px;
     margin-right: 5px;
     margin-top: 5px;
-}
+  }
 
-a.hui_button_light em.hui_button_icon_notext
-{
+  .hui_button_icon_notext {
     margin-right: -5px;
+  }
 }
 
 
