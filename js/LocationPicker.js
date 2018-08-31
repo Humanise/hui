@@ -61,7 +61,7 @@ hui.ui.LocationPicker.prototype = {
       window.huiLocationPickerReady = null;
     }.bind(this);
     hui.log('Loading google maps...');
-    hui.require('http://maps.google.com/maps/api/js?callback=huiLocationPickerReady&key=AIzaSyD-kxdnmiDp7Vs9U4oK_iL9UfaRJgbWF8w');
+    hui.require(document.location.protocol+'//maps.google.com/maps/api/js?callback=huiLocationPickerReady&key=AIzaSyD-kxdnmiDp7Vs9U4oK_iL9UfaRJgbWF8w');
   },
   setLocation : function(loc) {
     this._whenReady(function() {

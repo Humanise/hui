@@ -181,10 +181,21 @@
     border-color: #adcaba;
   }
 
+
+  &.hui_is_disabled {
+    &, &:hover {
+      cursor: default;
+      background: #f9f9f9;
+      color: #999;
+      border: 1px solid #e3e3e3;
+      box-shadow: none;
+    }
+  }
+
   .hui_button_icon {
     margin-left: -6px;
     margin-right: 5px;
-    margin-top: 5px;
+    margin-top: 4px;
   }
 
   .hui_button_icon_notext {

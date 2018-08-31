@@ -52,6 +52,8 @@
     <buttons top="10">
       <button variant="light" text="Light"/>
       <button variant="light" text="Light disabled" disabled="true"/>
+      <button variant="light" text="Light highlighted" highlighted="true"/>
+      <button variant="light" text="Light highlighted + disabled" highlighted="true" disabled="true"/>
       <button variant="light" text="Light" icon="monochrome/delete"/>
       <button variant="light" icon="monochrome/delete"/>
     </buttons>
@@ -59,16 +61,22 @@
     <buttons top="10">
       <button variant="light" text="Light (small)" small="true"/>
       <button variant="light" text="Light (small + disabled)" small="true" disabled="true"/>
+      <button variant="light" text="Light (small + highlighted)" small="true" highlighted="true"/>
+      <button variant="light" text="Light (small + highlighted + disabled)" small="true" highlighted="true" disabled="true"/>
     </buttons>
 
     <buttons top="10">
       <button variant="light" text="Light (mini)" mini="true"/>
       <button variant="light" text="Light (mini + disabled)" mini="true" disabled="true"/>
+      <button variant="light" text="Light (mini + highlighted)" mini="true" highlighted="true"/>
+      <button variant="light" text="Light (mini + highlighted + disabled)" mini="true" highlighted="true" disabled="true"/>
     </buttons>
 
     <buttons top="10">
       <button variant="light" text="Light (tiny)" tiny="true"/>
       <button variant="light" text="Light (tiny + disabled)" tiny="true" disabled="true"/>
+      <button variant="light" text="Light (tiny + highlighted)" tiny="true" highlighted="true"/>
+      <button variant="light" text="Light (tiny + highlighted + disabled)" tiny="true" highlighted="true" disabled="true"/>
     </buttons>
 
     <text top="10"><h>Actions</h></text>
