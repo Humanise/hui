@@ -9,7 +9,7 @@
 
   input {
     font-size: 9pt;
-    font-family: Monaco,monospace;
+    font-family: $mono-font;
     width: 62px;
   }
 }
@@ -28,7 +28,7 @@
   margin-top: 1px;
   text-decoration: none;
   font-size: 14px;
-  font-family: Tahoma;
+  font-family: $font;
   text-align: center;
   color: #ccc;
   line-height: 24px;

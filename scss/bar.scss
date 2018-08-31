@@ -69,7 +69,7 @@
     font-size: 13px;
     margin-left: 5px;
     text-shadow: 0 1px 0 #eee;
-    font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+    font-family: $font;
   }
 
   .hui_icon_16 {
@@ -183,7 +183,7 @@
 {
   color: #666;
   display: inline-block;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-family: $font;
   font-size: 12px;
   line-height: 28px;
   padding: 0 5px;

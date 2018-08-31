@@ -3,8 +3,10 @@ $border-color : #ddd;
 $focus-color: #0069ff;//#39f;
 $dark-focus-color: #65a5ff;
 $text-color: #004a80;
-$font: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-// font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+$font: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+$mono-font: Menlo,"Lucida Console", Monaco, monospace;
+$compact-font: Helvetica,Arial,sans-serif;
+//-apple-system, BlinkMacSystemFont, "Segoe UI",
 
 $bar-height: 30px;
 

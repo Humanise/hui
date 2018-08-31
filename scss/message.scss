@@ -1,3 +1,5 @@
+@import 'tools';
+
 .hui_message {
   position: absolute;
   display: none;
@@ -15,7 +17,7 @@
   font-size: 0;
   top: 40%;
   left: 50%;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-family: $font;
   line-height: 38px;
   font-size: 14px;
   color: #fff;

@@ -5,7 +5,7 @@
   padding-right: 28px; }
   .hui_colorinput input {
     font-size: 9pt;
-    font-family: Monaco,monospace;
+    font-family: Menlo, "Lucida Console", Monaco, monospace;
     width: 62px; }
 
 .hui_colorinput_color {
@@ -20,7 +20,7 @@
   margin-top: 1px;
   text-decoration: none;
   font-size: 14px;
-  font-family: Tahoma;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   text-align: center;
   color: #ccc;
   line-height: 24px;

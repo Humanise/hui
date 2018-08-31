@@ -276,8 +276,7 @@ a.hui_button_bar
   background: none;
   height: 26px;
   line-height: 26px;
-  font-family: Georgia,serif;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-family: $font;
   font-size: 14px;
   border-color: #ccc #d7d7d7 #ccc;
   @include vertical-gradient(#fdfdfd, #e6e6e6);

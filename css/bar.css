@@ -45,7 +45,7 @@
     font-size: 13px;
     margin-left: 5px;
     text-shadow: 0 1px 0 #eee;
-    font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif; }
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
   .hui_bar_button .hui_icon_16 {
     vertical-align: middle; }
   .hui_bar_button:hover {
@@ -144,7 +144,7 @@
 .hui_bar-layout .hui_bar_text {
   color: #666;
   display: inline-block;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 12px;
   line-height: 28px;
   padding: 0 5px;

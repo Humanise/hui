@@ -76,7 +76,7 @@ a.hui_icon_labeled:hover span.hui_icon_128 {
   position: absolute;
   padding: 0 5px;
   border-radius: 7px;
-  font-family: Arial;
+  font-family: Helvetica, Arial, sans-serif;
   right: -5px;
   bottom: -2px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); }

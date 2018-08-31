@@ -45,7 +45,7 @@ div.hui_datepicker_header {
 div.hui_datepicker_header strong {
   display: block;
   text-align: center;
-  font-family: Helvetica;
+  font-family: Helvetica, Arial, sans-serif;
   color: #40474d;
   text-shadow: white 0px 1px 0px; }
 

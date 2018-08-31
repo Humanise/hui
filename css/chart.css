@@ -6,7 +6,7 @@ div.hui_chart {
 div.hui_chart_legends {
   float: right;
   border: 1px solid #ddd;
-  font-family: Arial,sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 10px;
   background: #fff;
   margin-right: 5px;

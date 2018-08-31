@@ -1,8 +1,9 @@
+@import 'tools';
 
 .hui_picker
 {
   background: #b9bec6;
-  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-family: $font;
 }
 
 .hui_picker_middle
