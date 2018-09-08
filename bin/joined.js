@@ -1012,6 +1012,10 @@ hui.build = function(name,options,doc) {
         } else {
           options.parentFirst.insertBefore(e,options.parentFirst.childNodes[0]);
         }
+      } else if (prop=='children') {
+        for (var i = 0; i < options.children.length; i++) {
+          e.appendChild(options.children[i]);
+        }
       } else if (prop=='before') {
         options.before.parentNode.insertBefore(e,options.before);
       } else if (prop=='className') {
@@ -1681,7 +1685,7 @@ hui.request = function(options) {
   options = hui.override({
     method : 'POST',
     async : true,
-    headers : {Ajax : true}
+    headers : {Accept : 'application/json'}
   },options);
   var transport = new XMLHttpRequest();
   if (!transport) {return;}
@@ -5051,7 +5055,11 @@ hui.ui.request = function(options) {
     if (typeof(failure)=='string') {
       hui.ui.callDelegates(t,'failure$'+failure);
     } else if (typeof(failure)=='function') {
-      failure(t);
+      var obj;
+      if (t.getResponseHeader('Content-Type') == 'application/json') {
+        obj = hui.string.fromJSON(t.responseText);
+      }
+      failure(t, obj);
     } else {
       if (options.message && options.message.start) {
         hui.ui.hideMessage();
@@ -7844,6 +7852,9 @@ hui.ui.Button.create = function(options) {
     text = hui.ui.getTranslated(options.title);
   }
   var element = options.element = hui.build('a',{'class':className, href:'#'});
+  if (options.testName) {
+    element.setAttribute('data-test', options.testName);
+  }
   if (options.icon) {
     var icon = hui.build('span',{parent:element,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
     if (!text) {
@@ -15524,6 +15535,9 @@ hui.ui.TextInput.create = function(options) {
     if (options.secret) {
       input.setAttribute('type','password');
     }
+  }
+  if (options.testName) {
+    input.setAttribute('data-test', options.testName);
   }
   if (options.value!==undefined) {
     input.value=options.value;

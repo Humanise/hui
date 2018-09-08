@@ -56,6 +56,9 @@ hui.ui.TextInput.create = function(options) {
       input.setAttribute('type','password');
     }
   }
+  if (options.testName) {
+    input.setAttribute('data-test', options.testName);
+  }
   if (options.value!==undefined) {
     input.value=options.value;
   }

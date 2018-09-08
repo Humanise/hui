@@ -984,7 +984,11 @@ hui.ui.request = function(options) {
     if (typeof(failure)=='string') {
       hui.ui.callDelegates(t,'failure$'+failure);
     } else if (typeof(failure)=='function') {
-      failure(t);
+      var obj;
+      if (t.getResponseHeader('Content-Type') == 'application/json') {
+        obj = hui.string.fromJSON(t.responseText);
+      }
+      failure(t, obj);
     } else {
       if (options.message && options.message.start) {
         hui.ui.hideMessage();

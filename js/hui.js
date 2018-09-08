@@ -1012,6 +1012,10 @@ hui.build = function(name,options,doc) {
         } else {
           options.parentFirst.insertBefore(e,options.parentFirst.childNodes[0]);
         }
+      } else if (prop=='children') {
+        for (var i = 0; i < options.children.length; i++) {
+          e.appendChild(options.children[i]);
+        }
       } else if (prop=='before') {
         options.before.parentNode.insertBefore(e,options.before);
       } else if (prop=='className') {
@@ -1681,7 +1685,7 @@ hui.request = function(options) {
   options = hui.override({
     method : 'POST',
     async : true,
-    headers : {Ajax : true}
+    headers : {Accept : 'application/json'}
   },options);
   var transport = new XMLHttpRequest();
   if (!transport) {return;}

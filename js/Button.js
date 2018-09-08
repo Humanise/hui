@@ -70,6 +70,9 @@ hui.ui.Button.create = function(options) {
     text = hui.ui.getTranslated(options.title);
   }
   var element = options.element = hui.build('a',{'class':className, href:'#'});
+  if (options.testName) {
+    element.setAttribute('data-test', options.testName);
+  }
   if (options.icon) {
     var icon = hui.build('span',{parent:element,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
     if (!text) {

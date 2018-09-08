@@ -52,7 +52,6 @@ div.hui_window div.hui_formula_fieldset
 table.hui_formula_fields
 {
   width: 100%;
-  font-size: 0;
   border-collapse: collapse;
 }
 
@@ -183,8 +182,6 @@ td.hui_formula_field
 div.hui_formula_field_body
 {
   padding-bottom: 5px;
-  font-size: 0;
-  line-height: 0;
 }
 
 div.hui_formula_field_compact div.hui_formula_field_body
