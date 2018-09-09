@@ -15218,6 +15218,9 @@ hui.ui.Checkboxes.Items.prototype = {
     this.parent._checkValues();
     this._updateUI();
   },
+  $objectsLoaded : function(items) {
+    this.$optionsLoaded(items);
+  },
   _onItemClick : function(item) {
     this.parent.flipValue(item.value);
   },
