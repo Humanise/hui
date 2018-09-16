@@ -1225,13 +1225,12 @@ hui.window = {
    * Get the width of the viewport (the visible part of the page)
    */
   getViewWidth : function() {
-    if (window.innerWidth) {
-      return window.innerWidth;
-    } else if (document.documentElement && document.documentElement.clientWidth) {
+    if (document.documentElement && document.documentElement.clientWidth) {
       return document.documentElement.clientWidth;
     } else if (document.body) {
       return document.body.clientWidth;
     }
+    return window.innerWidth;
   }
 };
 
@@ -8969,7 +8968,7 @@ hui.ui.BoundPanel.prototype = {
     var nodeHeight = node.clientHeight || node.offsetHeight;
 
     var panelDimensions = this._getDimensions();
-    var viewportWidth = hui.window.getViewWidth();
+    var viewportWidth = document.body.clientWidth;
     var viewportHeight = hui.window.getViewHeight();
 
     var arrowLeft, arrowTop, left, top;

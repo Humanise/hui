@@ -279,7 +279,7 @@ hui.ui.BoundPanel.prototype = {
     var nodeHeight = node.clientHeight || node.offsetHeight;
 
     var panelDimensions = this._getDimensions();
-    var viewportWidth = hui.window.getViewWidth();
+    var viewportWidth = document.body.clientWidth;
     var viewportHeight = hui.window.getViewHeight();
 
     var arrowLeft, arrowTop, left, top;
