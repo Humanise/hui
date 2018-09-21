@@ -121,65 +121,65 @@ span.hui_disclosure_open:hover {
   background-position: 0 -33px; }
 
 
-span.hui_icon_1, span.hui_icon_16, a.hui_icon_16 {
+.hui_icon_1, .hui_icon_16 {
   display: inline-block;
   width: 16px;
   height: 16px;
   vertical-align: middle; }
 
-a.hui_icon_16:hover {
+.hui_icon_16:hover {
   background-position: 0 -16px; }
 
-span.hui_icon_2, span.hui_icon_32, a.hui_icon_32 {
+.hui_icon_2, .hui_icon_32 {
   display: inline-block;
   width: 32px;
   height: 32px;
   vertical-align: middle; }
 
-span.hui_icon_12, a.hui_icon_12 {
+.hui_icon_12 {
   display: inline-block;
   width: 12px;
   height: 12px;
   vertical-align: middle; }
 
-span.hui_icon_24 {
+.hui_icon_24 {
   display: inline-block;
   width: 24px;
   height: 24px;
   vertical-align: middle; }
 
-span.hui_icon_64 {
+.hui_icon_64 {
   display: inline-block;
   width: 64px;
   height: 64px;
   vertical-align: middle; }
 
-span.hui_icon_128 {
+.hui_icon_128 {
   display: inline-block;
   width: 128px;
   height: 128px;
   vertical-align: middle; }
 
-a.hui_icon_labeled {
+.hui_icon_labeled {
   display: inline-block;
   vertical-align: middle;
   text-align: center;
   text-decoration: none; }
 
-a.hui_icon_labeled strong {
+.hui_icon_labeled strong {
   display: block;
   color: #333;
   font-size: 12px;
   font-weight: normal;
   margin-top: 2px; }
 
-a.hui_icon_labeled_128 strong {
+.hui_icon_labeled_128 strong {
   font-size: 18px; }
 
-a.hui_icon_labeled:hover span.hui_icon_64 {
+.hui_icon_labeled:hover .hui_icon_64 {
   background-position: 0 -64px; }
 
-a.hui_icon_labeled:hover span.hui_icon_128 {
+.hui_icon_labeled:hover .hui_icon_128 {
   background-position: 0 -128px; }
 
 .hui_icon_overlay {
@@ -2079,8 +2079,11 @@ div.hui_window_dark .hui_selection_item span {
     background-position: -8px -115px; }
 
 
+@charset "UTF-8";
 .hui_panel {
-  display: none; }
+  display: none;
+  transition: left .5s,top .5s, transform .5s, opacity .5s;
+  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
   .hui_panel_titlebar {
     font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     text-align: center;
@@ -2089,23 +2092,64 @@ div.hui_window_dark .hui_selection_item span {
     padding: 5px 0;
     cursor: move;
     cursor: -webkit-grab;
-    cursor: -moz-grab; }
+    cursor: -moz-grab;
+    display: none; }
+  .hui_panel.hui-is-titled .hui_panel_titlebar {
+    display: block; }
   .hui_panel_close {
     position: absolute;
     top: 0;
     right: 0;
     width: 26px;
     height: 26px;
-    font-size: 20px;
+    font-size: 16px;
     text-align: center;
     line-height: 26px;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+    cursor: pointer; }
     .hui_panel_close:before {
-      content: '\2573';
-      content: '\00D7'; }
-  .hui_panel .hui_panel_icon {
+      font-family: 'HUI' !important;
+      speak: none;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      content: "";
+      line-height: inherit; }
+  .hui_panel_arrow {
+    position: absolute;
+    background: url("../gfx/pointer.svg");
+    background-size: 20px;
+    display: none; }
+    .hui_panel_arrow-left {
+      width: 10px;
+      height: 20px;
+      right: -10px;
+      background-position: -10px 0; }
+    .hui_panel_arrow-right {
+      width: 10px;
+      height: 20px;
+      left: -10px; }
+    .hui_panel_arrow-above {
+      width: 20px;
+      height: 10px;
+      bottom: -10px;
+      background-position: 0 -10px; }
+    .hui_panel_arrow-below {
+      width: 20px;
+      height: 10px;
+      top: -10px;
+      background-position: 0 0; }
+  .hui_panel.hui-is-targeted .hui_panel_arrow {
+    display: block; }
+  .hui_panel_icon {
     margin-right: 5px;
-    vertical-align: top; }
+    vertical-align: top;
+    background-size: 16px; }
+  .hui_panel.hui-is-dragging {
+    transition: none; }
   .hui_panel.hui-is-dragging .hui_panel_titlebar {
     cursor: -webkit-grabbing;
     cursor: -moz-grabbing; }
@@ -4887,13 +4931,13 @@ textarea.hui_textinput {
   min-height: 40px;
   box-sizing: border-box; }
 
-/*
-.hui_textinput_dummy {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  visibility: visible;
-}*/
+@media (max-width: 450px) {
+  .hui_textinput, .hui_textinput_dummy {
+    font-size: 16px; }
+
+  textarea.hui_textinput, .hui_textinput_dummy {
+    line-height: 18px;
+    min-height: 44px; } }
 
 
 .hui_pages_full {
@@ -5031,8 +5075,11 @@ textarea.hui_textinput {
     padding: 10px 30px; } }
 
 
+@charset "UTF-8";
 .hui_panel {
-  display: none; }
+  display: none;
+  transition: left .5s,top .5s, transform .5s, opacity .5s;
+  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
   .hui_panel_titlebar {
     font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     text-align: center;
@@ -5041,23 +5088,64 @@ textarea.hui_textinput {
     padding: 5px 0;
     cursor: move;
     cursor: -webkit-grab;
-    cursor: -moz-grab; }
+    cursor: -moz-grab;
+    display: none; }
+  .hui_panel.hui-is-titled .hui_panel_titlebar {
+    display: block; }
   .hui_panel_close {
     position: absolute;
     top: 0;
     right: 0;
     width: 26px;
     height: 26px;
-    font-size: 20px;
+    font-size: 16px;
     text-align: center;
     line-height: 26px;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+    cursor: pointer; }
     .hui_panel_close:before {
-      content: '\2573';
-      content: '\00D7'; }
-  .hui_panel .hui_panel_icon {
+      font-family: 'HUI' !important;
+      speak: none;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      content: "";
+      line-height: inherit; }
+  .hui_panel_arrow {
+    position: absolute;
+    background: url("../gfx/pointer.svg");
+    background-size: 20px;
+    display: none; }
+    .hui_panel_arrow-left {
+      width: 10px;
+      height: 20px;
+      right: -10px;
+      background-position: -10px 0; }
+    .hui_panel_arrow-right {
+      width: 10px;
+      height: 20px;
+      left: -10px; }
+    .hui_panel_arrow-above {
+      width: 20px;
+      height: 10px;
+      bottom: -10px;
+      background-position: 0 -10px; }
+    .hui_panel_arrow-below {
+      width: 20px;
+      height: 10px;
+      top: -10px;
+      background-position: 0 0; }
+  .hui_panel.hui-is-targeted .hui_panel_arrow {
+    display: block; }
+  .hui_panel_icon {
     margin-right: 5px;
-    vertical-align: top; }
+    vertical-align: top;
+    background-size: 16px; }
+  .hui_panel.hui-is-dragging {
+    transition: none; }
   .hui_panel.hui-is-dragging .hui_panel_titlebar {
     cursor: -webkit-grabbing;
     cursor: -moz-grabbing; }

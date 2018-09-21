@@ -10,17 +10,28 @@
   <script src="../../js/ui.js"></script>
   <script src="../../js/Component.js"></script>
   <script src="../../js/Panel.js"></script>
+  <script src="panel.js"></script>
 </head>
 
 <body>
-  <script>
-    var panel = hui.ui.Panel.create({title:'This is the title', icon: 'common/info'});
-    panel.add(hui.build('div',{style:'width: 200px; height: 200px; background: #eee'}));
-    panel.show();
-  </script>
-  <div style="position: fixed;">
-    <button class="hui_button" onclick="panel.show()">Show</button>
+  <style>
+    .tests a {
+      display: inline-block;
+    }
+  </style>
+  <div style="position: fixed; left: 40%; top: 50%;">
+    <button class="hui_button" onclick="hui.ui.get('myPanel').show()">Show</button>
+    <button class="hui_button" onclick="hui.ui.get('myPanel').setTitle()">No title</button>
+    <button class="hui_button" onclick="hui.ui.get('myPanel').setTitle('This is a panel')">Title</button>
   </div>
-  <div style="height: 2000px"></div>
+  <div class="tests">
+  <p>Lorem ipsum dolor <a href="#">sit amet</a>, consectetur adipisicing elit, sed do eiusmod tempor <a href="#">incididunt ut labore</a> et dolore magna aliqua. <a href="#">Ut enim ad minim</a> veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat <a href="#">cupidatat non proident</a>, sunt in culpa qui officia deserunt mollit anim id <a href="#">est laborum</a>.</p>
+  <div style="height: 100px"></div>
+  <p>Lorem ipsum <a href="#">dolor sit amet</a>, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat <a href="#">cupidatat non proident</a>, sunt in culpa qui officia deserunt mollit <a href="#">anim id est laborum</a>.</p>
+  <div style="height: 100px"></div>
+  <p>Lorem ipsum <a href="#">dolor sit amet</a>, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat <a href="#">cupidatat non proident</a>, sunt in culpa qui officia deserunt mollit <a href="#">anim id est laborum</a>.</p>
+  <div style="height: 100px"></div>
+  <p>Lorem ipsum <a href="#">dolor sit amet</a>, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat <a href="#">cupidatat non proident</a>, sunt in culpa qui officia deserunt mollit <a href="#">anim id est laborum</a>.</p>
+  </div>
 </body>
 </html>

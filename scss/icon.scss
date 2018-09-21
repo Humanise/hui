@@ -1,6 +1,6 @@
 @import 'tools';
 
-span.hui_icon_1, span.hui_icon_16, a.hui_icon_16
+.hui_icon_1, .hui_icon_16
 {
   display: inline-block;
   width: 16px;
@@ -8,12 +8,12 @@ span.hui_icon_1, span.hui_icon_16, a.hui_icon_16
   vertical-align: middle;
 }
 
-a.hui_icon_16:hover
+.hui_icon_16:hover
 {
   background-position: 0 -16px;
 }
 
-span.hui_icon_2, span.hui_icon_32, a.hui_icon_32
+.hui_icon_2, .hui_icon_32
 {
   display: inline-block;
   width: 32px;
@@ -21,7 +21,7 @@ span.hui_icon_2, span.hui_icon_32, a.hui_icon_32
   vertical-align: middle;
 }
 
-span.hui_icon_12, a.hui_icon_12
+.hui_icon_12
 {
   display: inline-block;
   width: 12px;
@@ -29,7 +29,7 @@ span.hui_icon_12, a.hui_icon_12
   vertical-align: middle;
 }
 
-span.hui_icon_24
+.hui_icon_24
 {
   display: inline-block;
   width: 24px;
@@ -37,7 +37,7 @@ span.hui_icon_24
   vertical-align: middle;
 }
 
-span.hui_icon_64
+.hui_icon_64
 {
   display: inline-block;
   width: 64px;
@@ -45,7 +45,7 @@ span.hui_icon_64
   vertical-align: middle;
 }
 
-span.hui_icon_128
+.hui_icon_128
 {
   display: inline-block;
   width: 128px;
@@ -53,7 +53,7 @@ span.hui_icon_128
   vertical-align: middle;
 }
 
-a.hui_icon_labeled
+.hui_icon_labeled
 {
   display: inline-block;
   vertical-align: middle;
@@ -61,7 +61,7 @@ a.hui_icon_labeled
   text-decoration: none;
 }
 
-a.hui_icon_labeled strong
+.hui_icon_labeled strong
 {
   display: block;
   color: #333;
@@ -70,17 +70,17 @@ a.hui_icon_labeled strong
   margin-top: 2px;
 }
 
-a.hui_icon_labeled_128 strong
+.hui_icon_labeled_128 strong
 {
   font-size: 18px;
 }
 
-a.hui_icon_labeled:hover span.hui_icon_64
+.hui_icon_labeled:hover .hui_icon_64
 {
   background-position: 0 -64px;
 }
 
-a.hui_icon_labeled:hover span.hui_icon_128
+.hui_icon_labeled:hover .hui_icon_128
 {
   background-position: 0 -128px;
 }

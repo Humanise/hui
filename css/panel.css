@@ -1,5 +1,8 @@
+@charset "UTF-8";
 .hui_panel {
-  display: none; }
+  display: none;
+  transition: left .5s,top .5s, transform .5s, opacity .5s;
+  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
   .hui_panel_titlebar {
     font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     text-align: center;
@@ -8,23 +11,64 @@
     padding: 5px 0;
     cursor: move;
     cursor: -webkit-grab;
-    cursor: -moz-grab; }
+    cursor: -moz-grab;
+    display: none; }
+  .hui_panel.hui-is-titled .hui_panel_titlebar {
+    display: block; }
   .hui_panel_close {
     position: absolute;
     top: 0;
     right: 0;
     width: 26px;
     height: 26px;
-    font-size: 20px;
+    font-size: 16px;
     text-align: center;
     line-height: 26px;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+    cursor: pointer; }
     .hui_panel_close:before {
-      content: '\2573';
-      content: '\00D7'; }
-  .hui_panel .hui_panel_icon {
+      font-family: 'HUI' !important;
+      speak: none;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      content: "";
+      line-height: inherit; }
+  .hui_panel_arrow {
+    position: absolute;
+    background: url("../gfx/pointer.svg");
+    background-size: 20px;
+    display: none; }
+    .hui_panel_arrow-left {
+      width: 10px;
+      height: 20px;
+      right: -10px;
+      background-position: -10px 0; }
+    .hui_panel_arrow-right {
+      width: 10px;
+      height: 20px;
+      left: -10px; }
+    .hui_panel_arrow-above {
+      width: 20px;
+      height: 10px;
+      bottom: -10px;
+      background-position: 0 -10px; }
+    .hui_panel_arrow-below {
+      width: 20px;
+      height: 10px;
+      top: -10px;
+      background-position: 0 0; }
+  .hui_panel.hui-is-targeted .hui_panel_arrow {
+    display: block; }
+  .hui_panel_icon {
     margin-right: 5px;
-    vertical-align: top; }
+    vertical-align: top;
+    background-size: 16px; }
+  .hui_panel.hui-is-dragging {
+    transition: none; }
   .hui_panel.hui-is-dragging .hui_panel_titlebar {
     cursor: -webkit-grabbing;
     cursor: -moz-grabbing; }

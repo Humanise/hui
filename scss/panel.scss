@@ -12,27 +12,71 @@
     cursor: move;
     cursor: -webkit-grab;
     cursor: -moz-grab;
+    display: none;
   }
+
+  &.hui-is-titled &_titlebar {
+    display: block;
+  }
+
   &_close {
     position: absolute;
     top: 0;
     right: 0;
     width: 26px;
     height: 26px;
-    font-size: 20px;
+    font-size: 16px;
     text-align: center;
     line-height: 26px;
-    font-family: $font;
-
-    &:before {
-      content: '\2573';
-      content: '\00D7';
-    }
+    @include symbol-before($close-symbol) {line-height: inherit;};
+    cursor: pointer;
   }
 
-  & &_icon {
+  &_arrow {
+    position: absolute;
+    background: url('../gfx/pointer.svg');
+    background-size: 20px;
+    display: none;
+
+    &-left {
+      width: 10px;
+      height: 20px;
+      right: -10px;
+      background-position: -10px 0;
+    }
+    &-right {
+      width: 10px;
+      height: 20px;
+      left: -10px;
+    }
+    &-above {
+      width: 20px;
+      height: 10px;
+      bottom: -10px;
+      background-position: 0 -10px;
+    }
+    &-below {
+      width: 20px;
+      height: 10px;
+      top: -10px;
+      background-position: 0 0;
+    }
+  }
+  &.hui-is-targeted &_arrow {
+    display: block;
+  }
+
+  &_icon {
     margin-right: 5px;
     vertical-align: top;
+    background-size: 16px;
+  }
+
+  transition: left .5s,top .5s, transform .5s, opacity .5s;
+  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+  &.hui-is-dragging {
+    transition: none;
   }
 
   &.hui-is-dragging &_titlebar{

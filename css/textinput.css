@@ -49,10 +49,10 @@ textarea.hui_textinput {
   min-height: 40px;
   box-sizing: border-box; }
 
-/*
-.hui_textinput_dummy {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  visibility: visible;
-}*/
+@media (max-width: 450px) {
+  .hui_textinput, .hui_textinput_dummy {
+    font-size: 16px; }
+
+  textarea.hui_textinput, .hui_textinput_dummy {
+    line-height: 18px;
+    min-height: 44px; } }
