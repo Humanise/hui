@@ -632,7 +632,6 @@
       <xs:element name="icon" type="toolbar_icon"/>
       <xs:element name="item" type="toolbar_item"/>
       <xs:element name="divider" type="toolbar_divider"/>
-      <xs:element name="divider" type="toolbar_divider"/>
       <xs:element name="grid" type="toolbar_grid"/>
       <xs:element name="button" type="button"/>
       <xs:element name="checkbox" type="checkbox"/>

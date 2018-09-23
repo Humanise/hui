@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Bar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="../../xslt/schema.xsd">
+<gui xmlns="uri:hui" title="Bar">
   <bar>
     <button icon="common/edit" text="Edit"/>
     <button icon="common/delete" text="Delete" selected="true"/>
