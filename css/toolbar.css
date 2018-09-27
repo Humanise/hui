@@ -141,7 +141,9 @@ th.hui_toolbar_grid_label {
   .hui_toolbar_more_toggle:hover {
     background: #ddd;
     color: #333; }
+
 .hui_toolbar_more_content {
   display: none; }
+
 .hui_toolbar_more.hui_is_expanded .hui_toolbar_more_content {
   display: inline-block; }

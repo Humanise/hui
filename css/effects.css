@@ -79,6 +79,7 @@
     -webkit-transform: rotate(1deg); }
   100% {
     -webkit-transform: rotate(2deg); } }
+
 @-moz-keyframes hui_wiggle {
   0% {
     -moz-transform: rotate(4deg); }
@@ -100,6 +101,7 @@
     -moz-transform: rotate(4deg); }
   100% {
     -moz-transform: rotate(4deg); } }
+
 .hui_effect_wiggle {
   -webkit-animation: hui_wiggle 1s infinite;
   -moz-animation: hui_wiggle 1s infinite;
@@ -111,11 +113,13 @@
     -webkit-transform: rotateY(0); }
   to {
     -webkit-transform: rotateY(360deg); } }
+
 @-moz-keyframes hui_spin {
   from {
     -moz-transform: rotateY(0); }
   to {
     -moz-transform: rotateY(360deg); } }
+
 .hui_effect_spin {
   -webkit-perspective: 1000;
   -webkit-transform-style: preserve-3d;
@@ -140,6 +144,7 @@
     -webkit-transform: translateX(-5%) rotate(-1deg); }
   100% {
     -webkit-transform: translateX(0%); } }
+
 @-moz-keyframes hui_wobble {
   0% {
     -moz-transform: translateX(0%); }
@@ -155,6 +160,7 @@
     -moz-transform: translateX(-5%) rotate(-1deg); }
   100% {
     -moz-transform: translateX(0%); } }
+
 @-ms-keyframes hui_wobble {
   0% {
     -ms-transform: translateX(0%); }
@@ -170,6 +176,7 @@
     -ms-transform: translateX(-5%) rotate(-1deg); }
   100% {
     -ms-transform: translateX(0%); } }
+
 @-o-keyframes hui_wobble {
   0% {
     -o-transform: translateX(0%); }
@@ -185,6 +192,7 @@
     -o-transform: translateX(-5%) rotate(-1deg); }
   100% {
     -o-transform: translateX(0%); } }
+
 @keyframes hui_wobble {
   0% {
     transform: translateX(0%); }
@@ -200,6 +208,7 @@
     transform: translateX(-5%) rotate(-1deg); }
   100% {
     transform: translateX(0%); } }
+
 .hui_effect_wobble {
   -webkit-animation-name: hui_wobble;
   -moz-animation-name: hui_wobble;
@@ -215,6 +224,7 @@
     -webkit-transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     -webkit-transform: translateX(10px); } }
+
 @-moz-keyframes hui_shake {
   0%, 100% {
     -moz-transform: translateX(0); }
@@ -222,6 +232,7 @@
     -moz-transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     -moz-transform: translateX(10px); } }
+
 @-ms-keyframes hui_shake {
   0%, 100% {
     -ms-transform: translateX(0); }
@@ -229,6 +240,7 @@
     -ms-transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     -ms-transform: translateX(10px); } }
+
 @-o-keyframes hui_shake {
   0%, 100% {
     -o-transform: translateX(0); }
@@ -236,6 +248,7 @@
     -o-transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     -o-transform: translateX(10px); } }
+
 @keyframes hui_shake {
   0%, 100% {
     transform: translateX(0); }
@@ -243,6 +256,7 @@
     transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     transform: translateX(10px); } }
+
 .hui_effect_shake {
   -webkit-animation-name: hui_shake;
   -moz-animation-name: hui_shake;
@@ -284,6 +298,7 @@
   to {
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1); } }
+
 @keyframes hui_effect_tada {
   from {
     -webkit-transform: scale3d(1, 1, 1);
@@ -300,6 +315,7 @@
   to {
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1); } }
+
 .hui_effect_tada {
   -webkit-animation-name: hui_effect_tada;
   animation-name: hui_effect_tada; }

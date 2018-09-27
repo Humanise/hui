@@ -1,7 +1,6 @@
 @import 'tools';
 
-.hui_buttons
-{
+.hui_buttons {
   font-size: 0;
   line-height: 0;
   white-space: nowrap;
@@ -24,8 +23,7 @@
 
 /**************** Standard button ************/
 
-.hui_button
-{
+.hui_button {
   color: $text-color;
   display: inline-block;
   vertical-align: middle;
@@ -130,31 +128,31 @@
 
 }
 
-.hui_button_icon
-{
+.hui_button_icon {
   padding: 0px;
   margin: 4px 5px 0px -2px;
   width: 16px;
   height: 16px;
   display: inline-block;
   vertical-align: top;
+
+  .hui_button:hover & {
+    background-position: 0 -16px;
+  }
+
+  &_notext {
+    margin: 4px -3px 0px -3px;
+  }
 }
 
-.hui_button_icon_notext
-{
-  margin: 4px -3px 0px -3px;
-}
-
-.hui_button:hover .hui_button_icon
-{
-  background-position: 0 -16px;
-}
 
 
 
 
-.hui_button_light
-{
+
+
+
+.hui_button_light {
   border: 1px solid #ddd;
   border-radius: 3px;
   @include vertical-gradient(#ffffff, #f6f6f6);
@@ -261,44 +259,4 @@
       }
     }
   }
-}
-
-
-
-
-
-/** Small bar **/
-
-a.hui_button_bar
-{
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  background: none;
-  height: 26px;
-  line-height: 26px;
-  font-family: $font;
-  font-size: 14px;
-  border-color: #ccc #d7d7d7 #ccc;
-  @include vertical-gradient(#fdfdfd, #e6e6e6);
-}
-
-a.hui_button_bar span
-{
-  background: none;
-  color: #333;
-}
-
-a.hui_button_small_bar, a.hui_button_small_bar span
-{
-  height: 20px;
-  line-height: 20px;
-}
-
-a.hui_button_small_bar span span
-{
-  margin: 0;
-  padding: 0 7px;
-  font-size: 11px;
-  line-height: 17px;
-  text-shadow: 0 1px 0 #fff;
 }

@@ -9,16 +9,11 @@
     height: 30px;
     display: flex;
     align-items: center; }
-    .hui_bar_right > *:not(script) {
-      margin-right: 4px; }
   .hui_bar_left {
     height: 30px;
     display: flex;
     align-items: center;
-    flex-grow: 1;
-    margin-right: 4px; }
-    .hui_bar_left > *:not(script) {
-      margin-left: 4px; }
+    flex-grow: 1; }
   .hui_bar_space {
     display: inline-block;
     width: 5px; }
@@ -166,7 +161,7 @@
   .hui_bar-mini .hui_bar_button {
     height: 22px;
     line-height: 22px;
-    padding: 0 2px; }
+    padding: 0 3px; }
     .hui_bar-mini .hui_bar_button:hover {
       background: #ddd; }
     .hui_bar-mini .hui_bar_button_text {

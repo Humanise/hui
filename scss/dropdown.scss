@@ -112,8 +112,7 @@
 
 /** Mini bar variant **/
 
-.hui_dropdown_bar_mini
-{
+.hui_dropdown-bar_mini {
     vertical-align: top;
     margin-top: 0px;
     background: none;
@@ -122,4 +121,7 @@
     line-height: 22px;
     border: none;
     box-shadow: none;
+    &:hover {
+      background: #eee;
+    };
 }

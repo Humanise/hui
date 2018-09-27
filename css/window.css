@@ -103,11 +103,14 @@
   background: #fff;
   border-radius: 5px;
   box-shadow: 0 3px 20px rgba(0, 0, 0, 0.1); }
+
 .hui_window_light .hui_window_titlebar {
   background: none; }
+
 .hui_window_light .hui_window_close:hover:before {
   background: #eee;
   color: #000; }
+
 .hui_window_light .hui_window_busy {
   top: 26px;
   background: rgba(255, 255, 255, 0.7); }
@@ -115,15 +118,18 @@
 .hui_window_dark .hui_window_front {
   background: rgba(19, 19, 19, 0.9);
   border: none; }
+
 .hui_window_dark .hui_window_titlebar {
   background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 50%);
   color: #fff;
   text-shadow: 0 -1px #000; }
+
 .hui_window_dark .hui_window_close {
   color: #fff; }
   .hui_window_dark .hui_window_close:hover:before {
     background: #666;
     color: #fff; }
+
 .hui_window_dark .hui_window_busy {
   background: rgba(42, 42, 42, 0.7); }
   .hui_window_dark .hui_window_busy_text {

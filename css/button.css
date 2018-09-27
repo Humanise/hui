@@ -100,12 +100,10 @@
   height: 16px;
   display: inline-block;
   vertical-align: top; }
-
-.hui_button_icon_notext {
-  margin: 4px -3px 0px -3px; }
-
-.hui_button:hover .hui_button_icon {
-  background-position: 0 -16px; }
+  .hui_button:hover .hui_button_icon {
+    background-position: 0 -16px; }
+  .hui_button_icon_notext {
+    margin: 4px -3px 0px -3px; }
 
 .hui_button_light {
   border: 1px solid #ddd;
@@ -191,9 +189,9 @@
     border-color: #000; }
   .hui_context_dark .hui_button.hui_is_highlighted {
     /*
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
-    border-color: #2c3831 #222b26 #232b27;
-    @include vertical-gradient(#36634e, #2b4e38);*/
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
+      border-color: #2c3831 #222b26 #232b27;
+      @include vertical-gradient(#36634e, #2b4e38);*/
     box-shadow: inset 0 1px 0px #2ea2ff, 0 0px 1px rgba(255, 255, 255, 0.35);
     border-color: #002752 #003361 #000000;
     background-color: #0a71ec;
@@ -224,37 +222,3 @@
     background: #333;
     color: #999;
     box-shadow: none; }
-
-/** Small bar **/
-a.hui_button_bar {
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  background: none;
-  height: 26px;
-  line-height: 26px;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  font-size: 14px;
-  border-color: #ccc #d7d7d7 #ccc;
-  background-color: #fdfdfd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fdfdfd), to(#e6e6e6));
-  background-image: -webkit-linear-gradient(top, #fdfdfd, #e6e6e6);
-  background-image: -moz-linear-gradient(top, #fdfdfd, #e6e6e6);
-  background-image: -ms-linear-gradient(top, #fdfdfd, #e6e6e6);
-  background-image: -o-linear-gradient(top, #fdfdfd, #e6e6e6);
-  background-image: linear-gradient(top, #fdfdfd, #e6e6e6);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#e6e6e6'); }
-
-a.hui_button_bar span {
-  background: none;
-  color: #333; }
-
-a.hui_button_small_bar, a.hui_button_small_bar span {
-  height: 20px;
-  line-height: 20px; }
-
-a.hui_button_small_bar span span {
-  margin: 0;
-  padding: 0 7px;
-  font-size: 11px;
-  line-height: 17px;
-  text-shadow: 0 1px 0 #fff; }

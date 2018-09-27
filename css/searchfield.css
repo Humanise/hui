@@ -62,7 +62,8 @@
     left: 20px;
     height: 16px;
     top: 2px; }
-    .hui_searchfield-dirty .hui_searchfield_placeholder, .hui_searchfield-focus .hui_searchfield_placeholder {
+    .hui_searchfield-dirty .hui_searchfield_placeholder,
+    .hui_searchfield-focus .hui_searchfield_placeholder {
       display: none; }
   .hui_searchfield-adaptive {
     width: 100%;
