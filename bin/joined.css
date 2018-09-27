@@ -210,6 +210,7 @@ span.hui_disclosure_open:hover {
   src: url("../symbols/font/fonts/HUI.ttf?4k393m") format("truetype"), url("../symbols/font/fonts/HUI.woff?4k393m") format("woff"), url("../symbols/font/fonts/HUI.svg?4k393m#HUI") format("svg");
   font-weight: normal;
   font-style: normal; }
+
 .hui_symbol {
   width: 16px;
   height: 16px;
@@ -318,12 +319,10 @@ span.hui_disclosure_open:hover {
   height: 16px;
   display: inline-block;
   vertical-align: top; }
-
-.hui_button_icon_notext {
-  margin: 4px -3px 0px -3px; }
-
-.hui_button:hover .hui_button_icon {
-  background-position: 0 -16px; }
+  .hui_button:hover .hui_button_icon {
+    background-position: 0 -16px; }
+  .hui_button_icon_notext {
+    margin: 4px -3px 0px -3px; }
 
 .hui_button_light {
   border: 1px solid #ddd;
@@ -409,9 +408,9 @@ span.hui_disclosure_open:hover {
     border-color: #000; }
   .hui_context_dark .hui_button.hui_is_highlighted {
     /*
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
-    border-color: #2c3831 #222b26 #232b27;
-    @include vertical-gradient(#36634e, #2b4e38);*/
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
+      border-color: #2c3831 #222b26 #232b27;
+      @include vertical-gradient(#36634e, #2b4e38);*/
     box-shadow: inset 0 1px 0px #2ea2ff, 0 0px 1px rgba(255, 255, 255, 0.35);
     border-color: #002752 #003361 #000000;
     background-color: #0a71ec;
@@ -442,40 +441,6 @@ span.hui_disclosure_open:hover {
     background: #333;
     color: #999;
     box-shadow: none; }
-
-/** Small bar **/
-a.hui_button_bar {
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  background: none;
-  height: 26px;
-  line-height: 26px;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  font-size: 14px;
-  border-color: #ccc #d7d7d7 #ccc;
-  background-color: #fdfdfd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fdfdfd), to(#e6e6e6));
-  background-image: -webkit-linear-gradient(top, #fdfdfd, #e6e6e6);
-  background-image: -moz-linear-gradient(top, #fdfdfd, #e6e6e6);
-  background-image: -ms-linear-gradient(top, #fdfdfd, #e6e6e6);
-  background-image: -o-linear-gradient(top, #fdfdfd, #e6e6e6);
-  background-image: linear-gradient(top, #fdfdfd, #e6e6e6);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#e6e6e6'); }
-
-a.hui_button_bar span {
-  background: none;
-  color: #333; }
-
-a.hui_button_small_bar, a.hui_button_small_bar span {
-  height: 20px;
-  line-height: 20px; }
-
-a.hui_button_small_bar span span {
-  margin: 0;
-  padding: 0 7px;
-  font-size: 11px;
-  line-height: 17px;
-  text-shadow: 0 1px 0 #fff; }
 
 
 .tabbox {
@@ -843,7 +808,7 @@ body .hui_context_dark label.hui_formula_field,
 
 /* Adaptive */
 /** Mini bar variant **/
-.hui_dropdown_bar_mini {
+.hui_dropdown-bar_mini {
   vertical-align: top;
   margin-top: 0px;
   background: none;
@@ -852,6 +817,8 @@ body .hui_context_dark label.hui_formula_field,
   line-height: 22px;
   border: none;
   box-shadow: none; }
+  .hui_dropdown-bar_mini:hover {
+    background: #eee; }
 
 
 /******************** Header *********************/
@@ -1271,8 +1238,10 @@ th.hui_toolbar_grid_label {
   .hui_toolbar_more_toggle:hover {
     background: #ddd;
     color: #333; }
+
 .hui_toolbar_more_content {
   display: none; }
+
 .hui_toolbar_more.hui_is_expanded .hui_toolbar_more_content {
   display: inline-block; }
 
@@ -1382,11 +1351,14 @@ th.hui_toolbar_grid_label {
   background: #fff;
   border-radius: 5px;
   box-shadow: 0 3px 20px rgba(0, 0, 0, 0.1); }
+
 .hui_window_light .hui_window_titlebar {
   background: none; }
+
 .hui_window_light .hui_window_close:hover:before {
   background: #eee;
   color: #000; }
+
 .hui_window_light .hui_window_busy {
   top: 26px;
   background: rgba(255, 255, 255, 0.7); }
@@ -1394,15 +1366,18 @@ th.hui_toolbar_grid_label {
 .hui_window_dark .hui_window_front {
   background: rgba(19, 19, 19, 0.9);
   border: none; }
+
 .hui_window_dark .hui_window_titlebar {
   background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 50%);
   color: #fff;
   text-shadow: 0 -1px #000; }
+
 .hui_window_dark .hui_window_close {
   color: #fff; }
   .hui_window_dark .hui_window_close:hover:before {
     background: #666;
     color: #fff; }
+
 .hui_window_dark .hui_window_busy {
   background: rgba(42, 42, 42, 0.7); }
   .hui_window_dark .hui_window_busy_text {
@@ -3120,7 +3095,8 @@ ul.hui_wizard a.hui_selected {
     left: 20px;
     height: 16px;
     top: 2px; }
-    .hui_searchfield-dirty .hui_searchfield_placeholder, .hui_searchfield-focus .hui_searchfield_placeholder {
+    .hui_searchfield-dirty .hui_searchfield_placeholder,
+    .hui_searchfield-focus .hui_searchfield_placeholder {
       display: none; }
   .hui_searchfield-adaptive {
     width: 100%;
@@ -3209,6 +3185,7 @@ ul.hui_wizard a.hui_selected {
 
 .hui_dock.hui-is-collapsed .hui_dock_main {
   left: 10px; }
+
 .hui_dock.hui-is-collapsed .hui_dock_sidebar {
   display: none; }
   .hui_dock.hui-is-collapsed .hui_dock_sidebar_line {
@@ -3393,16 +3370,11 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
     height: 30px;
     display: flex;
     align-items: center; }
-    .hui_bar_right > *:not(script) {
-      margin-right: 4px; }
   .hui_bar_left {
     height: 30px;
     display: flex;
     align-items: center;
-    flex-grow: 1;
-    margin-right: 4px; }
-    .hui_bar_left > *:not(script) {
-      margin-left: 4px; }
+    flex-grow: 1; }
   .hui_bar_space {
     display: inline-block;
     width: 5px; }
@@ -3550,7 +3522,7 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
   .hui_bar-mini .hui_bar_button {
     height: 22px;
     line-height: 22px;
-    padding: 0 2px; }
+    padding: 0 3px; }
     .hui_bar-mini .hui_bar_button:hover {
       background: #ddd; }
     .hui_bar-mini .hui_bar_button_text {
@@ -3929,6 +3901,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -webkit-transform: rotate(1deg); }
   100% {
     -webkit-transform: rotate(2deg); } }
+
 @-moz-keyframes hui_wiggle {
   0% {
     -moz-transform: rotate(4deg); }
@@ -3950,6 +3923,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -moz-transform: rotate(4deg); }
   100% {
     -moz-transform: rotate(4deg); } }
+
 .hui_effect_wiggle {
   -webkit-animation: hui_wiggle 1s infinite;
   -moz-animation: hui_wiggle 1s infinite;
@@ -3961,11 +3935,13 @@ div.hui_links_row:hover span.hui_links_remove {
     -webkit-transform: rotateY(0); }
   to {
     -webkit-transform: rotateY(360deg); } }
+
 @-moz-keyframes hui_spin {
   from {
     -moz-transform: rotateY(0); }
   to {
     -moz-transform: rotateY(360deg); } }
+
 .hui_effect_spin {
   -webkit-perspective: 1000;
   -webkit-transform-style: preserve-3d;
@@ -3990,6 +3966,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -webkit-transform: translateX(-5%) rotate(-1deg); }
   100% {
     -webkit-transform: translateX(0%); } }
+
 @-moz-keyframes hui_wobble {
   0% {
     -moz-transform: translateX(0%); }
@@ -4005,6 +3982,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -moz-transform: translateX(-5%) rotate(-1deg); }
   100% {
     -moz-transform: translateX(0%); } }
+
 @-ms-keyframes hui_wobble {
   0% {
     -ms-transform: translateX(0%); }
@@ -4020,6 +3998,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -ms-transform: translateX(-5%) rotate(-1deg); }
   100% {
     -ms-transform: translateX(0%); } }
+
 @-o-keyframes hui_wobble {
   0% {
     -o-transform: translateX(0%); }
@@ -4035,6 +4014,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -o-transform: translateX(-5%) rotate(-1deg); }
   100% {
     -o-transform: translateX(0%); } }
+
 @keyframes hui_wobble {
   0% {
     transform: translateX(0%); }
@@ -4050,6 +4030,7 @@ div.hui_links_row:hover span.hui_links_remove {
     transform: translateX(-5%) rotate(-1deg); }
   100% {
     transform: translateX(0%); } }
+
 .hui_effect_wobble {
   -webkit-animation-name: hui_wobble;
   -moz-animation-name: hui_wobble;
@@ -4065,6 +4046,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -webkit-transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     -webkit-transform: translateX(10px); } }
+
 @-moz-keyframes hui_shake {
   0%, 100% {
     -moz-transform: translateX(0); }
@@ -4072,6 +4054,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -moz-transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     -moz-transform: translateX(10px); } }
+
 @-ms-keyframes hui_shake {
   0%, 100% {
     -ms-transform: translateX(0); }
@@ -4079,6 +4062,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -ms-transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     -ms-transform: translateX(10px); } }
+
 @-o-keyframes hui_shake {
   0%, 100% {
     -o-transform: translateX(0); }
@@ -4086,6 +4070,7 @@ div.hui_links_row:hover span.hui_links_remove {
     -o-transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     -o-transform: translateX(10px); } }
+
 @keyframes hui_shake {
   0%, 100% {
     transform: translateX(0); }
@@ -4093,6 +4078,7 @@ div.hui_links_row:hover span.hui_links_remove {
     transform: translateX(-10px); }
   20%, 40%, 60%, 80% {
     transform: translateX(10px); } }
+
 .hui_effect_shake {
   -webkit-animation-name: hui_shake;
   -moz-animation-name: hui_shake;
@@ -4134,6 +4120,7 @@ div.hui_links_row:hover span.hui_links_remove {
   to {
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1); } }
+
 @keyframes hui_effect_tada {
   from {
     -webkit-transform: scale3d(1, 1, 1);
@@ -4150,6 +4137,7 @@ div.hui_links_row:hover span.hui_links_remove {
   to {
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1); } }
+
 .hui_effect_tada {
   -webkit-animation-name: hui_effect_tada;
   animation-name: hui_effect_tada; }
@@ -4934,7 +4922,6 @@ textarea.hui_textinput {
 @media (max-width: 450px) {
   .hui_textinput, .hui_textinput_dummy {
     font-size: 16px; }
-
   textarea.hui_textinput, .hui_textinput_dummy {
     line-height: 18px;
     min-height: 44px; } }
