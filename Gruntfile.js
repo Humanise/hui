@@ -1,3 +1,5 @@
+const sass = require('node-sass');
+
 module.exports = function(grunt) {
 
   // Project configuration.
@@ -62,8 +64,12 @@ module.exports = function(grunt) {
       }
     },
     sass: {
-      all: {
-        options : {sourcemap:'none'},
+      options: {
+        implementation: sass,
+        sourceMap: false,
+        outputStyle: 'nested'
+      },
+      dist: {
         files: [{
           expand: true,
           cwd: 'scss',
@@ -141,7 +147,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-typescript');
