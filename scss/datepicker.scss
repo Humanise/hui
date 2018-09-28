@@ -1,18 +1,15 @@
 @import 'tools';
 
-div.hui_datepicker
-{
+div.hui_datepicker {
   /*padding-left: 1px;*/
 }
 
-div.hui_datepicker table
-{
+div.hui_datepicker table {
   border-collapse: collapse;
   width: 100%;
 }
 
-div.hui_datepicker th
-{
+div.hui_datepicker th {
   font-size: 8pt;
   line-height: 18px;
   padding: 0px;
@@ -21,8 +18,7 @@ div.hui_datepicker th
   color: #999;
 }
 
-div.hui_datepicker td
-{
+div.hui_datepicker td {
   border: 1px solid #ddd;
   height: 22px;
   padding: 0px;
@@ -33,37 +29,31 @@ div.hui_datepicker td
   background: #fff;
 }
 
-div.hui_datepicker td:hover
-{
+div.hui_datepicker td:hover {
   background: #eee;
 }
 
-td.hui_datepicker_dimmed
-{
+td.hui_datepicker_dimmed {
   color: #aaa;
 }
 
-div.hui_datepicker td.hui_datepicker_selected
-{
+div.hui_datepicker td.hui_datepicker_selected {
   background: #3875d7;
   color: #fff;
 }
 
-td.hui_datepicker_today
-{
+td.hui_datepicker_today {
   font-weight: bold;
 }
 
-div.hui_datepicker_header
-{
+div.hui_datepicker_header {
   font-size: 9pt;
   overflow: hidden;
   line-height: 13px;
   height: 16px;
 }
 
-div.hui_datepicker_header strong
-{
+div.hui_datepicker_header strong {
   display: block;
   text-align: center;
   font-family: $compact-font;
@@ -71,8 +61,7 @@ div.hui_datepicker_header strong
   text-shadow: rgba(255, 255, 255, 1) 0px 1px 0px;
 }
 
-a.hui_datepicker_previous
-{
+a.hui_datepicker_previous {
   float: left;
   background: url('../icons/monochrome/previous16.png') -1px -2px no-repeat;
   width: 12px;
@@ -81,8 +70,7 @@ a.hui_datepicker_previous
   cursor: pointer;
 }
 
-a.hui_datepicker_next
-{
+a.hui_datepicker_next {
   float: right;
   background: url('../icons/monochrome/next16.png') -3px -2px no-repeat;
   width: 12px;

@@ -1,18 +1,15 @@
 @import 'tools';
 
-div.hui_linkinput
-{
+div.hui_linkinput {
   position: relative;
   font-family: $font;
 }
 
-div.hui_linkinput_busy
-{
+div.hui_linkinput_busy {
   opacity: .5;
 }
 
-span.hui_linkinput_body
-{
+span.hui_linkinput_body {
   margin-left: 106px;
   position: absolute;
   right: 0;
@@ -21,8 +18,7 @@ span.hui_linkinput_body
   height: 23px;
 }
 
-div.hui_linkinput input
-{
+div.hui_linkinput input {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   border-color: #BBBBBB #CCCCCC #DDDDDD;
@@ -40,19 +36,16 @@ div.hui_linkinput input
   width: 100%;
 }
 
-div.hui_linkinput a.hui_dropdown
-{
+div.hui_linkinput a.hui_dropdown {
   width: 100px;
 }
 
-span.hui_linkinput_object
-{
+span.hui_linkinput_object {
   margin-top: 3px;
   display: inline-block;
 }
 
-span.hui_linkinput_title
-{
+span.hui_linkinput_title {
   font-size: 12px;
   margin-left: 3px;
   display: inline-block;

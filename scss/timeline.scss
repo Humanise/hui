@@ -1,15 +1,13 @@
 @import 'tools';
 
-div.hui_timeline
-{
+div.hui_timeline {
   height: 100%;
   width: 100%;
   overflow: auto;
   position: relative;
 }
 
-div.hui_timeline_line
-{
+div.hui_timeline_line {
   width: 1px;
   font-size: 0;
   top: 0;
@@ -18,8 +16,7 @@ div.hui_timeline_line
   background: #f69;
 }
 
-div.hui_timeline_block
-{
+div.hui_timeline_block {
   position: absolute;
   width: 100px;
   height: 20px;
@@ -33,8 +30,7 @@ div.hui_timeline_block
   text-indent: 6px;
 }
 
-div.hui_timeline_bg
-{
+div.hui_timeline_bg {
   height: 100%;
   background-size: 100px 20px;
   background-image: -webkit-linear-gradient(0deg, transparent 99px, #eee 100px),

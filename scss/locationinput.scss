@@ -2,8 +2,7 @@
 
 /******************************** Location *************************/
 
-.hui_locationinput
-{
+.hui_locationinput {
   padding-right: 18px;
   position: relative;
   display: inline-block;
@@ -38,8 +37,7 @@
 }
 
 
-.hui_locationinput_picker
-{
+.hui_locationinput_picker {
   background-image: url('../icons/geo/map16.png');
   width: 16px;
   height: 16px;
@@ -54,8 +52,7 @@
 }
 
 .hui_locationinput_latitude,
-.hui_locationinput_longitude
-{
+.hui_locationinput_longitude {
   display: inline-block;
   height: 16px;
   width: 50%;
@@ -65,12 +62,10 @@
   margin-top: 3px;
 }
 
-.hui_locationinput_latitude
-{
+.hui_locationinput_latitude {
   background: url('../icons/monochrome/latitude16.png') 2px top no-repeat;
 }
 
-.hui_locationinput_longitude
-{
+.hui_locationinput_longitude {
   background: url('../icons/monochrome/longitude16.png') 2px top no-repeat;
 }

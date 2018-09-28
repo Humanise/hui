@@ -1,23 +1,20 @@
 @import 'tools';
 
-form.hui_formula
-{
+form.hui_formula {
   padding: 0px;
   margin: 0px;
   font-family: $font;
   text-align: left;
 }
 
-div.hui_formula_fieldset
-{
+div.hui_formula_fieldset {
   border: 1px solid #ddd;
   padding: 10px 10px 5px;
   margin-top: 4px;
   background: #fff;
 }
 
-strong.hui_formula_fieldset
-{
+strong.hui_formula_fieldset {
   position: absolute;
   margin-top: -19px;
   background: #fff;
@@ -29,56 +26,47 @@ strong.hui_formula_fieldset
   border-radius: 4px;
 }
 
-div.hui_window strong.hui_formula_fieldset
-{
+div.hui_window strong.hui_formula_fieldset {
   background: #E7E7E7;
 }
 
-div.hui_window div.hui_formula_fieldset
-{
+div.hui_window div.hui_formula_fieldset {
   background: #eee;
   border: 1px solid #ccc;
   border-radius: 3px 3px 3px 3px;
     box-shadow: 0 1px 3px #DDDDDD inset;
 }
 
-.hui_formula_header
-{
+.hui_formula_header {
   color: #0077cd;
   font-size: 13pt;
   padding-bottom: 5px;
 }
 
-table.hui_formula_fields
-{
+table.hui_formula_fields {
   width: 100%;
   border-collapse: collapse;
 }
 
-p.hui_formula_field_hint
-{
+p.hui_formula_field_hint {
   font-size: 9px;
   color: #999;
   margin: -5px 0 0 3px;
 }
 
-table.hui_formula_fields_above
-{
+table.hui_formula_fields_above {
   border-spacing: 0px;
 }
 
-form.hui_formula table.split
-{
+form.hui_formula table.split {
   border-spacing: 5px 0px;
 }
 
-td.hui_fields_buttons
-{
+td.hui_fields_buttons {
   border-spacing: 0px;
 }
 
-label.hui_formula_field
-{
+label.hui_formula_field {
   color: #004A80;
   font-size: 12px;
   font-weight: normal;
@@ -87,13 +75,11 @@ label.hui_formula_field
 }
 
 
-table.hui_formula_fields th label.hui_formula_field
-{
+table.hui_formula_fields th label.hui_formula_field {
   font-size: 9pt;
 }
 
-table.hui_formula_fields th
-{
+table.hui_formula_fields th {
   width: 1%;
   vertical-align: top;
   padding: 5px 5px 0px 0px;
@@ -101,33 +87,28 @@ table.hui_formula_fields th
   white-space: nowrap;
 }
 
-table.hui_formula_fields th.hui_formula_middle
-{
+table.hui_formula_fields th.hui_formula_middle {
   vertical-align: middle;
   line-height: normal;
   padding-bottom: 5px;
   padding-top: 0;
 }
 
-table.hui_formula_fields_above th
-{
+table.hui_formula_fields_above th {
   text-align: left;
 }
 
-table.hui_formula_fields_above div.hui_tokenfield
-{
+table.hui_formula_fields_above div.hui_tokenfield {
   margin-bottom: 2px;
 }
 
-form.hui_formula select
-{
+form.hui_formula select {
   font-size: 9pt;
   margin: 0;
   width: 100%;
 }
 
-.hui_formula_text
-{
+.hui_formula_text {
   border: 0px;
   padding: 0px;
   margin: 0px;
@@ -139,19 +120,16 @@ form.hui_formula select
   outline: none;
 }
 
-input.hui_formula_text
-{
+input.hui_formula_text {
   height: 18px;
 }
 
-span.hui_formula_text_multiline
-{
+span.hui_formula_text_multiline {
   display: block;
   font-size: 0;
 }
 
-textarea.hui_formula_text
-{
+textarea.hui_formula_text {
   text-indent: 0;
   line-height: 16px;
   padding: 0px;
@@ -161,51 +139,43 @@ textarea.hui_formula_text
   overflow-x: hidden;
 }
 
-textarea.hui_formula_text::-webkit-scrollbar
-{
+textarea.hui_formula_text::-webkit-scrollbar {
   height: 14px;
   width: 14px;
 }
 
-textarea.hui_formula_text::-webkit-scrollbar-thumb
-{
+textarea.hui_formula_text::-webkit-scrollbar-thumb {
     background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0%, from(#fff), to(rgb(240, 240, 240)));
     border-radius: 7px;
   border: 1px solid #ddd;
 }
 
-td.hui_formula_field
-{
+td.hui_formula_field {
   padding: 0;
 }
 
-div.hui_formula_field_body
-{
+div.hui_formula_field_body {
   padding-bottom: 5px;
 }
 
-div.hui_formula_field_compact div.hui_formula_field_body
-{
+div.hui_formula_field_compact div.hui_formula_field_body {
   padding: 0;
 }
 
 /************************************** Buttons *********************************/
 
-.hui_formula .hui_buttons
-{
+.hui_formula .hui_buttons {
   text-align: right;
 }
 
 /******************************* Object list **************************/
 
-table.hui_objectlist
-{
+table.hui_objectlist {
   margin-top: 1px;
   width: 100%;
 }
 
-table.hui_objectlist th
-{
+table.hui_objectlist th {
   text-align: left;
   font-size: 11px;
   line-height: 13px;
@@ -214,24 +184,20 @@ table.hui_objectlist th
   padding-left: 4px;
 }
 
-table.hui_objectlist th.hui_objectlist1
-{
+table.hui_objectlist th.hui_objectlist1 {
   padding-left: 2px;
 }
 
-.hui_objectlist tbody input.text
-{
+.hui_objectlist tbody input.text {
   border-color: #ccc #ddd #eee #ddd;
   width: 100%;
 }
-.hui_objectlist tbody td
-{
+.hui_objectlist tbody td {
   padding: 0px 0px 0px 2px;
   vertical-align: top;
 }
 
-.hui_objectlist tbody td.first
-{
+.hui_objectlist tbody td.first {
   padding-left: 0px;
 }
 
@@ -239,8 +205,7 @@ span.hui_datetime {
   display: block;
 }
 
-.hui_datetime_selector
-{
+.hui_datetime_selector {
   position: absolute;
   margin-left: -19px;
   margin-top: 6px;
@@ -253,12 +218,10 @@ span.hui_datetime {
 }
 
 a.hui_datetime span,
-body .hui_context_dark a.hui_datetime span
-{
+body .hui_context_dark a.hui_datetime span {
 }
 
-.hui_datetime_selector:hover
-{
+.hui_datetime_selector:hover {
   background-position: 0 -14px;
 }
 
@@ -266,19 +229,16 @@ body .hui_context_dark a.hui_datetime span
 
 
 
-div.hui_window label.hui_formula_field
-{
+div.hui_window label.hui_formula_field {
   background: rgb(240, 240, 240);
 }
 
 div.hui_formula_fieldset label.hui_formula_field,
-div.hui_window_news label.hui_formula_field
-{
+div.hui_window_news label.hui_formula_field {
   background: none;
 }
 
-div.hui_window_light label.hui_formula_field
-{
+div.hui_window_light label.hui_formula_field {
   color: #004A80;
   background: none;
 }
@@ -287,8 +247,7 @@ div.hui_window_light label.hui_formula_field
 body .hui_context_dark label.hui_formula_field,
 .hui_context_dark .hui_checkbox,
 .hui_context_dark span.hui_radiobutton_label,
-.hui_context_dark th.hui_objectlist
-{
+.hui_context_dark th.hui_objectlist {
   color: #fff;
   background: none;
 }

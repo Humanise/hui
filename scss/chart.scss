@@ -1,14 +1,12 @@
 @import 'tools';
 
-div.hui_chart
-{
+div.hui_chart {
   overflow: hidden;
   position: relative;
   width: 100%;
 }
 
-div.hui_chart_legends
-{
+div.hui_chart_legends {
   float: right;
   border: 1px solid #ddd;
   font-family: $compact-font;
@@ -21,8 +19,7 @@ div.hui_chart_legends
   border-radius: 3px;
 }
 
-div.hui_chart_legend em
-{
+div.hui_chart_legend em {
   display: inline-block;
   border-radius: 2px;
   width: 12px;
@@ -33,14 +30,12 @@ div.hui_chart_legend em
 
 
 
-div.hui_chart_legend span
-{
+div.hui_chart_legend span {
   display: inline-block;
   vertical-align: middle;
 }
 
-span.hui_chart_label
-{
+span.hui_chart_label {
   position: absolute;
   text-align: center;
   width: 50px;

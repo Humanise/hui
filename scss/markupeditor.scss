@@ -1,7 +1,6 @@
 @import 'tools';
 
-div.hui_markupeditor
-{
+div.hui_markupeditor {
   border: 1px solid #eee;
   height: 200px;
   background: #fff;
@@ -9,14 +8,12 @@ div.hui_markupeditor
   cursor: text;
 }
 
-.hui_markupeditor_highlighted
-{
+.hui_markupeditor_highlighted {
   box-shadow: 0 0 5px #abf, 0 0 5px #abf;
   border-radius: 3px;
 }
 
-.hui_markupeditor_path
-{
+.hui_markupeditor_path {
   font-family: $font;
     font-size: 0;
   text-align: left;
@@ -32,8 +29,7 @@ div.hui_markupeditor
   text-decoration: none;
 }
 
-.hui_markupeditor_inlinepanel a
-{
+.hui_markupeditor_inlinepanel a {
   font-family: $font;
   color: #333;
   padding: 3px 5px;

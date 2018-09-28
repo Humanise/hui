@@ -1,7 +1,6 @@
 @import 'tools';
 
-div.hui_alert
-{
+div.hui_alert {
   width: 500px;
   border: 1px solid #ddd;
   border-bottom-color: #d3d3d3;
@@ -19,8 +18,7 @@ div.hui_alert
   font-family: $font;
 }
 
-div.hui_alert_body
-{
+div.hui_alert_body {
   min-height: 135px;
   padding: 13px 15px;
   overflow: hidden;
@@ -28,26 +26,22 @@ div.hui_alert_body
   border: 1px solid #fff;
 }
 
-div.hui_alert_content
-{
+div.hui_alert_content {
   min-height: 105px;
   overflow: hidden;
 }
 
-div.hui_alert .smile
-{
+div.hui_alert .smile {
   padding-left: 160px;
   background: url('../gfx/smiley_large_smile.png') no-repeat scroll 10px 10px;
 }
 
-div.hui_alert .gasp
-{
+div.hui_alert .gasp {
   padding-left: 160px;
   background: url('../gfx/smiley_large_gasp.png') no-repeat scroll 10px 10px;
 }
 
-div.hui_alert h1
-{
+div.hui_alert h1 {
   color: #123;
   font-size: 18px;
   margin: 0px 0px 10px;
@@ -55,8 +49,7 @@ div.hui_alert h1
   text-align: left;
 }
 
-div.hui_alert p
-{
+div.hui_alert p {
   color: #123;
   font-size: 13px;
   margin: 0px 0px 10px;

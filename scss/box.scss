@@ -1,15 +1,13 @@
 @import 'tools';
 
-.hui_box
-{
+.hui_box {
   margin: 0 auto;
   text-align: left;
   box-shadow: 0 4px 8px rgba(0,0,0,.15);
   background: #fff;
 }
 
-.hui_box_close
-{
+.hui_box_close {
   width: 29px;
   height: 31px;
   background: url('../gfx/box_close.png') left top no-repeat;
@@ -18,25 +16,21 @@
   z-index: 200;
 }
 
-.hui_box_close:hover
-{
+.hui_box_close:hover {
   background-position: 0 -31px;
 }
 
-.hui_box_close:focus
-{
+.hui_box_close:focus {
   background-position: 0 -62px;
   outline: none;
 }
 
-.hui_box_close:focus:hover
-{
+.hui_box_close:focus:hover {
   background-position: 0 -93px;
   outline: none;
 }
 
-.hui_box_absolute
-{
+.hui_box_absolute {
   position: absolute;
   left: 50%;
   top: -10000px;
@@ -46,13 +40,11 @@
 
 /****************************** Plain ****************************/
 
-.hui_box_plain
-{
+.hui_box_plain {
     box-shadow: 0 5px 20px rgba(0,0,0,.3);
 }
 
-.hui_box_close_plain
-{
+.hui_box_close_plain {
   margin: -15px 0 0 -15px;
 }
 
@@ -62,13 +54,11 @@
   background: #f3f3f3;
 }
 
-.hui_box_textured .hui_box_body
-{
+.hui_box_textured .hui_box_body {
   border: 1px solid #fff;
 }
 
-.hui_box_header
-{
+.hui_box_header {
   height: 56px;
   @include vertical-gradient(#d1dae5,#b6c0cc);
   border: 1px solid #b6c1d0;
@@ -78,8 +68,7 @@
   border-width: 1px 0;
 }
 
-.hui_box_title
-{
+.hui_box_title {
   float: left;
   height: 58px;
   line-height: 58px;
@@ -90,18 +79,15 @@
   text-shadow: rgba(255,255,255,.5) 0px 1px 0px;
 }
 
-.hui_box_header_toolbar .hui_box_title
-{
+.hui_box_header_toolbar .hui_box_title {
   float: right;
 }
 
-.hui_box_header .hui_toolbar
-{
+.hui_box_header .hui_toolbar {
   float: left;
 }
 
-.hui_box_header a.hui_toolbar_icon_selected
-{
+.hui_box_header a.hui_toolbar_icon_selected {
     background-color: rgba(119, 142, 169, 0.5);
 }
 

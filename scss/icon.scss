@@ -1,68 +1,59 @@
 @import 'tools';
 
-.hui_icon_1, .hui_icon_16
-{
+.hui_icon_1, .hui_icon_16 {
   display: inline-block;
   width: 16px;
   height: 16px;
   vertical-align: middle;
 }
 
-.hui_icon_16:hover
-{
+.hui_icon_16:hover {
   background-position: 0 -16px;
 }
 
-.hui_icon_2, .hui_icon_32
-{
+.hui_icon_2, .hui_icon_32 {
   display: inline-block;
   width: 32px;
   height: 32px;
   vertical-align: middle;
 }
 
-.hui_icon_12
-{
+.hui_icon_12 {
   display: inline-block;
   width: 12px;
   height: 12px;
   vertical-align: middle;
 }
 
-.hui_icon_24
-{
+.hui_icon_24 {
   display: inline-block;
   width: 24px;
   height: 24px;
   vertical-align: middle;
 }
 
-.hui_icon_64
-{
+.hui_icon_64 {
   display: inline-block;
   width: 64px;
   height: 64px;
   vertical-align: middle;
 }
 
-.hui_icon_128
-{
+.hui_icon_128 {
   display: inline-block;
   width: 128px;
   height: 128px;
   vertical-align: middle;
 }
 
-.hui_icon_labeled
-{
+.hui_icon_labeled {
   display: inline-block;
   vertical-align: middle;
   text-align: center;
   text-decoration: none;
 }
 
-.hui_icon_labeled strong
-{
+.hui_icon_labeled strong {
   display: block;
   color: #333;
   font-size: 12px;
@@ -70,31 +61,26 @@
   margin-top: 2px;
 }
 
-.hui_icon_labeled_128 strong
-{
+.hui_icon_labeled_128 strong {
   font-size: 18px;
 }
 
-.hui_icon_labeled:hover .hui_icon_64
-{
+.hui_icon_labeled:hover .hui_icon_64 {
   background-position: 0 -64px;
 }
 
-.hui_icon_labeled:hover .hui_icon_128
-{
+.hui_icon_labeled:hover .hui_icon_128 {
   background-position: 0 -128px;
 }
 
-.hui_icon_overlay
-{
+.hui_icon_overlay {
   height: 32px;
   width: 32px;
   background: right bottom no-repeat;
   display:inline-block;
 }
 
-.hui_icon_badge
-{
+.hui_icon_badge {
   background: #f00;
   background: -webkit-gradient(linear, left top, left bottom, from(#f69), to(#f03));
   color: #fff;

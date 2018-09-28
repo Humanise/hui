@@ -1,7 +1,6 @@
 @import 'tools';
 
-.hui_overlay
-{
+.hui_overlay {
   display: none;
   position: absolute;
   height: 38px;
@@ -17,16 +16,14 @@
   font-size: 0;
 }
 
-.hui_overlay_icon
-{
+.hui_overlay_icon {
   width: 32px;
   height: 32px;
   display: inline-block;
   margin: 3px 3px 0px;
 }
 
-.hui_overlay .hui_button
-{
+.hui_overlay .hui_button {
   vertical-align: top;
   margin-top: 6px;
   margin-left: 4px;
@@ -34,8 +31,7 @@
 
 
 
-.hui_overlay_text
-{
+.hui_overlay_text {
   display: inline-block;
   line-height: 33px;
   vertical-align: top;
@@ -50,8 +46,7 @@
 
 /*** Light variant ***/
 
-.hui_overlay_light
-{
+.hui_overlay_light {
   background: #fafafa;
   border: 1px solid #eee;
   border-radius: 4px;
@@ -60,7 +55,6 @@
   box-shadow: none;
 }
 
-.hui_overlay_light .hui_overlay_icon
-{
+.hui_overlay_light .hui_overlay_icon {
   margin-top: 2px;
 }

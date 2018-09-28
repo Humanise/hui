@@ -1,7 +1,6 @@
 @import 'tools';
 
-span.hui_disclosure
-{
+span.hui_disclosure {
   display: inline-block;
   width: 11px;
   height: 11px;
@@ -12,17 +11,14 @@ span.hui_disclosure
   cursor: default;
 }
 
-span.hui_disclosure:hover
-{
+span.hui_disclosure:hover {
   background-position: 0 -11px;
 }
 
-span.hui_disclosure_open
-{
+span.hui_disclosure_open {
   background-position: 0 -22px;
 }
 
-span.hui_disclosure_open:hover
-{
+span.hui_disclosure_open:hover {
   background-position: 0 -33px;
 }

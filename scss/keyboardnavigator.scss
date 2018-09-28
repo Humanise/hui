@@ -1,7 +1,6 @@
 @import 'tools';
 
-div.hui_keyboardnavigator
-{
+div.hui_keyboardnavigator {
   display: none;
   left: 50%;
   top: 50%;
@@ -15,8 +14,7 @@ div.hui_keyboardnavigator
   box-shadow: 0 0 10px rgba(0,0,0,.2);
 }
 
-p.hui_keyboardnavigator_input
-{
+p.hui_keyboardnavigator_input {
   margin: 0;
   padding: 3px 8px;
   background: rgba(0,0,0,.4);
@@ -31,8 +29,7 @@ p.hui_keyboardnavigator_input
   text-shadow: 0 0 3px rgba(0,0,0,.5);
 }
 
-div.hui_keyboardnavigator li
-{
+div.hui_keyboardnavigator li {
   padding: 4px 8px;
   overflow: hidden;
   margin: 4px 4px 0 4px;
@@ -41,14 +38,12 @@ div.hui_keyboardnavigator li
   text-shadow: 0 0 3px rgba(0,0,0,.5);
 }
 
-div.hui_keyboardnavigator ul
-{
+div.hui_keyboardnavigator ul {
   list-style: none;
   margin: 0;
   padding: 0 0 4px;
 }
 
-li.hui_keyboardnavigator_selected
-{
+li.hui_keyboardnavigator_selected {
   background: rgba(0,0,0,.7);
 }

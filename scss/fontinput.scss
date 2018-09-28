@@ -1,13 +1,11 @@
 @import 'tools';
 
-span.hui_fontinput
-{
+span.hui_fontinput {
   display: inline-block;
   vertical-align: middle;
 }
 
-a.hui_fontinput
-{
+a.hui_fontinput {
   background: #fff;
   border: 1px solid #ddd;
   line-height: 18px;
@@ -27,14 +25,12 @@ a.hui_fontinput
   box-sizing: boder-box;
 }
 
-a.hui_fontinput:hover
-{
+a.hui_fontinput:hover {
   background: #eee;
   border: 1px solid #ccc;
 }
 
-a.hui_fontinput:focus
-{
+a.hui_fontinput:focus {
   /*border-color: #2678ff;*/
   outline: 4px auto #2678ff;
 }

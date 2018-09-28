@@ -1,7 +1,6 @@
 @import 'tools';
 
-div.hui_fontpicker
-{
+div.hui_fontpicker {
   background: #fff;
   width: 200px;
   border: 1px solid #ddd;
@@ -10,8 +9,7 @@ div.hui_fontpicker
   overflow: auto;
 }
 
-div.hui_fontpicker_item
-{
+div.hui_fontpicker_item {
   border-bottom: 1px solid #ddd;
   padding: 4px 8px;
   font-size: 12pt;
@@ -19,14 +17,12 @@ div.hui_fontpicker_item
   color: #333;
 }
 
-div.hui_fontpicker_item:hover
-{
+div.hui_fontpicker_item:hover {
   background: #EBF0F7;
   cursor: pointer;
 }
 
-div.hui_fontpicker_item a.hui_icon
-{
+div.hui_fontpicker_item a.hui_icon {
   position: absolute;
   right: 5px;
   top: 50%;
@@ -34,15 +30,13 @@ div.hui_fontpicker_item a.hui_icon
   display: none;
 }
 
-div.hui_fontpicker_item:hover a.hui_icon
-{
+div.hui_fontpicker_item:hover a.hui_icon {
   display: block;
 }
 
 /*********** Example ***********/
 
-div.hui_fontpicker_example
-{
+div.hui_fontpicker_example {
   max-width: 400px;
   max-height: 400px;
   overflow: auto;
@@ -51,28 +45,24 @@ div.hui_fontpicker_example
   border: 1px solid #ddd;
 }
 
-div.hui_fontpicker_example h1
-{
+div.hui_fontpicker_example h1 {
   font-weight: normal;
   margin: 0 0 10px;
 }
 
-div.hui_fontpicker_example table
-{
+div.hui_fontpicker_example table {
   cell-spacing: 0;
   border-collapse: collapse;
   border: 1px solid #eee;
 }
 
-div.hui_fontpicker_example td
-{
+div.hui_fontpicker_example td {
   border: 1px solid #eee;
   padding: 2px 6px 3px;
   vertical-align: top;
 }
 
-div.hui_fontpicker_example th
-{
+div.hui_fontpicker_example th {
   border: 1px solid #eee;
   padding: 2px 6px 3px;
   font-size: 11px;

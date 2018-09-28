@@ -1,7 +1,6 @@
 @import 'tools';
 
-div.hui_tooltip
-{
+div.hui_tooltip {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -15,14 +14,12 @@ div.hui_tooltip
   cursor: default;
 }
 
-div.hui_tooltip div
-{
+div.hui_tooltip div {
   background: url('../gfx/tooltip.png') right -62px no-repeat;
   height: 31px;
 }
 
-div.hui_tooltip div div
-{
+div.hui_tooltip div div {
   background: url('../gfx/tooltip.png') left -31px repeat-x;
   margin: 0px 18px 0px 11px;
 }

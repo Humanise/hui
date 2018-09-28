@@ -1,7 +1,6 @@
 @import 'tools';
 
-body.hui
-{
+body.hui {
   margin: 0px;
   font-size: 11pt;
   background: #fff;
@@ -9,32 +8,26 @@ body.hui
   min-height: 100%;
 }
 
-body.hui, textarea
-{
+body.hui, textarea {
   font-family: $font;
 }
 
-td
-{
+td {
   padding: 0px;
 }
 
-table
-{
+table {
   border-spacing: 0px 0px;
 }
 
-tr.view_toolbar
-{
+tr.view_toolbar {
   display: none;
 }
 
-div.hui_calendar_bar
-{
+div.hui_calendar_bar {
   display: none;
 }
 
-table.hui_view
-{
+table.hui_view {
   width: 100%;
 }

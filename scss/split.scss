@@ -1,21 +1,18 @@
 @import 'tools';
 
-div.hui_split
-{
+div.hui_split {
   height: 100%;
   position: relative;
 }
 
-div.hui_split_row
-{
+div.hui_split_row {
   height: 33%;
   position: absolute;
   width: 100%;
   overflow: hidden;
 }
 
-div.hui_split_handle
-{
+div.hui_split_handle {
   position: absolute;
   width: 100%;
   height: 4px;

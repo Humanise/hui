@@ -79,18 +79,15 @@
 
 
 
-.hui_bar  .hui_bar_button-selected, .hui_bar .hui_bar_button-selected:hover
-{
+.hui_bar  .hui_bar_button-selected, .hui_bar .hui_bar_button-selected:hover {
   @include vertical-gradient(#bdbdbd, #ebebeb);
 }
 
-.hui_bar_button-selected .hui_icon_16
-{
+.hui_bar_button-selected .hui_icon_16 {
   background-position: 0 -32px;
 }
 
-.hui_bar_button-selected .hui_bar_button_text
-{
+.hui_bar_button-selected .hui_bar_button_text {
   color: #0054a6;
 }
 
@@ -104,34 +101,29 @@
 
 /******************* window mini variant ***************/
 
-.hui_bar-window_mini
-{
+.hui_bar-window_mini {
   @include vertical-gradient(#fff, rgb(240,240,240));
   height: 24px;
 }
 
-.hui_window_light .hui_bar-window_mini
-{
+.hui_window_light .hui_bar-window_mini {
   background: #fafafa;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   padding: 0 5px;
 }
 
-.hui_bar-window_mini .hui_bar_right
-{
+.hui_bar-window_mini .hui_bar_right {
   height: 24px;
   background: none;
 }
 
-.hui_bar-window_mini .hui_bar_left
-{
+.hui_bar-window_mini .hui_bar_left {
   height: 24px;
 }
 
 
-.hui_bar-window_mini .hui_bar_button
-{
+.hui_bar-window_mini .hui_bar_button {
   height: 24px;
   line-height: 24px;
   background: none;
@@ -140,39 +132,33 @@
   padding: 0 4px;
 }
 
-.hui_bar-window_mini .hui_bar_button:hover
-{
+.hui_bar-window_mini .hui_bar_button:hover {
   background: #eee;
   border-color: #ddd;
 }
 
-.hui_bar-window_mini .hui_bar_button-selected, .hui_bar-window_mini .hui_bar_button-selected:hover
-{
+.hui_bar-window_mini .hui_bar_button-selected, .hui_bar-window_mini .hui_bar_button-selected:hover {
   @include vertical-gradient(#bbb, #ddd);
   border-color: #bbb;
 }
 
-.hui_bar-window_mini_top
-{
+.hui_bar-window_mini_top {
   border-top: 1px solid #ddd;
 }
 
-.hui_bar-window_mini_bottom
-{
+.hui_bar-window_mini_bottom {
   border-top: 1px solid #ddd;
 }
 
 /******************* layout variant ***************/
 
-.hui_bar-layout
-{
+.hui_bar-layout {
   @include vertical-gradient(#fff, rgb(240,240,240));
   border-bottom: 1px solid #ddd;
 }
 
 
-.hui_bar-layout .hui_bar_text
-{
+.hui_bar-layout .hui_bar_text {
   color: #666;
   display: inline-block;
   font-family: $font;
@@ -183,16 +169,14 @@
   vertical-align: top;
 }
 
-.hui_bar-layout .hui_bar_text_header
-{
+.hui_bar-layout .hui_bar_text_header {
   color: #445566;
   font-weight: bold;
 }
 
 /******************* Mini variant *****************/
 
-.hui_bar-mini
-{
+.hui_bar-mini {
   height: 22px;
   background: #fafafa;
   border: 1px solid #ddd;
@@ -217,8 +201,7 @@
   }
 }
 
-.hui_bar-mini .hui_bar_divider
-{
+.hui_bar-mini .hui_bar_divider {
   display: inline-block;
   height: 22px;
   border-left: 1px solid #ddd;
@@ -228,8 +211,7 @@
 
 /******************* Layout mini variant ***************/
 
-.hui_bar-layout_mini
-{
+.hui_bar-layout_mini {
   @include vertical-gradient(#fff, rgb(240,240,240));
   height: 22px;
   border-bottom: 1px solid #ddd;
@@ -258,23 +240,19 @@
   }
 }
 
-.hui_bar-layout_mini .hui_bar_button-selected, .hui_bar-layout_mini .hui_bar_button-selected:hover
-{
+.hui_bar-layout_mini .hui_bar_button-selected, .hui_bar-layout_mini .hui_bar_button-selected:hover {
   @include vertical-gradient(#bbb, #ddd);
   border-color: #bbb;
 }
 
-.hui_bar-layout_mini .hui_bar_button-selected .hui_icon_16
-{
+.hui_bar-layout_mini .hui_bar_button-selected .hui_icon_16 {
   background-position: 0 -16px;
 }
 
-.hui_bar-layout_mini_top
-{
+.hui_bar-layout_mini_top {
   border-top: 1px solid #ddd;
 }
 
-.hui_bar-layout_mini_bottom
-{
+.hui_bar-layout_mini_bottom {
   border-top: 1px solid #ddd;
 }
