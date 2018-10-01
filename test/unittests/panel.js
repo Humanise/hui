@@ -4,7 +4,7 @@ QUnit.test( "Test", function( assert ) {
   assert.equal(hui.style.get(panel.getElement(),'display'), 'none', 'Panel is not visible');
 
   panel.show();
-  assert.equal(hui.style.get(panel.getElement(), 'block'), null, 'Panel is visible');
+  assert.equal(hui.style.get(panel.getElement(), 'block'), '', 'Panel is visible');
 
   panel.toggle();
   var done = assert.async();
