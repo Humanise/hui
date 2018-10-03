@@ -10,7 +10,7 @@ div.hui_markupeditor {
   border-radius: 3px; }
 
 .hui_markupeditor_path {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 0;
   text-align: left; }
 
@@ -24,7 +24,7 @@ div.hui_markupeditor {
   text-decoration: none; }
 
 .hui_markupeditor_inlinepanel a {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   color: #333;
   padding: 3px 5px;
   display: inline-block;

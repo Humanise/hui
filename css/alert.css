@@ -13,7 +13,7 @@ div.hui_alert {
   -webkit-box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   display: none;
   opacity: 0;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
 
 div.hui_alert_body {
   min-height: 135px;

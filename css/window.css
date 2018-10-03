@@ -12,7 +12,7 @@
     border: 1px solid #ddd;
     border-color: #e6e6e6 #ddd #ccc; }
   .hui_window_titlebar {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     font-size: 0;
     height: 26px;
     cursor: default;
@@ -84,7 +84,7 @@
     background: rgba(241, 241, 241, 0.7);
     z-index: 1;
     border-radius: 3px;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
     .hui_window_busy_text {
       position: absolute;
       width: 100%;

@@ -4,7 +4,7 @@
   vertical-align: middle;
   font-size: 12px;
   text-decoration: none;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   white-space: nowrap;
   background: #fff;
   border: 1px solid #ccc;
@@ -35,7 +35,7 @@ textarea.hui_textinput {
   word-break: break-word; }
 
 .hui_textinput_dummy {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 12px;
   line-height: 16px;
   position: absolute;

@@ -10,7 +10,7 @@ body.hui {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
 
 
 div.hui_dragproxy {
@@ -40,7 +40,7 @@ a.hui_link:hover, a.hui_link:hover span {
 
 
 div.hui_text {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
 
 div.hui_text h1 {
   margin: 0px;
@@ -85,7 +85,7 @@ div.hui_tooltip {
   left: 0px;
   height: 31px;
   background: url("../gfx/tooltip.png") -7px top no-repeat;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   line-height: 28px;
   color: #433909;
   font-size: 8pt;
@@ -240,7 +240,7 @@ span.hui_disclosure_open:hover {
   line-height: 24px;
   cursor: pointer;
   text-decoration: none;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   -webkit-user-select: none;
   -moz-user-select: none;
   white-space: nowrap;
@@ -509,7 +509,7 @@ span.hui_disclosure_open:hover {
 form.hui_formula {
   padding: 0px;
   margin: 0px;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   text-align: left; }
 
 div.hui_formula_fieldset {
@@ -603,7 +603,7 @@ form.hui_formula select {
   font-size: 9pt;
   width: 100%;
   background: transparent;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   outline: none; }
 
 input.hui_formula_text {
@@ -729,7 +729,7 @@ body .hui_context_dark label.hui_formula_field,
   line-height: 24px;
   cursor: pointer;
   text-decoration: none;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   -webkit-user-select: none;
   -moz-user-select: none;
   padding: 0 24px 0 7px;
@@ -789,7 +789,7 @@ body .hui_context_dark label.hui_formula_field,
     font-size: 12px;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
     overflow: auto;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     text-align: left; }
   .hui_dropdown_option {
     padding: 2px 5px;
@@ -994,7 +994,7 @@ div.hui_alert {
   -webkit-box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   display: none;
   opacity: 0;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
 
 div.hui_alert_body {
   min-height: 135px;
@@ -1097,7 +1097,7 @@ td.view_sidebar {
 
 .hui_toolbar {
   padding: 0px;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   position: relative;
   font-size: 0;
   text-align: left; }
@@ -1260,7 +1260,7 @@ th.hui_toolbar_grid_label {
     border: 1px solid #ddd;
     border-color: #e6e6e6 #ddd #ccc; }
   .hui_window_titlebar {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     font-size: 0;
     height: 26px;
     cursor: default;
@@ -1332,7 +1332,7 @@ th.hui_toolbar_grid_label {
     background: rgba(241, 241, 241, 0.7);
     z-index: 1;
     border-radius: 3px;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
     .hui_window_busy_text {
       position: absolute;
       width: 100%;
@@ -1389,7 +1389,7 @@ th.hui_toolbar_grid_label {
 
 
 .hui_list {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   min-height: 100%; }
 
 .hui_list_table {
@@ -1826,7 +1826,7 @@ div.hui_list_cell_card {
 
 
 div.hui_selection {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 0; }
 
 .split_sidebar div.hui_selection {
@@ -2002,7 +2002,7 @@ div.hui_window_dark .hui_selection_item span {
 
 .hui_boundpanel {
   position: absolute;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   top: 0px;
   left: 0px;
   background: #f2f2f2;
@@ -2060,7 +2060,7 @@ div.hui_window_dark .hui_selection_item span {
   transition: left .5s,top .5s, transform .5s, opacity .5s;
   transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
   .hui_panel_titlebar {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     text-align: center;
     font-size: 14px;
     line-height: 16px;
@@ -2138,7 +2138,7 @@ div.hui_window_dark .hui_selection_item span {
 
 .hui_imageviewer {
   background: #fff;
-  font: 10pt "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font: 10pt "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   text-align: left; }
 
 .hui_imageviewer_viewer {
@@ -2214,7 +2214,7 @@ div.hui_window_dark .hui_selection_item span {
 
 .hui_picker {
   background: #b9bec6;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
 
 .hui_picker_middle {
   background: url("../gfx/picker_bg_middle.png") right 0px repeat-y;
@@ -2396,7 +2396,7 @@ div.hui_menu {
   -moz-box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
   -ms-box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   min-width: 120px;
   padding: 4px 0px; }
 
@@ -2457,7 +2457,7 @@ div.hui_menu_item_children:hover {
   height: 30px;
   padding: 0 5px;
   color: #fff;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 12px;
   margin-top: 2px;
   cursor: default; }
@@ -2477,7 +2477,7 @@ div.hui_menu_item_children:hover {
 
 div.hui_upload {
   overflow: hidden;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 0; }
 
 div.hui_upload_drop div.hui_upload_placeholder {
@@ -2947,7 +2947,7 @@ a.hui_datepicker_next {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d1dae5', endColorstr='#b6c0cc');
   border: 1px solid #b6c1d0;
   border-color: #c4cbd4 #acb2bb #a3aab3;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), inset -1px 0 0 rgba(0, 0, 0, 0.1), inset 1px 0 0 rgba(0, 0, 0, 0.1);
   border-width: 1px 0; }
 
@@ -3032,7 +3032,7 @@ ul.hui_wizard a.hui_selected {
 
 
 .hui_searchfield {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   display: inline-block;
   vertical-align: middle;
   text-decoration: none;
@@ -3217,7 +3217,7 @@ div.hui_tabs_tab_light {
 
 div.hui_tabs_bar {
   padding-top: 4px;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 0; }
 
 div.hui_tabs_bar ul {
@@ -3401,7 +3401,7 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
     font-size: 13px;
     margin-left: 5px;
     text-shadow: 0 1px 0 #eee;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
   .hui_bar_button .hui_icon_16 {
     vertical-align: middle; }
   .hui_bar_button:hover {
@@ -3500,7 +3500,7 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
 .hui_bar-layout .hui_bar_text {
   color: #666;
   display: inline-block;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 12px;
   line-height: 28px;
   padding: 0 5px;
@@ -3613,7 +3613,7 @@ span.hui_videoplayer_placeholder_info {
 span.hui_videoplayer_placeholder_info strong {
   display: block;
   font-weight: normal;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   color: #fff;
   margin-top: 10px;
   font-size: 14px;
@@ -3657,7 +3657,7 @@ div.hui_videoplayer_placeholder:hover span.hui_videoplayer_placeholder_info stro
   font-size: 0;
   top: 40%;
   left: 50%;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   line-height: 38px;
   font-size: 14px;
   color: #fff; }
@@ -4229,7 +4229,7 @@ div.hui_colorpicker_swatches a {
     background: none;
     height: 16px;
     outline: none;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     font-size: 12px; }
 
 .hui_locationinput_picker {
@@ -4332,7 +4332,7 @@ div.hui_colorpicker_swatches a {
 
 div.hui_infoview {
   overflow-y: hidden;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
 
 div.hui_infoview_busy {
   background: url("../gfx/spinner_large.gif") center center no-repeat; }
@@ -4461,7 +4461,7 @@ div.hui_infoview_click:hover {
 
 
 div.hui_rendering {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 12px; }
 
 div.hui_rendering p {
@@ -4496,7 +4496,7 @@ div.hui_rendering p {
   margin-top: 1px;
   text-decoration: none;
   font-size: 14px;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   text-align: center;
   color: #ccc;
   line-height: 24px;
@@ -4631,7 +4631,7 @@ div.hui_structure_left {
 
 div.hui_linkinput {
   position: relative;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
 
 div.hui_linkinput_busy {
   opacity: .5; }
@@ -4683,7 +4683,7 @@ a.hui_fontinput {
   background: #fff;
   border: 1px solid #ddd;
   line-height: 18px;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 18px;
   text-align: center;
   color: #333;
@@ -4811,7 +4811,7 @@ div.hui_markupeditor {
   border-radius: 3px; }
 
 .hui_markupeditor_path {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 0;
   text-align: left; }
 
@@ -4825,7 +4825,7 @@ div.hui_markupeditor {
   text-decoration: none; }
 
 .hui_markupeditor_inlinepanel a {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   color: #333;
   padding: 3px 5px;
   display: inline-block;
@@ -4874,7 +4874,7 @@ div.hui_markupeditor {
   vertical-align: middle;
   font-size: 12px;
   text-decoration: none;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   white-space: nowrap;
   background: #fff;
   border: 1px solid #ccc;
@@ -4905,7 +4905,7 @@ textarea.hui_textinput {
   word-break: break-word; }
 
 .hui_textinput_dummy {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 12px;
   line-height: 16px;
   position: absolute;
@@ -5068,7 +5068,7 @@ textarea.hui_textinput {
   transition: left .5s,top .5s, transform .5s, opacity .5s;
   transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
   .hui_panel_titlebar {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     text-align: center;
     font-size: 14px;
     line-height: 16px;

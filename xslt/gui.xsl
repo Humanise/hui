@@ -77,6 +77,7 @@
         <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/mediasimulator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
 
+      <link rel="stylesheet" href="https://rsms.me/inter/inter-ui.css" type="text/css" media="screen" charset="utf-8"/>
       <xsl:for-each select="//gui:css">
         <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:for-each>

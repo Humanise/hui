@@ -4,7 +4,7 @@
   transition: left .5s,top .5s, transform .5s, opacity .5s;
   transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
   .hui_panel_titlebar {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     text-align: center;
     font-size: 14px;
     line-height: 16px;

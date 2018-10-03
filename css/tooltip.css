@@ -4,7 +4,7 @@ div.hui_tooltip {
   left: 0px;
   height: 31px;
   background: url("../gfx/tooltip.png") -7px top no-repeat;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-family: "Inter UI", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   line-height: 28px;
   color: #433909;
   font-size: 8pt;
