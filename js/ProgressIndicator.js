@@ -61,9 +61,6 @@ hui.ui.ProgressIndicator.prototype = {
       fill : '#eee'
     });
   },
-  destroy : function() {
-    hui.dom.remove(this.element);
-  },
   reset : function() {
     var start = this._renderedValue;
     this._renderedValue = this.value = 0;

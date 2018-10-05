@@ -4246,15 +4246,23 @@ hui.ui.confirmOverlay = function(options) {
  * @param widget {Widget} The widget to destroy
  */
 hui.ui.destroy = function(widget) {
-  if (typeof(widget.destroy)=='function') {
-    widget.destroy();
+  if (widget.getAccessories) {
+    var accessories = widget.getAccessories();
+    for (var i = 0; i < accessories.length; i++) {
+      hui.ui.destroy(accessories[i]);
+    }
   }
   delete(hui.ui.objects[widget.name]);
+  widget.detach();
+  var element = widget.getElement();
+  if (element) {
+    hui.dom.remove(element);
+    hui.ui.destroyDescendants(element);
+  }
 };
 
 hui.ui.destroyDescendants = function(widgetOrElement) {
   var desc = hui.ui.getDescendants(widgetOrElement);
-  var objects = hui.ui.objects;
   for (var i=0; i < desc.length; i++) {
     hui.ui.destroy(desc[i]);
   }
@@ -4731,12 +4739,11 @@ hui.ui.extend = function(obj,options) {
       return this.element;
     };
   }
+  if (!obj.detach) {
+    obj.detach = function() {};
+  }
   if (!obj.destroy) {
-    obj.destroy = function() {
-      if (this.element) {
-        hui.dom.remove(this.element);
-      }
-    };
+    obj.destroy = function() {hui.ui.destroy(this)};
   }
   if (!obj.valueForProperty) {
     obj.valueForProperty = function(p) {return this[p];};
@@ -5178,9 +5185,11 @@ hui.ui.Component.prototype = {
    * @see hui.ui.destroy
    */
   destroy : function() {
-    if (this.element) {
-      hui.dom.remove(this.element);
-    }
+    hui.ui.destroy(this)
+  },
+  detach : function() {
+    // TODO: Can we auto-remove all listeners
+    // Override this
   },
   valueForProperty : function(property) {
     return this[property];
@@ -5745,9 +5754,6 @@ hui.ui.Window.prototype = {
   _onAfterMove : function() {
     hui.ui.callDescendants(this,'$$parentMoved');
     hui.cls.remove(this.element,'hui_window_dragging');
-  },
-  destroy : function() {
-    hui.dom.remove(this.element);
   }
 };
 
@@ -7553,8 +7559,7 @@ hui.ui.DropDown.prototype = {
     this.fire('valueChanged', this.value);
     hui.ui.firePropertyChange(this, 'value', this.value);
   },
-  destroy: function() {
-    hui.dom.remove(this.element);
+  detach: function() {
     if (this.selector) {
       hui.dom.remove(this.selector);
     }
@@ -9061,9 +9066,8 @@ hui.ui.BoundPanel.prototype = {
       this.element.style.left = left + 'px';
     }
   },
-  destroy: function() {
+  detach: function() {
     hui.ui.hideCurtain(this);
-    hui.dom.remove(this.element);
   }
 };
 
@@ -10232,7 +10236,7 @@ hui.ui.Upload.prototype = {
   clear : function() {
     for (var i=0; i < this.items.length; i++) {
       if (this.items[i]) {
-        this.items[i].destroy();
+        this.items[i].remove();
       }
     }
     this.items = [];
@@ -10551,7 +10555,7 @@ hui.ui.Upload.Item.prototype = {
   hide : function() {
     this.element.hide();
   },
-  destroy : function() {
+  remove : function() {
     hui.dom.remove(this.element);
   },
   _setStatus : function(text) {
@@ -13477,17 +13481,19 @@ hui.ui.MarkupEditor.prototype = {
   },
 
   /** Remove the widget from the DOM */
-  destroy : function() {
-    hui.dom.remove(this.element);
+  detach : function() {
     if (this.options.replace) {
       this.options.replace.style.display='';
     }
-    var dest = ['colorPicker','_infoWindow','bar','impl'];
+    var dest = ['_infoWindow','impl'];
     for (var i = dest.length - 1; i >= 0; i--) {
       if (this[dest[i]]) {
         this[dest[i]].destroy();
       }
     }
+  },
+  getAccessories : function() {
+    return [this.colorPicker,this.bar].filter(function(e) {!!e});
   },
 
   /** Get the HTML value */
@@ -13738,8 +13744,8 @@ hui.ui.MarkupEditor.Bar.prototype = {
       this.blockSelector.setValue(value.tagName.toLowerCase());
     }
   },
-  destroy : function() {
-    this.bar.destroy();
+  getAccessories : function() {
+    return [this.bar];
   }
 };
 
@@ -14113,7 +14119,6 @@ hui.ui.MarkupEditor.MSIE = {
     return [];
   },
   destroy : function() {
-
   }
 };
 
@@ -14737,9 +14742,6 @@ hui.ui.DateTimeInput.prototype = {
       return Math.round(this.value.getTime() / 1000);
     }
     return this.value;
-  },
-  getElement : function() {
-    return this.element;
   },
   getLabel : function() {
     return this.options.label;
@@ -15894,12 +15896,9 @@ hui.ui.ColorInput.prototype = {
   reset : function() {
     this.setValue('');
   },
-    destroy : function() {
-        hui.dom.remove(this.element);
-        if (this.panel) {
-            this.panel.destroy();
-        }
-    }
+  getAccessories : function() {
+    return this.panel ? [this.panel] : [];
+  }
 };
 ;
 /**
@@ -16834,13 +16833,12 @@ hui.ui.FontInput.prototype = {
   reset : function() {
     this.setValue('');
   },
-    destroy : function() {
-        hui.dom.remove(this.element);
-        if (this.panel) {
-            this.panel.destroy();
-            this.picker.destroy();
-        }
-    }
+  getAccessories : function() {
+    var a = [];
+    if (this.panel) a.push(this.panel);
+    if (this.picker) a.push(this.picker);
+    return a;
+  }
 };
 ;
 /**
@@ -16969,11 +16967,8 @@ hui.ui.FontPicker.prototype = {
     this.previews[font.text] = win;
     win.show();
   },
-  destroy : function() {
-    hui.each(this.previews,function(key,value) {
-      value.destroy();
-    });
-    hui.dom.remove(this.element);
+  getAccessories : function() {
+    return this.previews;
   }
 };
 ;
@@ -17717,9 +17712,6 @@ hui.ui.Pages.prototype = {
     _onAfterMove : function() {
       hui.ui.callDescendants(this,'$$parentMoved');
       hui.cls.remove(this.element,'hui-is-dragging');
-    },
-    destroy : function() {
-      hui.dom.remove(this.element);
     }
   };
 
@@ -18191,9 +18183,6 @@ hui.ui.ProgressIndicator.prototype = {
       outerRadius : this.size/2,
       fill : '#eee'
     });
-  },
-  destroy : function() {
-    hui.dom.remove(this.element);
   },
   reset : function() {
     var start = this._renderedValue;
@@ -21232,9 +21221,6 @@ hui.ui.Matrix.prototype = {
       this.fire('valueChanged', this.value);
       hui.ui.firePropertyChange(this, 'value', this.value);
       hui.ui.callAncestors(this, 'childValueChanged', this.value);
-    },
-    getElement : function() {
-      return _super.prototype.getElement.call(this);
     }
   };
 

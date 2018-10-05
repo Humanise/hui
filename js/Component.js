@@ -56,9 +56,11 @@ hui.ui.Component.prototype = {
    * @see hui.ui.destroy
    */
   destroy : function() {
-    if (this.element) {
-      hui.dom.remove(this.element);
-    }
+    hui.ui.destroy(this)
+  },
+  detach : function() {
+    // TODO: Can we auto-remove all listeners
+    // Override this
   },
   valueForProperty : function(property) {
     return this[property];

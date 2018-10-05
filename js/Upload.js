@@ -70,7 +70,7 @@ hui.ui.Upload.prototype = {
   clear : function() {
     for (var i=0; i < this.items.length; i++) {
       if (this.items[i]) {
-        this.items[i].destroy();
+        this.items[i].remove();
       }
     }
     this.items = [];
@@ -389,7 +389,7 @@ hui.ui.Upload.Item.prototype = {
   hide : function() {
     this.element.hide();
   },
-  destroy : function() {
+  remove : function() {
     hui.dom.remove(this.element);
   },
   _setStatus : function(text) {

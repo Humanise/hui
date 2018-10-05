@@ -369,8 +369,7 @@ hui.ui.BoundPanel.prototype = {
       this.element.style.left = left + 'px';
     }
   },
-  destroy: function() {
+  detach: function() {
     hui.ui.hideCurtain(this);
-    hui.dom.remove(this.element);
   }
 };

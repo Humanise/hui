@@ -124,10 +124,7 @@ hui.ui.FontPicker.prototype = {
     this.previews[font.text] = win;
     win.show();
   },
-  destroy : function() {
-    hui.each(this.previews,function(key,value) {
-      value.destroy();
-    });
-    hui.dom.remove(this.element);
+  getAccessories : function() {
+    return this.previews;
   }
 };
