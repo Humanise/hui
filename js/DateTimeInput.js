@@ -84,9 +84,6 @@ hui.ui.DateTimeInput.prototype = {
     }
     return this.value;
   },
-  getElement : function() {
-    return this.element;
-  },
   getLabel : function() {
     return this.options.label;
   },

@@ -173,15 +173,23 @@ hui.ui.confirmOverlay = function(options) {
  * @param widget {Widget} The widget to destroy
  */
 hui.ui.destroy = function(widget) {
-  if (typeof(widget.destroy)=='function') {
-    widget.destroy();
+  if (widget.getAccessories) {
+    var accessories = widget.getAccessories();
+    for (var i = 0; i < accessories.length; i++) {
+      hui.ui.destroy(accessories[i]);
+    }
   }
   delete(hui.ui.objects[widget.name]);
+  widget.detach();
+  var element = widget.getElement();
+  if (element) {
+    hui.dom.remove(element);
+    hui.ui.destroyDescendants(element);
+  }
 };
 
 hui.ui.destroyDescendants = function(widgetOrElement) {
   var desc = hui.ui.getDescendants(widgetOrElement);
-  var objects = hui.ui.objects;
   for (var i=0; i < desc.length; i++) {
     hui.ui.destroy(desc[i]);
   }
@@ -658,12 +666,11 @@ hui.ui.extend = function(obj,options) {
       return this.element;
     };
   }
+  if (!obj.detach) {
+    obj.detach = function() {};
+  }
   if (!obj.destroy) {
-    obj.destroy = function() {
-      if (this.element) {
-        hui.dom.remove(this.element);
-      }
-    };
+    obj.destroy = function() {hui.ui.destroy(this)};
   }
   if (!obj.valueForProperty) {
     obj.valueForProperty = function(p) {return this[p];};

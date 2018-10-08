@@ -104,10 +104,7 @@ hui.ui.ColorInput.prototype = {
   reset : function() {
     this.setValue('');
   },
-    destroy : function() {
-        hui.dom.remove(this.element);
-        if (this.panel) {
-            this.panel.destroy();
-        }
-    }
+  getAccessories : function() {
+    return this.panel ? [this.panel] : [];
+  }
 };

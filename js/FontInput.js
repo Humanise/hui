@@ -82,11 +82,10 @@ hui.ui.FontInput.prototype = {
   reset : function() {
     this.setValue('');
   },
-    destroy : function() {
-        hui.dom.remove(this.element);
-        if (this.panel) {
-            this.panel.destroy();
-            this.picker.destroy();
-        }
-    }
+  getAccessories : function() {
+    var a = [];
+    if (this.panel) a.push(this.panel);
+    if (this.picker) a.push(this.picker);
+    return a;
+  }
 };

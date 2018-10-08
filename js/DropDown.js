@@ -337,8 +337,7 @@ hui.ui.DropDown.prototype = {
     this.fire('valueChanged', this.value);
     hui.ui.firePropertyChange(this, 'value', this.value);
   },
-  destroy: function() {
-    hui.dom.remove(this.element);
+  detach: function() {
     if (this.selector) {
       hui.dom.remove(this.selector);
     }

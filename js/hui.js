@@ -1552,6 +1552,9 @@ hui.Event.prototype = {
     return hui.closest(tag, this.element);
   },
   find : function(func) {
+    if (hui.isString(func)) {
+      return hui.closest(func, this.element);
+    }
     var parent = this.element;
     while (parent) {
       if (func(parent)) {

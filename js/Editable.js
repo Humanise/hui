@@ -27,9 +27,6 @@
       this.fire('valueChanged', this.value);
       hui.ui.firePropertyChange(this, 'value', this.value);
       hui.ui.callAncestors(this, 'childValueChanged', this.value);
-    },
-    getElement : function() {
-      return _super.prototype.getElement.call(this);
     }
   };
 

@@ -269,9 +269,6 @@
     _onAfterMove : function() {
       hui.ui.callDescendants(this,'$$parentMoved');
       hui.cls.remove(this.element,'hui-is-dragging');
-    },
-    destroy : function() {
-      hui.dom.remove(this.element);
     }
   };
 

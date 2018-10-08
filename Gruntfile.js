@@ -119,26 +119,26 @@ module.exports = function(grunt) {
       }
     },
     typescript: {
-        base: {
-          src: ['ts/**/*.ts'],
-          dest: 'js/ts',
-          options: {
-            module: 'amd', //or commonjs
-            target: 'es3', //or es3
-            basePath: 'ts',
-            sourceMap: true,
-            declaration: true
+      base: {
+        src: ['ts/**/*.ts'],
+        dest: 'js/ts',
+        options: {
+          module: 'amd', //or commonjs
+          target: 'es3', //or es3
+          basePath: 'ts',
+          sourceMap: true,
+          declaration: true
+        }
+      }
+    },
+    jsbeautifier : {
+        files : ["js/Alert.js", "js/Bar.js", "js/BoundPanel.js", "js/DropDown.js", "js/VideoPlayer.js"],
+        options : {
+          js: {
+            indentSize: 2
           }
         }
-      },
-      "jsbeautifier" : {
-          files : ["js/Alert.js", "js/Bar.js", "js/BoundPanel.js", "js/DropDown.js", "js/VideoPlayer.js"],
-          options : {
-            js: {
-              indentSize: 2
-            }
-          }
-      }
+    }
   });
 
   // Load plugins.
@@ -163,10 +163,10 @@ module.exports = function(grunt) {
   grunt.registerTask('test', 'Run tests', function(testname) {
     var tests = grunt.file.expand('test/unittests/*.html');
     if (!!testname) {
-      tests = ['test/unittests/' + testname + '.html']
+      tests = ['test/unittests/' + testname + '.html'];
     }
     for (var i = 0; i < tests.length; i++) {
-      tests[i] = 'http://hui.local/hui/' + tests[i]
+      tests[i] = 'http://hui.local/hui/' + tests[i];
     }
     grunt.config('qunit.live.options.urls', tests);
     grunt.task.run('qunit:live');

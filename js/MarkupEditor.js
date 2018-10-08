@@ -90,17 +90,19 @@ hui.ui.MarkupEditor.prototype = {
   },
 
   /** Remove the widget from the DOM */
-  destroy : function() {
-    hui.dom.remove(this.element);
+  detach : function() {
     if (this.options.replace) {
       this.options.replace.style.display='';
     }
-    var dest = ['colorPicker','_infoWindow','bar','impl'];
+    var dest = ['_infoWindow','impl'];
     for (var i = dest.length - 1; i >= 0; i--) {
       if (this[dest[i]]) {
         this[dest[i]].destroy();
       }
     }
+  },
+  getAccessories : function() {
+    return [this.colorPicker,this.bar].filter(function(e) {!!e});
   },
 
   /** Get the HTML value */
@@ -351,8 +353,8 @@ hui.ui.MarkupEditor.Bar.prototype = {
       this.blockSelector.setValue(value.tagName.toLowerCase());
     }
   },
-  destroy : function() {
-    this.bar.destroy();
+  getAccessories : function() {
+    return [this.bar];
   }
 };
 
@@ -726,7 +728,6 @@ hui.ui.MarkupEditor.MSIE = {
     return [];
   },
   destroy : function() {
-
   }
 };
 
