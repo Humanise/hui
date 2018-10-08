@@ -76,7 +76,14 @@ hui.ui.Pages.prototype = {
     hui.ui.callVisible(this);
     this.expanded = !this.expanded;
   },
+  _unFocus : function() {
+    var active = document.activeElement;
+    if (active && hui.dom.isDescendantOrSelf(active, this.element)) {
+      active.blur();
+    }
+  },
   _transition : function(options) {
+    this._unFocus();
     var hide = options.hide,
       show = options.show,
       e = this.element,
