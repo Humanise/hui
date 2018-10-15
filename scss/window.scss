@@ -17,23 +17,19 @@
 
   &_titlebar {
     @include font;
-    font-size: 0;
     height: 26px;
     cursor: default;
     text-align: center;
-    cursor: move;
-    cursor: -webkit-grab;
-    cursor: -moz-grab;
+    @include cursor-grab;
     background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 50%);
     line-height: 26px;
-    font-size: 10pt;
+    font-size: $title-font-size;
     color: #333;
     text-shadow: 0 1px white;
     border-radius: 2px;
 
     .hui_window_dragging & {
-      cursor: -webkit-grabbing;
-      cursor: -moz-grabbing;
+      @include cursor-grabbing;
     }
   }
 

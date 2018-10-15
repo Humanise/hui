@@ -1577,6 +1577,11 @@ hui.Event.prototype = {
   /** Stops the event from propagating */
   stop : function() {
     hui.stop(this.event);
+  },
+  prevent : function() {
+    if (this.event.preventDefault) {
+      this.event.preventDefault();
+    }
   }
 };
 

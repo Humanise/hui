@@ -38,11 +38,11 @@ hui.ui.ProgressIndicator.prototype = {
       return;
     }
     var start = this._renderedValue;
-    var dur = Math.abs(value-start)*2000;
+    var dur = Math.max(200,Math.abs(value-start)*1000);
     hui.animate({
       node : this.element,
       duration : dur,
-      ease:hui.ease.slowFastSlow,
+      ease: hui.ease.cubicOut,
       callback : function(node,pos) {
         var p = start+(value-start)*pos;
         this._renderedValue = p;
@@ -54,9 +54,9 @@ hui.ui.ProgressIndicator.prototype = {
   _draw : function(value) {
     this.arc.update({
       center : {x:this.size/2,y:this.size/2},
-        startDegrees : -90,
+      startDegrees : -90,
       endDegrees : Math.min(-90 + value * 360, 269.9999),
-        innerRadius : this.size/4,
+      innerRadius : this.size/3,
       outerRadius : this.size/2,
       fill : '#eee'
     });
@@ -66,15 +66,15 @@ hui.ui.ProgressIndicator.prototype = {
     this._renderedValue = this.value = 0;
     hui.animate({
       node : this.element,
-      duration : 900,
-      ease:hui.ease.fastSlow,
+      duration : 300,
+      ease : hui.ease.fastSlow,
       callback : function(node,pos) {
         var x = 1 - pos;
         this.arc.update({
           center : {x:this.size/2,y:this.size/2},
-            startDegrees : -90,
+          startDegrees : -90,
           endDegrees : Math.min(-90 + (start+(1-start)*pos) * 360, 269.9999),
-            innerRadius : this.size/4 * x,
+          innerRadius : this.size/4 * x,
           outerRadius : this.size/2 * x,
           fill : '#eee'
         });

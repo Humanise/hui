@@ -1,6 +1,11 @@
 hui.on(function() {
-  var panel = hui.ui.Panel.create({title:'This is the title', icon: 'common/info', name:'myPanel'});
-  panel.add(hui.build('div',{style:'width: 200px; height: 200px; background: #eee'}));
+  var panel = hui.ui.Panel.create({
+    title: 'This is the title',
+    icon: 'common/info',
+    name:'myPanel',
+    close: true
+  });
+  panel.add(hui.build('div',{style:'width: 200px; height: 200px;'}));
   panel.show();
 
   var targets = hui.findAll('.tests a');

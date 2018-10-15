@@ -1577,6 +1577,11 @@ hui.Event.prototype = {
   /** Stops the event from propagating */
   stop : function() {
     hui.stop(this.event);
+  },
+  prevent : function() {
+    if (this.event.preventDefault) {
+      this.event.preventDefault();
+    }
   }
 };
 
@@ -17456,6 +17461,7 @@ hui.ui.Pages.prototype = {
    */
   hui.ui.Panel = function(options) {
     _super.call(this, options);
+    this.options = options;
     this.visible = false;
     this._attach();
     if (options.listener) {
@@ -17464,7 +17470,7 @@ hui.ui.Pages.prototype = {
   };
 
   hui.ui.Panel.create = function(options) {
-    options = hui.override({close : true}, options);
+    options = hui.override({}, options);
     var html = (options.close ? '<div class="hui_panel_close"></div>' : '')+
       '<div class="hui_panel_arrow"></div><div class="hui_panel_titlebar">';
       if (options.icon) {
@@ -17475,7 +17481,6 @@ hui.ui.Pages.prototype = {
       (options.width ? 'width:'+options.width+'px;':'')+
       (options.height ? 'height:'+options.height+'px;':'')+
       (options.padding ? 'padding:'+options.padding+'px;':'')+
-      (options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
       '">'+
       '</div>'+
       '';
@@ -17488,6 +17493,7 @@ hui.ui.Pages.prototype = {
   };
 
   hui.ui.Panel.prototype = {
+    _target : null,
     nodes : {
       close: '.hui_panel_close',
       titlebar: '.hui_panel_titlebar',
@@ -17516,6 +17522,23 @@ hui.ui.Pages.prototype = {
         this.element.style.zIndex = hui.ui.nextPanelIndex();
       }.bind(this));
     },
+    _attachHider : function() {
+      if (this.options.autoHide && !this._hideListener) {
+        this._hideListener = hui.on(document.body, 'tap', function(e) {
+          if (!hui.ui.isWithin(e, this.element) && (!this._target || !hui.ui.isWithin(e, this._target))) {
+            this.hide();
+          }
+        }.bind(this));
+      }
+      if (!this._resizeListener) {
+        var pos = this._positionAtTarget.bind(this);
+        this._resizeListener = hui.listen(window, 'resize', function(e) {
+          if (this.visible) {
+            hui.onDraw(pos);
+          }
+        }.bind(this));
+      }
+    },
     setTitle : function(title) {
       hui.dom.setText(this.nodes.title,hui.ui.getTranslated(title));
       hui.cls.set(this.element,'hui-is-titled', !hui.isBlank(title));
@@ -17528,115 +17551,134 @@ hui.ui.Pages.prototype = {
       }
     },
     show : function(options) {
+      var element = this.element;
       options = options || {};
+      this._target = options.target;
       if (this.visible) {
-        hui.style.set(this.element,{
+        hui.style.set(element,{
           zIndex : hui.ui.nextPanelIndex()
         });
       } else {
-        hui.style.set(this.element,{
-          zIndex : hui.ui.nextPanelIndex(), visibility : 'hidden', display : 'block'
+        hui.style.set(element,{
+          zIndex : hui.ui.nextPanelIndex(),
+          visibility : 'hidden',
+          display : 'block'
         });
       }
-      var panel = {
-        width: this.element.clientWidth,
-        height: this.element.clientHeight
-      };
-      if (options.target) {
-        var target = hui.position.get(options.target);
-        target.height = options.target.clientHeight || options.target.offsetHeight;
-        target.width = options.target.clientWidth || options.target.offsetWidth;
-        var view = {
-          height: hui.window.getViewHeight(),
-          width: hui.window.getViewWidth(),
-          scrollTop: hui.window.getScrollTop(),
-          scrollLeft: hui.window.getScrollTop()
-        }
-        var dist = {
-          above: (target.top - view.scrollTop),
-          below: view.height - (target.top - view.scrollTop + target.height),
-          left: (target.left - view.scrollLeft),
-          right: view.width - (target.left - view.scrollLeft + target.width)
-        }
-        var pos = {
-          top: 0, left: 0
-        }
-        var orientation = this._getOrientation(dist);
-        orientation = (function() {
-          if (dist.below / view.height > .8) {
-            return 'below'
-          }
-          else if (dist.above / view.height > .8) {
-            return 'above'
-          }
-          return dist.left > dist.right ? 'left' : 'right'
-        })()
-        if (orientation == 'below') {
-          pos.top = target.top + target.height + 5;
-          pos.left = target.left + target.width/2 - panel.width/2;
-        } else if (orientation == 'above') {
-          pos.top = target.top - panel.height - 5;
-          pos.left = target.left + target.width/2 - panel.width/2;
-        } else if (orientation == 'left') {
-          pos.top = target.top + target.height/2 - panel.height/2;
-          pos.left = target.left - panel.width;
-        } else if (orientation == 'right') {
-          pos.top = target.top + target.height/2 - panel.height/2;
-          pos.left = target.left + target.width;
-        }
-        var gutter = 5;
-        pos.top = hui.between(gutter, pos.top, view.scrollTop + view.height - panel.height - gutter);
-        pos.left = hui.between(gutter, pos.left, view.scrollLeft + view.width - panel.width - gutter);
-        this.nodes.arrow.className = 'hui_panel_arrow hui_panel_arrow-'+orientation;
-        if (orientation == 'above' || orientation == 'below') {
-          hui.style.set(this.nodes.arrow,{
-            left: (target.left - pos.left + target.width/2 - 10) + 'px',
-            top: ''
+      if (this._target) {
+        if (!this.visible) {
+          this._positionAtTarget();
+          hui.style.set(element,{
+            opacity: '0',
+            transform: 'scale(0.5)',
+            visibility : 'visible'
           });
+          setTimeout(function() {
+            hui.cls.add(element, 'hui-is-animating');
+          })
         } else {
-          hui.style.set(this.nodes.arrow,{
-            top: (target.top - pos.top + target.height/2 - 10) + 'px',
-            left: ''
+          hui.cls.add(element, 'hui-is-animating');
+          this._positionAtTarget();
+        }
+        hui.cls.add(element,'hui-is-targeted');
+        if (!this.visible) {
+          setTimeout(function() {
+            hui.style.set(element, {
+              opacity: 1,
+              transform: 'scale(1) '
+            });
           });
         }
-        hui.cls.add(this.element,'hui-is-targeted');
-        hui.style.set(this.element,{
-          visibility : 'visible',
-          top: pos.top + 'px',
-          left: pos.left + 'px',
-          opacity: 0,
-          transform: 'scale(0) translate(100px,100px)'
-        });
-        hui.onDraw(function() {
-          hui.style.set(this.element,{
-            opacity: 1,
-            transform: 'scale(1) translate(0,0)'
-          });
-        }.bind(this))
+        setTimeout(function() {
+          hui.cls.remove(element,'hui-is-animating');
+        }, 600);
       } else {
         if (this.visible) {
           this._positionInView();
           return;
         }
-        hui.style.set(this.element,{
+        hui.style.set(element,{
           visibility : 'visible'
         });
         if (options.avoid) {
-          hui.position.place({insideViewPort : true, target : {element : options.avoid, vertical : 0.5, horizontal : 1}, source : {element : this.element, vertical : 0.5, horizontal : 0} });
+          hui.position.place({
+            insideViewPort : true,
+            target : {element : options.avoid, vertical : 0.5, horizontal : 1},
+            source : {element : element, vertical : 0.5, horizontal : 0}
+          });
         } else {
-          if (!this.element.style.top) {
-            this.element.style.top = (hui.window.getScrollTop()+40)+'px';
+          if (!element.style.top) {
+            element.style.top = (hui.window.getScrollTop()+40)+'px';
           } else {
             this._positionInView();
           }
-          if (!this.element.style.left) {
-            this.element.style.left = Math.round((hui.window.getViewWidth()-panel.width)/2)+'px';
+          if (!element.style.left) {
+            element.style.left = Math.round((hui.window.getViewWidth()-element.clientWidth)/2)+'px';
           }
         }
-        hui.animate(this.element,'opacity',1,0);
+        hui.animate(element,'opacity',1,0);
       }
       this.visible = true;
       hui.ui.callVisible(this);
+      this._attachHider();
+    },
+    _positionAtTarget : function() {
+      if (!this._target) { return; }
+      var panel = {
+        width: this.element.clientWidth,
+        height: this.element.clientHeight
+      };
+      var target = hui.position.get(this._target);
+      target.height = this._target.offsetHeight || this._target.clientHeight;
+      target.width = this._target.offsetWidth || this._target.clientWidth;
+      var view = {
+        height: hui.window.getViewHeight(),
+        width: hui.window.getViewWidth(),
+        scrollTop: hui.window.getScrollTop(),
+        scrollLeft: hui.window.getScrollLeft()
+      }
+      var dist = {
+        above: (target.top - view.scrollTop) / panel.height,
+        below: (view.height - (target.top - view.scrollTop + target.height))  / panel.height,
+        left: (target.left - view.scrollLeft)  / panel.width,
+        right: (view.width - (target.left - view.scrollLeft + target.width)) / panel.width
+      }
+      var pos = {
+        top: 0, left: 0
+      }
+      var orientation = this._getOrientation(dist);
+      if (orientation == 'below') {
+        pos.top = target.top + target.height + 5;
+        pos.left = target.left + target.width/2 - panel.width/2;
+      } else if (orientation == 'above') {
+        pos.top = target.top - panel.height - 5;
+        pos.left = target.left + target.width/2 - panel.width/2;
+      } else if (orientation == 'left') {
+        pos.top = target.top + target.height/2 - panel.height/2;
+        pos.left = target.left - panel.width - 5;
+      } else if (orientation == 'right') {
+        pos.top = target.top + target.height/2 - panel.height/2;
+        pos.left = target.left + target.width + 5;
+      }
+      var gutter = 5;
+      pos.top = hui.between(gutter, pos.top, view.scrollTop + view.height - panel.height - gutter);
+      pos.left = hui.between(gutter, pos.left, view.scrollLeft + view.width - panel.width - gutter);
+      this.nodes.arrow.className = 'hui_panel_arrow hui_panel_arrow-'+orientation;
+      if (orientation == 'above' || orientation == 'below') {
+        hui.style.set(this.nodes.arrow,{
+          left: hui.between(3, (target.left - pos.left + target.width/2 - 10), panel.width - 3 - 20) + 'px',
+          top: ''
+        });
+      } else {
+        hui.style.set(this.nodes.arrow,{
+          top: hui.between(3, (target.top - pos.top + target.height/2 - 10), panel.height - 3 - 20) + 'px',
+          left: ''
+        });
+      }
+      hui.style.set(this.element,{
+        top: pos.top + 'px',
+        left: pos.left + 'px'
+      })
     },
     _getOrientation : function(distances) {
       var prop, value = 0;
@@ -17657,18 +17699,23 @@ hui.ui.Pages.prototype = {
         this.show(options);
       }
     },
+    isVisible : function() {
+      return this.visible;
+    },
     hide : function() {
       if (!this.visible) return;
-      if (hui.browser.opacity) {
-        hui.animate(this.element,'opacity',0,100,{$complete:function() {
-          this.element.style.display='none';
-          hui.ui.callVisible(this);
-        }.bind(this)});
-      } else {
+      hui.cls.add(this.element, 'hui-is-animating');
+      this.element.style.opacity='0';
+      setTimeout(function() {
+        hui.cls.remove(this.element, 'hui-is-animating');
         this.element.style.display='none';
         hui.ui.callVisible(this);
-      }
+      }.bind(this),500);
       this.visible = false;
+    },
+    clear : function() {
+      hui.ui.destroyDescendants(this.nodes.body);
+      this.nodes.body.innerHTML = '';
     },
     add : function(widgetOrNode) {
       if (widgetOrNode.getElement) {
@@ -17676,23 +17723,27 @@ hui.ui.Pages.prototype = {
       } else {
         this.nodes.body.appendChild(widgetOrNode);
       }
+      this._positionAtTarget();
     },
     setBusy : function(stringOrBoolean) {
-      window.clearTimeout(this._busyTimer);
       if (stringOrBoolean===false) {
         if (this._busyCurtain) {
-          this._busyCurtain.style.display = 'none';
+          hui.cls.remove(this._busyCurtain, 'hui-is-visible');
         }
         return;
       }
-      this._busyTimer = window.setTimeout(function() {
-        var curtain = this._busyCurtain;
-        if (!curtain) {
-          curtain = this._busyCurtain = hui.build('div',{'class':'hui_panel_busy',parentFirst:hui.get.firstByClass(this.element,'hui_panel_content')});
+      var curtain = this._busyCurtain;
+      if (!curtain) {
+        curtain = this._busyCurtain = hui.build('div.hui_panel_busy',{parentFirst:this.nodes.body});
+        if (hui.browser.msie) {
+          hui.cls.add(curtain,'hui_panel_busy-legacy');
         }
-        curtain.innerHTML = hui.isString(stringOrBoolean) ? '<span>'+stringOrBoolean+'</span>' : '<span></span>';
-        curtain.style.display = '';
-      }.bind(this),300);
+      }
+      var text = hui.isString(stringOrBoolean) ? hui.string.escape(stringOrBoolean) : '';
+      curtain.innerHTML = '<span class="hui_panel_busy_text">' + text + '</span>';
+      setTimeout(function() {
+        hui.cls.add(curtain, 'hui-is-visible');
+      },16);
     },
 
     move : function(point) {

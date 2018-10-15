@@ -1,12 +1,11 @@
 @charset "UTF-8";
 .hui_panel {
   display: none;
-  transition: left .5s,top .5s, transform .5s, opacity .5s;
-  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
+  -webkit-tap-highlight-color: transparent; }
   .hui_panel_titlebar {
     font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     text-align: center;
-    font-size: 14px;
+    font-size: 10pt;
     line-height: 16px;
     padding: 5px 0;
     cursor: move;
@@ -17,14 +16,19 @@
     display: block; }
   .hui_panel_close {
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 26px;
-    height: 26px;
-    font-size: 16px;
     text-align: center;
-    line-height: 26px;
-    cursor: pointer; }
+    line-height: 18px;
+    cursor: pointer;
+    top: -10px;
+    right: -10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #eee;
+    border: 1px solid #ddd;
+    color: #333;
+    z-index: 2;
+    font-size: 14px; }
     .hui_panel_close:before {
       font-family: 'HUI' !important;
       speak: none;
@@ -37,6 +41,17 @@
       -moz-osx-font-smoothing: grayscale;
       content: "";
       line-height: inherit; }
+  .hui_panel.hui-is-titled .hui_panel_close {
+    display: block;
+    top: 0;
+    right: 0;
+    width: 26px;
+    height: 26px;
+    font-size: 16px;
+    line-height: 26px;
+    background: none;
+    color: #333;
+    border: none; }
   .hui_panel_arrow {
     position: absolute;
     background: url("../gfx/pointer.svg");
@@ -67,8 +82,9 @@
     margin-right: 5px;
     vertical-align: top;
     background-size: 16px; }
-  .hui_panel.hui-is-dragging {
-    transition: none; }
+  .hui_panel.hui-is-animating {
+    transition: left .5s,top .5s, transform .2s, opacity .5s;
+    transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
   .hui_panel.hui-is-dragging .hui_panel_titlebar {
     cursor: -webkit-grabbing;
     cursor: -moz-grabbing; }
@@ -78,3 +94,36 @@
     border-radius: 5px;
     box-shadow: 0 3px 20px rgba(0, 0, 0, 0.1);
     background: #fff; }
+  .hui_panel_busy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    border-radius: 3px;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s, visibility 0s, bottom 0s;
+    transition-delay: 0s, 1s, 1s; }
+    .hui_panel_busy_text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 30%;
+      background: center top no-repeat;
+      background-image: url("../gfx/progress/spinner_white.svg");
+      background-size: 32px;
+      padding-top: 35px;
+      font-size: 12px;
+      text-shadow: 0 1px white; }
+    .hui_panel_busy.hui-is-visible {
+      transition-delay: .5s, 0s, 0s;
+      bottom: 0;
+      opacity: 1;
+      visibility: visible; }
+    .hui_panel_busy-legacy.hui-is-visible .hui_panel_busy_text {
+      background-image: url("../gfx/progress/spinner_white_32.gif"); }

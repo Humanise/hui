@@ -12,6 +12,7 @@ $bar-height: 30px;
 
 $standard-font-size: 12px;
 
+$title-font-size: 10pt; // 13.333px but looks nice
 
 $search-symbol: "\e90c";
 $menu-symbol: "\e916";
@@ -91,4 +92,15 @@ $view-symbol: "\e60d";
     content: $symbol;
     @content;
   }
+}
+
+@mixin cursor-grab {
+  cursor: move;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+
+@mixin cursor-grabbing {
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
 }

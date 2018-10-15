@@ -15,16 +15,17 @@
   <script src="../../js/ProgressIndicator.js"></script>
 </head>
 
-<body onload="showProgress()">
+<body>
 
-  <button onclick="showProgress()">Large</button>
-  <button onclick="showProgress(true)">Small</button>
+  <button class="hui_button" onclick="showProgress()">New window</button>
+  <button class="hui_button" onclick="showProgress(500)">New window</button>
 
 
   <script>
-    function showProgress(small) {
-      var win = hui.ui.Window.create({width:300});
-      var bar = hui.ui.ProgressIndicator.create({size:48});
+    hui.on(showProgress)
+    function showProgress(size) {
+      var win = hui.ui.Window.create({width:Math.max(size,300)});
+      var bar = hui.ui.ProgressIndicator.create({size:size||48});
       var g = hui.ui.Buttons.create();
       var b = hui.ui.Button.create({text:'Random'});
       b.listen({$click:function(){bar.setValue(Math.random())}});
