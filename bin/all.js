@@ -17727,6 +17727,7 @@ hui.ui.Pages.prototype = {
     },
     setBusy : function(stringOrBoolean) {
       if (stringOrBoolean===false) {
+        clearTimeout(this._busyTimer);
         if (this._busyCurtain) {
           hui.cls.remove(this._busyCurtain, 'hui-is-visible');
         }
@@ -17741,7 +17742,7 @@ hui.ui.Pages.prototype = {
       }
       var text = hui.isString(stringOrBoolean) ? hui.string.escape(stringOrBoolean) : '';
       curtain.innerHTML = '<span class="hui_panel_busy_text">' + text + '</span>';
-      setTimeout(function() {
+      this._busyTimer = setTimeout(function() {
         hui.cls.add(curtain, 'hui-is-visible');
       },16);
     },
