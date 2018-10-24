@@ -1380,16 +1380,32 @@ hui.on = function(node,event,func,bind) {
       touched = false;
       if (!moved) {
         touched = true;
-        func(ev);
+        hui._callListener(func, ev);
       }
     },bind);
     hui.listen(node,'click',function(ev) {
       if (!moved && !touched) {
-        func(ev);
+        hui._callListener(func, ev);
       }
     },bind);
   } else {
     hui.listen(node,event,func,bind);
+  }
+};
+
+hui._callListener = function(listener, ev) {
+  if (typeof(listener)=='function') {
+    listener(ev);
+  } else {
+    for (var key in listener) {
+      if (listener.hasOwnProperty(key)) {
+        var found = hui.closest(key, ev.target);
+        if (found) {
+          listener[key](found, ev);
+          return;
+        }
+      }
+    }
   }
 };
 
@@ -1400,18 +1416,24 @@ hui.on = function(node,event,func,bind) {
  * @param {Function} listener The function to be called
  * @param {object} ?bindTo Bind the listener to it
  */
-hui.listen = function(element,type,listener,bindTo) {
+hui.listen = function(element, type, listener, bindTo) {
   element = hui.get(element);
   if (!element) {
     return;
   }
-  if (bindTo) {
-    listener = listener.bind(bindTo);
+  var l = listener;
+  if (typeof(listener)!=='function') {
+    l = function(e) {
+      hui._callListener(listener, e);
+    }
+  }
+  else if (bindTo) {
+    l = listener.bind(bindTo);
   }
   if(document.addEventListener) {
-    element.addEventListener(type,listener);
+    element.addEventListener(type, l);
   } else {
-    element.attachEvent('on'+type, listener);
+    element.attachEvent('on'+type, l);
   }
 };
 
