@@ -2111,7 +2111,8 @@ div.hui_window_dark .hui_selection_item span {
     position: absolute;
     background: url("../gfx/pointer.svg");
     background-size: 20px;
-    display: none; }
+    display: none;
+    transition: top .3s, left .3s; }
     .hui_panel_arrow-left {
       width: 10px;
       height: 20px;

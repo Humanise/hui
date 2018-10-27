@@ -6,6 +6,7 @@ hui.on(function() {
     close: true
   });
   panel.add(hui.build('div',{style:'width: 200px; height: 200px;'}));
+  panel.add(hui.ui.Button.create({text:'Click me'}))
   panel.show();
 
   var targets = hui.findAll('.tests a');

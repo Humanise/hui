@@ -55,6 +55,7 @@
     background: url('../gfx/pointer.svg');
     background-size: 20px;
     display: none;
+    transition: top .3s, left .3s;
 
     &-left {
       width: 10px;

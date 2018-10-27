@@ -9,14 +9,14 @@ QUnit.test( "Test", function( assert ) {
   panel.toggle();
   var done = assert.async();
   window.setTimeout(function() {
-    assert.equal(hui.style.get(panel.getElement(),'display'), 'none', 'Window is not visible');
+    assert.equal(hui.style.get(panel.getElement(),'display'), 'none', 'Panel is not visible');
     panel.destroy();
     done();
-  },300)
+  },600)
 });
 
 QUnit.test( "Test", function( assert ) {
-  var panel = hui.ui.Panel.create({title:'This is the window title',width:200,name:'myPanel'});
+  var panel = hui.ui.Panel.create({title:'This is the window title',width:200,name:'myPanel',close:true});
   var panel = hui.ui.get('myPanel');
 
   panel.show();
