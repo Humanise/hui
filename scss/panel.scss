@@ -150,4 +150,35 @@
       background-image: url('../gfx/progress/spinner_white_32.gif');
     }
   }
+
+  &.hui-is-full {
+    border: none;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    position: fixed;
+
+    .hui_panel_body {
+      width: auto !important;
+      position: absolute;
+      top: 32px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .hui_panel_close {
+      width: 32px;
+      height: 32px;
+      font-size: 22px;
+      line-height: 32px;
+    }
+
+    .hui_panel_titlebar {
+      line-height: 22px;
+    }
+  }
 }

@@ -15009,7 +15009,7 @@ hui.ui.Checkbox = function(o) {
  * Creates a new checkbox
  */
 hui.ui.Checkbox.create = function(options) {
-  var e = options.element = hui.build('a',{'class':'hui_checkbox',href:'#',html:'<span class="hui_checkbox_button"></span>'});
+  var e = options.element = hui.build('a.hui_checkbox',{href: '#', html: '<span class="hui_checkbox_button"></span>'});
   if (options.value) {
     hui.cls.add(e, 'hui_checkbox_selected');
   }
@@ -17493,7 +17493,7 @@ hui.ui.Pages.prototype = {
 
   hui.ui.Panel.create = function(options) {
     options = hui.override({}, options);
-    var html = (options.close ? '<div class="hui_panel_close"></div>' : '')+
+    var html = (options.closable ? '<div class="hui_panel_close"></div>' : '')+
       '<div class="hui_panel_arrow"></div><div class="hui_panel_titlebar">';
       if (options.icon) {
         html+='<span class="hui_icon hui_icon_16 hui_panel_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,16)+'); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(options.icon,16)+') 1x,url('+hui.ui.getIconUrl(options.icon,32+'x2')+') 2x);"></span>';
@@ -17507,6 +17507,7 @@ hui.ui.Pages.prototype = {
       '</div>'+
       '';
     var cls = 'hui_panel hui-is-floating'+(options.variant ? ' hui_panel_'+options.variant : '');
+    if (options.title) { cls+= ' hui-is-titled'; }
     if (options.variant=='dark') {
       cls+=' hui_context_dark';
     }
@@ -17553,10 +17554,13 @@ hui.ui.Pages.prototype = {
         }.bind(this));
       }
       if (!this._resizeListener) {
-        var pos = this._positionAtTarget.bind(this);
+        var go = function() {
+          this._adjustSize();
+          this._positionAtTarget();
+        }.bind(this)
         this._resizeListener = hui.listen(window, 'resize', function(e) {
           if (this.visible) {
-            hui.onDraw(pos);
+            hui.onDraw(go);
           }
         }.bind(this));
       }
@@ -17569,13 +17573,35 @@ hui.ui.Pages.prototype = {
       var scrollTop = hui.window.getScrollTop();
       var winTop = hui.position.getTop(this.element);
       if (winTop < scrollTop || winTop+this.element.clientHeight > hui.window.getViewHeight()+scrollTop) {
-        hui.animate({node:this.element,css:{top:(scrollTop+40)+'px'},duration:500,ease:hui.ease.slowFastSlow});
+        hui.animate({
+          node: this.element,
+          css: {top: (scrollTop+40)+'px'},
+          duration: 500,
+          ease: hui.ease.slowFastSlow
+        });
+      }
+    },
+    _ensureInView : function() {
+      if (!this.visible || this._target) return;
+      var viewWidth = hui.window.getViewWidth() - 3;
+      var right = hui.position.getLeft(this.element) + this.element.offsetWidth;
+      if (viewWidth - right < 0) {
+        this.element.style.left = (viewWidth - this.element.offsetWidth) + 'px';
+      }
+    },
+    _adjustSize : function() {
+      var viewWidth = hui.window.getViewWidth();
+      var isTooLarge = this.options.width + 40 > viewWidth;
+      hui.cls.set(this.element, 'hui-is-full', isTooLarge);
+      if (!isTooLarge) {
+        this._ensureInView();
       }
     },
     show : function(options) {
       var element = this.element;
       options = options || {};
       this._target = options.target;
+      this._adjustSize();
       if (this.visible) {
         hui.style.set(element,{
           zIndex : hui.ui.nextPanelIndex()
@@ -17726,6 +17752,7 @@ hui.ui.Pages.prototype = {
     },
     hide : function() {
       if (!this.visible) return;
+      this._unFocus();
       hui.cls.add(this.element, 'hui-is-animating');
       this.element.style.opacity='0';
       setTimeout(function() {
@@ -17734,6 +17761,12 @@ hui.ui.Pages.prototype = {
         hui.ui.callVisible(this);
       }.bind(this),500);
       this.visible = false;
+    },
+    _unFocus : function() {
+      var active = document.activeElement;
+      if (active && hui.dom.isDescendantOrSelf(active, this.element)) {
+        active.blur();
+      }
     },
     clear : function() {
       hui.ui.destroyDescendants(this.nodes.body);
@@ -17779,7 +17812,11 @@ hui.ui.Pages.prototype = {
     _onBeforeMove : function(e) {
       e = hui.event(e);
       var pos = hui.position.get(this.element);
-      this.dragState = {left: e.getLeft() - pos.left,top:e.getTop()-pos.top};
+      this.dragState = {
+        left: e.getLeft() - pos.left,
+        top: e.getTop() - pos.top,
+        maxLeft: hui.window.getViewWidth() - this.element.offsetWidth - 3
+      };
       this.element.style.right = 'auto';
       hui.cls.add(this.element,'hui-is-dragging');
       hui.cls.remove(this.element,'hui-is-targeted');
@@ -17787,8 +17824,8 @@ hui.ui.Pages.prototype = {
     _onMove : function(e) {
       var top = (e.getTop()-this.dragState.top);
       var left = (e.getLeft()-this.dragState.left);
-      this.element.style.top = Math.max(top,0)+'px';
-      this.element.style.left = Math.max(left,0)+'px';
+      this.element.style.top = Math.max(top, 3) + 'px';
+      this.element.style.left = hui.between(3, left, this.dragState.maxLeft) + 'px';
     },
     _onAfterMove : function() {
       hui.ui.callDescendants(this,'$$parentMoved');

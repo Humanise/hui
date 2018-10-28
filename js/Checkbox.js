@@ -16,7 +16,7 @@ hui.ui.Checkbox = function(o) {
  * Creates a new checkbox
  */
 hui.ui.Checkbox.create = function(options) {
-  var e = options.element = hui.build('a',{'class':'hui_checkbox',href:'#',html:'<span class="hui_checkbox_button"></span>'});
+  var e = options.element = hui.build('a.hui_checkbox',{href: '#', html: '<span class="hui_checkbox_button"></span>'});
   if (options.value) {
     hui.cls.add(e, 'hui_checkbox_selected');
   }
