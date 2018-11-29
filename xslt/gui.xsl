@@ -206,7 +206,11 @@
 </xsl:template>
 
 
-
+<xsl:template name="gui:test-name">
+  <xsl:if test="@test-name">
+    <xsl:attribute name="data-test"><xsl:value-of select="@test-name"/></xsl:attribute>
+  </xsl:if>
+</xsl:template>
 
 <xsl:template name="gui:createobject">
   <xsl:if test="@name and @name!='' and not(//gui:subgui[@globals='false'])">
@@ -811,6 +815,7 @@
         <xsl:text> hui_context_dark</xsl:text>
       </xsl:if>
     </xsl:attribute>
+    <xsl:call-template name="gui:test-name"/>
     <xsl:apply-templates select="gui:back"/>
     <div class="hui_window_front">
       <xsl:if test="not(@close='false') and not(@closable='false')"> <!-- TODO close is deprecated -->
@@ -2850,6 +2855,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
             <xsl:attribute name="autocapitalize">off</xsl:attribute>
             <xsl:attribute name="autocorrect">off</xsl:attribute>
           </xsl:if>
+          <xsl:call-template name="gui:test-name"/>
         </input>
       </xsl:otherwise>
     </xsl:choose>
@@ -3327,6 +3333,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
           </xsl:when>
         </xsl:choose>
       </xsl:attribute>
+      <xsl:call-template name="gui:test-name"/>
       <xsl:if test="@disabled='true'"><xsl:attribute name="tabindex">-1</xsl:attribute></xsl:if>
         <xsl:if test="@icon"><span style="background-image: url('{$context}/hui/icons/{@icon}16.png')">
           <xsl:attribute name="class">

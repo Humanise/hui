@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HUI</title>
+  <link type="text/css" href="../../bin/development.css" rel="stylesheet" />
+  <link type="text/css" href="style.css" rel="stylesheet" />
+  <script data-hui-context="../../.." src="../../bin/development.js"></script>
+</head>
+
+<body>
+  <div class="description">
+    <h1>Message</h1>
+    <p>How to show a message</p>
+  </div>
+  <p>
+    <button class="hui_button" onclick="hui.ui.hideMessage()">Hide</button>
+    <button class="hui_button" onclick="hui.ui.msg({text:'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'})">Show long message</button>
+    <button class="hui_button" onclick="hui.ui.msg({text:'Please wait while we work', busy: true})">Busy spinner</button>
+    <button class="hui_button" onclick="hui.ui.msg.success({text:'Everything went exactly as planned', duration: null})">Success</button>
+    <button class="hui_button" onclick="hui.ui.msg({text:'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', success:true})">Long success</button>
+    <button class="hui_button" onclick="hui.ui.msg.fail({text:'It failed catastrophically', duration: null})">Failure</button>
+  </p>
+  <div style="height: 2000px"></div>
+  <script>
+    hui.on(function() {
+      hui.ui.listen({
+        $ready : function() {
+          hui.ui.msg({text:'Ready', busy: true});
+        }
+      })
+    })
+  </script>
+</body>
+</html>

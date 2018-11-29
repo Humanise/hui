@@ -5,12 +5,12 @@ hui.test = {
   run : function(recipe) {
     this.errorHandler = hui.listen(window,'error',function(e) {
       hui.log(e);
-      hui.ui.showMessage({text:'Error ('+e.message+') ['+e.lineno+']',icon:'common/warning'});
+      hui.ui.msg.fail({text:'Error ('+e.message+') ['+e.lineno+']'});
       throw e;
     });
     this.status = {failures:0,successes:0};
     this.busy = 0;
-    hui.ui.showMessage({text:'Running test',busy:true});
+    hui.ui.msg({text:'Running test',busy:true});
     this._next(0,recipe);
 
   },
@@ -19,7 +19,7 @@ hui.test = {
       this._stop();
       return;
     }
-    hui.ui.showMessage({text:'Running test ('+num+')',busy:true});
+    hui.ui.msg({text:'Running test ('+num+')',busy:true});
     if(typeof(recipe[num])=='function') {
       recipe[num]();
       this._next(num+1,recipe);
@@ -35,9 +35,9 @@ hui.test = {
       return;
     }
     if (this.status.failures>0) {
-      hui.ui.showMessage({text:'Failure',icon:'common/warning',duration:2000});
+      hui.ui.msg.fail({text:'Failure',duration:2000});
     } else {
-      hui.ui.showMessage({text:'Success',icon:'common/success',duration:2000});
+      hui.ui.msg.success({text:'Success',duration:2000});
     }
     hui.unListen(window,'error',this.errorHandler);
   },

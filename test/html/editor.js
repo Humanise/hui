@@ -7,10 +7,10 @@ hui.ui.listen({
     editor.activate();
   },
   $partWasMoved : function(info) {
-    hui.ui.showMessage({text:'Moving',busy:true});
+    hui.ui.msg({text:'Moving',busy:true});
     window.setTimeout(function() {
       if (hui.cls.has(info.dragged,'nodrag')) {
-        hui.ui.showMessage({text:'I could not move it',duration:2000});
+        hui.ui.msg({text:'I could not move it',duration:2000});
         info.$failure()
       } else {
         hui.ui.hideMessage();

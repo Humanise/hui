@@ -86,7 +86,7 @@ hui.ui.onReady = function(func) {
 };
 
 hui.ui._frameLoaded = function(win) {
-  hui.ui.callSuperDelegates(this,'frameLoaded',win);
+  hui.ui.tellGlobalListeners(this,'frameLoaded',win);
 };
 
 /** @private */
@@ -100,7 +100,7 @@ hui.ui._resize = function() {
 
 hui.ui._afterResize = function() {
   hui.onDraw(function() {
-    hui.ui.callSuperDelegates(hui.ui,'$afterResize');
+    hui.ui.tellGlobalListeners(hui.ui,'$afterResize');
     for (var key in hui.ui.objects) {
       var component = hui.ui.objects[key];
       if (component.$$draw) {
@@ -424,39 +424,37 @@ hui.ui.showMessage = function(options) {
     // TODO: Backwards compatibility
     options={text:options};
   }
+  window.clearTimeout(hui.ui.messageDelayTimer);
   if (options.delay) {
     hui.ui.messageDelayTimer = window.setTimeout(function() {
-      options.delay=null;
+      options.delay = null;
       hui.ui.showMessage(options);
     },options.delay);
     return;
   }
-  window.clearTimeout(hui.ui.messageDelayTimer);
   if (!hui.ui.message) {
-    hui.ui.message = hui.build('div',{'class':'hui_message'});
-    if (!hui.browser.msie) {
-      hui.style.setOpacity(hui.ui.message,0);
-    }
-    document.body.appendChild(hui.ui.message);
+    hui.ui.message = hui.build('div.hui_message', {parent: document.body, style: {opacity: 0}});
   }
   var text = hui.ui.getTranslated(options.text) || '';
-  if (options.icon) {
-    hui.dom.clear(hui.ui.message);
-    hui.ui.message.appendChild(hui.ui.createIcon(options.icon, 24));
-    hui.dom.addText(hui.ui.message, text);
-  }
-  else if (options.busy) {
-    hui.ui.message.innerHTML='<span class="hui_message_busy"></span>';
-    hui.dom.addText(hui.ui.message, text);
-  } else {
-    hui.dom.setText(hui.ui.message, text);
-  }
+  hui.cls.set(hui.ui.message, 'hui-is-busy', options.busy);
+  hui.cls.set(hui.ui.message, 'hui-is-success', options.success);
+  hui.cls.set(hui.ui.message, 'hui-is-failure', options.failure);
+  hui.dom.setText(hui.ui.message, text);
+  hui.ui.message.style.width = '';
+  hui.ui.message.style.left = '0';
   hui.ui.message.style.display = 'block';
+  var w = hui.ui.message.offsetWidth;
+  hui.ui.message.style.left = '50%';
+  if (w > hui.window.getViewWidth()) {
+    hui.ui.message.style.width = '80%';
+    hui.ui.message.style.marginLeft = '-40%';
+  } else {
+    hui.ui.message.style.marginLeft = (hui.ui.message.offsetWidth / -2) + 'px';
+  }
+  hui.ui.message.style.marginTop = (hui.ui.message.offsetHeight / -2) + 'px';
   hui.ui.message.style.zIndex = hui.ui.nextTopIndex();
-  hui.ui.message.style.marginLeft = (hui.ui.message.clientWidth/-2)+'px';
-  hui.ui.message.style.marginTop = hui.window.getScrollTop()+'px';
   if (hui.browser.opacity) {
-    hui.animate(hui.ui.message,'opacity',1,300);
+    hui.animate(hui.ui.message, 'opacity', 1, 300);
   }
   window.clearTimeout(hui.ui.messageTimer);
   if (options.duration) {
@@ -467,12 +465,12 @@ hui.ui.showMessage = function(options) {
 hui.ui.msg = hui.ui.showMessage;
 
 hui.ui.msg.success = function(options) {
-  options = hui.override({icon:'common/success',duration:2000},options);
+  options = hui.override({success: true,duration:2000},options);
   hui.ui.msg(options);
 };
 
 hui.ui.msg.fail = function(options) {
-  options = hui.override({icon:'common/warning',duration:3000},options);
+  options = hui.override({failure:true,duration:3000},options);
   hui.ui.msg(options);
 };
 
@@ -776,18 +774,18 @@ hui.ui.callDelegates = function(obj,method,value,event) {
     for (var i=0; i < obj.delegates.length; i++) {
       var delegate = obj.delegates[i],
         thisResult,
-        x = '$'+method+'$'+obj.name;
-      if (obj.name && delegate[x]) {
-        thisResult = delegate[x](value,event);
+        specific = '$'+method+'$'+obj.name;
+      if (obj.name && delegate[specific]) {
+        thisResult = delegate[specific](value,event);
       } else if (delegate['$'+method]) {
         thisResult = delegate['$'+method](value,event);
       }
-      if (result===undefined && thisResult!==undefined && typeof(thisResult)!='undefined') {
+      if (result===undefined && thisResult!==undefined) {
         result = thisResult;
       }
     }
   }
-  var superResult = hui.ui.callSuperDelegates(obj,method,value,event);
+  var superResult = hui.ui.tellGlobalListeners(obj,method,value,event);
   if (result===undefined && superResult!==undefined) {
     result = superResult;
   }
@@ -810,7 +808,7 @@ hui.ui.tellContainers = function(event,value) {
 };
 
 hui.ui._tellContainers = function(event,value) {
-  var result = hui.ui.callSuperDelegates({},event,value);
+  var result = hui.ui.tellGlobalListeners({},event,value);
   if (window.parent!=window) {
     try {
       result = window.parent.hui.ui._tellContainers(event,value) || result;
@@ -821,7 +819,7 @@ hui.ui._tellContainers = function(event,value) {
   return result;
 };
 
-hui.ui.callSuperDelegates = function(obj,method,value,event) {
+hui.ui.tellGlobalListeners = function(obj,method,value,event) {
   if (typeof(value)=='undefined') value=obj;
   var result;
   for (var i=0; i < hui.ui.delegates.length; i++) {
@@ -901,7 +899,7 @@ hui.ui.bind = function(expression,delegate) {
 
 hui.ui.handleRequestError = function(widget) {
   hui.log('General request error received');
-  var result = hui.ui.callSuperDelegates(widget || this,'requestError');
+  var result = hui.ui.tellGlobalListeners(widget || this,'requestError');
   if (!result) {
     hui.ui.confirmOverlay({
       element : document.body,
@@ -917,7 +915,7 @@ hui.ui.handleRequestError = function(widget) {
 
 hui.ui.handleForbidden = function(widget) {
   hui.log('General access denied received');
-  var result = hui.ui.callSuperDelegates(widget || this,'accessDenied');
+  var result = hui.ui.tellGlobalListeners(widget || this,'accessDenied');
   if (!result) {
     hui.ui.confirmOverlay({
       element : document.body,
@@ -953,7 +951,7 @@ hui.ui.request = function(options) {
   options.$success = function(t) {
     if (message) {
       if (message.success) {
-        hui.ui.showMessage({text:message.success,icon:'common/success',duration:message.duration || 2000});
+        hui.ui.msg({text:message.success,success:true,duration:message.duration || 2000});
       } else if (message.start) {
         hui.ui.hideMessage();
       }
@@ -1048,7 +1046,7 @@ hui.on(function() {
     hui.ui.delayedUntilReady[i]();
   }
   // Call super delegates after delayedUntilReady...
-  hui.ui.callSuperDelegates(this,'ready');
+  hui.ui.tellGlobalListeners(this,'ready');
   hui.define('hui.ui', hui.ui);
 });
 

@@ -35,9 +35,9 @@ QUnit.test( "Test", function( assert ) {
   });
 
 
-  hui.ui.showMessage({text:'Dark variant',duration: 1000});
+  hui.ui.msg({text:'Dark variant',duration: 1000});
   win.setVariant('dark');
 
-  hui.ui.showMessage({text:'Light variant',duration: 1000});
+  hui.ui.msg({text:'Light variant',duration: 1000});
   win.setVariant('light');
 });
