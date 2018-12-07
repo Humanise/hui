@@ -4865,6 +4865,15 @@ hui.ui.unListen = function(listener) {
   hui.array.remove(hui.ui.delegates,listener);
 };
 
+hui.ui.tell = function(event) {
+  if (hui.isString(event)) {
+    event = {name:event};
+  }
+  if (!event.target) {
+    hui.ui.tellGlobalListeners(window, event.name);
+  }
+}
+
 hui.ui.callDelegates = function(obj,method,value,event) {
   if (typeof(value)=='undefined') {
     value=obj;
