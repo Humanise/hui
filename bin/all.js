@@ -23301,7 +23301,9 @@ hui.ready = function(delegate) {
         this.index = params.index;
         this._goToImage(false, 0, false);
       }
-      this._lockScroll(true);
+      window.setTimeout(function() {
+        this._lockScroll(true);        
+      }.bind(this),100)
     },
     _tapThumbs : function(e) {
       e = hui.event(e);
