@@ -3091,7 +3091,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </dropdown>
   -->
   <xsl:template name="gui:dropdown" match="gui:dropdown">
-    <a id="{generate-id()}" href="javascript://">
+    <a id="dropdown_{generate-id()}" href="javascript://">
       <xsl:if test="@width">
         <xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
       </xsl:if>
@@ -3103,24 +3103,26 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <span class="hui_dropdown_text"><xsl:comment/></span>
     </a>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DropDown(
-        {element:'<xsl:value-of select="generate-id()"/>'
-        ,name:'<xsl:value-of select="@name"/>'
-        ,key:'<xsl:value-of select="@key"/>'
-        ,value:'<xsl:value-of select="@value"/>'
-        <xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
-        <xsl:if test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:if>
-        <xsl:if test="@placeholder">,placeholder:'<xsl:value-of select="@placeholder"/>'</xsl:if>
-      });
-      with(<xsl:value-of select="generate-id()"/>_obj) {
-        <xsl:for-each select="gui:item | gui:option"> <!-- TODO item is deprecated -->
-          addItem({
-            title : '<xsl:value-of select="@title"/><xsl:value-of select="@label"/><xsl:value-of select="@text"/>', <!-- TODO title,label is deprecated -->
-            value : hui.intOrString('<xsl:call-template name="gui:escapeScript"><xsl:with-param name="text" select="@value"/></xsl:call-template>')
-          });
-        </xsl:for-each>
-      }
-      <xsl:call-template name="gui:createobject"/>
+      (function() {
+        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DropDown(
+          {element:'dropdown_<xsl:value-of select="generate-id()"/>'
+          ,name:'<xsl:value-of select="@name"/>'
+          ,key:'<xsl:value-of select="@key"/>'
+          ,value:'<xsl:value-of select="@value"/>'
+          <xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
+          <xsl:if test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:if>
+          <xsl:if test="@placeholder">,placeholder:'<xsl:value-of select="@placeholder"/>'</xsl:if>
+        });
+        with(<xsl:value-of select="generate-id()"/>_obj) {
+          <xsl:for-each select="gui:item | gui:option"> <!-- TODO item is deprecated -->
+            addItem({
+              title : '<xsl:value-of select="@title"/><xsl:value-of select="@label"/><xsl:value-of select="@text"/>', <!-- TODO title,label is deprecated -->
+              value : hui.intOrString('<xsl:call-template name="gui:escapeScript"><xsl:with-param name="text" select="@value"/></xsl:call-template>')
+            });
+          </xsl:for-each>
+        }
+        <xsl:call-template name="gui:createobject"/>
+      })();
     </script>
   </xsl:template>
 
