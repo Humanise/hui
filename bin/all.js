@@ -5099,7 +5099,11 @@ hui.ui.request = function(options) {
       hui.ui.callDelegates(t,'failure$'+failure);
     } else if (typeof(failure)=='function') {
       var obj;
-      if (t.getResponseHeader('Content-Type') == 'application/json') {
+      var contentType = t.getResponseHeader('Content-Type');
+      if (contentType) {
+        contentType = contentType.split(";")[0].trim();
+      }
+      if (contentType == 'application/json') {
         obj = hui.string.fromJSON(t.responseText);
       }
       failure(t, obj);
@@ -22145,128 +22149,6 @@ hui.ui.TimeLine.prototype = {
   }
 };
 ;
-(function (_super) {
-
-  /**
-   * Vertical rows
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   */
-  hui.ui.Clipboard = function(options) {
-    options = options || {};
-    _super.call(this, options);
-    this.value = null;
-    this._attach();
-  };
-
-  hui.ui.Clipboard.prototype = {
-    _attach : function() {
-      hui.on(document, 'paste', this._onPaste.bind(this));
-    },
-    _onPaste : function(e) {
-      this.fire('paste',e);
-      console.log('Paste event', e);
-      console.log('Clipboard data', e.clipboardData)
-      var items = e.clipboardData.items;
-      console.log('Clipboard data items', items)
-      if (items) {
-        console.log('items:', items)
-        for (var i = 0; i < items.length; i++) {
-          console.log(items[i]);
-          if (items[i].type == 'file') {
-            this._readFile(items[i].getAsFile());
-          }
-          if (items[i].type == 'text/plain') {
-            items[i].getAsString(function(x) {
-              this.fire('text', {text:x});
-            }.bind(this));
-          }
-        }
-      }
-      var files = e.clipboardData.files;
-      console.log('files:', files)
-      if (files) {
-        for (var i = 0; i < files.length; i++) {
-          var file = files[i];
-          this._readFile(file);
-        }
-      }
-
-      var types = e.clipboardData.types;
-      console.log('Clipboard data types:', types)
-      if (types) {
-        for (var i = 0; i < types.length; i++) {
-          var data = e.clipboardData.getData(types[i], console.log);
-          console.log(data)
-        }
-      }
-      console.log(arguments)
-    },
-    _readFile : function(file) {
-      console.log(file.type)
-      var self = this;
-      if (/image\//.test(file.type)) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-          self.fire('image', {base64:reader.result});
-        }
-        reader.readAsDataURL(file);
-      } else if (/text\//.test(file.type)) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-          self.fire('text', {text:reader.result});
-        }
-        reader.readAsText(file);
-      } else {
-        self.fire('file', {file:file});
-      }
-    }
-
-  };
-
-  hui.extend(hui.ui.Clipboard, _super);
-  hui.define('hui.ui.Clipboard', hui.ui.Clipboard);
-
-})(hui.ui.Component);
-;
-(function (_super) {
-
-  var NS = 'http://www.w3.org/2000/svg';
-
-  /**
-   * Emotion
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   */
-  hui.ui.Emotion = function(options) {
-    options = options || {};
-    _super.call(this, options);
-    this.value = null;
-    this._attach();
-  };
-
-  hui.ui.Emotion.create = function() {
-    var node = document.createElementNS(ns,'svg');
-    node.addAttribute()
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill-rule="evenodd" clip-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5">
-      <circle cx="16" cy="16" r="15" fill="#ebebeb" stroke="#000" stroke-width="2"/>
-      <path d="M23.708 19.985A8.481 8.481 0 0 1 16 24.935c-3.42 0-6.37-2.03-7.708-4.95" fill="#ebebeb" stroke="#000" stroke-width="2"/>
-      <circle cx="11" cy="11" r="2"/>
-      <circle cx="21" cy="11" r="2"/>
-    </svg>
-  }
-
-  hui.ui.Emotion.prototype = {
-
-  };
-
-  hui.extend(hui.ui.Emotion, _super);
-  hui.define('hui.ui.Emotion', hui.ui.Emotion);
-
-})(hui.ui.Component);
-;
 /**
  * Editing of documents composed of different parts
  *
@@ -23419,7 +23301,9 @@ hui.ready = function(delegate) {
         this.index = params.index;
         this._goToImage(false, 0, false);
       }
-      this._lockScroll(true);
+      window.setTimeout(function() {
+        this._lockScroll(true);        
+      }.bind(this),100)
     },
     _tapThumbs : function(e) {
       e = hui.event(e);

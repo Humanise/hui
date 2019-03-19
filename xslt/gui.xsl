@@ -862,6 +862,7 @@
   <div id="{generate-id()}">
     <xsl:attribute name="class">
       <xsl:text>hui_panel hui-is-floating</xsl:text>
+      <xsl:if test="@title!=''"> hui-is-titled</xsl:if>
     </xsl:attribute>
     <xsl:if test="not(@closable='false')">
       <div class="hui_panel_close"><xsl:comment/></div>

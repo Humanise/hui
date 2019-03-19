@@ -5099,7 +5099,11 @@ hui.ui.request = function(options) {
       hui.ui.callDelegates(t,'failure$'+failure);
     } else if (typeof(failure)=='function') {
       var obj;
-      if (t.getResponseHeader('Content-Type') == 'application/json') {
+      var contentType = t.getResponseHeader('Content-Type');
+      if (contentType) {
+        contentType = contentType.split(";")[0].trim();
+      }
+      if (contentType == 'application/json') {
         obj = hui.string.fromJSON(t.responseText);
       }
       failure(t, obj);
