@@ -13,6 +13,7 @@ class Inspector
 
     components = list_dir hui_path
     check_graphics hui_path
+    check_icons hui_path
     components.each { |component|
       puts component.name + (component.modern ? "+" : "")
       puts "  " + (component.sass_path ? component.sass_path.to_s : "none")
@@ -60,9 +61,29 @@ class Inspector
     gfx_dir = directory.join("gfx")
     gfx_dir.children.select{|item| !File.directory?(item)}.sort_by!{|obj| obj.basename.to_s.downcase}.each { |file|
       if all_css.index(file.basename.to_s) == nil 
-        puts file.basename
+        puts "Graphic not found: #{file.basename}"
       end
     }
+  end
+
+  def check_icons directory
+    dir = directory.join("icons")
+    dir.children.select{|item| File.directory?(item)}.each do |group|
+      names = group.children.sort_by!{|obj| obj.basename.to_s.downcase}.map{|file| /^[a-z_]+/.match(file.basename.to_s).to_s }.uniq.each do |name|
+        puts "Icon: #{group.basename.to_s}/#{name}"
+        ch = [
+          group.join("#{name}16.png"),
+          group.join("#{name}16x2.png"),
+          group.join("#{name}32.png"),
+          group.join("#{name}32x2.png")
+        ]
+        ch.each do |x|
+          unless x.exist?
+            puts "Missing icon: #{x}"
+          end
+        end
+      end
+    end
   end
 
   def check_css dir
