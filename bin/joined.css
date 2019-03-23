@@ -3432,29 +3432,34 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
 
 
 .hui_bar {
-  height: 30px;
   text-align: left;
   font-size: 0;
   display: flex;
   justify-content: space-between; }
   .hui_bar_right {
     float: right;
-    height: 30px;
-    display: flex;
-    align-items: center; }
-  .hui_bar_left {
-    height: 30px;
     display: flex;
     align-items: center;
-    flex-grow: 1; }
+    flex-wrap: wrap;
+    align-content: flex-start; }
+  .hui_bar_left {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    align-content: flex-start; }
   .hui_bar_space {
     display: inline-block;
     width: 5px; }
+  .hui_bar_flexible {
+    flex-grow: 1; }
   .hui_bar-absolute {
     position: absolute;
     visibility: hidden;
     left: -1000px;
     top: -1000px; }
+  .hui_bar .hui_button, .hui_bar .hui_checkbox, .hui_bar .hui_searchfield, .hui_bar .hui_dropdown, .hui_bar .hui_segmented {
+    margin: 2px 3px; }
 
 /*************** Button **************/
 .hui_bar_button {
@@ -3465,7 +3470,8 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
   text-decoration: none;
   vertical-align: middle;
   cursor: pointer;
-  color: #444; }
+  color: #444;
+  white-space: nowrap; }
   .hui_bar_button:focus {
     outline: none; }
   .hui_bar_button_text {
@@ -3567,21 +3573,20 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
   background-image: -o-linear-gradient(top, #fff, #f0f0f0);
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-  border-bottom: 1px solid #ddd; }
-
-.hui_bar-layout .hui_bar_text {
-  color: #666;
-  display: inline-block;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  font-size: 12px;
-  line-height: 28px;
-  padding: 0 5px;
-  text-shadow: 0 1px 0 #FFFFFF;
-  vertical-align: top; }
-
-.hui_bar-layout .hui_bar_text_header {
-  color: #445566;
-  font-weight: bold; }
+  border-bottom: 1px solid #ddd;
+  min-height: 30px; }
+  .hui_bar-layout .hui_bar_text {
+    color: #666;
+    display: inline-block;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    font-size: 12px;
+    line-height: 28px;
+    padding: 0 8px;
+    text-shadow: 0 1px 0 #FFFFFF;
+    vertical-align: top; }
+  .hui_bar-layout .hui_bar_text_header {
+    color: #445566;
+    font-weight: bold; }
 
 /******************* Mini variant *****************/
 .hui_bar-mini {
@@ -3773,6 +3778,7 @@ div.hui_videoplayer_placeholder:hover span.hui_videoplayer_placeholder_info stro
 .hui_segmented {
   display: inline-block;
   vertical-align: middle;
+  white-space: nowrap;
   /* Standard variant */
   /* Inset variant */ }
   .hui_segmented_item {
@@ -4365,6 +4371,8 @@ div.hui_colorpicker_swatches a {
   outline: none;
   text-decoration: none;
   vertical-align: middle; }
+  .hui_bar .hui_checkbox {
+    white-space: nowrap; }
   .hui_checkbox_button {
     width: 16px;
     height: 16px;
@@ -4596,11 +4604,11 @@ div.hui_rendering p {
   background: #eee; }
 
 
-div.hui_structure {
+.hui_structure {
   height: 100%;
   position: relative; }
 
-div.hui_structure_top {
+.hui_structure_top {
   min-height: 26px;
   border: 1px solid #ccc;
   border-radius: 6px 6px 0 0;
@@ -4612,8 +4620,8 @@ div.hui_structure_top {
   background: -ms-linear-gradient(top, white, #F0F0F0);
   background: linear-gradient(top, white, #F0F0F0); }
 
-div.hui_structure_bottom {
-  height: 26px;
+.hui_structure_bottom {
+  min-height: 26px;
   border: 1px solid #ccc;
   border-radius: 0 0 6px 6px;
   position: absolute;
@@ -4627,7 +4635,7 @@ div.hui_structure_bottom {
   background: -ms-linear-gradient(top, white, #F0F0F0);
   background: linear-gradient(top, white, #F0F0F0); }
 
-div.hui_structure_middle {
+.hui_structure_middle {
   position: absolute;
   bottom: 28px;
   top: 58px;
@@ -4635,15 +4643,15 @@ div.hui_structure_middle {
   right: 0;
   background: #fff; }
 
-div.hui_structure_full div.hui_structure_middle {
+.hui_structure_full .hui_structure_middle {
   border-right: 1px solid #ccc;
   border-left: 1px solid #ccc; }
 
-div.hui_structure_center {
+.hui_structure_center {
   height: 100%;
   margin-left: 201px; }
 
-div.hui_structure_left {
+.hui_structure_left {
   background: #EBF0F7 none repeat scroll 0 0;
   border-right: 1px solid #BBBBBB;
   left: 0;

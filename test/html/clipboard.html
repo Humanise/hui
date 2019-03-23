@@ -9,71 +9,32 @@
 
 <body>
   <button class="hui_button" data-hui="Button" data-options='{"name":"getData"}'>Get data</button>
-  <div id="">
-
-  <script src="../../js/hui.js"></script>
   <script>
-    hui.on(['hui.ui'],function() {
-      var readFile = function(file) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-          hui.build('img',{src:reader.result, parent: document.body})
-          console.info(reader.result)
-        };
-        reader.readAsDataURL(file);
-      }
-
-      hui.on(document, 'paste', function(e) {
-        console.log('Paste event', e);
-        console.log('Clipboard data', e.clipboardData)
-        var items = e.clipboardData.items;
-        console.log('Clipboard data items', items)
-        if (items) {
-          console.log('items:', items)
-          for (var i = 0; i < items.length; i++) {
-            console.log(items[i]);
-            if (items[i].type == 'file') {
-              readFile(items[i].getAsFile());
-            }
-            if (items[i].type == 'text/plain') {
-              items[i].getAsString(function(x) {
-                console.log('getAsString:', x)
-                hui.build('p',{text:x, parent: document.body})
-              });
-            }
-          }
-        }
-        var files = e.clipboardData.files;
-        console.log('files:', files)
-        if (files) {
-          for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            readFile(file);
-          }
-        }
-
-        var types = e.clipboardData.types;
-        console.log('Clipboard data types:', types)
-        if (types) {
-          for (var i = 0; i < types.length; i++) {
-            var data = e.clipboardData.getData(types[i], console.log);
-            console.log(data)
-          }
-        }
-        console.log(arguments)
-      });
+    hui.on(['hui.ui','hui.ui.Clipboard'],function() {
+      new hui.ui.Clipboard({name: 'clipboard'});
       hui.ui.listen({
-        $click$getData : function() {
-          console.log('x')
-          window.clipboardData.getData('Text')
+        $paste$clipboard : function(e) {
+          console.log(e);
+        },
+        $image$clipboard : function(event) {
+          hui.build('img',{src:event.base64, parent: document.body})
+        },
+        $text$clipboard : function(event) {
+          hui.build('p',{text:event.text, parent: document.body})
+        },
+        $file$clipboard : function(event) {
+          hui.build('p',{text:event.file, parent: document.body})
         }
       })
-    });
+    })
   </script>
+
+  <script src="../../js/hui.js"></script>
   <script src="../../js/hui_animation.js"></script>
   <script src="../../js/hui_auto.js"></script>
-  <script src="../../js/hui_color.js"></script>
   <script src="../../js/ui.js"></script>
+  <script src="../../js/Component.js"></script>
+  <script src="../../js/Clipboard.js"></script>
   <script src="../../js/Button.js"></script>
   <script src="../../js/Overlay.js"></script>
 </body>

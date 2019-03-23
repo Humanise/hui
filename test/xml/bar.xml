@@ -1,64 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Bar">
-  <bar>
-    <button icon="common/edit" text="Edit"/>
-    <button icon="common/delete" text="Delete" selected="true"/>
-    <button icon="common/color" text="Color"/>
-    <button icon="common/internet"/>
-    <button text="Only text"/>
-    <checkbox text="djslkfjksdjl"/>
-    <searchfield/>
-    <dropdown value="1">
-      <option value="1" text="My option"/>
-    </dropdown>
-    <segmented value="2">
-      <option value="1" text="H1"/>
-      <option value="2" text="H2"/>
-      <option value="3" text="H3"/>
-      <option value="4" icon="common/color"/>
-    </segmented>
-    <right>
-      <button icon="common/delete" text="Hep hey!"/>
-      <button icon="common/delete" text="Hep hey!"/>
-      <button icon="common/delete" text="Hep hey!"/>
-    </right>
-  </bar>
+<gui xmlns="uri:hui" title="Bar" padding="10">
 
-  <bar variant="layout">
-    <button icon="common/edit" text="Edit"/>
-    <button icon="common/delete" text="Delete" selected="true"/>
-    <button icon="common/color" text="Color"/>
-    <button icon="common/internet"/>
-    <button text="Only text" small="true"/>
-    <checkbox/>
-    <searchfield/>
-    <dropdown value="1">
-      <option value="1" text="My option"/>
-    </dropdown>
-    <segmented value="2">
-      <option value="1" text="H1"/>
-      <option value="2" text="H2"/>
-      <option value="3" text="H3"/>
-      <option value="4" icon="common/color"/>
-    </segmented>
-    <right>
-      <button icon="common/delete" text="Hep hey!"/>
-      <button icon="common/delete" text="Hep hey!"/>
-      <button icon="common/delete" text="Hep hey!"/>
-    </right>
-  </bar>
+  <structure>
+    <top>
+      <bar>
+      <button icon="common/edit" text="Edit"/>
+      </bar>
+    </top>
+    <middle>
+      <left>
+        <bar variant="layout_mini">
+          <button icon="monochrome/hierarchy" name="mini1"/>
+          <button icon="monochrome/stamp" selected="true" name="mini2"/>
+          <button icon="monochrome/warning" name="mini3"/>
+          <button icon="monochrome/search" name="mini4"/>
+        </bar>
+      </left>
+      <center>
+        <bar variant="layout">
+          <button icon="common/edit" text="Edit"/>
+          <button icon="common/delete" text="Delete" selected="true"/>
+          <button icon="common/color" text="Color"/>
+          <button icon="common/internet"/>
+          <button text="Only text"/>
+          <checkbox text="djslkfjksdjl"/>
+          <searchfield/>
+          <dropdown value="1">
+            <option value="1" text="My option"/>
+          </dropdown>
+          <segmented value="2">
+            <option value="1" text="H1"/>
+            <option value="2" text="H2"/>
+            <option value="3" text="H3"/>
+            <option value="4" icon="common/color"/>
+          </segmented>
+          <right>
+            <button icon="common/delete" text="Hep hey!"/>
+            <button icon="common/delete" text="Hep hey!"/>
+            <button icon="common/delete" text="Hep hey!"/>
+          </right>
+        </bar>
 
-  <space all="50">
+        <bar variant="layout">
+          <button text="Edit" small="true"/>
+          <button icon="common/delete" text="Delete" selected="true"/>
+          <button icon="common/color" text="Color"/>
+          <button icon="common/internet"/>
+          <button text="Only text" small="true"/>
+          <checkbox/>
+          <searchfield/>
+          <dropdown value="1">
+            <option value="1" text="My option"/>
+          </dropdown>
+          <segmented value="2">
+            <option value="1" text="H1"/>
+            <option value="2" text="H2"/>
+            <option value="3" text="H3"/>
+            <option value="4" icon="common/color"/>
+          </segmented>
+          <right>
+            <button icon="common/delete" text="Hep hey!"/>
+            <button icon="common/delete" text="Hep hey!"/>
+            <button icon="common/delete" text="Hep hey!"/>
+          </right>
+        </bar>
+        <bar variant="layout">
+          <text text="Eat my pants"/>
+          <flexible/>
+          <button text="Edit" small="true"/>
+        </bar>
 
-  <bar variant="mini">
-    <button icon="common/edit" text="Edit"/>
-    <button icon="common/delete" text="Delete"/>
-    <button icon="common/color" text="Color"/>
-    <button icon="common/internet"/>
-    <checkbox/>
-  </bar>
-  </space>
+        <space all="50">
+
+        <bar variant="mini">
+          <button icon="common/edit" text="Edit"/>
+          <button icon="common/delete" text="Delete"/>
+          <button icon="common/color" text="Color"/>
+          <button icon="common/internet"/>
+          <checkbox/>
+        </bar>
+        </space>
+      </center>
+    </middle>
+    <bottom>
+      <bar>
+      <button text="Hello world"/>
+      <flexible/>
+        <searchfield expanded-width="200"/>
+      <flexible/>
+      <button text="Hello world"/>
+      <button text="Hello world"/>
+      <button text="Hello world"/>
+      <button text="Hello world"/>
+      <button text="Hello world"/>
+      </bar>
+    </bottom>
+  </structure>
 
   <window name="win" width="400">
     <bar variant="window_mini">
@@ -100,8 +138,8 @@
   <script>
     hui.ui.listen({
       $ready : function() {
-        win.show();
-        win2.show();
+        //win.show();
+        //win2.show();
       }
     })
   </script>

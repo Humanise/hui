@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
+<gui xmlns="uri:hui" title="System" padding="10">
+  <source name="hierarchySource" url="data/hierarchy.xml"/>
+  <source name="listSource" url="data/list_pages.xml"/>
+  <source name="languagesSource" url="data/languages.xml"/>
+  <source name="designsSource" url="data/languages.xml"/>
+  <source name="setupsSource" url="data/languages.xml"/>
+  <controller url="integration.js"/>
+  <clipboard name="myClipboard"/>
+
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/page" text="Ny side" overlay="new" click="newPage.show()"/>
+        <more>
+          <icon icon="common/hierarchy_item" text="Nyt punkt" overlay="new" click="newPage.show()"/>
+          <icon icon="common/hierarchy" text="Nyt hierarki" overlay="new" click="box.show()"/>
+          <icon icon="common/template" text="Ny skabelon" overlay="new" click="newPage.show()"/>
+        </more>
+        <divider/>
+        <icon icon="common/edit" text="Edit" name="edit" disabled="true"/>
+        <icon icon="common/info" text="Info" name="info" disabled="true"/>
+        <icon icon="common/view" text="Show" name="view" disabled="true"/>
+        <icon icon="common/delete" text="Delete" name="delete" disabled="true">
+          <confirm text="Are you sure? It cannot be undone" ok="Yes, delete" cancel="Cancel"/>
+        </icon>
+        <icon icon="common/internet" overlay="upload" text="Udgiv ændringer" click="pages.next()"/>
+        <right>
+          <item label="Søgning">
+            <searchfield/>
+          </item>
+        </right>
+      </toolbar>
+    </top>
+    <middle>
+      <left>
+        <overflow>
+          <selection value="latest" name="selector">
+            <option icon="common/page" text="Alle sider" value="all"/>
+            <option icon="common/time" text="Seneste" badge="10" value="latest"/>
+            <option icon="common/draft" text="Klader" badge="5" value="drafts"/>
+            <option icon="common/duplicate" text="Skabeloner" badge="2" value="templates"/>
+            <option icon="common/star" text="Favorites" badge="12" value="favorites"/>
+            <title>Hierarkier</title>
+            <options source="hierarchySource"/>
+          </selection>
+        </overflow>
+      </left>
+      <center>
+        <pages height="full" name="pages">
+          <page key="list">
+            <bar variant="layout">
+              <button text="Close" click="pages.next()" small="true"/>
+              <flexible/>
+              <searchfield expanded-width="300"/>
+              <flexible/>
+              <searchfield expanded-width="300"/>
+              <flexible/>
+              <button text="Properties" click="pages.next()" small="true"/>
+            </bar>
+            <overflow>
+              <list name="list" source="listSource"/>
+            </overflow>
+          </page>
+          <page key="viewpage">
+          </page>
+        </pages>
+      </center>
+    </middle>
+    <bottom>
+
+    </bottom>
+  </structure>
+
+</gui>

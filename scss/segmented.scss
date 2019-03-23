@@ -3,6 +3,7 @@
 .hui_segmented {
   display: inline-block;
   vertical-align: middle;
+  white-space: nowrap;
 
   &_item {
     display: inline-block;
@@ -25,11 +26,12 @@
     &:first-child {
       border-top-left-radius: 2px;
       border-bottom-left-radius: 2px;
-    };
+    }
+
     &:last-child {
       border-top-right-radius: 2px;
       border-bottom-right-radius: 2px;
-    };
+    }
   }
 
   &_text {

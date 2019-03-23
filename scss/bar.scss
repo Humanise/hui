@@ -1,7 +1,6 @@
 @import 'tools';
 
 .hui_bar {
-  height: 30px;
   text-align: left;
   font-size: 0;
   display: flex;
@@ -9,21 +8,27 @@
 
   &_right {
     float: right;
-    height: 30px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    align-content: flex-start;
   }
 
   &_left {
-    height: 30px;
     display: flex;
     align-items: center;
     flex-grow: 1;
+    flex-wrap: wrap;
+    align-content: flex-start;
   }
 
   &_space {
     display: inline-block;
     width: 5px;
+  }
+
+  &_flexible {
+    flex-grow: 1;
   }
 
   &-absolute {
@@ -33,6 +38,9 @@
     top: -1000px;
   }
 
+  .hui_button, .hui_checkbox, .hui_searchfield, .hui_dropdown, .hui_segmented {
+    margin: 2px 3px;
+  }
 }
 
 
@@ -51,6 +59,7 @@
   vertical-align: middle;
   cursor: pointer;
   color: #444;
+  white-space: nowrap;
 
   &:focus {
     outline: none;
@@ -155,24 +164,26 @@
 .hui_bar-layout {
   @include vertical-gradient(#fff, rgb(240,240,240));
   border-bottom: 1px solid #ddd;
+  min-height: 30px;
+
+  .hui_bar_text {
+    color: #666;
+    display: inline-block;
+    font-family: $font;
+    font-size: 12px;
+    line-height: 28px;
+    padding: 0 8px;
+    text-shadow: 0 1px 0 #FFFFFF;
+    vertical-align: top;
+  }
+
+  .hui_bar_text_header {
+    color: #445566;
+    font-weight: bold;
+  }
+
 }
 
-
-.hui_bar-layout .hui_bar_text {
-  color: #666;
-  display: inline-block;
-  font-family: $font;
-  font-size: 12px;
-  line-height: 28px;
-  padding: 0 5px;
-  text-shadow: 0 1px 0 #FFFFFF;
-  vertical-align: top;
-}
-
-.hui_bar-layout .hui_bar_text_header {
-  color: #445566;
-  font-weight: bold;
-}
 
 /******************* Mini variant *****************/
 

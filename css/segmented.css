@@ -1,6 +1,7 @@
 .hui_segmented {
   display: inline-block;
   vertical-align: middle;
+  white-space: nowrap;
   /* Standard variant */
   /* Inset variant */ }
   .hui_segmented_item {

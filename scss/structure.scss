@@ -1,11 +1,11 @@
 @import 'tools';
 
-div.hui_structure {
+.hui_structure {
   height: 100%;
   position: relative;
 }
 
-div.hui_structure_top {
+.hui_structure_top {
   min-height: 26px;
   border: 1px solid #ccc;
   border-radius: 6px 6px 0 0;
@@ -18,8 +18,8 @@ div.hui_structure_top {
   background: linear-gradient(top, white, #F0F0F0);
 }
 
-div.hui_structure_bottom {
-  height: 26px;
+.hui_structure_bottom {
+  min-height: 26px;
   border: 1px solid #ccc;
   border-radius:  0 0 6px 6px;
   position: absolute;
@@ -34,7 +34,7 @@ div.hui_structure_bottom {
   background: linear-gradient(top, white, #F0F0F0);
 }
 
-div.hui_structure_middle {
+.hui_structure_middle {
   position: absolute;
   bottom: 28px;
   top: 58px;
@@ -43,17 +43,17 @@ div.hui_structure_middle {
   background: #fff;
 }
 
-div.hui_structure_full div.hui_structure_middle {
+.hui_structure_full .hui_structure_middle {
   border-right: 1px solid #ccc;
   border-left: 1px solid #ccc;
 }
 
-div.hui_structure_center {
+.hui_structure_center {
   height: 100%;
   margin-left: 201px;
 }
 
-div.hui_structure_left {
+.hui_structure_left {
   background: #EBF0F7 none repeat scroll 0 0;
   border-right: 1px solid #BBBBBB;
   left: 0;

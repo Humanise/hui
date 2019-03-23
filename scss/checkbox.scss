@@ -9,6 +9,9 @@
   outline: none;
   text-decoration: none;
   vertical-align: middle;
+  .hui_bar & {
+    white-space: nowrap;
+  }
 
   &_button {
     width: 16px;

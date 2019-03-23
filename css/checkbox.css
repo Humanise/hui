@@ -7,6 +7,8 @@
   outline: none;
   text-decoration: none;
   vertical-align: middle; }
+  .hui_bar .hui_checkbox {
+    white-space: nowrap; }
   .hui_checkbox_button {
     width: 16px;
     height: 16px;

@@ -138,6 +138,9 @@
       <xsl:if test="//gui:media-simulator">
         <script src="{$context}/hui/{$pathVersion}js/MediaSimulator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
+      <xsl:if test="//gui:clipboard">
+        <script src="{$context}/hui/{$pathVersion}js/Clipboard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+      </xsl:if>
 
       <xsl:for-each select="gui:localize[@source]">
         <script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -363,6 +366,17 @@
   </script>
 </xsl:template>
 
+
+<!--doc title:'Clipboard' module:'base'
+<clipboard ...>
+-->
+<xsl:template match="gui:clipboard">
+  <script type="text/javascript">
+    (function() {
+      new hui.ui.Clipboard({name:'<xsl:value-of select="@name"/>'});
+    })();
+  </script>
+</xsl:template>
 
 
 
@@ -862,7 +876,6 @@
   <div id="{generate-id()}">
     <xsl:attribute name="class">
       <xsl:text>hui_panel hui-is-floating</xsl:text>
-      <xsl:if test="@title!=''"> hui-is-titled</xsl:if>
     </xsl:attribute>
     <xsl:if test="not(@closable='false')">
       <div class="hui_panel_close"><xsl:comment/></div>
@@ -2598,6 +2611,16 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
 
+  <!--doc title:'Flexible space' module:'bar'
+  <bar>
+      <flexible/>
+  </bar>
+  -->
+  <xsl:template match="gui:bar//gui:flexible">
+    <span class="hui_bar_flexible">
+      <xsl:comment/>
+    </span>
+  </xsl:template>
 
 
   <!--doc title:'Bar space' module:'bar'

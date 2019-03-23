@@ -2,7 +2,6 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Toolbar" padding="10">
   <source name="itemsSource" url="data/source_items.xml"/>
-  <script url="shdha"/>
   <script>
     hui.ui.listen({
       $ready : function() {
@@ -80,12 +79,12 @@
     </top>
     <middle>
       <left>
-        <bar variant="layout_mini">
-          <button icon="monochrome/hierarchy" name="mini1"/>
-          <button icon="monochrome/stamp" selected="true" name="mini2"/>
-          <button icon="monochrome/warning" name="mini3"/>
-          <button icon="monochrome/search" name="mini4"/>
-        </bar>
+        <toolbar variant="layout_mini">
+          <icon icon="common/info"/>
+          <icon icon="common/edit" selected="true"/>
+          <icon icon="common/folder"/>
+          <icon icon="common/person"/>
+        </toolbar>
       </left>
       <center>
         <toolbar border="bottom">

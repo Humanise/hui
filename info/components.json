@@ -50,6 +50,10 @@
     "css": "checkboxes.css"
   },
   {
+    "name": "Clipboard",
+    "htmlSample": "clipboard.html"
+  },
+  {
     "name": "CodeInput",
     "sass": "codeinput.scss",
     "css": "codeinput.css"
@@ -115,6 +119,9 @@
     "sass": "editor.scss",
     "css": "editor.css",
     "htmlSample": "editor.html"
+  },
+  {
+    "name": "Emotion"
   },
   {
     "name": "Finder",
@@ -273,6 +280,7 @@
   {
     "name": "Overlay",
     "sass": "overlay.scss",
+    "css": "overlay.css",
     "htmlSample": "overlay.html"
   },
   {
