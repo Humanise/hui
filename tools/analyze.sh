@@ -73,10 +73,14 @@ class Inspector
         puts "Icon: #{group.basename.to_s}/#{name}"
         ch = [
           group.join("#{name}16.png"),
-          group.join("#{name}16x2.png"),
-          group.join("#{name}32.png"),
-          group.join("#{name}32x2.png")
+          group.join("#{name}16x2.png")
         ]
+        if group.basename.to_s != 'monochrome'
+          ch += [
+            group.join("#{name}32.png"),
+            group.join("#{name}32x2.png")
+          ]
+        end
         ch.each do |x|
           unless x.exist?
             puts "Missing icon: #{x}"
