@@ -432,4 +432,5 @@ div.hui_list_cell_card {
   border: 1px solid #ddd;
   border-color: #f3f3f3 #e3e3e3 #ccc;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 2px 4px; }
+  padding: 2px 4px;
+  word-break: break-word; }
