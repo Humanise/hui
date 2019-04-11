@@ -22,10 +22,13 @@
       <icons>
         <icon icon="monochrome/edit" action="true"/>
         <icon icon="monochrome/view" action="true"/>
+        <icon icon="monochrome/view" action="true"/>
+        <symbol name="info"/>
+        <symbol name="gear" action="true"/>
       </icons>
     </cell>
     <cell>
-      <button text="Download"/>
+      <button text="Download" data="{}"/>
     </cell>
   </row>
   <row id="1" kind="user">

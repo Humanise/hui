@@ -57,6 +57,7 @@ hui.ui.List = function(options) {
   if (options.dropFiles) {
     this._addDrop();
   }
+  this._attach();
   if (this.url)  {
     this.refresh();
   }
@@ -84,11 +85,44 @@ hui.ui.List.create = function(options) {
   }
   options.element = hui.build('div',{
     'class' : cls,
-    html: '<div class="hui_list_progress"></div><div class="hui_list_navigation"><div class="hui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="hui_list_count"></span></div><div class="hui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px; overflow: auto;"' : '')+'><table class="hui_list_table"><thead><tr></tr></thead><tbody></tbody></table></div>'});
+    html: '<div class="hui_list_spinner"></div><div class="hui_list_navigation"><div class="hui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="hui_list_count"></span></div><div class="hui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px; overflow: auto;"' : '')+'><table class="hui_list_table"><thead><tr></tr></thead><tbody></tbody></table></div>'});
   return new hui.ui.List(options);
 };
 
 hui.ui.List.prototype = {
+  _attach : function() {
+    hui.on(this.element,'click', this._onClick.bind(this));
+    hui.on(this.element,'dblclick', this._onDblClick.bind(this));
+  },
+  _onClick : function(e) {
+    if (this.busy) {return;}
+    e = hui.event(e);
+    var a = e.findByClass('hui_is_action');
+    if (a) {
+      var data = a.getAttribute('data');
+      if (data) {
+        data = hui.string.fromJSON(data);
+      }
+      var tr = hui.closest('tr',a);
+      var row = null;
+      if (tr) {
+        var i = parseInt(tr.getAttribute('data-index'), 10);
+        row = this.rows[i];
+      }
+      this.fire('clickIcon', {row: row, data: data, node: a});
+    }
+  },
+  _onDblClick : function(e) {
+    if (this.busy) {return;}
+    e = hui.event(e);
+    if (e.closest('.hui_list_row') && !e.closest('.hui_is_action')) {
+      var row = this.getFirstSelection();
+      if (row) {
+        this.fire('open',row);
+      }
+    }
+    hui.selection.clear();
+  },
   _addDrop : function() {
     hui.drag.listen({
       element : this.element,
@@ -376,6 +410,7 @@ hui.ui.List.prototype = {
     for (i=0; i < rows.length; i++) {
       var cells = rows[i].getElementsByTagName('cell');
       var row = document.createElement('tr');
+      row.className = 'hui_list_row';
       row.setAttribute('data-index',i);
       var td;
       if (this.checkboxMode) {
@@ -472,11 +507,12 @@ hui.ui.List.prototype = {
       } else if (hui.dom.isElement(child,'icon')) {
         var size = child.getAttribute('size') || 16;
         var icon = hui.ui.createIcon(child.getAttribute('icon'),size);
+        hui.cls.add(icon, 'hui_list_icon')
         if (child.getAttribute('hint')) {
           icon.setAttribute('title',child.getAttribute('hint'));
         }
         if (child.getAttribute('action')=='true') {
-          hui.cls.add(icon,'hui_list_icon_action');
+          hui.cls.add(icon,'hui_is_action');
         }
         var data = child.getAttribute('data');
         if (data) {
@@ -486,6 +522,11 @@ hui.ui.List.prototype = {
           hui.cls.add(icon,'hui_list_revealing');
         }
         cell.appendChild(icon);
+      } else if (hui.dom.isElement(child,'symbol')) {
+        var symbol = hui.build('span',{'class':'hui_symbol hui_list_symbol hui_symbol-'+child.getAttribute('name'), parent: cell});
+        if (child.getAttribute('action')=='true') {
+          hui.cls.add(symbol,'hui_is_action');
+        }
       } else if (hui.dom.isElement(child,'line')) {
         var line = hui.build('p',{'class':'hui_list_line'});
         if (child.getAttribute('dimmed')=='true') {
@@ -837,17 +878,6 @@ hui.ui.List.prototype = {
         }
       }
     };
-    row.ondblclick = function(e) {
-      if (self.busy) {return;}
-      self._onRowDoubleClick(index,e);
-      hui.selection.clear();
-      return false;
-    };
-    row.onclick = function(e) {
-      if (self.busy) {return;}
-      self._onRowClick(index,e);
-      return false;
-    };
   },
   _checkAll : function() {
     for (var i=0; i < this.rows.length; i++) {
@@ -890,17 +920,6 @@ hui.ui.List.prototype = {
       this.fire('select');
     }
   },
-  _onRowClick : function(index,e) {
-    e = hui.event(e);
-    var a = e.findByClass('hui_list_icon_action');
-    if (a) {
-      var data = a.getAttribute('data');
-      if (data) {
-        data = hui.string.fromJSON(data);
-      }
-      this.fire('clickIcon',{row:this.rows[index],data:data,node:a});
-    }
-  },
   _onRowDown : function(index,event) {
     if (!this.options.selectable) {
       return;
@@ -912,15 +931,6 @@ hui.ui.List.prototype = {
       this._changeSelection(newSelection);
     } else {
       this._changeSelection([index]);
-    }
-  },
-  _onRowDoubleClick : function(index,e) {
-    e = hui.event(e);
-    if (!e.findByClass('hui_list_icon_action')) {
-      var row = this.getFirstSelection();
-      if (row) {
-        this.fire('open',row);
-      }
     }
   },
   /** @private */

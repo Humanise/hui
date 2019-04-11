@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @font-face {
   font-family: 'HUI';
   src: url("../symbols/font/fonts/HUI.ttf?4k393m") format("truetype"), url("../symbols/font/fonts/HUI.woff?4k393m") format("woff"), url("../symbols/font/fonts/HUI.svg?4k393m#HUI") format("svg");
@@ -7,4 +8,19 @@
 .hui_symbol {
   width: 16px;
   height: 16px;
-  display: inline-block; }
+  display: inline-block;
+  font-size: 16px; }
+  .hui_symbol:before {
+    font-family: 'HUI' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; }
+  .hui_symbol-info:before {
+    content: "'"; }
+  .hui_symbol-gear:before {
+    content: ""; }

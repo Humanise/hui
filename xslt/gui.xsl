@@ -624,7 +624,7 @@
     <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state) or @visible='false'">
       <xsl:attribute name="style">display:none</xsl:attribute>
     </xsl:if>
-    <div class="hui_list_progress"><xsl:comment/></div>
+    <div class="hui_list_spinner"><xsl:comment/></div>
     <div class="hui_list_navigation">
       <div class="hui_list_selection window_page"><div><div class="window_page_body"><xsl:comment/></div></div></div>
       <span class="hui_list_count"><xsl:comment/></span>
