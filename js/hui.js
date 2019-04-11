@@ -1573,7 +1573,11 @@ hui.Event.prototype = {
   findByTag : function(tag) {
     return hui.closest(tag, this.element);
   },
+  /* @Deprecated */
   find : function(func) {
+    return this.closest(func);
+  },
+  closest : function(func) {
     if (hui.isString(func)) {
       return hui.closest(func, this.element);
     }
