@@ -33,6 +33,7 @@
       <xs:element name="tabs" type="tabs"/>
       <xs:element name="menu" type="menu"/>
       <xs:element name="div" type="div"/>
+      <xs:element name="clipboard" type="clipboard"/>
     </xs:choice>
     <xs:attribute name="padding" type="xs:positiveInteger"/>
     <xs:attribute name="background" type="xs:string"/>
@@ -82,6 +83,11 @@
   <xs:complexType name="listen_set">
     <xs:attribute name="on" type="xs:string"/>
     <xs:anyAttribute namespace="##local" processContents="lax"/>
+  </xs:complexType>
+
+  <xs:element name="clipboard" type="clipboard"/>
+  <xs:complexType name="clipboard">
+    <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="space" type="space"/>
@@ -141,6 +147,7 @@
   <xs:complexType name="structure_top">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="toolbar" type="toolbar"/>
+      <xs:element name="bar" type="bar"/>
     </xs:choice>
   </xs:complexType>
 
@@ -148,6 +155,7 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="button" type="button"/>
       <xs:element name="toolbar" type="toolbar"/>
+      <xs:element name="bar" type="bar"/>
       <xs:element name="space" type="space"/>
     </xs:choice>
   </xs:complexType>
@@ -554,6 +562,7 @@
       <xs:element name="dropdown" type="dropdown"/>
       <xs:element name="segmented" type="segmented"/>
       <xs:element name="searchfield" type="searchfield"/>
+      <xs:element name="flexible" type="bar_flexible"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="state" type="xs:string"/>
@@ -573,6 +582,9 @@
       <xs:element name="searchfield" type="searchfield"/>
       <xs:element name="segmented" type="segmented"/>
     </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="bar_flexible">
   </xs:complexType>
 
   <xs:complexType name="bar_text">
@@ -651,6 +663,9 @@
   </xs:complexType>
 
   <xs:complexType name="toolbar_divider">
+  </xs:complexType>
+
+  <xs:complexType name="toolbar_flexible">
   </xs:complexType>
 
   <xs:complexType name="toolbar_item">

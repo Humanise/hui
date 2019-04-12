@@ -218,7 +218,7 @@
 <xsl:template name="gui:createobject">
   <xsl:if test="@name and @name!='' and not(//gui:subgui[@globals='false'])">
     if (window['<xsl:value-of select="@name"/>']===undefined) {
-      window['<xsl:value-of select="@name"/>'] = <xsl:value-of select="generate-id()"/>_obj;
+      window['<xsl:value-of select="@name"/>'] = <xsl:call-template name="gui:id"/>_obj;
     }
   </xsl:if>
 </xsl:template>
@@ -256,7 +256,7 @@
       </xsl:for-each>
 
 
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Source({
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Source({
         name : '<xsl:value-of select="@name"/>',
         parameters : parameters
         <xsl:choose>
@@ -391,7 +391,8 @@
 -->
 
 <xsl:template match="gui:dock">
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:text>hui_dock </xsl:text>
       <xsl:if test="gui:sidebar"> hui_dock-sidebar</xsl:if>
@@ -423,7 +424,7 @@
     </div>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Dock({element:'<xsl:call-template name="gui:id"/>',name:'<xsl:value-of select="@name"/>'});
     <xsl:call-template name="gui:createobject"/>
   </script>
 </xsl:template>
@@ -476,7 +477,7 @@
   <xsl:variable name="id">
     <xsl:choose>
       <xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when>
-      <xsl:otherwise><xsl:value-of select="generate-id()"/></xsl:otherwise>
+      <xsl:otherwise><xsl:call-template name="gui:id"/></xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
   <iframe id="{$id}" name="{$id}" src="{@source}{@url}" frameborder="0">
@@ -496,7 +497,7 @@
     <xsl:comment/>
   </iframe>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.IFrame({
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.IFrame({
       element:'<xsl:value-of select="$id"/>',
       name:'<xsl:value-of select="@name"/>'
       <xsl:if test="@state">
@@ -517,7 +518,8 @@
 </selection>
 -->
 <xsl:template match="gui:selection">
-  <div class="hui_selection" id="{generate-id()}">
+  <div class="hui_selection">
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:if test="@top">
       <xsl:attribute name="style">margin-top: <xsl:value-of select="@top"/>px;</xsl:attribute>
     </xsl:if>
@@ -531,7 +533,7 @@
       var items = [];
       <xsl:for-each select="gui:item | gui:option">
       items.push({
-        id : '<xsl:value-of select="generate-id()"/>',
+        id : '<xsl:call-template name="gui:id"/>',
         title : '<xsl:value-of select="@title"/><xsl:value-of select="@text"/>',
         icon : '<xsl:value-of select="@icon"/>',
         badge : '<xsl:value-of select="@badge"/>',
@@ -541,16 +543,16 @@
       </xsl:for-each>
 
 
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Selection({
-      element : '<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Selection({
+      element : '<xsl:call-template name="gui:id"/>',
       name : '<xsl:value-of select="@name"/>',
       state : '<xsl:value-of select="@state"/>',
       items : items
       <xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
     });
-    with (<xsl:value-of select="generate-id()"/>_obj) {
+    with (<xsl:call-template name="gui:id"/>_obj) {
       <xsl:for-each select="gui:items | gui:options">
-        registerItems(<xsl:value-of select="generate-id()"/>_obj);
+        registerItems(<xsl:call-template name="gui:id"/>_obj);
       </xsl:for-each>
     }
     <xsl:call-template name="gui:createobject"/>
@@ -559,7 +561,8 @@
 </xsl:template>
 
 <xsl:template match="gui:selection/gui:item | gui:selection/gui:option">
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">hui_selection_item<xsl:if test="@value=../@value"> hui_selected</xsl:if></xsl:attribute>
     <xsl:if test="@badge"><strong class="hui_selection_badge"><xsl:value-of select="@badge"/></strong></xsl:if>
     <xsl:if test="@icon">
@@ -584,14 +587,17 @@
 -->
 <xsl:template match="gui:selection/gui:items | gui:selection/gui:options">
   <xsl:if test="@title">
-    <div class="hui_selection_title" id="{generate-id()}_title" style="display: none;"><span><xsl:value-of select="@title"/></span></div>
+    <div class="hui_selection_title" style="display: none;">
+      <xsl:attribute name="id"><xsl:call-template name="gui:id"/><xsl:text>_title</xsl:text></xsl:attribute>
+      <span><xsl:value-of select="@title"/></span></div>
   </xsl:if>
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:comment/>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Selection.Items({
-      element:'<xsl:value-of select="generate-id()"/>'
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Selection.Items({
+      element:'<xsl:call-template name="gui:id"/>'
       ,name:'<xsl:value-of select="@name"/>'
       <xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
     });
@@ -614,7 +620,8 @@
 </list>
 -->
 <xsl:template match="gui:list">
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:text>hui_list</xsl:text>
       <xsl:if test="@variant">
@@ -659,8 +666,8 @@
     </div>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.List({
-      element:'<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.List({
+      element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>',
       url:'<xsl:value-of select="@url"/>',
       <xsl:if test="@source">source:<xsl:value-of select="@source"/>,</xsl:if>
@@ -671,7 +678,7 @@
       <xsl:if test="@indent">,indent:<xsl:value-of select="@indent"/></xsl:if>
       <xsl:if test="@remember='true'">,rememberSelection:true</xsl:if>
     });
-    with (<xsl:value-of select="generate-id()"/>_obj) {
+    with (<xsl:call-template name="gui:id"/>_obj) {
       <xsl:for-each select="gui:column">
         registerColumn({key:'<xsl:value-of select="@key"/>',title:'<xsl:value-of select="@title"/>'});
       </xsl:for-each>
@@ -707,7 +714,8 @@
 </tabs>
 -->
 <xsl:template match="gui:tabs">
-<div id="{generate-id()}" class="hui_tabs">
+<div class="hui_tabs">
+  <xsl:call-template name="gui:id-attribute"/>
   <xsl:if test="@below='true'">
     <xsl:apply-templates select="gui:tab"/>
   </xsl:if>
@@ -728,7 +736,8 @@
     </xsl:attribute>
     <ul>
     <xsl:for-each select="gui:tab">
-      <li id="{generate-id()}_tab">
+      <li>
+        <xsl:attribute name="id"><xsl:call-template name="gui:id"/><xsl:text>_tab</xsl:text></xsl:attribute>
         <xsl:if test="position()=1">
           <xsl:attribute name="class">hui_tabs_selected</xsl:attribute>
         </xsl:if>
@@ -741,8 +750,8 @@
     <xsl:apply-templates select="gui:tab"/>
   </xsl:if>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Tabs({
-      element:'<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Tabs({
+      element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>'
     });
     <xsl:call-template name="gui:createobject"/>
@@ -751,7 +760,8 @@
 </xsl:template>
 
 <xsl:template match="gui:tabs/gui:tab">
-  <div class="" id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:choose>
         <xsl:when test="@background='light'"><xsl:text>hui_tabs_tab hui_tabs_tab_light</xsl:text></xsl:when>
@@ -777,7 +787,8 @@
 </boundpanel>
 -->
 <xsl:template match="gui:boundpanel">
-  <div id="{generate-id()}" style="display:none;">
+  <div style="display:none;">
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:text>hui_boundpanel</xsl:text>
       <xsl:if test="@variant">
@@ -795,8 +806,8 @@
     </div>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.BoundPanel({
-      element:'<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.BoundPanel({
+      element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>'
       <xsl:if test="@target">,target:'<xsl:value-of select="@target"/>'</xsl:if>
       <xsl:if test="@variant">,variant:'<xsl:value-of select="@variant"/>'</xsl:if>
@@ -819,7 +830,8 @@
 </window>
 -->
 <xsl:template match="gui:window">
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:text>hui_window</xsl:text>
       <xsl:if test="@variant">
@@ -851,8 +863,8 @@
     </div>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Window({
-      element:'<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Window({
+      element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>'
     });
     <xsl:call-template name="gui:createobject"/>
@@ -873,7 +885,8 @@
 </panel>
 -->
 <xsl:template match="gui:panel">
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:text>hui_panel hui-is-floating</xsl:text>
     </xsl:attribute>
@@ -895,8 +908,8 @@
     </div>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Panel({
-      element:'<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Panel({
+      element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>'
     });
     <xsl:call-template name="gui:createobject"/>
@@ -910,14 +923,15 @@
 </upload>
 -->
 <xsl:template match="gui:upload">
-  <div class="hui_upload" id="{generate-id()}">
+  <div class="hui_upload">
+    <xsl:call-template name="gui:id-attribute"/>
     <div class="hui_upload_items"><xsl:comment/></div>
     <div class="hui_upload_status"><xsl:comment/></div>
     <xsl:apply-templates/>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Upload({
-      element:'<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Upload({
+      element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>',
       url:'<xsl:value-of select="@url"/>',
       button:'<xsl:value-of select="@button"/>'
@@ -945,12 +959,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
 <richtext name="«name»" height="«pixels»" />
 
 <xsl:template match="gui:richtext">
-  <div class="hui_richtext" id="{generate-id()}">
+  <div class="hui_richtext">
+    <xsl:call-template name="gui:id-attribute"/>
     <div class="hui_richtext_toolbar" id="{generate-id()}_toolbar"><div class="hui_richtext_inner_toolbar"><div class="hui_richtext_toolbar_content" id="{generate-id()}_toolbar_content"><xsl:comment/></div></div></div>
     <iframe id="{generate-id()}_iframe" style="width: 100%; height: {@heigth}px;" frameborder="0"/>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.RichText({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.RichText({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
       });
       <xsl:call-template name="gui:createobject"/>
@@ -966,7 +981,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
 <gallery name="«name»" source="«name»" padding="«pixels»" state="«state»" drop-files="«boolean»"/>
 -->
 <xsl:template match="gui:gallery">
-  <div class="hui_gallery" id="{generate-id()}">
+  <div class="hui_gallery">
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)">
       <xsl:attribute name="style">display:none</xsl:attribute>
     </xsl:if>
@@ -978,8 +994,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </div>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Gallery({
-      element:'<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Gallery({
+      element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>'
       <xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
       <xsl:if test="@state">,state:'<xsl:value-of select="@state"/>'</xsl:if>
@@ -998,7 +1014,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
 <calendar name="«name»" source="«name»" start-hour="«integer»" end-hour="«integer»" />
 -->
 <xsl:template match="gui:calendar">
-  <div class="hui_calendar" id="{generate-id()}">
+  <div class="hui_calendar">
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)">
       <xsl:attribute name="style">display:none</xsl:attribute>
     </xsl:if>
@@ -1031,8 +1048,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </table>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Calendar({
-      element:'<xsl:value-of select="generate-id()"/>'
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Calendar({
+      element:'<xsl:call-template name="gui:id"/>'
       ,name:'<xsl:value-of select="@name"/>'
       ,state:'<xsl:value-of select="@state"/>'
       <xsl:if test="@start-hour">,startHour:<xsl:value-of select="@start-hour"/></xsl:if>
@@ -1055,7 +1072,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
 </picker>
 -->
 <xsl:template match="gui:picker">
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:text>hui_picker</xsl:text>
       <xsl:if test="@shadow='true'"><xsl:text> hui_picker_shadow</xsl:text></xsl:if>
@@ -1068,8 +1086,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </div>
   <script type="text/javascript">
     (function() {
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Picker({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Picker({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
         <xsl:if test="@item-height">,itemHeight:<xsl:value-of select="@item-height"/></xsl:if>
         <xsl:if test="@item-width">,itemWidth:<xsl:value-of select="@item-width"/></xsl:if>
@@ -1083,7 +1101,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
           ,value:'<xsl:value-of select="@value"/>'
         });
       </xsl:for-each>
-      <xsl:value-of select="generate-id()"/>_obj.setObjects(items);
+      <xsl:call-template name="gui:id"/>_obj.setObjects(items);
     })();
   </script>
 </xsl:template>
@@ -1167,10 +1185,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
 </link>
 -->
 <xsl:template match="gui:link">
-  <a href="javascript://" class="hui_link" id="{generate-id()}"><span><xsl:apply-templates/></span></a>
+  <a href="javascript://" class="hui_link"><xsl:call-template name="gui:id-attribute"/><span><xsl:apply-templates/></span></a>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Link({
-      element : '<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Link({
+      element : '<xsl:call-template name="gui:id"/>',
       name : '<xsl:value-of select="@name"/>'
     });
     <xsl:call-template name="gui:createobject"/>
@@ -1184,7 +1202,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <diagram name="«name»"/>
   -->
   <xsl:template match="gui:diagram">
-    <div class="hui_diagram" id="{generate-id()}">
+    <div class="hui_diagram">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="style">
         <xsl:choose>
         <xsl:when test="not(@height) or @height='full'">
@@ -1201,8 +1220,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:comment/>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Diagram({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Diagram({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>'
         <xsl:if test="@source">
           ,source:<xsl:value-of select="@source"/>
@@ -1218,7 +1237,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <chart name="«name»" source="«name»"/>
   -->
   <xsl:template match="gui:chart">
-    <div class="hui_chart" id="{generate-id()}">
+    <div class="hui_chart">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="style">
         <xsl:if test="@width">
           <xsl:text>width:</xsl:text><xsl:value-of select="@width"/><xsl:text>px;</xsl:text>
@@ -1237,8 +1257,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:attribute>
       <xsl:comment/></div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Chart({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Chart({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>'
         <xsl:if test="@source">
           ,source:<xsl:value-of select="@source"/>
@@ -1256,7 +1276,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </segmented>
   -->
   <xsl:template match="gui:segmented" name="gui:segmented">
-    <span id="{generate-id()}">
+    <span>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@top">
         <xsl:attribute name="style">
           <xsl:text>margin-top: </xsl:text><xsl:value-of select="@top"/><xsl:text>px;</xsl:text>
@@ -1289,8 +1310,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:for-each>
     <xsl:comment/></span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Segmented({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Segmented({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
         <xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
         <xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
@@ -1308,12 +1329,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <rendering name="«name»"/>
   -->
   <xsl:template match="gui:rendering">
-    <div class="hui_rendering" id="{generate-id()}">
+    <div class="hui_rendering">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:apply-templates/>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Rendering({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Rendering({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>'
       });
       <xsl:call-template name="gui:createobject"/>
@@ -1333,7 +1355,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:menu">
     <script type="text/javascript">
       (function() {
-        var menu = <xsl:value-of select="generate-id()"/>_obj = hui.ui.Menu.create({name:'<xsl:value-of select="@name"/>'});
+        var menu = <xsl:call-template name="gui:id"/>_obj = hui.ui.Menu.create({name:'<xsl:value-of select="@name"/>'});
         var items = [];
         <xsl:apply-templates/>
         menu.addItems(items);
@@ -1357,8 +1379,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
   <xsl:template match="gui:keyboard-navigator">
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.KeyboardNavigator({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.KeyboardNavigator({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>'
       });
       <xsl:call-template name="gui:createobject"/>
@@ -1368,7 +1390,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:finder">
       <script type="text/javascript">
           (function() {
-          var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Finder({
+          var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Finder({
           name : '<xsl:value-of select="@name"/>',
                   url : '<xsl:value-of select="@url"/>',
           title : '<xsl:value-of select="@title"/>',
@@ -1386,7 +1408,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:media-simulator">
-    <div class="hui_mediasimulator" id="{generate-id()}">
+    <div class="hui_mediasimulator">
+      <xsl:call-template name="gui:id-attribute"/>
       <div class="hui_mediasimulator_base">
         <div class="hui_mediasimulator_bar">
         </div>
@@ -1399,8 +1422,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </div>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.MediaSimulator({
-          element : '<xsl:value-of select="generate-id()"/>',
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.MediaSimulator({
+          element : '<xsl:call-template name="gui:id"/>',
           name : '<xsl:value-of select="@name"/>'
         });
       <xsl:call-template name="gui:createobject"/>
@@ -1412,7 +1435,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <xsl:apply-templates/>
     <script type="text/javascript">
       (function() {
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.EditManager({
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.EditManager({
         name : '<xsl:value-of select="@name"/>',
         root: '<xsl:value-of select="generate-id(gui:window)"/>',
         save: {url:'<xsl:value-of select="@save-url"/>'},
@@ -1428,14 +1451,15 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <icon name="«text»" icon="«icon»" size="«pixels»" text="«text»"/>
   -->
   <xsl:template match="gui:icon">
-    <span id="{generate-id()}">
+    <span>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="@icon"/><xsl:value-of select="@size"/>.png');</xsl:attribute>
       <xsl:attribute name="class">hui_icon hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
       <xsl:comment/>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Icon({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Icon({
+        element : '<xsl:call-template name="gui:id"/>',
         icon : '<xsl:value-of select="@icon"/>',
         size : <xsl:value-of select="@size"/>
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
@@ -1446,7 +1470,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
 
   <xsl:template match="gui:icon[@text]">
-    <a id="{generate-id()}" href="javascript://" class="hui_icon_labeled hui_icon_labeled_{@size}">
+    <a href="javascript://" class="hui_icon_labeled hui_icon_labeled_{@size}">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@click">
         <xsl:attribute name="onclick"><xsl:value-of select="@click"/></xsl:attribute>
       </xsl:if>
@@ -1458,8 +1483,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <strong><xsl:value-of select="@text"/></strong>
     </a>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Icon({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Icon({
+        element : '<xsl:call-template name="gui:id"/>',
         icon : '<xsl:value-of select="@icon"/>',
         size : <xsl:value-of select="@size"/>
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
@@ -1527,12 +1552,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   -->
 
   <xsl:template match="gui:columns">
-    <div class="hui_columns" id="{generate-id()}">
+    <div class="hui_columns">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:apply-templates/>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Columns({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Columns({
+        element : '<xsl:call-template name="gui:id"/>',
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
       });
       <xsl:call-template name="gui:createobject"/>
@@ -1584,7 +1610,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </row>
   -->
   <xsl:template match="gui:rows">
-    <div id="{generate-id()}">
+    <div>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_rows</xsl:text>
       </xsl:attribute>
@@ -1592,8 +1619,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </div>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Rows({
-          element : '<xsl:value-of select="generate-id()"/>',
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Rows({
+          element : '<xsl:call-template name="gui:id"/>',
           <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
         });
         <xsl:call-template name="gui:createobject"/>
@@ -1650,7 +1677,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </overflow>
   -->
   <xsl:template match="gui:overflow">
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:text>hui_overflow</xsl:text>
       <xsl:if test="@background">
@@ -1687,8 +1715,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </div>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Overflow({
-      element : '<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Overflow({
+      element : '<xsl:call-template name="gui:id"/>',
       dynamic : <xsl:value-of select="not(@height or @max-height or @min-height or @vertical or @full='true')"/>
       <xsl:if test="@vertical">,vertical:<xsl:value-of select="@vertical"/></xsl:if>
       <xsl:if test="@state">,state:'<xsl:value-of select="@state"/>'</xsl:if>
@@ -1708,13 +1736,14 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </split>
   -->
   <xsl:template match="gui:split">
-    <div class="hui_split" id="{generate-id()}">
+    <div class="hui_split">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:apply-templates select="gui:row"/>
     </div>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Split({
-          element : '<xsl:value-of select="generate-id()"/>'
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Split({
+          element : '<xsl:call-template name="gui:id"/>'
           <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
         });
         <xsl:call-template name="gui:createobject"/>
@@ -1743,7 +1772,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </box>
   -->
   <xsl:template match="gui:box">
-    <div id="{generate-id()}">
+    <div>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_box</xsl:text>
         <xsl:if test="@variant"><xsl:text> hui_box_</xsl:text><xsl:value-of select="@variant"/></xsl:if>
@@ -1768,8 +1798,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </div>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Box({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Box({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
         <xsl:if test="@modal='true'">,modal:true</xsl:if>
         <xsl:if test="@absolute='true'">,absolute:true</xsl:if>
@@ -1791,7 +1821,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </wizard>
   -->
   <xsl:template match="gui:wizard">
-    <div class="hui_wizard" id="{generate-id()}">
+    <div class="hui_wizard">
+      <xsl:call-template name="gui:id-attribute"/>
       <table class="hui_wizard"><tr>
         <th class="hui_wizard">
           <xsl:if test="@selection-width">
@@ -1842,8 +1873,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </div>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Wizard({
-          element : '<xsl:value-of select="generate-id()"/>',
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Wizard({
+          element : '<xsl:call-template name="gui:id"/>',
           name : '<xsl:value-of select="@name"/>'
         });
         <xsl:call-template name="gui:createobject"/>
@@ -1874,12 +1905,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </layout>
   -->
   <xsl:template match="gui:layout">
-    <table class="hui_layout" id="{generate-id()}">
+    <table class="hui_layout">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:apply-templates/>
     </table>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Layout({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Layout({element:'<xsl:call-template name="gui:id"/>',name:'<xsl:value-of select="@name"/>'});
         <xsl:call-template name="gui:createobject"/>
       })();
     </script>
@@ -1944,7 +1976,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </fragment>
   -->
   <xsl:template match="gui:fragment">
-  <div id="{generate-id()}">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="style">
       <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state) or @visible='false'">
         <xsl:text>display:none;</xsl:text>
@@ -1963,8 +1996,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <xsl:comment/>
   </div>
   <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Fragment({
-      element:'<xsl:value-of select="generate-id()"/>',
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Fragment({
+      element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>',
       state:'<xsl:value-of select="@state"/>'
     });
@@ -1986,7 +2019,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </pages>
   -->
   <xsl:template match="gui:pages">
-    <div id="{generate-id()}">
+    <div>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_pages</xsl:text>
         <xsl:if test="@height='full'">
@@ -2014,8 +2048,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:apply-templates/>
     </div>
     <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Pages({
-      element : '<xsl:value-of select="generate-id()"/>'
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Pages({
+      element : '<xsl:call-template name="gui:id"/>'
       <xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
     });
     <xsl:call-template name="gui:createobject"/>
@@ -2042,7 +2076,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </pages>
   -->
   <xsl:template match="gui:tiles">
-    <div id="{generate-id()}">
+    <div>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_tiles</xsl:text>
         <xsl:if test="@reveal='true'">
@@ -2052,8 +2087,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:apply-templates/>
     </div>
     <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Tiles({
-      element : '<xsl:value-of select="generate-id()"/>'
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Tiles({
+      element : '<xsl:call-template name="gui:id"/>'
       <xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
       <xsl:if test="@reveal='true'">,reveal : true</xsl:if>
     });
@@ -2062,7 +2097,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:tiles/gui:tile">
-    <div class="hui_tile" id="{generate-id()}">
+    <div class="hui_tile">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="style">
         width: <xsl:value-of select="@width"/>%;
         height: <xsl:value-of select="@height"/>%;
@@ -2101,8 +2137,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </div>
     </div>
     <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Tile({
-      element : '<xsl:value-of select="generate-id()"/>'
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Tile({
+      element : '<xsl:call-template name="gui:id"/>'
       <xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
     });
     <xsl:call-template name="gui:createobject"/>
@@ -2155,7 +2191,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </structure>
   -->
   <xsl:template match="gui:structure">
-    <div id="{generate-id()}">
+    <div>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_structure</xsl:text>
         <xsl:if test="not(@height)">
@@ -2167,8 +2204,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:apply-templates/>
     </div>
     <script type="text/javascript">
-    var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Structure({
-      element : '<xsl:value-of select="generate-id()"/>'
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Structure({
+      element : '<xsl:call-template name="gui:id"/>'
       <xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
     });
     <xsl:call-template name="gui:createobject"/>
@@ -2219,7 +2256,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   -->
 
   <xsl:template match="gui:foundation">
-    <div class="hui_foundation" id="{generate-id()}">
+    <div class="hui_foundation">
+      <xsl:call-template name="gui:id-attribute"/>
       <div class="hui_foundation_overlay_toggle"><xsl:comment/></div>
       <div class="hui_foundation_overlay">
         <div class="hui_foundation_overlay_title">
@@ -2252,8 +2290,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </div>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Foundation({
-          element : '<xsl:value-of select="generate-id()"/>'
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Foundation({
+          element : '<xsl:call-template name="gui:id"/>'
           <xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
           <xsl:if test="@selection">,selection : '<xsl:value-of select="@selection"/>'</xsl:if>
         });
@@ -2263,12 +2301,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:links">
-    <div class="hui_links" id="{generate-id()}">
+    <div class="hui_links">
+      <xsl:call-template name="gui:id-attribute"/>
       <div class="hui_links_list"><xsl:comment/></div>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Links({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Links({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
         <xsl:if test="@pageSource">,pageSource:<xsl:value-of select="@pageSource"/></xsl:if>
         <xsl:if test="@page-source">,pageSource:<xsl:value-of select="@page-source"/></xsl:if>
@@ -2290,7 +2329,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </toolbar>
   -->
   <xsl:template match="gui:toolbar" name="gui:toolbar">
-    <div id="{generate-id()}">
+    <div>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_toolbar</xsl:text>
         <xsl:if test="@border='top'"><xsl:text> hui_toolbar-border-top</xsl:text></xsl:if>
@@ -2308,8 +2348,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:apply-templates select="gui:right"/>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Toolbar({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Toolbar({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
       });
       <xsl:call-template name="gui:createobject"/>
@@ -2326,7 +2366,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:toolbar//gui:more">
-    <span class="hui_toolbar_more" id="{generate-id()}">
+    <span class="hui_toolbar_more">
+      <xsl:call-template name="gui:id-attribute"/>
       <span class="hui_toolbar_more_content">
         <xsl:apply-templates/>
         <xsl:comment/>
@@ -2339,8 +2380,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:if>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Toolbar.More({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Toolbar.More({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
       });
       <xsl:call-template name="gui:createobject"/>
@@ -2357,7 +2398,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </toolbar>
   -->
   <xsl:template match="gui:toolbar//gui:icon">
-    <a id="{generate-id()}">
+    <a>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_toolbar_icon</xsl:text>
         <xsl:if test="@selected='true'"> hui_toolbar_icon_selected</xsl:if>
@@ -2375,8 +2417,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <span class="hui_toolbar_icon_text"><xsl:value-of select="@title"/><xsl:value-of select="@text"/></span>
     </a>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Toolbar.Icon({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Toolbar.Icon({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>'
         <xsl:if test="@key">
           ,key : '<xsl:value-of select="@key"/>'
@@ -2387,7 +2429,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       });
       <xsl:call-template name="gui:createobject"/>
       <xsl:if test="@click">
-        <xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
+        <xsl:call-template name="gui:id"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
       </xsl:if>
     </script>
   </xsl:template>
@@ -2396,7 +2438,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <searchfield name="«text»" adaptive="«true»" width="«pixels»" expanded-width="«pixels»"/>
   -->
   <xsl:template match="gui:searchfield" name="gui:searchfield">
-    <span id="{generate-id()}">
+    <span>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_searchfield</xsl:text>
         <xsl:if test="@adaptive='true'">
@@ -2411,8 +2454,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <input class="hui_searchfield_input" type="text"/>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.SearchField({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.SearchField({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
         <xsl:if test="@expanded-width">,expandedWidth:<xsl:value-of select="@expanded-width"/></xsl:if>
       });
@@ -2515,7 +2558,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </bar>
   -->
   <xsl:template match="gui:bar">
-    <div id="{generate-id()}">
+    <div>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_bar</xsl:text>
         <xsl:if test="@variant">
@@ -2532,8 +2576,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:apply-templates select="gui:right"/>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Bar({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Bar({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
         <xsl:if test="@state">,state : '<xsl:value-of select="@state"/>'</xsl:if>
       });
@@ -2561,7 +2605,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:text>hui_bar_button</xsl:text>
       <xsl:if test="@selected='true'"><xsl:text> hui_bar_button-selected</xsl:text></xsl:if>
     </xsl:variable>
-    <a id="{generate-id()}" class="{$class}">
+    <a class="{$class}">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@icon">
         <span class="hui_icon_16" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></span>
       </xsl:if>
@@ -2570,14 +2615,14 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:if>
     </a>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Bar.Button({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Bar.Button({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>'
         <xsl:if test="@key">,key : '<xsl:value-of select="@key"/>'</xsl:if>
       });
       <xsl:call-template name="gui:createobject"/>
       <xsl:if test="@click">
-        <xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
+        <xsl:call-template name="gui:id"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
       </xsl:if>
     </script>
   </xsl:template>
@@ -2591,7 +2636,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </bar>
   -->
   <xsl:template match="gui:bar//gui:text">
-    <span class="hui_bar_text" id="{generate-id()}">
+    <span class="hui_bar_text">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_bar_text</xsl:text>
         <xsl:if test="@variant">
@@ -2602,8 +2648,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:comment/>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Bar.Text({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Bar.Text({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>'
       });
       <xsl:call-template name="gui:createobject"/>
@@ -2641,14 +2687,15 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <graph name="«name»" layout="«?»" source="«source»"/>
   -->
   <xsl:template match="gui:graph">
-    <div class="hui_graph" id="{generate-id()}">
+    <div class="hui_graph">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)">
         <xsl:attribute name="style">display:none</xsl:attribute>
       </xsl:if>
       <xsl:comment/></div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Graph({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Graph({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>',
         layout : '<xsl:value-of select="@layout"/>',
         state : '<xsl:value-of select="@state"/>'
@@ -2662,12 +2709,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <graph name="«name»" layout="«?»" source="«source»"/>
   -->
   <xsl:template match="gui:timeline">
-    <div class="hui_timeline" id="{generate-id()}">
+    <div class="hui_timeline">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:comment/>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.TimeLine({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.TimeLine({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>'
         <xsl:if test="@source">,source : <xsl:value-of select="@source"/></xsl:if>
       });
@@ -2680,7 +2728,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   -->
   <xsl:template match="gui:datepicker">
 
-    <div class="hui_datepicker" id="{generate-id()}">
+    <div class="hui_datepicker">
+      <xsl:call-template name="gui:id-attribute"/>
       <div class="hui_datepicker_header">
         <a class="hui_datepicker_next"></a>
         <a class="hui_datepicker_previous"></a>
@@ -2700,8 +2749,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </div>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DatePicker({
-          element : '<xsl:value-of select="generate-id()"/>',
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.DatePicker({
+          element : '<xsl:call-template name="gui:id"/>',
           name : '<xsl:value-of select="@name"/>'
         });
         <xsl:call-template name="gui:createobject"/>
@@ -2718,7 +2767,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </formula>
   -->
   <xsl:template match="gui:formula">
-    <form class="hui_formula hui_formula" id="{generate-id()}">
+    <form class="hui_formula hui_formula">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="style">
         <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)">
           <xsl:text>display:none;</xsl:text>
@@ -2729,8 +2779,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </form>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Formula({
-          element:'<xsl:value-of select="generate-id()"/>',
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Formula({
+          element:'<xsl:call-template name="gui:id"/>',
           name:'<xsl:value-of select="@name"/>'
           <xsl:if test="@state">
             ,state:'<xsl:value-of select="@state"/>'
@@ -2789,7 +2839,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
         </xsl:attribute>
           <xsl:if test="@name">
               <xsl:attribute name="id">
-                  <xsl:value-of select="generate-id()"/>
+                  <xsl:call-template name="gui:id"/>
               </xsl:attribute>
           </xsl:if>
       <th>
@@ -2806,8 +2856,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:if test="@name">
         <script type="text/javascript">
           (function() {
-            var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Formula.Field({
-              element:'<xsl:value-of select="generate-id()"/>',
+            var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Formula.Field({
+              element:'<xsl:call-template name="gui:id"/>',
               name:'<xsl:value-of select="@name"/>'
               <xsl:if test="@state">
                 ,state:'<xsl:value-of select="@state"/>'
@@ -2852,7 +2902,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:when test="@lines>1 or @multiline='true' or @breaks='true'">
         <xsl:text disable-output-escaping='yes'>
         <![CDATA[<textarea class="hui_textinput"]]></xsl:text>
-          <xsl:text> id="</xsl:text><xsl:value-of select="generate-id()"/><xsl:text>"</xsl:text>
+          <xsl:text> id="</xsl:text><xsl:call-template name="gui:id"/><xsl:text>"</xsl:text>
           <xsl:if test="@placeholder!=''">
             <xsl:text> placeholder="</xsl:text><xsl:value-of select="@placeholder"/><xsl:text>"</xsl:text>
           </xsl:if>
@@ -2860,7 +2910,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
         </xsl:text>
       </xsl:when>
       <xsl:otherwise>
-        <input id="{generate-id()}">
+        <input>
+          <xsl:call-template name="gui:id-attribute"/>
           <xsl:if test="@value">
             <xsl:attribute name="value"><xsl:value-of select="@value"/></xsl:attribute>
           </xsl:if>
@@ -2884,8 +2935,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:otherwise>
     </xsl:choose>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.TextInput({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.TextInput({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>',
         key : '<xsl:value-of select="@key"/>'
         <xsl:if test="@animate-value-change='false'">
@@ -2905,13 +2956,14 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <datetime-input name="«text»" key="«text»" return-type="«'date' | 'seconds'»"/>
   -->
   <xsl:template name="gui:datetime" match="gui:datetime-input">
-    <span class="hui_datetime" id="{generate-id()}">
+    <span class="hui_datetime">
+      <xsl:call-template name="gui:id-attribute"/>
       <input type="text" class="hui_textinput"/>
       <a class="hui_datetime_selector" href="javascript://" tabindex="-1"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DateTimeInput({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.DateTimeInput({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         key:'<xsl:value-of select="@key"/>',
         returnType:'<xsl:value-of select="@return-type"/>'
@@ -2928,7 +2980,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <number-input name="«text»" key="«text»" adaptive="«boolean»" min="«number»" max="«number»" decimals="«integer»" value="«number»" allow-null="«boolean»" tick-size="«number»"/>
   -->
   <xsl:template name="gui:number" match="gui:number-input">
-    <span id="{generate-id()}">
+    <span>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@width">
         <xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
       </xsl:if>
@@ -2948,8 +3001,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <a class="hui_numberinput_down"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.NumberInput({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.NumberInput({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         key:'<xsl:value-of select="@key"/>'
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
@@ -2973,7 +3026,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <style-length-input name="«text»" key="«text»" value="«css-length»"/>
   -->
   <xsl:template name="gui:style-length" match="gui:style-length-input">
-    <span id="{generate-id()}">
+    <span>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@width">
         <xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
       </xsl:if>
@@ -2991,8 +3045,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <a class="hui_numberinput_down"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.StyleLength({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.StyleLength({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         key:'<xsl:value-of select="@key"/>'
         <xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
@@ -3009,13 +3063,14 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <color-input name="«text»" key="«text»" value="«css-color»"/>
   -->
   <xsl:template match="gui:color-input">
-    <span class="hui_colorinput" id="{generate-id()}">
+    <span class="hui_colorinput">
+      <xsl:call-template name="gui:id-attribute"/>
       <input class="hui_textinput" type="text" value="{@value}"/>
       <a class="hui_colorinput_color" href="javascript://" tabindex="-1"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ColorInput({
-        element:'<xsl:value-of select="generate-id()"/>'
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.ColorInput({
+        element:'<xsl:call-template name="gui:id"/>'
         <xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
         <xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
@@ -3032,7 +3087,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <object-input name="«text»" key="«text»"/>
   -->
   <xsl:template match="gui:object-input">
-    <div class="hui_objectinput" id="{generate-id()}">
+    <div class="hui_objectinput">
+      <xsl:call-template name="gui:id-attribute"/>
       <div class="hui_objectinput_list">
         <span class="hui_objectinput_text">No value</span>
       </div>
@@ -3042,8 +3098,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </div>
 
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ObjectInput({
-        element:'<xsl:value-of select="generate-id()"/>'
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.ObjectInput({
+        element:'<xsl:call-template name="gui:id"/>'
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
         <xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
         <xsl:if test="gui:finder">
@@ -3070,13 +3126,14 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <font-input name="«text»" key="«text»" value="«css-color»"/>
   -->
   <xsl:template match="gui:font-input">
-    <span class="hui_fontinput" id="{generate-id()}">
+    <span class="hui_fontinput">
+      <xsl:call-template name="gui:id-attribute"/>
       <a class="hui_dropdown" href="javascript://"><span class="hui_dropdown_text"><xsl:comment/></span></a>
       <a class="hui_fontinput" href="javascript://" tabindex="-1">a</a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.FontInput({
-        element:'<xsl:value-of select="generate-id()"/>'
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.FontInput({
+        element:'<xsl:call-template name="gui:id"/>'
         <xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
         <xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
@@ -3090,14 +3147,15 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <location-input name="«text»" key="«text»" />
   -->
   <xsl:template match="gui:location-input">
-    <span class="hui_locationinput" id="{generate-id()}">
+    <span class="hui_locationinput">
+      <xsl:call-template name="gui:id-attribute"/>
       <span class="hui_locationinput_latitude"><span><input/></span></span>
       <span class="hui_locationinput_longitude"><span><input/></span></span>
       <a href="javascript://" class="hui_locationinput_picker"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.LocationInput({
-        element:'<xsl:value-of select="generate-id()"/>'
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.LocationInput({
+        element:'<xsl:call-template name="gui:id"/>'
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
         <xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
       });
@@ -3115,7 +3173,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </dropdown>
   -->
   <xsl:template name="gui:dropdown" match="gui:dropdown">
-    <a id="dropdown_{generate-id()}" href="javascript://">
+    <a href="javascript://">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@width">
         <xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
       </xsl:if>
@@ -3128,8 +3187,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </a>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DropDown(
-          {element:'dropdown_<xsl:value-of select="generate-id()"/>'
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.DropDown(
+          {element:'<xsl:call-template name="gui:id"/>'
           ,name:'<xsl:value-of select="@name"/>'
           ,key:'<xsl:value-of select="@key"/>'
           ,value:'<xsl:value-of select="@value"/>'
@@ -3137,7 +3196,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
           <xsl:if test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:if>
           <xsl:if test="@placeholder">,placeholder:'<xsl:value-of select="@placeholder"/>'</xsl:if>
         });
-        with(<xsl:value-of select="generate-id()"/>_obj) {
+        with(<xsl:call-template name="gui:id"/>_obj) {
           <xsl:for-each select="gui:item | gui:option"> <!-- TODO item is deprecated -->
             addItem({
               title : '<xsl:value-of select="@title"/><xsl:value-of select="@label"/><xsl:value-of select="@text"/>', <!-- TODO title,label is deprecated -->
@@ -3161,19 +3220,20 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </radiobuttons>
   -->
   <xsl:template name="gui:radiobuttons" match="gui:radiobuttons">
-    <span class="hui_radiobuttons" id="{generate-id()}">
+    <span class="hui_radiobuttons">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:apply-templates/>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Radiobuttons({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Radiobuttons({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>',
         value : '<xsl:value-of select="@value"/>',
         key : '<xsl:value-of select="@key"/>'
       });
-      with (<xsl:value-of select="generate-id()"/>_obj) {
+      with (<xsl:call-template name="gui:id"/>_obj) {
         <xsl:for-each select="gui:radiobutton | gui:item | gui:option"> <!-- TODO item and radiobutton is deprecated -->
-          registerRadiobutton({id:'<xsl:value-of select="generate-id()"/>','value':'<xsl:value-of select="@value"/>'});
+          registerRadiobutton({id:'<xsl:call-template name="gui:id"/>','value':'<xsl:value-of select="@value"/>'});
         </xsl:for-each>
       }
       <xsl:call-template name="gui:createobject"/>
@@ -3181,7 +3241,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:radiobuttons/gui:radiobutton | gui:radiobuttons/gui:item | gui:radiobuttons/gui:option">
-    <a id="{generate-id()}" href="javascript://">
+    <a href="javascript://">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_radiobutton</xsl:text>
         <xsl:if test="@value=../@value"> hui_radiobutton_selected</xsl:if>
@@ -3201,7 +3262,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <checkbox name="«text»" key="«text»" value="«boolean»" label="«text»"/>
   -->
   <xsl:template name="gui:checkbox"  match="gui:checkbox">
-    <a id="{generate-id()}" href="javascript://">
+    <a href="javascript://">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@right">
         <xsl:attribute name="style">
           <xsl:text>margin-right:</xsl:text><xsl:value-of select="@right"/><xsl:text>px;</xsl:text>
@@ -3217,8 +3279,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:if>
     </a>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Checkbox({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Checkbox({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         'key':'<xsl:value-of select="@key"/>',
         'value':'<xsl:value-of select="@value"/>'
@@ -3238,21 +3300,22 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </checkboxes>
   -->
   <xsl:template name="gui:checkboxes" match="gui:checkboxes">
-    <span class="hui_checkboxes" id="{generate-id()}">
+    <span class="hui_checkboxes">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@max-height">
         <xsl:attribute name="style">max-height:<xsl:value-of select="@max-height"/>px; overflow: auto;</xsl:attribute>
       </xsl:if>
       <xsl:apply-templates/>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Checkboxes({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Checkboxes({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         key:'<xsl:value-of select="@key"/>'
       });
-      with (<xsl:value-of select="generate-id()"/>_obj) {
+      with (<xsl:call-template name="gui:id"/>_obj) {
         <xsl:for-each select="gui:items | gui:options"> <!-- TODO items is deprecated -->
-          registerItems(<xsl:value-of select="generate-id()"/>_obj);
+          registerItems(<xsl:call-template name="gui:id"/>_obj);
         </xsl:for-each>
         <xsl:for-each select="gui:item | gui:option"> <!-- TODO item is deprecated -->
           registerItem({title:'<xsl:value-of select="@title"/><xsl:value-of select="@text"/>',value:hui.intOrString('<xsl:value-of select="@value"/>')});
@@ -3263,11 +3326,12 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:checkboxes/gui:items | gui:checkboxes/gui:options">
-    <span id="{generate-id()}">
+    <span>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:comment/>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Checkboxes.Items({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>',source:<xsl:value-of select="@source"/>});
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Checkboxes.Items({element:'<xsl:call-template name="gui:id"/>',name:'<xsl:value-of select="@name"/>',source:<xsl:value-of select="@source"/>});
       <xsl:call-template name="gui:createobject"/>
     </script>
   </xsl:template>
@@ -3339,7 +3403,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:when test="@tiny='true' or ../@tiny='true'">tiny</xsl:when>
       </xsl:choose>
     </xsl:variable>
-    <a id="{generate-id()}" href="javascript://">
+    <a href="javascript://">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_button</xsl:text>
         <xsl:if test="@variant">
@@ -3371,8 +3436,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:value-of select="@title"/><xsl:value-of select="@text"/>
     </a>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Button({
-        element:'<xsl:value-of select="generate-id()"/>'
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Button({
+        element:'<xsl:call-template name="gui:id"/>'
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
         <xsl:if test="@role">,role:'<xsl:value-of select="@role"/>'</xsl:if>
         <xsl:if test="@submit='true'">,submit:true</xsl:if>
@@ -3381,10 +3446,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
         </xsl:if>
       });
       <xsl:if test="@click">
-        <xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
+        <xsl:call-template name="gui:id"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
       </xsl:if>
       <xsl:if test="@url">
-        <xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {document.location='<xsl:value-of select="@url"/>'}});
+        <xsl:call-template name="gui:id"/>_obj.listen({$click:function() {document.location='<xsl:value-of select="@url"/>'}});
       </xsl:if>
       <xsl:call-template name="gui:createobject"/>
     </script>
@@ -3404,7 +3469,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <image-input name="«text»" source="«url»"/>
   -->
   <xsl:template match="gui:image-input">
-    <span class="hui_imageinput" id="{generate-id()}" tabindex="0">
+    <span class="hui_imageinput" tabindex="0">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@size">
         <xsl:attribute name="style">
           <xsl:text>width:</xsl:text><xsl:value-of select="@size"/><xsl:text>px; height:</xsl:text><xsl:value-of select="@size"/><xsl:text>px;</xsl:text>
@@ -3415,8 +3481,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </a>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ImageInput({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.ImageInput({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>',
         key : '<xsl:value-of select="@key"/>',
         url : '<xsl:value-of select="@url"/>'
@@ -3449,7 +3515,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <code-input name="«text»"/>
   -->
   <xsl:template match="gui:code-input">
-    <div id="{generate-id()}">
+    <div>
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
         <xsl:text>hui_codeinput</xsl:text>
         <xsl:if test="@height='full'">
@@ -3462,8 +3529,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:text disable-output-escaping='yes'><![CDATA[<textarea spellcheck="false" class="hui_codeinput_input"></textarea>]]></xsl:text>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.CodeInput({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.CodeInput({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>',
         key : '<xsl:value-of select="@key"/>'
       });
@@ -3472,7 +3539,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
 
+  <xsl:template name="gui:id">
+    <xsl:value-of select="$unique"/><xsl:value-of select="generate-id()"/>
+  </xsl:template>
 
+  <xsl:template name="gui:id-attribute">
+    <xsl:attribute name="id"><xsl:call-template name="gui:id"/></xsl:attribute>
+  </xsl:template>
 
   <!--doc title:'Object input' class:'hui.ui.LinkInput' module:'input'
   <link-input name="«text»" key="«text»">
@@ -3482,8 +3555,9 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </link-input>
   -->
   <xsl:template match="gui:link-input">
-    <div class="hui_linkinput" id="{generate-id()}">
-      <a id="{generate-id()}" href="javascript://" class="hui_dropdown">
+    <div class="hui_linkinput">
+      <xsl:call-template name="gui:id-attribute"/>
+      <a href="javascript://" class="hui_dropdown">
         <span class="hui_dropdown_text"><xsl:comment/></span>
       </a>
       <span class="hui_linkinput_body">
@@ -3519,8 +3593,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
             </xsl:if>
           })
         </xsl:for-each>
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.LinkInput({
-          element : '<xsl:value-of select="generate-id()"/>',
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.LinkInput({
+          element : '<xsl:call-template name="gui:id"/>',
           name : '<xsl:value-of select="@name"/>',
           key : '<xsl:value-of select="@key"/>',
           types : types
@@ -3538,12 +3612,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <tokens name="«text»" key="«text»"/>
   -->
   <xsl:template match="gui:tokens">
-    <div class="hui_tokenfield" id="{generate-id()}">
+    <div class="hui_tokenfield">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:comment/>
     </div>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.TokenField({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.TokenField({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         'key':'<xsl:value-of select="@key"/>'}
         );
@@ -3556,13 +3631,14 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <slider name="«text»" key="«text»" width="«pixels»"/>
   -->
   <xsl:template match="gui:slider">
-    <span class="hui_slider" id="{generate-id()}">
+    <span class="hui_slider">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@width"><xsl:attribute name="style">width: <xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
       <a href="javascript://" class="hui_slider_knob"><xsl:comment/></a><span class="hui_slider_bar"><xsl:comment/></span>
     </span>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Slider({
-        element : '<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Slider({
+        element : '<xsl:call-template name="gui:id"/>',
         name : '<xsl:value-of select="@name"/>',
         'key' : '<xsl:value-of select="@key"/>'
         <xsl:if test="@value">
@@ -3585,7 +3661,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </objectlist>
   -->
   <xsl:template match="gui:objectlist" name="gui:objectlist">
-    <table cellspacing="0" cellpadding="0" id="{generate-id()}" class="hui_objectlist">
+    <table cellspacing="0" cellpadding="0" class="hui_objectlist">
+      <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="gui:text/@label">
         <thead>
           <tr>
@@ -3600,13 +3677,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </tbody>
     </table>
     <script type="text/javascript">
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ObjectList({
-        element : '<xsl:value-of select="generate-id()"/>'
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.ObjectList({
+        element : '<xsl:call-template name="gui:id"/>'
         ,key:'<xsl:value-of select="@key"/>'
         <xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
       });
       <xsl:call-template name="gui:createobject"/>
-      with (<xsl:value-of select="generate-id()"/>_obj) {
+      with (<xsl:call-template name="gui:id"/>_obj) {
         <xsl:apply-templates select="gui:text | gui:select"/>
         ignite();
       }
@@ -3618,12 +3695,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:objectlist/gui:select">
-    <xsl:variable name="id" select="generate-id()"/>
-    var <xsl:value-of select="$id"/> = new hui.ui.ObjectList.Select('<xsl:value-of select="@key"/>');
+    var <xsl:call-template name="gui:id"/> = new hui.ui.ObjectList.Select('<xsl:value-of select="@key"/>');
     <xsl:for-each select="gui:option">
-      <xsl:value-of select="$id"/>.addOption('<xsl:value-of select="@value"/>','<xsl:value-of select="@label"/><xsl:value-of select="@text"/>');
+      <xsl:call-template name="gui:id"/>.addOption('<xsl:value-of select="@value"/>','<xsl:value-of select="@label"/><xsl:value-of select="@text"/>');
     </xsl:for-each>
-    registerTemplateItem(<xsl:value-of select="generate-id()"/>);
+    registerTemplateItem(<xsl:call-template name="gui:id"/>);
   </xsl:template>
 
   <!--             Tokens            -->
@@ -3636,7 +3712,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </style-editor>
   -->
   <xsl:template match="gui:style-editor">
-    <div class="hui_styleeditor" id="{generate-id()}">
+    <div class="hui_styleeditor">
+      <xsl:call-template name="gui:id-attribute"/>
       <div class="hui_styleeditor_list"><![CDATA[ ]]></div>
     </div>
     <script type="text/javascript">
@@ -3645,8 +3722,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:for-each select="gui:component">
       components.push({name:'<xsl:value-of select="@key"/>',description:'<xsl:value-of select="@description"/>'})
       </xsl:for-each>
-      var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.StyleEditor({
-        element:'<xsl:value-of select="generate-id()"/>',
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.StyleEditor({
+        element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         components: components
       });

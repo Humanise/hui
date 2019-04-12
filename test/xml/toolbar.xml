@@ -79,12 +79,6 @@
     </top>
     <middle>
       <left>
-        <toolbar variant="layout_mini">
-          <icon icon="common/info"/>
-          <icon icon="common/edit" selected="true"/>
-          <icon icon="common/folder"/>
-          <icon icon="common/person"/>
-        </toolbar>
       </left>
       <center>
         <toolbar border="bottom">

@@ -10,6 +10,7 @@
 <xsl:variable name="pathVersion"></xsl:variable>
 <xsl:variable name="profile">false</xsl:variable>
 <xsl:variable name="language">en</xsl:variable>
+<xsl:variable name="unique">id123456789</xsl:variable>
 
 <xsl:template match="/"><xsl:apply-templates/></xsl:template>
 </xsl:stylesheet>
