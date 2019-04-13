@@ -69,14 +69,16 @@ class Inspector
   def check_icons directory
     dir = directory.join("icons")
     dir.children.select{|item| File.directory?(item)}.each do |group|
-      names = group.children.sort_by!{|obj| obj.basename.to_s.downcase}.map{|file| /^[a-z_]+/.match(file.basename.to_s).to_s }.uniq.each do |name|
+      names = group.children.sort_by!{|obj| obj.basename.to_s.downcase}.map{|file| /^[a-z_]+/.match(file.basename.to_s).to_s }.select{|name| name.length > 0}.uniq.each do |name|
         puts "Icon: #{group.basename.to_s}/#{name}"
         ch = [
+          group.join("#{name}16.svg"),
           group.join("#{name}16.png"),
           group.join("#{name}16x2.png")
         ]
         if group.basename.to_s != 'monochrome'
           ch += [
+            group.join("#{name}32.svg"),
             group.join("#{name}32.png"),
             group.join("#{name}32x2.png")
           ]

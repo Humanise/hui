@@ -8406,7 +8406,7 @@ hui.ui.Selection.Items.prototype = {
       }
       var inner = hui.build('span',{'class':'hui_selection_label',text:text});
       if (item.icon) {
-        node.appendChild(hui.build('span',{'class':'hui_icon_1',style:'background-image: url('+hui.ui.getIconUrl(item.icon,16)+')'}));
+        node.appendChild(hui.build('span',{'class':'hui_icon hui_icon_16',style:'background-image: url('+hui.ui.getIconUrl(item.icon,16)+')'}));
       }
       node.appendChild(inner);
       hui.listen(node,'click',function(e) {
@@ -11582,13 +11582,13 @@ Date.monthNames =
     "November",
     "December"];
 Date.dayNames =
-   ["Søndag",
-    "Mandag",
-    "Tirsdag",
-    "Onsdag",
-    "Torsdag",
-    "Fredag",
-    "Lørdag"];
+   ["S",
+    "M",
+    "T",
+    "O",
+    "T",
+    "F",
+    "L"];
 ;
 /**
  * @constructor

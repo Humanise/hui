@@ -19,7 +19,7 @@ textarea.hui_editor_html {
 
 div.hui_overlay_icon:hover {
   cursor: pointer;
-  background-position: 0px -32px; }
+  filter: brightness(0.8); }
 
 .hui_editor_part_hover {
   outline: 1px dashed rgba(0, 0, 0, 0.2);

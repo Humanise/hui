@@ -101,7 +101,7 @@
   display: inline-block;
   vertical-align: top; }
   .hui_button:hover .hui_button_icon {
-    background-position: 0 -16px; }
+    filter: brightness(0.8); }
   .hui_button_icon_notext {
     margin: 4px -3px 0px -3px; }
 

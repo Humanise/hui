@@ -52,8 +52,8 @@ div.hui_selection div.hui_selected strong.hui_selection_badge {
 .hui_context_sidebar .hui_selection_item:hover {
   background-color: #d4dce9; }
 
-.hui_selection_item:hover .icon {
-  background-position: 0px -16px; }
+.hui_selection_item:hover .hui_icon {
+  filter: brightness(0.8); }
 
 div.hui_selection div.hui_selected, div.hui_selection div.hui_selected:hover {
   background-color: #3875d7;

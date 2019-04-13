@@ -96,9 +96,12 @@
   margin: 0 3px 0 0;
 }
 
+.hui_list_icon.hui_is_action {
+  opacity: .5;
+}
 
 .hui_list_icon.hui_is_action:hover {
-  background-position: 0px -16px;
+  opacity: .8;
   cursor: pointer;
 }
 

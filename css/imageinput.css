@@ -25,7 +25,7 @@
   outline: none; }
 
 .hui_imageinput_clear:hover {
-  background-position: 0 -16px; }
+  filter: brightness(0.8); }
 
 .hui_imageinput_full:hover > .hui_imageinput_clear {
   display: block; }

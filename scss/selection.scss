@@ -66,8 +66,8 @@ div.hui_selection div.hui_selected strong.hui_selection_badge {
   background-color: #d4dce9;
 }
 
-.hui_selection_item:hover .icon {
-  background-position: 0px -16px;
+.hui_selection_item:hover .hui_icon {
+  @include icon-hover;
 }
 
 div.hui_selection div.hui_selected, div.hui_selection div.hui_selected:hover {

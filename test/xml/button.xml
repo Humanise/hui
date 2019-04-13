@@ -33,7 +33,7 @@
       <button text="Small" small="true" icon="monochrome/delete"/>
       <button text="Small" small="true" icon="monochrome/edit"/>
       <button small="true" icon="monochrome/info"/>
-      <button small="true" icon="monochrome/info_light" highlighted="true"/>
+      <button small="true" icon="monochrome/info" highlighted="true"/>
       <button small="true" icon="monochrome/edit"/>
     </buttons>
 
@@ -113,7 +113,7 @@
       <button text="Small" small="true" icon="monochrome/delete"/>
       <button text="Small" small="true" icon="monochrome/edit"/>
       <button small="true" icon="monochrome/info"/>
-      <button small="true" icon="monochrome/info_light" highlighted="true"/>
+      <button small="true" icon="monochrome/info" highlighted="true"/>
       <button small="true" icon="monochrome/edit"/>
     </buttons>
 

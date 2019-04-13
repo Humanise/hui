@@ -94,6 +94,14 @@ $view-symbol: "\e60d";
   }
 }
 
+@mixin icon-hover {
+  filter: brightness(0.8);
+}
+
+@mixin anti-icon-hover {
+  filter: none;
+}
+
 @mixin cursor-grab {
   cursor: move;
   cursor: -webkit-grab;

@@ -7,10 +7,6 @@
   vertical-align: middle;
 }
 
-.hui_icon_16:hover {
-  background-position: 0 -16px;
-}
-
 .hui_icon_2, .hui_icon_32 {
   display: inline-block;
   width: 32px;
@@ -66,11 +62,11 @@
 }
 
 .hui_icon_labeled:hover .hui_icon_64 {
-  background-position: 0 -64px;
+  @include icon-hover;
 }
 
 .hui_icon_labeled:hover .hui_icon_128 {
-  background-position: 0 -128px;
+  @include icon-hover;
 }
 
 .hui_icon_overlay {

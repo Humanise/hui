@@ -24,7 +24,7 @@ textarea.hui_editor_html {
 
 div.hui_overlay_icon:hover {
   cursor: pointer;
-  background-position: 0px -32px;
+  @include icon-hover;
 }
 
 .hui_editor_part_hover {

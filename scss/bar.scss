@@ -82,7 +82,7 @@
   }
 
   &:hover .hui_icon_16 {
-    background-position: 0 -16px;
+    @include icon-hover;
   }
 }
 
@@ -93,7 +93,7 @@
 }
 
 .hui_bar_button-selected .hui_icon_16 {
-  background-position: 0 -32px;
+  @include icon-hover;
 }
 
 .hui_bar_button-selected .hui_bar_button_text {
@@ -257,7 +257,7 @@
 }
 
 .hui_bar-layout_mini .hui_bar_button-selected .hui_icon_16 {
-  background-position: 0 -16px;
+  @include icon-hover;
 }
 
 .hui_bar-layout_mini_top {

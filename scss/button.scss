@@ -136,7 +136,7 @@
   vertical-align: top;
 
   .hui_button:hover & {
-    background-position: 0 -16px;
+    @include icon-hover;
   }
 
   &_notext {

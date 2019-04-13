@@ -57,7 +57,7 @@ span.hui_links_remove {
 
 span.hui_links_remove:hover {
   cursor: pointer;
-  background-position: 0 -16px;
+  @include icon-hover;
 }
 
 div.hui_links_row:hover span.hui_links_remove {

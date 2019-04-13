@@ -52,7 +52,7 @@
   .hui_bar_button:hover {
     color: #000; }
   .hui_bar_button:hover .hui_icon_16 {
-    background-position: 0 -16px; }
+    filter: brightness(0.8); }
 
 .hui_bar .hui_bar_button-selected, .hui_bar .hui_bar_button-selected:hover {
   background-color: #bdbdbd;
@@ -65,7 +65,7 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bdbdbd', endColorstr='#ebebeb'); }
 
 .hui_bar_button-selected .hui_icon_16 {
-  background-position: 0 -32px; }
+  filter: brightness(0.8); }
 
 .hui_bar_button-selected .hui_bar_button_text {
   color: #0054a6; }
@@ -218,7 +218,7 @@
   border-color: #bbb; }
 
 .hui_bar-layout_mini .hui_bar_button-selected .hui_icon_16 {
-  background-position: 0 -16px; }
+  filter: brightness(0.8); }
 
 .hui_bar-layout_mini_top {
   border-top: 1px solid #ddd; }

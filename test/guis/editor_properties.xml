@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Editor properties">
-  <window width="300" name="win" title="Properties" icon="monochrome/info_light" variant="light">
+  <window width="300" name="win" title="Properties" icon="monochrome/info" variant="light">
     <bar variant="window_mini" name="bar">
       <button icon="monochrome/text" key="text" name="barText" selected="true"/>
       <button icon="monochrome/layout" key="layout" name="barLayout"/>

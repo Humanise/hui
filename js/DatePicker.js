@@ -152,10 +152,10 @@ Date.monthNames =
     "November",
     "December"];
 Date.dayNames =
-   ["Søndag",
-    "Mandag",
-    "Tirsdag",
-    "Onsdag",
-    "Torsdag",
-    "Fredag",
-    "Lørdag"];
+   ["S",
+    "M",
+    "T",
+    "O",
+    "T",
+    "F",
+    "L"];

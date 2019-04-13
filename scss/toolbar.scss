@@ -103,7 +103,7 @@
   }
 
   &:hover .hui_icon {
-    background-position: 0px -32px;
+    @include icon-hover;
   }
 
   &_disabled {
@@ -112,8 +112,9 @@
     -webkit-filter: saturate(0);
     -moz-filter: saturate(0);
     filter: saturate(0);
+
     &:hover .hui_icon {
-      background-position: 0 0;
+      @include anti-icon-hover;
     }
   }
 }

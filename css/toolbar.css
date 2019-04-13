@@ -74,7 +74,7 @@
     -ms-transform: scale(0.9);
     transform: scale(0.9); }
   .hui_toolbar_icon:hover .hui_icon {
-    background-position: 0px -32px; }
+    filter: brightness(0.8); }
   .hui_toolbar_icon_disabled {
     opacity: 0.3;
     cursor: default;
@@ -82,7 +82,7 @@
     -moz-filter: saturate(0);
     filter: saturate(0); }
     .hui_toolbar_icon_disabled:hover .hui_icon {
-      background-position: 0 0; }
+      filter: none; }
 
 /************************************ Items *****************************/
 .hui_toolbar_item {
