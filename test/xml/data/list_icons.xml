@@ -57,12 +57,4 @@
     <cell icon="common/user">common/user</cell>
     <cell></cell>
   </row>
-  <row kind="icon">
-    <cell icon="edit/decrease_font_size">edit/decrease_font_size</cell>
-    <cell></cell>
-  </row>
-  <row kind="icon">
-    <cell icon="edit/increase_font_size">edit/increase_font_size</cell>
-    <cell></cell>
-  </row>
 </list>

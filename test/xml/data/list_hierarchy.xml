@@ -41,10 +41,4 @@
   <row kind="user">
     <cell icon="common/user">common/user</cell>
   </row>
-  <row>
-    <cell icon="edit/decrease_font_size">edit/decrease_font_size</cell>
-  </row>
-  <row>
-    <cell icon="edit/increase_font_size">edit/increase_font_size</cell>
-  </row>
 </list>
