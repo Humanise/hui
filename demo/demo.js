@@ -11,7 +11,7 @@ var demo = {
     this._go('start3',500)
   },
   start3 : function() {
-    hui.ui.msg({text:'GO!',icon:'common/success'});
+    hui.ui.msg({text:'GO!',icon:'common/ok'});
     this._go('showWindow',1000)
   },
   showWindow : function() {
