@@ -2838,7 +2838,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:if test="@top">
         <xsl:attribute name="style">margin-top: <xsl:value-of select="@top"/>px;</xsl:attribute>
       </xsl:if>
-      <strong class="hui_formula_fieldset"><xsl:value-of select="@legend"/></strong>
+      <div class="hui_formula_fieldset_legend"><xsl:value-of select="@legend"/></div>
       <xsl:apply-templates/>
     </div>
   </xsl:template>

@@ -39,10 +39,6 @@
         "statistics": [
             16, 
             32
-        ], 
-        "water": [
-            32, 
-            16
         ]
     }, 
     "colorpicker": {
@@ -56,7 +52,8 @@
             16
         ], 
         "wheel_saturated": [
-            16
+            16, 
+            32
         ]
     }, 
     "common": {
@@ -77,8 +74,7 @@
         ], 
         "delete": [
             16, 
-            32, 
-            24
+            32
         ], 
         "design": [
             32
@@ -87,7 +83,8 @@
             32
         ], 
         "draft": [
-            16
+            16, 
+            32
         ], 
         "duplicate": [
             32, 
@@ -95,7 +92,6 @@
         ], 
         "edit": [
             32, 
-            64, 
             16
         ], 
         "email": [
@@ -103,7 +99,8 @@
             16
         ], 
         "files": [
-            16
+            16, 
+            32
         ], 
         "flag": [
             32
@@ -113,7 +110,8 @@
             32
         ], 
         "folder_grey": [
-            16
+            16, 
+            32
         ], 
         "frame": [
             32
@@ -150,12 +148,17 @@
             16
         ], 
         "lifebuoy": [
+            32, 
             128, 
             64
         ], 
         "link": [
             16, 
             32
+        ], 
+        "map": [
+            32, 
+            16
         ], 
         "move_left": [
             32
@@ -190,6 +193,7 @@
             16
         ], 
         "pagereference": [
+            32, 
             16
         ], 
         "pause": [
@@ -200,6 +204,7 @@
             32
         ], 
         "phone": [
+            32, 
             16
         ], 
         "play": [
@@ -214,6 +219,9 @@
             16
         ], 
         "refresh": [
+            32
+        ], 
+        "rubberstamp": [
             32
         ], 
         "save": [
@@ -243,14 +251,8 @@
             16
         ], 
         "stop": [
-            24, 
             32, 
             16
-        ], 
-        "success": [
-            16, 
-            32, 
-            24
         ], 
         "template": [
             32
@@ -274,10 +276,10 @@
             32
         ], 
         "view": [
+            16, 
             32
         ], 
         "warning": [
-            24, 
             32, 
             16
         ], 
@@ -288,12 +290,6 @@
     }, 
     "edit": {
         "clear": [
-            16
-        ], 
-        "decrease_font_size": [
-            16
-        ], 
-        "increase_font_size": [
             16
         ], 
         "text_align_center": [
@@ -324,7 +320,8 @@
             16
         ], 
         "text": [
-            32
+            32, 
+            16
         ]
     }, 
     "flag": {
@@ -336,45 +333,6 @@
         ], 
         "gb": [
             16
-        ]
-    }, 
-    "geo": {
-        "map": [
-            32, 
-            16
-        ]
-    }, 
-    "input": {
-        "datetime": [
-            14
-        ]
-    }, 
-    "inset": {
-        "cross": [
-            16
-        ], 
-        "globe": [
-            16
-        ], 
-        "public": [
-            16
-        ], 
-        "stamp": [
-            32
-        ], 
-        "tools": [
-            16
-        ], 
-        "user": [
-            16
-        ], 
-        "view": [
-            32
-        ]
-    }, 
-    "layout": {
-        "layout": [
-            32
         ]
     }, 
     "monochrome": {
@@ -436,9 +394,6 @@
         "info": [
             16
         ], 
-        "info_light": [
-            16
-        ], 
         "invisible": [
             16
         ], 
@@ -458,9 +413,11 @@
             16
         ], 
         "loudspeaker": [
+            16, 
             32
         ], 
         "message": [
+            16, 
             32
         ], 
         "new": [
@@ -497,9 +454,6 @@
             16
         ], 
         "previous": [
-            16
-        ], 
-        "recycle": [
             16
         ], 
         "round_arrow_down": [
@@ -578,11 +532,6 @@
             32
         ]
     }, 
-    "part": {
-        "news": [
-            16
-        ]
-    }, 
     "status": {
         "paused": [
             16
@@ -613,34 +562,37 @@
         "float_right": [
             16
         ], 
+        "float_rigth": [
+            16
+        ], 
         "font_variant_normal": [
             16
         ], 
         "font_variant_smallcaps": [
             16
         ], 
-        "list-style-circle": [
+        "list_style_circle": [
             16
         ], 
-        "list-style-decimal": [
+        "list_style_decimal": [
             16
         ], 
-        "list-style-disc": [
+        "list_style_disc": [
             16
         ], 
-        "list-style-lower-alpha": [
+        "list_style_lower_alpha": [
             16
         ], 
-        "list-style-lower-roman": [
+        "list_style_lower_roman": [
             16
         ], 
-        "list-style-square": [
+        "list_style_square": [
             16
         ], 
-        "list-style-upper-alpha": [
+        "list_style_upper_alpha": [
             16
         ], 
-        "list-style-upper-roman": [
+        "list_style_upper_roman": [
             16
         ], 
         "text_align_center": [
@@ -695,17 +647,6 @@
         ], 
         "row": [
             32
-        ]
-    }, 
-    "transparent": {
-        "play": [
-            64
-        ], 
-        "playstroke": [
-            64
-        ], 
-        "warning": [
-            64
         ]
     }, 
     "view": {

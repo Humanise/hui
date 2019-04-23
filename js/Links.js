@@ -103,7 +103,7 @@ hui.ui.Links.prototype = {
   },
   getEditWindow : function() {
     if (!this.editWindow) {
-      var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:5});
+      var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:10});
       var form = this.editForm = hui.ui.Formula.create();
       var g = form.buildGroup({above:false},[
         {label:'Tekst',type:'TextInput',options:{key:'text'}}

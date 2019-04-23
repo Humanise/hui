@@ -25,8 +25,12 @@
     visibility: hidden;
     left: -1000px;
     top: -1000px; }
-  .hui_bar .hui_button, .hui_bar .hui_checkbox, .hui_bar .hui_searchfield, .hui_bar .hui_dropdown, .hui_bar .hui_segmented {
+  .hui_bar .hui_button, .hui_bar .hui_checkbox, .hui_bar .hui_searchfield, .hui_bar .hui_dropdown {
     margin: 2px 3px; }
+  .hui_bar .hui_button_small {
+    margin: 4px 4px; }
+  .hui_bar .hui_segmented {
+    margin: 5px 4px; }
 
 /*************** Button **************/
 .hui_bar_button {
@@ -147,7 +151,7 @@
     display: inline-block;
     font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
     font-size: 12px;
-    line-height: 28px;
+    line-height: 30px;
     padding: 0 8px;
     text-shadow: 0 1px 0 #FFFFFF;
     vertical-align: top; }

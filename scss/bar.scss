@@ -38,8 +38,15 @@
     top: -1000px;
   }
 
-  .hui_button, .hui_checkbox, .hui_searchfield, .hui_dropdown, .hui_segmented {
+  .hui_button, .hui_checkbox, .hui_searchfield, .hui_dropdown {
     margin: 2px 3px;
+  }
+
+  .hui_button_small {
+    margin: 4px 4px;
+  }
+  .hui_segmented {
+    margin: 5px 4px;
   }
 }
 
@@ -171,7 +178,7 @@
     display: inline-block;
     font-family: $font;
     font-size: 12px;
-    line-height: 28px;
+    line-height: 30px;
     padding: 0 8px;
     text-shadow: 0 1px 0 #FFFFFF;
     vertical-align: top;

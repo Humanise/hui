@@ -33,7 +33,6 @@ hui.ui.Window.create = function(options) {
     (options.width ? 'width:'+options.width+'px;':'')+
     (options.height ? 'height:'+options.height+'px;':'')+
     (options.padding ? 'padding:'+options.padding+'px;':'')+
-    (options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
     '">'+
     '</div>'+
     '</div>';

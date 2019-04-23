@@ -7,14 +7,14 @@ form.hui_formula {
   text-align: left;
 }
 
-div.hui_formula_fieldset {
+.hui_formula_fieldset {
   border: 1px solid #ddd;
   padding: 10px 10px 5px;
-  margin-top: 4px;
+  margin-top: 7px;
   background: #fff;
 }
 
-strong.hui_formula_fieldset {
+.hui_formula_fieldset_legend {
   position: absolute;
   margin-top: -19px;
   background: #fff;
@@ -22,19 +22,18 @@ strong.hui_formula_fieldset {
   padding: 0 4px;
   margin-left: -2px;
   color: #666;
-  -moz-border-radius: 4px;
   border-radius: 4px;
 }
 
-div.hui_window strong.hui_formula_fieldset {
-  background: #E7E7E7;
+.hui_window .hui_formula_fieldset_legend {
+  background: #f0f0f0;
 }
 
-div.hui_window div.hui_formula_fieldset {
+.hui_window .hui_formula_fieldset {
   background: #eee;
   border: 1px solid #ccc;
   border-radius: 3px 3px 3px 3px;
-    box-shadow: 0 1px 3px #DDDDDD inset;
+  box-shadow: 0 1px 3px #DDDDDD inset;
 }
 
 .hui_formula_header {

@@ -5619,7 +5619,6 @@ hui.ui.Window.create = function(options) {
     (options.width ? 'width:'+options.width+'px;':'')+
     (options.height ? 'height:'+options.height+'px;':'')+
     (options.padding ? 'padding:'+options.padding+'px;':'')+
-    (options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
     '">'+
     '</div>'+
     '</div>';
@@ -13352,7 +13351,7 @@ hui.ui.Links.prototype = {
   },
   getEditWindow : function() {
     if (!this.editWindow) {
-      var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:5});
+      var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:10});
       var form = this.editForm = hui.ui.Formula.create();
       var g = form.buildGroup({above:false},[
         {label:'Tekst',type:'TextInput',options:{key:'text'}}

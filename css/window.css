@@ -63,9 +63,9 @@
       height: 16px;
       display: inline-block;
       padding: 1px;
-      border-radius: 50%; }
+      border-radius: 3px; }
     .hui_window_close:hover:before {
-      background: #ddd;
+      background: rgba(0, 0, 0, 0.1);
       color: #000; }
   .hui_window_back {
     position: absolute;
