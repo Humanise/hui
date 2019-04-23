@@ -38,7 +38,7 @@
   function testProgressSuccess() {
     hui.ui.showMessage({text:'Just a moment...',busy:true})
     window.setTimeout(function() {
-      hui.ui.showMessage({text:'All went well!',icon:'common/success'})
+      hui.ui.showMessage({text:'All went well!',icon:'common/ok'})
     },3000);
   }
 
@@ -71,7 +71,7 @@
     var win = hui.ui.Window.create({width:400});
     var button = hui.ui.Button.create({text:'I need confirmation!',confirm:{text:'Are you confident in yourself?'}});
     button.click(function() {
-      hui.ui.showMessage({text:'Yes!',icon:'common/success',duration:1000})
+      hui.ui.showMessage({text:'Yes!',icon:'common/ok',duration:1000})
     });
     win.add(button);
     win.show();

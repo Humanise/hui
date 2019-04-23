@@ -551,15 +551,14 @@ hui.ui.getIconUrl = function(icon,size) {
 
 hui.ui.createIcon = function(icon,size,tag) {
   var node = hui.build(tag || 'span',{
-    'class' : 'hui_icon hui_icon_' + size,
-    style : 'background-image: url(' + hui.ui.getIconUrl(icon, size) + ')'
+    'class' : 'hui_icon hui_icon_' + size
   });
   hui.ui.setIconImage(node,icon,size);
   return node;
 };
 
 hui.ui.setIconImage = function(node, icon, size) {
-  if (size==32) {
+  if (size==32 || size==16 || size==64) {
     node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,size)+') 1x,url('+hui.ui.getIconUrl(icon,size+'x2')+') 2x); background-size: '+size+'px;');
   } else {
     node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + ');');

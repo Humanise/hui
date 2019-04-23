@@ -4655,15 +4655,14 @@ hui.ui.getIconUrl = function(icon,size) {
 
 hui.ui.createIcon = function(icon,size,tag) {
   var node = hui.build(tag || 'span',{
-    'class' : 'hui_icon hui_icon_' + size,
-    style : 'background-image: url(' + hui.ui.getIconUrl(icon, size) + ')'
+    'class' : 'hui_icon hui_icon_' + size
   });
   hui.ui.setIconImage(node,icon,size);
   return node;
 };
 
 hui.ui.setIconImage = function(node, icon, size) {
-  if (size==32) {
+  if (size==32 || size==16 || size==64) {
     node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,size)+') 1x,url('+hui.ui.getIconUrl(icon,size+'x2')+') 2x); background-size: '+size+'px;');
   } else {
     node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + ');');
@@ -8406,7 +8405,7 @@ hui.ui.Selection.Items.prototype = {
       }
       var inner = hui.build('span',{'class':'hui_selection_label',text:text});
       if (item.icon) {
-        node.appendChild(hui.build('span',{'class':'hui_icon hui_icon_16',style:'background-image: url('+hui.ui.getIconUrl(item.icon,16)+')'}));
+        node.appendChild(hui.ui.createIcon(item.icon, 16));
       }
       node.appendChild(inner);
       hui.listen(node,'click',function(e) {

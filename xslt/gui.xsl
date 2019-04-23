@@ -223,6 +223,14 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="gui:icon-style">
+  <xsl:param name="icon"/>
+  <xsl:param name="size"/>
+  <xsl:attribute name="style">
+    <xsl:text>background-image: url('</xsl:text><xsl:value-of select="$context"/><xsl:text>/hui/icons/</xsl:text><xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>.png');  background-image: -webkit-image-set(url('</xsl:text><xsl:value-of select="$context"/><xsl:text>/hui/icons/</xsl:text><xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>.png') 1x, url('</xsl:text><xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>x2.png') 2x);</xsl:text>
+  </xsl:attribute>
+</xsl:template>
+
 <xsl:template name="gui:escapeScript">
   <xsl:param name="text"/>
   <xsl:choose>
@@ -566,9 +574,8 @@
     <xsl:attribute name="class">hui_selection_item<xsl:if test="@value=../@value"> hui_selected</xsl:if></xsl:attribute>
     <xsl:if test="@badge"><strong class="hui_selection_badge"><xsl:value-of select="@badge"/></strong></xsl:if>
     <xsl:if test="@icon">
-      <span>
-        <xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="@icon"/>16.png');</xsl:attribute>
-        <xsl:attribute name="class">hui_icon_1</xsl:attribute>
+      <span class="hui_icon_16">
+        <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
         <xsl:comment/>
       </span>
     </xsl:if>
@@ -849,7 +856,9 @@
       </xsl:if>
       <div class="hui_window_titlebar">
         <xsl:if test="@icon">
-          <span class="hui_window_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png');"></span>
+          <span class="hui_window_icon">
+            <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
+          </span>
         </xsl:if>
         <span class="hui_window_title"><xsl:value-of select="@title"/></span>
       </div>
@@ -895,7 +904,9 @@
     </xsl:if>
     <div class="hui_panel_titlebar">
       <xsl:if test="@icon">
-        <span class="hui_icon hui_icon_16 hui_panel_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"></span>
+        <span class="hui_icon hui_icon_16 hui_panel_icon">
+          <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
+        </span>
       </xsl:if>
       <span class="hui_panel_title"><xsl:value-of select="@title"/></span>
     </div>
@@ -1301,7 +1312,9 @@ doc title:'Rich text' class:'hui.ui.RichText'
             </xsl:if>
           </xsl:attribute>
           <xsl:if test="@icon">
-            <span class="hui_icon_16" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></span>
+            <span class="hui_icon_16">
+              <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
+              <xsl:comment/></span>
           </xsl:if>
           <xsl:if test="@title or @text">
             <span class="hui_segmented_text"><xsl:value-of select="@title"/><xsl:value-of select="@text"/></span>
@@ -1453,7 +1466,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:icon">
     <span>
       <xsl:call-template name="gui:id-attribute"/>
-      <xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="@icon"/><xsl:value-of select="@size"/>.png');</xsl:attribute>
+      <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="@size"/></xsl:call-template>
       <xsl:attribute name="class">hui_icon hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
       <xsl:comment/>
     </span>
@@ -1476,7 +1489,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:attribute name="onclick"><xsl:value-of select="@click"/></xsl:attribute>
       </xsl:if>
       <span>
-        <xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="@icon"/><xsl:value-of select="@size"/>.png');</xsl:attribute>
+        <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="@size"/></xsl:call-template>
         <xsl:attribute name="class">hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
         <xsl:comment/>
       </span>
@@ -1659,7 +1672,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:header">
     <h2 class="hui_header">
       <xsl:if test="@icon">
-        <span class="hui_icon_2" style="background-image: url('{$context}/hui/icons/{@icon}32.png')">
+        <span class="hui_icon_32">
+          <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="32"/></xsl:call-template>
           <xsl:comment/>
         </span>
       </xsl:if>
@@ -1842,7 +1856,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
                     <xsl:text> hui_selected</xsl:text>
                   </xsl:if>
                 </xsl:attribute>
-                <xsl:if test="@icon"><span class="hui_icon_16" style="background-image: url('{$context}/hui/icons/{@icon}16.png');')"><xsl:comment/></span></xsl:if>
+                <xsl:if test="@icon">
+                  <span class="hui_icon_16">
+                    <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
+                  <xsl:comment/></span>
+                </xsl:if>
                 <span><xsl:value-of select="@title"/></span>
               </a>
             </li>
@@ -2155,7 +2173,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:tile/gui:actions/gui:icon">
-    <a class="hui_icon_16 hui_tile_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png')">
+    <a class="hui_icon_16 hui_tile_icon">
+      <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
       <xsl:if test="@key">
         <xsl:attribute name="data-hui-key">
           <xsl:value-of select="@key"/>
@@ -2405,7 +2424,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:if test="@selected='true'"> hui_toolbar_icon_selected</xsl:if>
         <xsl:if test="@disabled='true'"> hui_toolbar_icon_disabled</xsl:if>
       </xsl:attribute>
-      <span class="hui_icon" style="background-image: url('{$context}/hui/icons/{@icon}32.png'); background-image: -webkit-image-set(url('{$context}/hui/icons/{@icon}32.png') 1x, url('{$context}/hui/icons/{@icon}32x2.png') 2x);">
+      <span class="hui_icon">
+        <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="32"/></xsl:call-template>
         <xsl:if test="@overlay">
           <span class="hui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
         </xsl:if>
@@ -2608,7 +2628,9 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <a class="{$class}">
       <xsl:call-template name="gui:id-attribute"/>
       <xsl:if test="@icon">
-        <span class="hui_icon_16" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></span>
+        <span class="hui_icon_16">
+          <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
+          <xsl:comment/></span>
       </xsl:if>
       <xsl:if test="@text">
         <span class="hui_bar_button_text"><xsl:value-of select="@text"/></span>
@@ -3426,7 +3448,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:attribute>
       <xsl:call-template name="gui:test-name"/>
       <xsl:if test="@disabled='true'"><xsl:attribute name="tabindex">-1</xsl:attribute></xsl:if>
-        <xsl:if test="@icon"><span style="background-image: url('{$context}/hui/icons/{@icon}16.png')">
+        <xsl:if test="@icon"><span>
+          <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
           <xsl:attribute name="class">
             <xsl:text>hui_button_icon</xsl:text>
             <xsl:if test="(not(@title) or @title='') and (not(@text) or @text='')"><xsl:text> hui_button_icon_notext</xsl:text></xsl:if>
@@ -3695,11 +3718,12 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:objectlist/gui:select">
-    var <xsl:call-template name="gui:id"/> = new hui.ui.ObjectList.Select('<xsl:value-of select="@key"/>');
+    <xsl:variable name="id" select="generate-id()"/>
+    var <xsl:value-of select="$id"/> = new hui.ui.ObjectList.Select('<xsl:value-of select="@key"/>');
     <xsl:for-each select="gui:option">
-      <xsl:call-template name="gui:id"/>.addOption('<xsl:value-of select="@value"/>','<xsl:value-of select="@label"/><xsl:value-of select="@text"/>');
+      <xsl:value-of select="$id"/>.addOption('<xsl:value-of select="@value"/>','<xsl:value-of select="@label"/><xsl:value-of select="@text"/>');
     </xsl:for-each>
-    registerTemplateItem(<xsl:call-template name="gui:id"/>);
+    registerTemplateItem(<xsl:value-of select="$id"/>);
   </xsl:template>
 
   <!--             Tokens            -->
