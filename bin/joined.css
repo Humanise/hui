@@ -3464,7 +3464,8 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
   text-align: left;
   font-size: 0;
   display: flex;
-  justify-content: space-between; }
+  justify-content: space-between;
+  min-height: 30px; }
   .hui_bar_right {
     float: right;
     display: flex;
@@ -3487,12 +3488,10 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
     visibility: hidden;
     left: -1000px;
     top: -1000px; }
-  .hui_bar .hui_button, .hui_bar .hui_checkbox, .hui_bar .hui_searchfield, .hui_bar .hui_dropdown {
+  .hui_bar .hui_button, .hui_bar .hui_checkbox, .hui_bar .hui_dropdown {
     margin: 2px 3px; }
-  .hui_bar .hui_button_small {
+  .hui_bar .hui_button_small, .hui_bar .hui_searchfield, .hui_bar .hui_segmented {
     margin: 4px 4px; }
-  .hui_bar .hui_segmented {
-    margin: 5px 4px; }
 
 /*************** Button **************/
 .hui_bar_button {
@@ -3552,7 +3551,7 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
   background-image: -o-linear-gradient(top, #fff, #f0f0f0);
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-  height: 24px; }
+  min-height: 24px; }
 
 .hui_window_light .hui_bar-window_mini {
   background: #fafafa;
@@ -3606,8 +3605,7 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
   background-image: -o-linear-gradient(top, #fff, #f0f0f0);
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-  border-bottom: 1px solid #ddd;
-  min-height: 30px; }
+  border-bottom: 1px solid #ddd; }
   .hui_bar-layout .hui_bar_text {
     color: #666;
     display: inline-block;
@@ -3623,7 +3621,7 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
 
 /******************* Mini variant *****************/
 .hui_bar-mini {
-  height: 22px;
+  min-height: 22px;
   background: #fafafa;
   border: 1px solid #ddd;
   border-radius: 3px; }
@@ -3654,7 +3652,7 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span {
   background-image: -o-linear-gradient(top, #fff, #f0f0f0);
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-  height: 22px;
+  min-height: 22px;
   border-bottom: 1px solid #ddd; }
   .hui_bar-layout_mini .hui_bar_right {
     height: 22px;

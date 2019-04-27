@@ -5,6 +5,7 @@
   font-size: 0;
   display: flex;
   justify-content: space-between;
+  min-height: 30px;
 
   &_right {
     float: right;
@@ -38,15 +39,12 @@
     top: -1000px;
   }
 
-  .hui_button, .hui_checkbox, .hui_searchfield, .hui_dropdown {
+  .hui_button, .hui_checkbox, .hui_dropdown {
     margin: 2px 3px;
   }
 
-  .hui_button_small {
+  .hui_button_small, .hui_searchfield, .hui_segmented {
     margin: 4px 4px;
-  }
-  .hui_segmented {
-    margin: 5px 4px;
   }
 }
 
@@ -119,7 +117,7 @@
 
 .hui_bar-window_mini {
   @include vertical-gradient(#fff, rgb(240,240,240));
-  height: 24px;
+  min-height: 24px;
 }
 
 .hui_window_light .hui_bar-window_mini {
@@ -171,7 +169,6 @@
 .hui_bar-layout {
   @include vertical-gradient(#fff, rgb(240,240,240));
   border-bottom: 1px solid #ddd;
-  min-height: 30px;
 
   .hui_bar_text {
     color: #666;
@@ -195,7 +192,7 @@
 /******************* Mini variant *****************/
 
 .hui_bar-mini {
-  height: 22px;
+  min-height: 22px;
   background: #fafafa;
   border: 1px solid #ddd;
   border-radius: 3px;
@@ -231,7 +228,7 @@
 
 .hui_bar-layout_mini {
   @include vertical-gradient(#fff, rgb(240,240,240));
-  height: 22px;
+  min-height: 22px;
   border-bottom: 1px solid #ddd;
 
   .hui_bar_right {

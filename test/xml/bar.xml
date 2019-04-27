@@ -68,6 +68,7 @@
         <bar variant="layout">
           <text text="Eat my pants"/>
           <flexible/>
+          <searchfield/>
           <button text="Edit" small="true"/>
         </bar>
         <bar variant="layout">
@@ -149,8 +150,8 @@
   <script>
     hui.ui.listen({
       $ready : function() {
-        //win.show();
-        //win2.show();
+        win.show();
+        win2.show();
       }
     })
   </script>
