@@ -173,12 +173,13 @@
       background: #ddd; }
     .hui_bar-mini .hui_bar_button_text {
       font-size: 11px; }
-
-.hui_bar-mini .hui_bar_divider {
-  display: inline-block;
-  height: 22px;
-  border-left: 1px solid #ddd;
-  margin: 0 3px; }
+  .hui_bar-mini .hui_button, .hui_bar-mini .hui_checkbox, .hui_bar-mini .hui_dropdown, .hui_bar-mini .hui_button_small, .hui_bar-mini .hui_searchfield, .hui_bar-mini .hui_segmented {
+    margin: 0; }
+  .hui_bar-mini .hui_bar_divider {
+    display: inline-block;
+    height: 22px;
+    border-left: 1px solid #ddd;
+    margin: 0 3px; }
 
 /******************* Layout mini variant ***************/
 .hui_bar-layout_mini {

@@ -4663,11 +4663,15 @@ hui.ui.createIcon = function(icon,size,tag) {
 
 hui.ui.setIconImage = function(node, icon, size) {
   if (size==32 || size==16 || size==64) {
-    node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,size)+') 1x,url('+hui.ui.getIconUrl(icon,size+'x2')+') 2x); background-size: '+size+'px;');
+    node.setAttribute('style', hui.ui.getIconStyle(icon, size));
   } else {
     node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + ');');
   }
 };
+
+hui.ui.getIconStyle = function(icon, size) {
+  return 'background-image: url(' + hui.ui.getIconUrl(icon,size) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,size)+') 1x,url('+hui.ui.getIconUrl(icon,size+'x2')+') 2x); background-size: '+size+'px;';
+}
 
 /**
  * Add focus class to an element
@@ -14267,16 +14271,16 @@ hui.ui.ColorPicker.create = function(options) {
       '<div class="hui_bar hui_bar-window_mini">'+
         '<div class="hui_bar_left">'+
           '<a class="hui_bar_button hui_bar_button-selected" href="javascript:void(0)" rel="0">'+
-            '<span class="hui_icon_16" style="background: url('+hui.ui.getIconUrl('colorpicker/wheel_pastels',16)+')"></span>'+
+            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_pastels',16)+'"></span>'+
           '</a>'+
           '<a class="hui_bar_button" href="javascript:void(0)" rel="1">'+
-            '<span class="hui_icon_16" style="background: url('+hui.ui.getIconUrl('colorpicker/wheel_brightness',16)+')"></span>'+
+            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_brightness',16)+'"></span>'+
           '</a>'+
           '<a class="hui_bar_button" href="javascript:void(0)" rel="2">'+
-            '<span class="hui_icon_16" style="background: url('+hui.ui.getIconUrl('colorpicker/wheel_saturated',16)+')"></span>'+
+            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_saturated',16)+'"></span>'+
           '</a>'+
           '<a class="hui_bar_button" href="javascript:void(0)" rel="3">'+
-            '<span class="hui_icon_16" style="background: url('+hui.ui.getIconUrl('colorpicker/swatches',16)+')"></span>'+
+            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/swatches',16)+'"></span>'+
           '</a>'+
         '</div>'+
         '<div class="hui_bar_right">'+
