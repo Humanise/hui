@@ -8562,7 +8562,8 @@ hui.ui.Toolbar.Icon = function(options) {
 
 hui.ui.Toolbar.Icon.create = function(options) {
   var element = options.element = hui.build('a.hui_toolbar_icon');
-  var icon = hui.build('span.hui_icon',{style:'background-image: url('+hui.ui.getIconUrl(options.icon,32)+')', parent: element});
+  var icon = hui.build('span.hui_icon',{parent: element});
+  hui.ui.setIconImage(icon, options.icon, 32);
   if (options.overlay) {
     hui.build('span.hui_icon_overlay',{parent:icon,style:'background-image: url('+hui.ui.getIconUrl('overlay/'+options.overlay,32)+')'});
   }
@@ -8618,7 +8619,7 @@ hui.ui.Toolbar.Icon.prototype = {
   },
   setIcon : function(icon) {
     var e = hui.get.firstByClass(this.element,'hui_icon');
-    e.style.backgroundImage = 'url('+hui.ui.getIconUrl(icon,32)+')';
+    hui.ui.setIconImage(e, icon, 32);
   },
   /** Sets wether the icon should be selected */
   setSelected : function(selected) {
