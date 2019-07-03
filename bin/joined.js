@@ -4766,6 +4766,10 @@ hui.ui.extend = function(obj,options) {
   obj.fireSizeChange = function() {
     hui.ui.callAncestors(obj,'$$childSizeChanged');
   };
+  obj.addTo = function(other) {
+    other.add(this);
+    return this;
+  };
   if (!obj.getElement) {
     obj.getElement = function() {
       return this.element;
@@ -6798,7 +6802,7 @@ hui.ui.List.prototype = {
     this.rows = [];
     if (!rows) return;
     hui.each(rows,function(r,i) {
-      var tr = hui.build('tr');
+      var tr = hui.build('tr.hui_list_row');
       var icon = r.icon;
       var title = r.title;
       hui.each(r.cells,function(c) {
@@ -6830,7 +6834,7 @@ hui.ui.List.prototype = {
     hui.dom.clear(this.body);
     this.rows = [];
     for (var i=0; i < objects.length; i++) {
-      var row = hui.build('tr');
+      var row = hui.build('tr.hui_list_row');
       var obj = objects[i];
       var title = null;
       for (var j=0; j < this.columns.length; j++) {
@@ -6971,72 +6975,54 @@ hui.ui.Tabs = function(o) {
   this.element = hui.get(o.element);
   this.activeTab = -1;
   var x = hui.get.firstByClass(this.element,'hui_tabs_bar');
-  this.bar = hui.get.firstByTag(x,'ul');
-  this.tabs = [];
-  var nodes = this.bar.getElementsByTagName('li');
-  for (var i=0; i < nodes.length; i++) {
-    if (!hui.browser.msie) {
-      hui.get.firstByTag(nodes[i],'a').removeAttribute('href');
-    }
-    this.tabs.push(nodes[i]);
-  }
-  this.contents = hui.get.byClass(this.element,'hui_tabs_tab');
-  this.addBehavior();
+  this.bar = hui.find('.hui_tabs_bar', this.element);
+  this.tabs = hui.findAll('.hui_tabs_tab', this.element);
+  this.contents = hui.findAll('.hui_tabs_body', this.element);
+  this._attach();
   hui.ui.extend(this);
 };
 
 hui.ui.Tabs.create = function(options) {
   options = options || {};
   var e = options.element = hui.build('div',{'class':'hui_tabs'});
-  var cls = 'hui_tabs_bar';
   if (options.small) {
-    cls+=' hui_tabs_bar_small';
+    hui.cls.add(e, 'hui_tabs-small');
   }
+  var bar = hui.build('div',{'class' : 'hui_tabs_bar', parent : e});
   if (options.centered) {
-    cls+=' hui_tabs_bar_centered';
+    hui.cls.add(bar, 'hui_tabs_bar-centered');
   }
-  var bar = hui.build('div',{'class' : cls, parent : e});
-  hui.build('ul',{parent:bar});
   return new hui.ui.Tabs(options);
 };
 
 hui.ui.Tabs.prototype = {
-  /** @private */
-  addBehavior : function() {
+  _attach : function() {
     for (var i=0; i < this.tabs.length; i++) {
-      this.addTabBehavior(this.tabs[i],i);
+      this._attachTab(this.tabs[i],i);
     }
   },
-  /** @private */
-  addTabBehavior : function(tab,index) {
+  _attachTab : function(tab, index) {
     hui.listen(tab,'click',function() {
-      this.tabWasClicked(index);
+      this._clickTab(index);
     }.bind(this));
   },
-  /** @private */
-  registerTab : function(obj) {
-    obj.parent = this;
-    this.tabs.push(obj);
-  },
-  /** @private */
-  tabWasClicked : function(index) {
+  _clickTab : function(index) {
     this.activeTab = index;
-    this.updateGUI();
+    this._update();
     hui.ui.callVisible(this);
   },
-  /** @private */
-  updateGUI : function() {
+  _update : function() {
     for (var i=0; i < this.tabs.length; i++) {
-      hui.cls.set(this.tabs[i],'hui_tabs_selected',i==this.activeTab);
-      this.contents[i].style.display = i==this.activeTab ? 'block' : 'none';
+      hui.cls.set(this.tabs[i], 'hui-is-selected', i == this.activeTab);
+      hui.cls.set(this.contents[i], 'hui-is-selected', i == this.activeTab);
     }
   },
   createTab : function(options) {
     options = options || {};
-    var tab = hui.build('li',{html:'<a><span><span>'+hui.string.escape(options.title)+'</span></span></a>',parent:this.bar});
-    this.addTabBehavior(tab,this.tabs.length);
+    var tab = hui.build('a.hui_tabs_tab',{text: options.title,parent: this.bar});
+    this._attachTab(tab, this.tabs.length);
     this.tabs.push(tab);
-    var e = options.element = hui.build('div',{'class':'hui_tabs_tab'});
+    var e = options.element = hui.build('div',{'class':'hui_tabs_body'});
     if (options.padding>0) {
       e.style.padding = options.padding+'px';
     }
@@ -7044,9 +7030,8 @@ hui.ui.Tabs.prototype = {
     this.element.appendChild(e);
     if (this.activeTab==-1) {
       this.activeTab=0;
-      hui.cls.add(tab,'hui_tabs_selected');
-    } else {
-      e.style.display='none';
+      hui.cls.add(tab,'hui-is-selected');
+      hui.cls.add(e,'hui-is-selected');
     }
     return new hui.ui.Tab(options);
   }
@@ -7061,8 +7046,12 @@ hui.ui.Tab = function(o) {
 };
 
 hui.ui.Tab.prototype = {
-  add : function(widget) {
-    this.element.appendChild(widget.element);
+  add : function(widgetOrNode) {
+    if (widgetOrNode.getElement) {
+      this.element.appendChild(widgetOrNode.getElement());
+    } else {
+      this.element.appendChild(widgetOrNode);
+    }
   }
 };
 

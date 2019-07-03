@@ -783,7 +783,7 @@ hui.ui.List.prototype = {
     this.rows = [];
     if (!rows) return;
     hui.each(rows,function(r,i) {
-      var tr = hui.build('tr');
+      var tr = hui.build('tr.hui_list_row');
       var icon = r.icon;
       var title = r.title;
       hui.each(r.cells,function(c) {
@@ -815,7 +815,7 @@ hui.ui.List.prototype = {
     hui.dom.clear(this.body);
     this.rows = [];
     for (var i=0; i < objects.length; i++) {
-      var row = hui.build('tr');
+      var row = hui.build('tr.hui_list_row');
       var obj = objects[i];
       var title = null;
       for (var j=0; j < this.columns.length; j++) {

@@ -89,9 +89,6 @@
 
       <xsl:choose>
         <xsl:when test="$dev='true'">
-          <script type="text/javascript">
-            _context = '<xsl:value-of select="$context"/>/hui';
-          </script>
           <script src="{$context}/hui/bin/development.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
         </xsl:when>
         <xsl:otherwise>
@@ -721,7 +718,16 @@
 </tabs>
 -->
 <xsl:template match="gui:tabs">
-<div class="hui_tabs">
+<div>
+  <xsl:attribute name="class">
+    <xsl:text>hui_tabs</xsl:text>
+    <xsl:if test="@small='true'">
+      <xsl:text> hui_tabs-small</xsl:text>
+    </xsl:if>
+    <xsl:if test="@below='true'">
+      <xsl:text> hui_tabs-below</xsl:text>
+    </xsl:if>
+  </xsl:attribute>
   <xsl:call-template name="gui:id-attribute"/>
   <xsl:if test="@below='true'">
     <xsl:apply-templates select="gui:tab"/>
@@ -729,29 +735,20 @@
   <div>
     <xsl:attribute name="class">
       <xsl:text>hui_tabs_bar</xsl:text>
-      <xsl:choose>
-        <xsl:when test="@small='true' and @below='true'">
-          <xsl:text> hui_tabs_bar_small_below</xsl:text>
-        </xsl:when>
-        <xsl:when test="@small='true'">
-          <xsl:text> hui_tabs_bar_small</xsl:text>
-        </xsl:when>
-      </xsl:choose>
       <xsl:if test="@centered='true'">
-        <xsl:text> hui_tabs_bar_centered</xsl:text>
+        <xsl:text> hui_tabs_bar-centered</xsl:text>
       </xsl:if>
     </xsl:attribute>
-    <ul>
     <xsl:for-each select="gui:tab">
-      <li>
+      <a>
         <xsl:attribute name="id"><xsl:call-template name="gui:id"/><xsl:text>_tab</xsl:text></xsl:attribute>
-        <xsl:if test="position()=1">
-          <xsl:attribute name="class">hui_tabs_selected</xsl:attribute>
-        </xsl:if>
-        <a><span><span><xsl:value-of select="@title"/></span></span></a>
-      </li>
+        <xsl:attribute name="class">
+          <xsl:text>hui_tabs_tab</xsl:text>
+          <xsl:if test="position()=1"><xsl:text> hui-is-selected</xsl:text></xsl:if>
+        </xsl:attribute>
+        <xsl:value-of select="@title"/>
+      </a>
     </xsl:for-each>
-    </ul>
   </div>
   <xsl:if test="not(@below='true')">
     <xsl:apply-templates select="gui:tab"/>
@@ -770,13 +767,11 @@
   <div>
     <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
-      <xsl:choose>
-        <xsl:when test="@background='light'"><xsl:text>hui_tabs_tab hui_tabs_tab_light</xsl:text></xsl:when>
-        <xsl:otherwise><xsl:text>hui_tabs_tab</xsl:text></xsl:otherwise>
-      </xsl:choose>
+      <xsl:text>hui_tabs_body</xsl:text>
+      <xsl:if test="@background='light'"><xsl:text> hui_tabs_body-light</xsl:text></xsl:if>
+      <xsl:if test="position() = 1"><xsl:text> hui-is-selected</xsl:text></xsl:if>
     </xsl:attribute>
     <xsl:attribute name="style">
-      <xsl:if test="position()>1">display: none;</xsl:if>
       <xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if>
     </xsl:attribute>
     <xsl:apply-templates/>

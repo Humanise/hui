@@ -662,6 +662,10 @@ hui.ui.extend = function(obj,options) {
   obj.fireSizeChange = function() {
     hui.ui.callAncestors(obj,'$$childSizeChanged');
   };
+  obj.addTo = function(other) {
+    other.add(this);
+    return this;
+  };
   if (!obj.getElement) {
     obj.getElement = function() {
       return this.element;
