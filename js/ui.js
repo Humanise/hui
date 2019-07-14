@@ -559,11 +559,15 @@ hui.ui.createIcon = function(icon,size,tag) {
 
 hui.ui.setIconImage = function(node, icon, size) {
   if (size==32 || size==16 || size==64) {
-    node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,size)+') 1x,url('+hui.ui.getIconUrl(icon,size+'x2')+') 2x); background-size: '+size+'px;');
+    node.setAttribute('style', hui.ui.getIconStyle(icon, size));
   } else {
     node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + ');');
   }
 };
+
+hui.ui.getIconStyle = function(icon, size) {
+  return 'background-image: url(' + hui.ui.getIconUrl(icon,size) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,size)+') 1x,url('+hui.ui.getIconUrl(icon,size+'x2')+') 2x); background-size: '+size+'px;';
+}
 
 /**
  * Add focus class to an element
@@ -657,6 +661,10 @@ hui.ui.extend = function(obj,options) {
   };
   obj.fireSizeChange = function() {
     hui.ui.callAncestors(obj,'$$childSizeChanged');
+  };
+  obj.addTo = function(other) {
+    other.add(this);
+    return this;
   };
   if (!obj.getElement) {
     obj.getElement = function() {

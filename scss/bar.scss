@@ -214,14 +214,21 @@
       font-size: 11px;
     }
   }
+
+
+  .hui_button, .hui_checkbox, .hui_dropdown, .hui_button_small, .hui_searchfield, .hui_segmented {
+    margin: 0;
+  }
+
+  .hui_bar_divider {
+    display: inline-block;
+    height: 22px;
+    border-left: 1px solid #ddd;
+    margin: 0 3px;
+  }
 }
 
-.hui_bar-mini .hui_bar_divider {
-  display: inline-block;
-  height: 22px;
-  border-left: 1px solid #ddd;
-  margin: 0 3px;
-}
+
 
 
 /******************* Layout mini variant ***************/

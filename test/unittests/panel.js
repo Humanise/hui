@@ -16,7 +16,7 @@ QUnit.test( "Test", function( assert ) {
 });
 
 QUnit.test( "Test", function( assert ) {
-  var panel = hui.ui.Panel.create({title:'This is the window title',width:200,name:'myPanel',close:true});
+  var panel = hui.ui.Panel.create({title:'This is the window title',width:200,name:'myPanel',closable:true});
   var panel = hui.ui.get('myPanel');
 
   panel.show();

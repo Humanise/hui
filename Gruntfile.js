@@ -165,6 +165,7 @@ module.exports = function(grunt) {
     if (!!testname) {
       tests = ['test/unittests/' + testname + '.html'];
     }
+    //tests = tests.filter(function(name) { return !name.match(/formula/)})
     for (var i = 0; i < tests.length; i++) {
       tests[i] = 'http://hui.local/hui/' + tests[i];
     }

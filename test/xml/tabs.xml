@@ -55,5 +55,25 @@
       <tab title="Centered" padding="10"/>
       <tab title="Centered" padding="10"/>
     </tabs>
+    <tabs small="true" below="true">
+      <tab title="Below" padding="10">
+        <text><p>This is below</p></text>
+      </tab>
+      <tab title="Below" padding="10"/>
+    </tabs>
+    <space height="10"/>
   </box>
+  <script>
+    hui.on(function() {
+    [{small:true},{small:false},{centered:true}].forEach(function(config) {
+      var content = hui.string.toJSON(config);
+      var win = hui.ui.Window.create({width: 400});
+      var tabs = hui.ui.Tabs.create(config).addTo(win);
+      tabs.createTab({title:'My tab'}).add(hui.build('div',{text:content,style:'padding: 20px'}));
+      tabs.createTab({title:'My other tab'}).add(hui.build('div',{text:'Other content',style:'padding: 20px'}));
+      win.move({top: 50*Math.random(), left: 50*Math.random()});
+      win.show();
+    })
+    })
+  </script>
 </gui>
