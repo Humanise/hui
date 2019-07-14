@@ -387,6 +387,7 @@
       <xs:element name="confirm" type="confirm" minOccurs="0" maxOccurs="1"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="test-name" type="xs:string"/>
     <xs:attribute name="text" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
     <xs:attribute name="role" type="xs:string"/>
@@ -1282,6 +1283,7 @@
     <xs:attribute name="title" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="test-name" type="xs:string"/>
     <xs:attribute name="width" type="xs:integer"/>
     <xs:attribute name="closable" type="xs:boolean"/>
     <xs:attribute name="padding" type="xs:positiveInteger"/>
@@ -1439,6 +1441,7 @@
   <xs:element name="text-input" type="text-input"/>
   <xs:complexType name="text-input">
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="test-name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
     <xs:attribute name="placeholder" type="xs:string"/>
