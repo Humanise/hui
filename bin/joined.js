@@ -5911,15 +5911,15 @@ hui.ui.Formula.prototype = {
    */
   buildGroup : function(options,recipe) {
     var g = this.createGroup(options);
-    hui.each(recipe,function(item) {
+    hui.each(recipe, function(item) {
       var w;
       if (hui.ui.Formula[item.type]) {
         w = hui.ui.Formula[item.type].create(item.options);
-        g.add(w,item.label);
+        g.add(w, item.label);
       }
       else if (hui.ui[item.type]) {
         w = hui.ui[item.type].create(item.options);
-        g.add(w,item.label);
+        g.add(w, item.label);
       }
       else {
         hui.log('buildGroup: Unable to find type: '+item.type);
@@ -5972,9 +5972,6 @@ hui.ui.Formula.Group.prototype = {
     var tr = hui.build('tr');
     this.body.appendChild(tr);
     var td = hui.build('td',{'class':'hui_formula_field'});
-    if (!label && widget.getLabel) {
-      label = widget.getLabel();
-    }
     if (label) {
       label = hui.ui.getTranslated(label);
       if (this.options.above) {
@@ -7151,9 +7148,6 @@ hui.ui.ObjectList.prototype = {
     if (obj.index>=this.objects.length-1) {
       this.addObject({},true);
     }
-  },
-  getLabel : function() {
-    return this.options.label;
   }
 };
 
@@ -7271,7 +7265,6 @@ hui.ui.ObjectList.Select.prototype = {
  */
 hui.ui.DropDown = function(options) {
   this.options = hui.override({
-    label: null,
     placeholder: null,
     url: null,
     source: null,
@@ -7484,10 +7477,6 @@ hui.ui.DropDown.prototype = {
   /** Set the value to null */
   reset: function() {
     this.setValue(null);
-  },
-  /** Get the label */
-  getLabel: function() {
-    return this.options.label;
   },
   /** Refresh the associated source */
   refresh: function() {
@@ -14508,9 +14497,6 @@ hui.ui.LocationInput.prototype = {
     hui.ui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'hui_locationinput-focused'});
     hui.ui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'hui_locationinput-focused'});
   },
-  getLabel : function() {
-    return this.options.label;
-  },
   reset : function() {
     this.setValue();
   },
@@ -14711,7 +14697,7 @@ hui.ui.DateTimeInput = function(o) {
   this.name = o.name;
   this.element = hui.get(o.element);
   this.input = hui.get.firstByTag(this.element,'input');
-  this.options = hui.override({returnType:null,label:null,allowNull:true,value:null},o);
+  this.options = hui.override({returnType:null,allowNull:true,value:null},o);
   this.value = this.options.value;
   hui.ui.extend(this);
   this._addBehavior();
@@ -14786,9 +14772,6 @@ hui.ui.DateTimeInput.prototype = {
       return Math.round(this.value.getTime() / 1000);
     }
     return this.value;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   _updateUI : function() {
     if (this.value) {
@@ -14924,7 +14907,7 @@ hui.ui.DateTimeInput.prototype = {
  * @constructor
  */
 hui.ui.TokenField = function(o) {
-  this.options = hui.override({label:null,key:null},o);
+  this.options = hui.override({key:null},o);
   this.element = hui.get(o.element);
   this.name = o.name;
   this.value = [''];
@@ -14957,9 +14940,6 @@ hui.ui.TokenField.prototype = {
       }
     });
     return out;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   _updateUI : function() {
     this.element.innerHTML='';
@@ -15033,6 +15013,9 @@ hui.ui.Checkbox.create = function(options) {
   if (options.testName) {
     e.setAttribute('data-test', options.testName);
   }
+  if (options.label) {
+    hui.build('span.hui_checkbox_label',{parent: e, text: hui.ui.getTranslated(options.label)});
+  }
   return new hui.ui.Checkbox(options);
 };
 
@@ -15069,12 +15052,6 @@ hui.ui.Checkbox.prototype = {
   /** Resets the checkbox */
   reset : function() {
     this.setValue(false);
-  },
-  /** Gets the label
-   * @return {String} The checkbox label
-   */
-  getLabel : function() {
-    return this.options.label;
   }
 };
 
@@ -15174,9 +15151,6 @@ hui.ui.Checkboxes.prototype = {
   },
   reset : function() {
     this.setValues([]);
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   /**
    * @private
@@ -15442,10 +15416,6 @@ hui.ui.NumberInput.prototype = {
   getValue : function() {
     return this.value;
   },
-  /** Gets the label */
-  getLabel : function() {
-    return this.options.label;
-  },
   /** Sets the value */
   setValue : function(value) {
     if (value===null || value===undefined) {
@@ -15540,7 +15510,6 @@ hui.ui.NumberInput.prototype = {
  *  element : «Element | ID»,
  *  name : «String»,
  *  key : «String»,
- *  label : «String»,
  *  maxHeight : «<strong>100</strong> | integer»,
  *  animateUserChange : «<strong>true</strong> | false»
  * }
@@ -15550,7 +15519,7 @@ hui.ui.NumberInput.prototype = {
  * @constructor
  */
 hui.ui.TextInput = function(options) {
-  this.options = hui.override({label:null,key:null,lines:1,maxHeight:100,animateUserChange:true},options);
+  this.options = hui.override({key:null,lines:1,maxHeight:100,animateUserChange:true},options);
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
@@ -15566,7 +15535,6 @@ hui.ui.TextInput = function(options) {
  * Creates a new text field
  * <pre><strong>options:</strong> {
  *  value : «String»,
- *  label : «String»,
  *  multiline : «true | <strong>false</strong>»,
  *  lines : «<strong>1</strong> | integer»,
  *
@@ -15701,9 +15669,6 @@ hui.ui.TextInput.prototype = {
    */
   getValue : function() {
     return this.input.value;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   /** Check if the value is empty ('' / the empty string)
    * @returns {Boolean} True if the value the empty string
