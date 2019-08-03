@@ -102,15 +102,15 @@ hui.ui.Formula.prototype = {
    */
   buildGroup : function(options,recipe) {
     var g = this.createGroup(options);
-    hui.each(recipe,function(item) {
+    hui.each(recipe, function(item) {
       var w;
       if (hui.ui.Formula[item.type]) {
         w = hui.ui.Formula[item.type].create(item.options);
-        g.add(w,item.label);
+        g.add(w, item.label);
       }
       else if (hui.ui[item.type]) {
         w = hui.ui[item.type].create(item.options);
-        g.add(w,item.label);
+        g.add(w, item.label);
       }
       else {
         hui.log('buildGroup: Unable to find type: '+item.type);
@@ -163,9 +163,6 @@ hui.ui.Formula.Group.prototype = {
     var tr = hui.build('tr');
     this.body.appendChild(tr);
     var td = hui.build('td',{'class':'hui_formula_field'});
-    if (!label && widget.getLabel) {
-      label = widget.getLabel();
-    }
     if (label) {
       label = hui.ui.getTranslated(label);
       if (this.options.above) {

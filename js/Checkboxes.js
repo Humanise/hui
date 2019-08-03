@@ -95,9 +95,6 @@ hui.ui.Checkboxes.prototype = {
   reset : function() {
     this.setValues([]);
   },
-  getLabel : function() {
-    return this.options.label;
-  },
   /**
    * @private
    * @deprecated

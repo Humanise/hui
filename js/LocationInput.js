@@ -29,9 +29,6 @@ hui.ui.LocationInput.prototype = {
     hui.ui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'hui_locationinput-focused'});
     hui.ui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'hui_locationinput-focused'});
   },
-  getLabel : function() {
-    return this.options.label;
-  },
   reset : function() {
     this.setValue();
   },

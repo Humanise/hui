@@ -94,9 +94,6 @@ hui.ui.ObjectList.prototype = {
     if (obj.index>=this.objects.length-1) {
       this.addObject({},true);
     }
-  },
-  getLabel : function() {
-    return this.options.label;
   }
 };
 

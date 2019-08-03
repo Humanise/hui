@@ -8,7 +8,7 @@ hui.ui.DateTimeInput = function(o) {
   this.name = o.name;
   this.element = hui.get(o.element);
   this.input = hui.get.firstByTag(this.element,'input');
-  this.options = hui.override({returnType:null,label:null,allowNull:true,value:null},o);
+  this.options = hui.override({returnType:null,allowNull:true,value:null},o);
   this.value = this.options.value;
   hui.ui.extend(this);
   this._addBehavior();
@@ -83,9 +83,6 @@ hui.ui.DateTimeInput.prototype = {
       return Math.round(this.value.getTime() / 1000);
     }
     return this.value;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   _updateUI : function() {
     if (this.value) {

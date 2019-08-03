@@ -3,7 +3,7 @@
  * @constructor
  */
 hui.ui.TokenField = function(o) {
-  this.options = hui.override({label:null,key:null},o);
+  this.options = hui.override({key:null},o);
   this.element = hui.get(o.element);
   this.name = o.name;
   this.value = [''];
@@ -36,9 +36,6 @@ hui.ui.TokenField.prototype = {
       }
     });
     return out;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   _updateUI : function() {
     this.element.innerHTML='';

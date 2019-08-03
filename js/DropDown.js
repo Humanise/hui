@@ -6,7 +6,6 @@
  */
 hui.ui.DropDown = function(options) {
   this.options = hui.override({
-    label: null,
     placeholder: null,
     url: null,
     source: null,
@@ -219,10 +218,6 @@ hui.ui.DropDown.prototype = {
   /** Set the value to null */
   reset: function() {
     this.setValue(null);
-  },
-  /** Get the label */
-  getLabel: function() {
-    return this.options.label;
   },
   /** Refresh the associated source */
   refresh: function() {

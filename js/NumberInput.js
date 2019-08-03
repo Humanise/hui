@@ -93,10 +93,6 @@ hui.ui.NumberInput.prototype = {
   getValue : function() {
     return this.value;
   },
-  /** Gets the label */
-  getLabel : function() {
-    return this.options.label;
-  },
   /** Sets the value */
   setValue : function(value) {
     if (value===null || value===undefined) {

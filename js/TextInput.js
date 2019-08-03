@@ -6,7 +6,6 @@
  *  element : «Element | ID»,
  *  name : «String»,
  *  key : «String»,
- *  label : «String»,
  *  maxHeight : «<strong>100</strong> | integer»,
  *  animateUserChange : «<strong>true</strong> | false»
  * }
@@ -16,7 +15,7 @@
  * @constructor
  */
 hui.ui.TextInput = function(options) {
-  this.options = hui.override({label:null,key:null,lines:1,maxHeight:100,animateUserChange:true},options);
+  this.options = hui.override({key:null,lines:1,maxHeight:100,animateUserChange:true},options);
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
@@ -32,7 +31,6 @@ hui.ui.TextInput = function(options) {
  * Creates a new text field
  * <pre><strong>options:</strong> {
  *  value : «String»,
- *  label : «String»,
  *  multiline : «true | <strong>false</strong>»,
  *  lines : «<strong>1</strong> | integer»,
  *
@@ -167,9 +165,6 @@ hui.ui.TextInput.prototype = {
    */
   getValue : function() {
     return this.input.value;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   /** Check if the value is empty ('' / the empty string)
    * @returns {Boolean} True if the value the empty string

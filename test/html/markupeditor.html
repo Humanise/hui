@@ -100,10 +100,9 @@
     var linkForm = hui.ui.Formula.create();
     linkEditor.add(linkForm);
     var group = linkForm.buildGroup({},[
-      {type : 'TextInput', options:{key:'url',label:'Address:',name:'linkAddress'}},
-      {type : 'DropDown', options:{
+      {type : 'TextInput',label:'Address:', options:{key:'url',name:'linkAddress'}},
+      {type : 'DropDown', label:'Page:', options:{
         name : 'linkPage',
-        label:'Page:',
         key:'page',
         items:[
           {value:1,text:'Front page'},

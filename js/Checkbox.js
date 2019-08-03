@@ -23,6 +23,9 @@ hui.ui.Checkbox.create = function(options) {
   if (options.testName) {
     e.setAttribute('data-test', options.testName);
   }
+  if (options.label) {
+    hui.build('span.hui_checkbox_label',{parent: e, text: hui.ui.getTranslated(options.label)});
+  }
   return new hui.ui.Checkbox(options);
 };
 
@@ -59,11 +62,5 @@ hui.ui.Checkbox.prototype = {
   /** Resets the checkbox */
   reset : function() {
     this.setValue(false);
-  },
-  /** Gets the label
-   * @return {String} The checkbox label
-   */
-  getLabel : function() {
-    return this.options.label;
   }
 };
