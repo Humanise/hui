@@ -75,9 +75,93 @@
 
   <space height="30"/>
 
+  <box width="600" title="Labels before" variant="textured" padding="10">
+    <formula>
+      <fields>
+        <field label="Text:">
+          <dropdown>
+            <option text="Hello world"/>
+          </dropdown>
+        </field>
+        <field label="Text:">
+          <text-input/>
+        </field>
+        <field label="Lorem ipsum dolor:">
+          <color-input/>
+        </field>
+        <field label="Lorem ipsum dolor:">
+          <slider/>
+        </field>
+        <field label="Single checkbox:">
+          <checkbox key="searchable" text="Searchable"/>
+          <checkbox key="inactive" text="Inactive"/>
+        </field>
+        <field label="Multiple:">
+          <checkbox key="external" text="Hello world"/>
+          <color-input/>
+          <radiobuttons value="yes">
+            <option text="Yes" value="yes"/>
+            <option text="No" value="no"/>
+          </radiobuttons>
+        </field>
+        <field label="Groups:">
+          <checkboxes key="groups">
+            <option text="Fixed" value="fixed"/>
+            <options source="itemsSource"/>
+          </checkboxes>
+        </field>
+        <field label="Tokens:">
+          <tokens key="tokens"/>
+        </field>
+        <field label="Radios:">
+          <radiobuttons key="radios">
+            <option text="Lorem" value="lorem"/>
+            <option text="Ipsum" value="ipsum"/>
+            <option text="Dolor" value="dolor"/>
+          </radiobuttons>
+        </field>
+        <field label="Text:">
+          <text-input breaks="true"/>
+        </field>
+      </fields>
+      <buttons>
+        <button click="createDateInput()" text="Create"/>
+        <button click="hui.log(dateForm.getValues())" text="Data"/>
+      </buttons>
+    </formula>
+  </box>
+
+  <space height="30"/>
+
+  <box width="600" title="Fields + fields" variant="textured" padding="10">
+    <formula>
+      <fields labels="above">
+        <field label="Seconds:">
+          <datetime-input key="date-seconds" return-type="seconds"/>
+        </field>
+        <field label="Date:">
+          <datetime-input key="date"/>
+        </field>
+      </fields>
+      <fields>
+        <field label="Seconds:">
+          <datetime-input key="date-seconds" return-type="seconds"/>
+        </field>
+        <field label="Date:">
+          <datetime-input key="date"/>
+        </field>
+      </fields>
+      <buttons>
+        <button text="Create"/>
+      </buttons>
+    </formula>
+  </box>
+
+  <space height="30"/>
+
   <box width="600" title="Dates" variant="textured" padding="10">
     <formula name="dateForm">
-      <fields>
+      <fields name="dateFields">
         <field label="Seconds:">
           <datetime-input key="date-seconds" return-type="seconds"/>
         </field>
@@ -90,11 +174,9 @@
         <button click="hui.log(dateForm.getValues())" text="Data"/>
       </buttons>
     </formula>
-    <div class="abc"></div>
     <script>
       function createDateInput() {
-        var f = hui.ui.DateTimeInput.create();
-        hui.find('.abc').appendChild(f.element);
+        dateFields.add(hui.ui.DateTimeInput.create(), 'Created');
       }
     </script>
   </box>
@@ -103,7 +185,7 @@
 
   <box width="600" title="Location" variant="textured" padding="10">
     <formula name="locationForm">
-      <fields labels="above">
+      <fields labels="above" name="locationFields">
         <field label="Seconds:">
           <location-input key="one"/>
         </field>
@@ -119,8 +201,7 @@
     <div class="locationContainer"></div>
     <script>
       function createLocationInput() {
-        var f = hui.ui.LocationField.create();
-        hui.find('.locationContainer').appendChild(f.element);
+        locationFields.add(hui.ui.LocationInput.create(),'Created');
       }
     </script>
   </box>

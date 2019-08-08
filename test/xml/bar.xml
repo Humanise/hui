@@ -5,7 +5,18 @@
   <structure>
     <top>
       <bar>
-      <button icon="common/edit" text="Edit"/>
+        <button icon="common/edit" text="Edit"/>
+        <tool icon="common/folder" text="Folder" overlay="new" selected="true"/>
+        <tool icon="common/info" text="Info"/>
+        <item text="Info">
+          <dropdown value="1">
+            <option value="1" text="My option"/>
+          </dropdown>
+        </item>
+        <flexible/>
+        <item text="Search">
+          <searchfield expanded-width="200"/>
+        </item>
       </bar>
     </top>
     <middle>

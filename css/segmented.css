@@ -85,3 +85,6 @@
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#777', endColorstr='#99a');
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
     color: #fff; }
+
+.hui_formula_field .hui_segmented {
+  margin: 2px 0; }

@@ -130,7 +130,7 @@ hui.ui.Links.prototype = {
         value.listen({$valueChanged:function(){self.changeType(key);}});
       });
 
-      g.createButtons().add(hui.ui.Button.create({text:'Gem',submit:true,highlighted:true}));
+      form.createButtons().add(hui.ui.Button.create({text:'Gem',submit:true,highlighted:true}));
       this.editForm.listen({$submit:this.saveLink.bind(this)});
       win.add(form);
       if (this.options.pageSource) {

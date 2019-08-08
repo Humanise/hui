@@ -5911,21 +5911,26 @@ hui.ui.Formula.prototype = {
    */
   buildGroup : function(options,recipe) {
     var g = this.createGroup(options);
-    hui.each(recipe,function(item) {
+    hui.each(recipe, function(item) {
       var w;
       if (hui.ui.Formula[item.type]) {
         w = hui.ui.Formula[item.type].create(item.options);
-        g.add(w,item.label);
+        g.add(w, item.label);
       }
       else if (hui.ui[item.type]) {
         w = hui.ui[item.type].create(item.options);
-        g.add(w,item.label);
+        g.add(w, item.label);
       }
       else {
         hui.log('buildGroup: Unable to find type: '+item.type);
       }
     });
     return g;
+  },
+  createButtons : function(options) {
+    var buttons = hui.ui.Buttons.create(options);
+    this.add(buttons);
+    return buttons;
   },
   /** @private */
   childValueChanged : function(value) {
@@ -5949,7 +5954,7 @@ hui.ui.Formula.prototype = {
 hui.ui.Formula.Group = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
-  this.body = hui.get.firstByTag(this.element,'tbody');
+  this.tableMode = this.element.nodeName.toLowerCase() == 'table'
   this.options = hui.override({above:true},options);
   hui.ui.extend(this);
 };
@@ -5957,46 +5962,44 @@ hui.ui.Formula.Group = function(options) {
 /** Creates a new form group */
 hui.ui.Formula.Group.create = function(options) {
   options = hui.override({above:true},options);
-  var element = options.element = hui.build('table',
-    {'class':'hui_formula_fields'}
-  );
+  var element;
   if (options.above) {
-    hui.cls.add(element,'hui_formula_fields_above');
+    element = hui.build('div', {'class':'hui_formula_fields hui_formula_fields_above'});
+  } else {
+    element = hui.build('table.hui_formula_fields');
+    element.appendChild(hui.build('tbody'));
   }
-  element.appendChild(hui.build('tbody'));
+  options.element = element;
   return new hui.ui.Formula.Group(options);
 };
 
 hui.ui.Formula.Group.prototype = {
   add : function(widget,label) {
-    var tr = hui.build('tr');
-    this.body.appendChild(tr);
-    var td = hui.build('td',{'class':'hui_formula_field'});
-    if (!label && widget.getLabel) {
-      label = widget.getLabel();
-    }
-    if (label) {
-      label = hui.ui.getTranslated(label);
-      if (this.options.above) {
-        hui.build('label',{className:'hui_formula_field',text:label,parent:td});
-      } else {
-        var th = hui.build('th',{parent:tr,className:'hui_formula_middle'});
-        hui.build('label',{className:'hui_formula_field',text:label,parent:th});
+    if (this.tableMode) {
+      var tr = hui.build('tr',{'class':'hui_formula_field'});
+      hui.find('tbody', this.element).appendChild(tr);
+      var td = hui.build('td');
+      if (label) {
+        label = hui.ui.getTranslated(label);
+        var th = hui.build('th',{parent:tr});
+        hui.build('label',{className:'hui_formula_field_label',text:label,parent:th});
       }
+      td.appendChild(widget.getElement());
+      tr.appendChild(td);
+    } else {
+      var field = hui.build('div.hui_formula_field');
+      if (label) {
+        label = hui.ui.getTranslated(label);
+        hui.build('label',{className:'hui_formula_field_label',text:label,parent:field});
+      }
+      field.appendChild(widget.getElement());
+      this.element.appendChild(field);
     }
-    var item = hui.build('div',{'class':'hui_formula_field_body'});
-    item.appendChild(widget.getElement());
-    td.appendChild(item);
-    tr.appendChild(td);
-  },
-  createButtons : function(options) {
-    var tr = hui.build('tr',{parent:this.body});
-    var td = hui.build('td',{colspan:this.options.above ? 1 : 2, parent:tr});
-    var b = hui.ui.Buttons.create(options);
-    td.appendChild(b.getElement());
-    return b;
   }
 };
+
+// TODO: Should be hui.ui.Formula.Fields
+hui.ui.Formula.Fields = hui.ui.Formula.Group;
 
 ///////////////////////// Field //////////////////////////
 
@@ -7151,9 +7154,6 @@ hui.ui.ObjectList.prototype = {
     if (obj.index>=this.objects.length-1) {
       this.addObject({},true);
     }
-  },
-  getLabel : function() {
-    return this.options.label;
   }
 };
 
@@ -7271,7 +7271,6 @@ hui.ui.ObjectList.Select.prototype = {
  */
 hui.ui.DropDown = function(options) {
   this.options = hui.override({
-    label: null,
     placeholder: null,
     url: null,
     source: null,
@@ -7484,10 +7483,6 @@ hui.ui.DropDown.prototype = {
   /** Set the value to null */
   reset: function() {
     this.setValue(null);
-  },
-  /** Get the label */
-  getLabel: function() {
-    return this.options.label;
   },
   /** Refresh the associated source */
   refresh: function() {
@@ -12373,7 +12368,10 @@ hui.ui.Fragment.prototype = {
   },
   setContent : function(htmlWidgetOrNode) {
     this.element.innerHTML = '';
-    this.element.appendChild(htmlWidgetOrNode);
+    this.add(widgetOrNode);
+  },
+  add : function(widgetOrNode) {
+    this.element.appendChild(widgetOrNode.element ? widgetOrNode.element : widgetOrNode);
     this.fireSizeChange();
   }
 };
@@ -13372,7 +13370,7 @@ hui.ui.Links.prototype = {
         value.listen({$valueChanged:function(){self.changeType(key);}});
       });
 
-      g.createButtons().add(hui.ui.Button.create({text:'Gem',submit:true,highlighted:true}));
+      form.createButtons().add(hui.ui.Button.create({text:'Gem',submit:true,highlighted:true}));
       this.editForm.listen({$submit:this.saveLink.bind(this)});
       win.add(form);
       if (this.options.pageSource) {
@@ -13649,10 +13647,10 @@ hui.ui.MarkupEditor.prototype = {
       this.linkEditor = hui.ui.Window.create({padding:5,width:300});
       this.linkForm = hui.ui.Formula.create();
       this.linkEditor.add(this.linkForm);
-      var group = this.linkForm.buildGroup({},[
+      this.linkForm.buildGroup({},[
         {type : 'TextInput', options:{key:'url',label:'Address:'}}
       ]);
-      var buttons = group.createButtons();
+      var buttons = this.linkForm.createButtons();
       var ok = hui.ui.Button.create({text:'OK',submit:true});
       this.linkForm.listen({$submit:this._updateLink.bind(this)});
       buttons.add(ok);
@@ -14508,9 +14506,6 @@ hui.ui.LocationInput.prototype = {
     hui.ui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'hui_locationinput-focused'});
     hui.ui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'hui_locationinput-focused'});
   },
-  getLabel : function() {
-    return this.options.label;
-  },
   reset : function() {
     this.setValue();
   },
@@ -14711,7 +14706,7 @@ hui.ui.DateTimeInput = function(o) {
   this.name = o.name;
   this.element = hui.get(o.element);
   this.input = hui.get.firstByTag(this.element,'input');
-  this.options = hui.override({returnType:null,label:null,allowNull:true,value:null},o);
+  this.options = hui.override({returnType:null,allowNull:true,value:null},o);
   this.value = this.options.value;
   hui.ui.extend(this);
   this._addBehavior();
@@ -14786,9 +14781,6 @@ hui.ui.DateTimeInput.prototype = {
       return Math.round(this.value.getTime() / 1000);
     }
     return this.value;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   _updateUI : function() {
     if (this.value) {
@@ -14924,7 +14916,7 @@ hui.ui.DateTimeInput.prototype = {
  * @constructor
  */
 hui.ui.TokenField = function(o) {
-  this.options = hui.override({label:null,key:null},o);
+  this.options = hui.override({key:null},o);
   this.element = hui.get(o.element);
   this.name = o.name;
   this.value = [''];
@@ -14957,9 +14949,6 @@ hui.ui.TokenField.prototype = {
       }
     });
     return out;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   _updateUI : function() {
     this.element.innerHTML='';
@@ -15033,6 +15022,9 @@ hui.ui.Checkbox.create = function(options) {
   if (options.testName) {
     e.setAttribute('data-test', options.testName);
   }
+  if (options.label) {
+    hui.build('span.hui_checkbox_label',{parent: e, text: hui.ui.getTranslated(options.label)});
+  }
   return new hui.ui.Checkbox(options);
 };
 
@@ -15069,12 +15061,6 @@ hui.ui.Checkbox.prototype = {
   /** Resets the checkbox */
   reset : function() {
     this.setValue(false);
-  },
-  /** Gets the label
-   * @return {String} The checkbox label
-   */
-  getLabel : function() {
-    return this.options.label;
   }
 };
 ;
@@ -15174,9 +15160,6 @@ hui.ui.Checkboxes.prototype = {
   },
   reset : function() {
     this.setValues([]);
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   /**
    * @private
@@ -15442,10 +15425,6 @@ hui.ui.NumberInput.prototype = {
   getValue : function() {
     return this.value;
   },
-  /** Gets the label */
-  getLabel : function() {
-    return this.options.label;
-  },
   /** Sets the value */
   setValue : function(value) {
     if (value===null || value===undefined) {
@@ -15540,7 +15519,6 @@ hui.ui.NumberInput.prototype = {
  *  element : «Element | ID»,
  *  name : «String»,
  *  key : «String»,
- *  label : «String»,
  *  maxHeight : «<strong>100</strong> | integer»,
  *  animateUserChange : «<strong>true</strong> | false»
  * }
@@ -15550,7 +15528,7 @@ hui.ui.NumberInput.prototype = {
  * @constructor
  */
 hui.ui.TextInput = function(options) {
-  this.options = hui.override({label:null,key:null,lines:1,maxHeight:100,animateUserChange:true},options);
+  this.options = hui.override({key:null,lines:1,maxHeight:100,animateUserChange:true},options);
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
@@ -15566,7 +15544,6 @@ hui.ui.TextInput = function(options) {
  * Creates a new text field
  * <pre><strong>options:</strong> {
  *  value : «String»,
- *  label : «String»,
  *  multiline : «true | <strong>false</strong>»,
  *  lines : «<strong>1</strong> | integer»,
  *
@@ -15701,9 +15678,6 @@ hui.ui.TextInput.prototype = {
    */
   getValue : function() {
     return this.input.value;
-  },
-  getLabel : function() {
-    return this.options.label;
   },
   /** Check if the value is empty ('' / the empty string)
    * @returns {Boolean} True if the value the empty string

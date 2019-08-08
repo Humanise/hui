@@ -214,10 +214,10 @@ hui.ui.MarkupEditor.prototype = {
       this.linkEditor = hui.ui.Window.create({padding:5,width:300});
       this.linkForm = hui.ui.Formula.create();
       this.linkEditor.add(this.linkForm);
-      var group = this.linkForm.buildGroup({},[
+      this.linkForm.buildGroup({},[
         {type : 'TextInput', options:{key:'url',label:'Address:'}}
       ]);
-      var buttons = group.createButtons();
+      var buttons = this.linkForm.createButtons();
       var ok = hui.ui.Button.create({text:'OK',submit:true});
       this.linkForm.listen({$submit:this._updateLink.bind(this)});
       buttons.add(ok);

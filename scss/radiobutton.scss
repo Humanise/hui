@@ -18,6 +18,8 @@
   cursor: default;
   display: inline-block;
   cursor: pointer;
+  line-height: 18px;
+  padding: 4px 0;
 
   &_button {
     width: 16px;
@@ -28,7 +30,7 @@
     border-radius: 50%;
     display: inline-block;
     position: relative;
-    vertical-align: middle;
+    vertical-align: top;
     box-shadow: 0 1px 1px rgba(0,0,0,.1);
 
     .hui_radiobutton_selected &:before {
@@ -67,9 +69,7 @@
   &_label {
     vertical-align: top;
     display: inline-block;
-    height: 18px;
     color: $text-color;
-    line-height: 18px;
     margin-left: 5px;
   }
 }

@@ -118,6 +118,11 @@ hui.ui.Formula.prototype = {
     });
     return g;
   },
+  createButtons : function(options) {
+    var buttons = hui.ui.Buttons.create(options);
+    this.add(buttons);
+    return buttons;
+  },
   /** @private */
   childValueChanged : function(value) {
     this.fire('valuesChanged',this.getValues());
@@ -140,7 +145,7 @@ hui.ui.Formula.prototype = {
 hui.ui.Formula.Group = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
-  this.body = hui.get.firstByTag(this.element,'tbody');
+  this.tableMode = this.element.nodeName.toLowerCase() == 'table'
   this.options = hui.override({above:true},options);
   hui.ui.extend(this);
 };
@@ -148,43 +153,44 @@ hui.ui.Formula.Group = function(options) {
 /** Creates a new form group */
 hui.ui.Formula.Group.create = function(options) {
   options = hui.override({above:true},options);
-  var element = options.element = hui.build('table',
-    {'class':'hui_formula_fields'}
-  );
+  var element;
   if (options.above) {
-    hui.cls.add(element,'hui_formula_fields_above');
+    element = hui.build('div', {'class':'hui_formula_fields hui_formula_fields_above'});
+  } else {
+    element = hui.build('table.hui_formula_fields');
+    element.appendChild(hui.build('tbody'));
   }
-  element.appendChild(hui.build('tbody'));
+  options.element = element;
   return new hui.ui.Formula.Group(options);
 };
 
 hui.ui.Formula.Group.prototype = {
   add : function(widget,label) {
-    var tr = hui.build('tr');
-    this.body.appendChild(tr);
-    var td = hui.build('td',{'class':'hui_formula_field'});
-    if (label) {
-      label = hui.ui.getTranslated(label);
-      if (this.options.above) {
-        hui.build('label',{className:'hui_formula_field',text:label,parent:td});
-      } else {
-        var th = hui.build('th',{parent:tr,className:'hui_formula_middle'});
-        hui.build('label',{className:'hui_formula_field',text:label,parent:th});
+    if (this.tableMode) {
+      var tr = hui.build('tr',{'class':'hui_formula_field'});
+      hui.find('tbody', this.element).appendChild(tr);
+      var td = hui.build('td');
+      if (label) {
+        label = hui.ui.getTranslated(label);
+        var th = hui.build('th',{parent:tr});
+        hui.build('label',{className:'hui_formula_field_label',text:label,parent:th});
       }
+      td.appendChild(widget.getElement());
+      tr.appendChild(td);
+    } else {
+      var field = hui.build('div.hui_formula_field');
+      if (label) {
+        label = hui.ui.getTranslated(label);
+        hui.build('label',{className:'hui_formula_field_label',text:label,parent:field});
+      }
+      field.appendChild(widget.getElement());
+      this.element.appendChild(field);
     }
-    var item = hui.build('div',{'class':'hui_formula_field_body'});
-    item.appendChild(widget.getElement());
-    td.appendChild(item);
-    tr.appendChild(td);
-  },
-  createButtons : function(options) {
-    var tr = hui.build('tr',{parent:this.body});
-    var td = hui.build('td',{colspan:this.options.above ? 1 : 2, parent:tr});
-    var b = hui.ui.Buttons.create(options);
-    td.appendChild(b.getElement());
-    return b;
   }
 };
+
+// TODO: Should be hui.ui.Formula.Fields
+hui.ui.Formula.Fields = hui.ui.Formula.Group;
 
 ///////////////////////// Field //////////////////////////
 

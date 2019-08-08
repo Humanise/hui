@@ -27,7 +27,10 @@ hui.ui.Fragment.prototype = {
   },
   setContent : function(htmlWidgetOrNode) {
     this.element.innerHTML = '';
-    this.element.appendChild(htmlWidgetOrNode);
+    this.add(widgetOrNode);
+  },
+  add : function(widgetOrNode) {
+    this.element.appendChild(widgetOrNode.element ? widgetOrNode.element : widgetOrNode);
     this.fireSizeChange();
   }
 };

@@ -1,11 +1,12 @@
 @import 'tools';
 
 .hui_checkbox {
-  font-size: 10pt;
-  line-height: 16px;
+  font-size: 12px;
+  line-height: 18px;
   cursor: pointer;
   color: $text-color;
   display: inline-block;
+  padding: 4px 0;
   outline: none;
   text-decoration: none;
   vertical-align: middle;
@@ -19,12 +20,12 @@
     @include control-base;
     display: inline-block;
     position: relative;
-    vertical-align: middle;
+    vertical-align: top;
   }
 
   &_label {
     margin-left: 5px;
-    vertical-align: middle;
+    vertical-align: top;
   }
 
   &:hover &_button {
@@ -51,4 +52,9 @@
       left: 2px;
     };
   }
+}
+
+.hui_checkbox + .hui_checkbox,
+.hui_checkbox + script + .hui_checkbox {
+  margin-left: 10px;
 }

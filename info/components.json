@@ -83,7 +83,9 @@
     "css": "datepicker.css"
   },
   {
-    "name": "DateTimeInput"
+    "name": "DateTimeInput",
+    "sass": "datetimeinput.scss",
+    "css": "datetimeinput.css"
   },
   {
     "name": "Diagram",
@@ -270,7 +272,9 @@
     "css": "objectinput.css"
   },
   {
-    "name": "ObjectList"
+    "name": "ObjectList",
+    "sass": "objectlist.scss",
+    "css": "objectlist.css"
   },
   {
     "name": "Overflow",
