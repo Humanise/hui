@@ -24,6 +24,7 @@
         <icon icon="monochrome/view" action="true"/>
         <icon icon="monochrome/view" action="true"/>
         <symbol name="info"/>
+        <symbol name="trash"/>
         <symbol name="gear" action="true"/>
       </icons>
     </cell>
@@ -46,9 +47,7 @@
   </row>
   <row id="1" kind="user">
     <cell icon="monochrome/dot"><strong>Progress</strong></cell>
-    <cell>
-      
-    </cell>
+    <cell></cell>
     <cell>
       <progress value="0.5"/>
     </cell>

@@ -30,7 +30,14 @@ hui.ui.listen({
             kind : 'component'
           });
         }
-        componentOptions.$optionsLoaded([{text:'Components',value:'components',icon:'common/folder',children:options}])
+        componentOptions.setOptions([
+          {
+            text: 'Components',
+            value: 'components',
+            icon: 'common/folder',
+            children: options
+          }
+        ]);
       }
     })
   },

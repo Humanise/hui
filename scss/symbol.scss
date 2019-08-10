@@ -28,11 +28,9 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  &-info:before {
-    content: $info-symbol;
-  }
-
-  &-gear:before {
-    content: $gear-symbol;
+  @each $name, $glyph in $symbols {
+    &-#{$name}:before {
+      content: $glyph;
+    }
   }
 }

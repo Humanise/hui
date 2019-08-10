@@ -224,10 +224,36 @@ span.hui_disclosure_open:hover {
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; }
+  .hui_symbol-search:before {
+    content: ""; }
+  .hui_symbol-menu:before {
+    content: ""; }
+  .hui_symbol-close:before {
+    content: ""; }
+  .hui_symbol-left:before {
+    content: ""; }
+  .hui_symbol-right:before {
+    content: ""; }
+  .hui_symbol-up:before {
+    content: ""; }
+  .hui_symbol-down:before {
+    content: ""; }
   .hui_symbol-info:before {
     content: "'"; }
+  .hui_symbol-more:before {
+    content: ""; }
+  .hui_symbol-follow:before {
+    content: ""; }
+  .hui_symbol-add:before {
+    content: ""; }
+  .hui_symbol-trash:before {
+    content: ""; }
   .hui_symbol-gear:before {
     content: ""; }
+  .hui_symbol-delete:before {
+    content: ""; }
+  .hui_symbol-view:before {
+    content: ""; }
 
 
 .hui_buttons {

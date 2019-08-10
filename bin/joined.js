@@ -8322,6 +8322,9 @@ hui.ui.Selection.Items.prototype = {
       this.options.source.refresh();
     }
   },
+  setOptions : function(options) {
+    this.$optionsLoaded(options);
+  },
   /** @private */
   $objectsLoaded : function(objects) {
     this.$optionsLoaded(objects);

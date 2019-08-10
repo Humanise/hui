@@ -564,6 +564,8 @@
       <xs:element name="segmented" type="segmented"/>
       <xs:element name="searchfield" type="searchfield"/>
       <xs:element name="flexible" type="bar_flexible"/>
+      <xs:element name="tool" type="toolbar_icon"/>
+      <xs:element name="item" type="toolbar_item"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="state" type="xs:string"/>
@@ -1424,6 +1426,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
+    <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="field" type="field"/>
