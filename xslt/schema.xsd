@@ -365,7 +365,8 @@
     </xs:choice>
     <xs:attribute name="top" type="xs:integer"/>
     <xs:attribute name="bottom" type="xs:positiveInteger"/>
-    <xs:attribute name="right" type="xs:integer"/>
+    <xs:attribute name="left" type="xs:positiveInteger"/>
+    <xs:attribute name="right" type="xs:positiveInteger"/>
     <xs:attribute name="small" type="xs:boolean"/>
     <xs:attribute name="tiny" type="xs:boolean"/>
     <xs:attribute name="mini" type="xs:boolean"/>
@@ -1281,6 +1282,7 @@
       <xs:element name="div" type="div"/>
       <xs:element name="space" type="space"/>
       <xs:element name="gallery" type="gallery"/>
+      <xs:element name="wizard" type="wizard"/>
     </xs:choice>
     <xs:attribute name="title" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
