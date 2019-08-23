@@ -1290,9 +1290,10 @@ hui.cls = {
     }
     if (element.addClassName) {
       element.addClassName(className);
-    }
+    } else {
       hui.cls.remove(element, className);
       element.className += ' ' + className;
+    }
   },
   /**
    * Remove a class from an element
