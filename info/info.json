@@ -1,0 +1,4983 @@
+{
+  "components": [
+    {
+      "xml": {
+        "name": "gui",
+        "_type": "gui",
+        "attributes": [
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "background",
+            "type": "xs:string"
+          },
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "adaptive",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "gui"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "controller",
+        "_type": "controller",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "finder",
+        "_type": "finder",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "list-url",
+            "type": "xs:string"
+          },
+          {
+            "name": "selection-url",
+            "type": "xs:string"
+          },
+          {
+            "name": "selection-value",
+            "type": "xs:string"
+          },
+          {
+            "name": "selection-parameter",
+            "type": "xs:string"
+          },
+          {
+            "name": "search-parameter",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Finder"
+      },
+      "xsl": [
+        {
+          "match": "finder"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "style",
+        "_type": "style",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "style"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "script",
+        "_type": "script",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "script"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "listen",
+        "_type": "listen",
+        "attributes": [
+          {
+            "name": "for",
+            "type": "xs:string"
+          },
+          {
+            "name": "on",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "listen"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "source",
+        "_type": "source",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "lazy",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": "Source"
+      },
+      "xsl": [
+        {
+          "match": "source"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "box",
+        "_type": "box",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "absolute",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "modal",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "top",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "width",
+            "type": ""
+          },
+          {
+            "name": "closable",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Box"
+      },
+      "xsl": [
+        {
+          "match": "box"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "fragment",
+        "_type": "fragment",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "visible",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "background",
+            "type": ""
+          },
+          {
+            "name": "top",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "height",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Fragment"
+      },
+      "xsl": [
+        {
+          "match": "fragment"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "tiles",
+        "_type": "tiles",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "space",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "Tiles"
+      },
+      "xsl": [
+        {
+          "match": "tiles"
+        },
+        {
+          "match": "tiles/tile"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "text",
+        "_type": "text",
+        "attributes": [
+          {
+            "name": "top",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "align",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "text"
+        },
+        {
+          "match": "text/header"
+        },
+        {
+          "match": "text/h"
+        },
+        {
+          "match": "text/p"
+        },
+        {
+          "match": "bar//text"
+        },
+        {
+          "match": "objectlist/text"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "window",
+        "_type": "window",
+        "attributes": [
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "test-name",
+            "type": "xs:string"
+          },
+          {
+            "name": "width",
+            "type": "xs:integer"
+          },
+          {
+            "name": "closable",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Window"
+      },
+      "xsl": [
+        {
+          "match": "list/window"
+        },
+        {
+          "match": "window"
+        },
+        {
+          "match": "window/back"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "space",
+        "_type": "space",
+        "attributes": [
+          {
+            "name": "all",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "top",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "bottom",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "left",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "right",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "height",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "align",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "space"
+        },
+        {
+          "match": "space[@width]"
+        },
+        {
+          "match": "bar//space"
+        },
+        {
+          "match": "toolbar//space"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "dock",
+        "_type": "dock",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "frame-name",
+            "type": "xs:string"
+          },
+          {
+            "name": "position",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Dock"
+      },
+      "xsl": [
+        {
+          "match": "dock"
+        },
+        {
+          "match": "dock/sidebar"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "structure",
+        "_type": "structure",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "height",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Structure"
+      },
+      "xsl": [
+        {
+          "match": "structure"
+        },
+        {
+          "match": "structure/top"
+        },
+        {
+          "match": "structure/middle"
+        },
+        {
+          "match": "structure/middle/left"
+        },
+        {
+          "match": "structure/middle/center"
+        },
+        {
+          "match": "structure/middle/right"
+        },
+        {
+          "match": "structure/bottom"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "columns",
+        "_type": "columns",
+        "attributes": [
+          {
+            "name": "space",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "flexible",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": "Columns"
+      },
+      "xsl": [
+        {
+          "match": "columns"
+        },
+        {
+          "match": "columns/column"
+        },
+        {
+          "match": "columns[@flexible='true']"
+        },
+        {
+          "match": "columns[@flexible='true']/column"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "rows",
+        "_type": "rows",
+        "attributes": []
+      },
+      "js": {
+        "name": "Rows"
+      },
+      "xsl": [
+        {
+          "match": "rows"
+        },
+        {
+          "match": "rows/row"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "foundation",
+        "_type": "foundation",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Foundation"
+      },
+      "xsl": [
+        {
+          "match": "foundation"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "boundpanel",
+        "_type": "boundpanel",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "target",
+            "type": "xs:string"
+          },
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "modal",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "BoundPanel"
+      },
+      "xsl": [
+        {
+          "match": "boundpanel"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "panel",
+        "_type": "panel",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "Panel"
+      },
+      "xsl": [
+        {
+          "match": "panel"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "managed",
+        "_type": "managed",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "save-url",
+            "type": "xs:string"
+          },
+          {
+            "name": "delete-url",
+            "type": "xs:string"
+          },
+          {
+            "name": "read-url",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "managed"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "bar",
+        "_type": "bar",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "visible",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Bar"
+      },
+      "xsl": [
+        {
+          "match": "bar//tool"
+        },
+        {
+          "match": "bar//item"
+        },
+        {
+          "match": "bar"
+        },
+        {
+          "match": "bar/right"
+        },
+        {
+          "match": "bar//button[@icon]"
+        },
+        {
+          "match": "bar//text"
+        },
+        {
+          "match": "bar//flexible"
+        },
+        {
+          "match": "bar//space"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "toolbar",
+        "_type": "toolbar",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "centered",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "left",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "border",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Toolbar"
+      },
+      "xsl": [
+        {
+          "match": "toolbar"
+        },
+        {
+          "match": "toolbar/right"
+        },
+        {
+          "match": "toolbar//divider"
+        },
+        {
+          "match": "toolbar//more"
+        },
+        {
+          "match": "toolbar//icon"
+        },
+        {
+          "match": "toolbar//field"
+        },
+        {
+          "match": "toolbar//item"
+        },
+        {
+          "match": "toolbar//grid"
+        },
+        {
+          "match": "toolbar//grid/row"
+        },
+        {
+          "match": "toolbar//grid/row/cell"
+        },
+        {
+          "match": "toolbar//grid/row/cell/label"
+        },
+        {
+          "match": "toolbar//space"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "tabs",
+        "_type": "tabs",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "centered",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "small",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "below",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": "Tabs"
+      },
+      "xsl": [
+        {
+          "match": "tabs"
+        },
+        {
+          "match": "tabs/tab"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "menu",
+        "_type": "menu",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Menu"
+      },
+      "xsl": [
+        {
+          "match": "menu"
+        },
+        {
+          "match": "menu//item"
+        },
+        {
+          "match": "menu//divider"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "div",
+        "_type": "div",
+        "attributes": [
+          {
+            "name": "class",
+            "type": "xs:string"
+          },
+          {
+            "name": "style",
+            "type": "xs:string"
+          },
+          {
+            "name": "id",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "div"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "clipboard",
+        "_type": "clipboard",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Clipboard"
+      },
+      "xsl": [
+        {
+          "match": "clipboard"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "subgui",
+        "_type": "subgui",
+        "attributes": [
+          {
+            "name": "globals",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "options",
+        "_type": "options",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/options"
+        },
+        {
+          "match": "checkboxes/options"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "option",
+        "_type": "options_option",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/option"
+        },
+        {
+          "match": "radiobuttons/option"
+        },
+        {
+          "match": "checkboxes/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "set",
+        "_type": "listen_set",
+        "attributes": [
+          {
+            "name": "on",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "parameter",
+        "_type": "source_parameter",
+        "attributes": [
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "top",
+        "_type": "structure_top",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "layout/top"
+        },
+        {
+          "match": "structure/top"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "middle",
+        "_type": "structure_middle",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "layout/middle"
+        },
+        {
+          "match": "layout/middle/left"
+        },
+        {
+          "match": "layout/middle/center"
+        },
+        {
+          "match": "structure/middle"
+        },
+        {
+          "match": "structure/middle/left"
+        },
+        {
+          "match": "structure/middle/center"
+        },
+        {
+          "match": "structure/middle/right"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "bottom",
+        "_type": "structure_bottom",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "layout/bottom"
+        },
+        {
+          "match": "structure/bottom"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "button",
+        "_type": "button",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "test-name",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "role",
+            "type": "xs:string"
+          },
+          {
+            "name": "click",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "submit",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "small",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "mini",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "tiny",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "highlighted",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "disabled",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Button"
+      },
+      "xsl": [
+        {
+          "match": "bar//button[@icon]"
+        },
+        {
+          "match": "button"
+        },
+        {
+          "match": "group/button"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "left",
+        "_type": "structure_left",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "layout/middle/left"
+        },
+        {
+          "match": "structure/middle/left"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "center",
+        "_type": "structure_center",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "layout/middle/center"
+        },
+        {
+          "match": "structure/middle/center"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "middle",
+        "_type": "structure_right",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "layout/middle"
+        },
+        {
+          "match": "layout/middle/left"
+        },
+        {
+          "match": "layout/middle/center"
+        },
+        {
+          "match": "structure/middle"
+        },
+        {
+          "match": "structure/middle/left"
+        },
+        {
+          "match": "structure/middle/center"
+        },
+        {
+          "match": "structure/middle/right"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "selection",
+        "_type": "selection",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "top",
+            "type": "xs:integer"
+          }
+        ]
+      },
+      "js": {
+        "name": "Selection"
+      },
+      "xsl": [
+        {
+          "match": "selection"
+        },
+        {
+          "match": "selection/item"
+        },
+        {
+          "match": "selection/option"
+        },
+        {
+          "match": "selection/items"
+        },
+        {
+          "match": "selection/options"
+        },
+        {
+          "match": "selection/title"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "overflow",
+        "_type": "overflow",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "height",
+            "type": ""
+          },
+          {
+            "name": "max-height",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "min-height",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "shadow-variant",
+            "type": ""
+          },
+          {
+            "name": "background",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Overflow"
+      },
+      "xsl": [
+        {
+          "match": "overflow"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "navigation",
+        "_type": "foundation_navigation",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "results",
+        "_type": "foundation_results",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "actions",
+        "_type": "foundation_actions",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "tile/actions"
+        },
+        {
+          "match": "tile/actions/icon"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "content",
+        "_type": "foundation_content",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "details",
+        "_type": "foundation_details",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "calendar",
+        "_type": "calendar",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          },
+          {
+            "name": "start-hour",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "end-hour",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "Calendar"
+      },
+      "xsl": [
+        {
+          "match": "calendar"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "diagram",
+        "_type": "diagram",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Diagram"
+      },
+      "xsl": [
+        {
+          "match": "diagram"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "media-simulator",
+        "_type": "media-simulator",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "MediaSimulator"
+      },
+      "xsl": [
+        {
+          "match": "media-simulator"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "timeline",
+        "_type": "timeline",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "TimeLine"
+      },
+      "xsl": [
+        {
+          "match": "timeline"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "gallery",
+        "_type": "gallery",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "drop-files",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": "Gallery"
+      },
+      "xsl": [
+        {
+          "match": "gallery"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "iframe",
+        "_type": "iframe",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "height",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "IFrame"
+      },
+      "xsl": [
+        {
+          "match": "iframe"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "frames",
+        "_type": "frames",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "frames"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "frame",
+        "_type": "frames_frame",
+        "attributes": [
+          {
+            "name": "scrolling",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "graph",
+        "_type": "graph",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          },
+          {
+            "name": "layout",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Graph"
+      },
+      "xsl": [
+        {
+          "match": "graph"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "buttons",
+        "_type": "buttons",
+        "attributes": [
+          {
+            "name": "top",
+            "type": "xs:integer"
+          },
+          {
+            "name": "bottom",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "left",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "right",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "small",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "tiny",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "mini",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "align",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "buttons"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "confirm",
+        "_type": "confirm",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "ok",
+            "type": "xs:string"
+          },
+          {
+            "name": "cancel",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "item",
+        "_type": "menu_item",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/item"
+        },
+        {
+          "match": "menu//item"
+        },
+        {
+          "match": "toolbar//item"
+        },
+        {
+          "match": "bar//item"
+        },
+        {
+          "match": "radiobuttons/item"
+        },
+        {
+          "match": "checkboxes/item"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "divider",
+        "_type": "menu_divider",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "menu//divider"
+        },
+        {
+          "match": "toolbar//divider"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "pages",
+        "_type": "pages",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "height",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Pages"
+      },
+      "xsl": [
+        {
+          "match": "pages"
+        },
+        {
+          "match": "pages/page"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "page",
+        "_type": "pages_page",
+        "attributes": [
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "background",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "pages/page"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "wizard",
+        "_type": "wizard",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "selection-width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "bordered",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": "Wizard"
+      },
+      "xsl": [
+        {
+          "match": "wizard"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "step",
+        "_type": "wizard_step",
+        "attributes": [
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "frame",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "option",
+        "_type": "selection_option",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "kind",
+            "type": "xs:string"
+          },
+          {
+            "name": "badge",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/option"
+        },
+        {
+          "match": "radiobuttons/option"
+        },
+        {
+          "match": "checkboxes/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "options",
+        "_type": "selection_options",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          },
+          {
+            "name": "title",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/options"
+        },
+        {
+          "match": "checkboxes/options"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "title",
+        "_type": "selection_title",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/title"
+        },
+        {
+          "match": "tile/title"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "tab",
+        "_type": "tabs_tab",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          },
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "background",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "tabs/tab"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "text",
+        "_type": "bar_text",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "text"
+        },
+        {
+          "match": "text/header"
+        },
+        {
+          "match": "text/h"
+        },
+        {
+          "match": "text/p"
+        },
+        {
+          "match": "bar//text"
+        },
+        {
+          "match": "objectlist/text"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "right",
+        "_type": "bar_right",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "structure/middle/right"
+        },
+        {
+          "match": "toolbar/right"
+        },
+        {
+          "match": "bar/right"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "button",
+        "_type": "bar_button",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "selected",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "small",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "click",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Button"
+      },
+      "xsl": [
+        {
+          "match": "bar//button[@icon]"
+        },
+        {
+          "match": "button"
+        },
+        {
+          "match": "group/button"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "checkbox",
+        "_type": "checkbox",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Checkbox"
+      },
+      "xsl": [
+        {
+          "match": "checkbox"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "dropdown",
+        "_type": "dropdown",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "adaptive",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "small",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "placeholder",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "DropDown"
+      },
+      "xsl": [
+        {
+          "match": "dropdown"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "segmented",
+        "_type": "segmented",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "allow-null",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Segmented"
+      },
+      "xsl": [
+        {
+          "match": "segmented"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "searchfield",
+        "_type": "searchfield",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "placeholder",
+            "type": "xs:string"
+          },
+          {
+            "name": "expanded-width",
+            "type": "xs:integer"
+          },
+          {
+            "name": "adaptive",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": "SearchField"
+      },
+      "xsl": [
+        {
+          "match": "searchfield"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "flexible",
+        "_type": "bar_flexible",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "bar//flexible"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "tool",
+        "_type": "toolbar_icon",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "badge",
+            "type": "xs:string"
+          },
+          {
+            "name": "overlay",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "click",
+            "type": "xs:string"
+          },
+          {
+            "name": "disabled",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "selected",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "bar//tool"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "item",
+        "_type": "toolbar_item",
+        "attributes": [
+          {
+            "name": "label",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/item"
+        },
+        {
+          "match": "menu//item"
+        },
+        {
+          "match": "toolbar//item"
+        },
+        {
+          "match": "bar//item"
+        },
+        {
+          "match": "radiobuttons/item"
+        },
+        {
+          "match": "checkboxes/item"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "icon",
+        "_type": "toolbar_icon",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "badge",
+            "type": "xs:string"
+          },
+          {
+            "name": "overlay",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "click",
+            "type": "xs:string"
+          },
+          {
+            "name": "disabled",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "selected",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": "Icon"
+      },
+      "xsl": [
+        {
+          "match": "icon"
+        },
+        {
+          "match": "icon[@text]"
+        },
+        {
+          "match": "tile/actions/icon"
+        },
+        {
+          "match": "toolbar//icon"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "right",
+        "_type": "toolbar_right",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "structure/middle/right"
+        },
+        {
+          "match": "toolbar/right"
+        },
+        {
+          "match": "bar/right"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "more",
+        "_type": "toolbar_more",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "toolbar//more"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "divider",
+        "_type": "toolbar_divider",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "menu//divider"
+        },
+        {
+          "match": "toolbar//divider"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "grid",
+        "_type": "toolbar_grid",
+        "attributes": [
+          {
+            "name": "left",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "right",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "toolbar//grid"
+        },
+        {
+          "match": "toolbar//grid/row"
+        },
+        {
+          "match": "toolbar//grid/row/cell"
+        },
+        {
+          "match": "toolbar//grid/row/cell/label"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "number-input",
+        "_type": "number-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "max",
+            "type": "xs:float"
+          },
+          {
+            "name": "min",
+            "type": "xs:float"
+          },
+          {
+            "name": "tick-size",
+            "type": "xs:float"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "decimals",
+            "type": "xs:integer"
+          },
+          {
+            "name": "allow-null",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "adaptive",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": "NumberInput"
+      },
+      "xsl": [
+        {
+          "match": "number-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "checkboxes",
+        "_type": "checkboxes",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "max-height",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "Checkboxes"
+      },
+      "xsl": [
+        {
+          "match": "checkboxes"
+        },
+        {
+          "match": "checkboxes/items"
+        },
+        {
+          "match": "checkboxes/options"
+        },
+        {
+          "match": "checkboxes/item"
+        },
+        {
+          "match": "checkboxes/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "text-input",
+        "_type": "text-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "test-name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "placeholder",
+            "type": "xs:string"
+          },
+          {
+            "name": "correction",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "secret",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "adaptive",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "breaks",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "max-height",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "TextInput"
+      },
+      "xsl": [
+        {
+          "match": "text-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "font-input",
+        "_type": "font-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "FontInput"
+      },
+      "xsl": [
+        {
+          "match": "font-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "color-input",
+        "_type": "color-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "ColorInput"
+      },
+      "xsl": [
+        {
+          "match": "color-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "style-length-input",
+        "_type": "style-length-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "adaptive",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "style-length-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "slider",
+        "_type": "slider",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "value",
+            "type": "xs:float"
+          }
+        ]
+      },
+      "js": {
+        "name": "Slider"
+      },
+      "xsl": [
+        {
+          "match": "slider"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "row",
+        "_type": "toolbar_row",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "rows/row"
+        },
+        {
+          "match": "split/row"
+        },
+        {
+          "match": "toolbar//grid/row"
+        },
+        {
+          "match": "toolbar//grid/row/cell"
+        },
+        {
+          "match": "toolbar//grid/row/cell/label"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "cell",
+        "_type": "toolbar_cell",
+        "attributes": [
+          {
+            "name": "label",
+            "type": "xs:string"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "right",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "toolbar//grid/row/cell"
+        },
+        {
+          "match": "toolbar//grid/row/cell/label"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "label",
+        "_type": "toolbar_label",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "toolbar//grid/row/cell/label"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "sidebar",
+        "_type": "dock_sidebar",
+        "attributes": [
+          {
+            "name": "collapsed",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "dock/sidebar"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "rendering",
+        "_type": "rendering",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Rendering"
+      },
+      "xsl": [
+        {
+          "match": "rendering"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "datepicker",
+        "_type": "datepicker",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "DatePicker"
+      },
+      "xsl": [
+        {
+          "match": "datepicker"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "links",
+        "_type": "links",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "page-source",
+            "type": "xs:string"
+          },
+          {
+            "name": "file-source",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Links"
+      },
+      "xsl": [
+        {
+          "match": "links"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "picker",
+        "_type": "picker",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "shadow",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "item-width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "item-height",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "Picker"
+      },
+      "xsl": [
+        {
+          "match": "picker"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "item",
+        "_type": "picker_item",
+        "attributes": [
+          {
+            "name": "image",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/item"
+        },
+        {
+          "match": "menu//item"
+        },
+        {
+          "match": "toolbar//item"
+        },
+        {
+          "match": "bar//item"
+        },
+        {
+          "match": "radiobuttons/item"
+        },
+        {
+          "match": "checkboxes/item"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "row",
+        "_type": "rows_row",
+        "attributes": [
+          {
+            "name": "height",
+            "type": ""
+          },
+          {
+            "name": "min",
+            "type": "xs:integer"
+          },
+          {
+            "name": "max",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "rows/row"
+        },
+        {
+          "match": "split/row"
+        },
+        {
+          "match": "toolbar//grid/row"
+        },
+        {
+          "match": "toolbar//grid/row/cell"
+        },
+        {
+          "match": "toolbar//grid/row/cell/label"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "column",
+        "_type": "columns_column",
+        "attributes": [
+          {
+            "name": "width",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "column"
+        },
+        {
+          "match": "columns/column"
+        },
+        {
+          "match": "columns[@flexible='true']/column"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "split",
+        "_type": "split",
+        "attributes": []
+      },
+      "js": {
+        "name": "Split"
+      },
+      "xsl": [
+        {
+          "match": "split"
+        },
+        {
+          "match": "split/row"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "row",
+        "_type": "split_row",
+        "attributes": [
+          {
+            "name": "height",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "rows/row"
+        },
+        {
+          "match": "split/row"
+        },
+        {
+          "match": "toolbar//grid/row"
+        },
+        {
+          "match": "toolbar//grid/row/cell"
+        },
+        {
+          "match": "toolbar//grid/row/cell/label"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "tile",
+        "_type": "tiles_tile",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "height",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "top",
+            "type": "xs:integer"
+          },
+          {
+            "name": "left",
+            "type": "xs:integer"
+          },
+          {
+            "name": "background",
+            "type": "xs:string"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "tiles/tile"
+        },
+        {
+          "match": "tile/title"
+        },
+        {
+          "match": "tile/actions"
+        },
+        {
+          "match": "tile/actions/icon"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "actions",
+        "_type": "tiles_actions",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "tile/actions"
+        },
+        {
+          "match": "tile/actions/icon"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "title",
+        "_type": "tiles_title",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/title"
+        },
+        {
+          "match": "tile/title"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "list",
+        "_type": "list",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          },
+          {
+            "name": "selectable",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "remember",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "visible",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "indent",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "drop-files",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "variant",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "List"
+      },
+      "xsl": [
+        {
+          "match": "list"
+        },
+        {
+          "match": "list/window"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "formula",
+        "_type": "formula",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "padding",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "Formula"
+      },
+      "xsl": [
+        {
+          "match": "formula"
+        },
+        {
+          "match": "formula//header"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "chart",
+        "_type": "chart",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "source",
+            "type": "xs:string"
+          },
+          {
+            "name": "height",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Chart"
+      },
+      "xsl": [
+        {
+          "match": "chart"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "icon",
+        "_type": "tiles_icon",
+        "attributes": [
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Icon"
+      },
+      "xsl": [
+        {
+          "match": "icon"
+        },
+        {
+          "match": "icon[@text]"
+        },
+        {
+          "match": "tile/actions/icon"
+        },
+        {
+          "match": "toolbar//icon"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "p",
+        "_type": "text_p",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "p"
+        },
+        {
+          "match": "text/p"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "h",
+        "_type": "text_h",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "text/h"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "link",
+        "_type": "link",
+        "attributes": []
+      },
+      "js": {
+        "name": "Link"
+      },
+      "xsl": [
+        {
+          "match": "link"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "strong",
+        "_type": "strong",
+        "attributes": [
+          {
+            "name": "class",
+            "type": "xs:string"
+          },
+          {
+            "name": "style",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "strong"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "icon",
+        "_type": "icon",
+        "attributes": [
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "size",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "Icon"
+      },
+      "xsl": [
+        {
+          "match": "icon"
+        },
+        {
+          "match": "icon[@text]"
+        },
+        {
+          "match": "tile/actions/icon"
+        },
+        {
+          "match": "toolbar//icon"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "symbol",
+        "_type": "symbol",
+        "attributes": [
+          {
+            "name": "symbol",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "symbol"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "html",
+        "_type": "html",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "html"
+        },
+        {
+          "match": "html"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "p",
+        "_type": "p",
+        "attributes": [
+          {
+            "name": "class",
+            "type": "xs:string"
+          },
+          {
+            "name": "style",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "p"
+        },
+        {
+          "match": "text/p"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "span",
+        "_type": "span",
+        "attributes": [
+          {
+            "name": "class",
+            "type": "xs:string"
+          },
+          {
+            "name": "style",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "span"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "em",
+        "_type": "em",
+        "attributes": [
+          {
+            "name": "class",
+            "type": "xs:string"
+          },
+          {
+            "name": "style",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "em"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "img",
+        "_type": "img",
+        "attributes": [
+          {
+            "name": "src",
+            "type": "xs:string"
+          },
+          {
+            "name": "width",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "height",
+            "type": "xs:positiveInteger"
+          },
+          {
+            "name": "style",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "h1",
+        "_type": "h1",
+        "attributes": [
+          {
+            "name": "class",
+            "type": "xs:string"
+          },
+          {
+            "name": "style",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "h1"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "h2",
+        "_type": "h2",
+        "attributes": [
+          {
+            "name": "class",
+            "type": "xs:string"
+          },
+          {
+            "name": "style",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "h2"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "error",
+        "_type": "list_error",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "empty",
+        "_type": "list_empty",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "back",
+        "_type": "window_back",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "window/back"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "fields",
+        "_type": "fields",
+        "attributes": [
+          {
+            "name": "labels",
+            "type": ""
+          },
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "fields"
+        },
+        {
+          "match": "fields/field"
+        },
+        {
+          "match": "fields[@labels='above']/field"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "upload",
+        "_type": "upload",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "multiple",
+            "type": "xs:boolean"
+          },
+          {
+            "name": "widget",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Upload"
+      },
+      "xsl": [
+        {
+          "match": "upload"
+        },
+        {
+          "match": "upload/placeholder"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "option",
+        "_type": "segmented_option",
+        "attributes": [
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/option"
+        },
+        {
+          "match": "radiobuttons/option"
+        },
+        {
+          "match": "checkboxes/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "placeholder",
+        "_type": "upload_placeholder",
+        "attributes": [
+          {
+            "name": "title",
+            "type": "xs:string"
+          },
+          {
+            "name": "text",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "upload/placeholder"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "header",
+        "_type": "",
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "text/header"
+        },
+        {
+          "match": "header"
+        },
+        {
+          "match": "formula//header"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "field",
+        "_type": "field",
+        "attributes": [
+          {
+            "name": "label",
+            "type": "xs:string"
+          },
+          {
+            "name": "hint",
+            "type": "xs:string"
+          },
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "state",
+            "type": "xs:string"
+          },
+          {
+            "name": "compact",
+            "type": "xs:boolean"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "toolbar//field"
+        },
+        {
+          "match": "fields/field"
+        },
+        {
+          "match": "fields[@labels='above']/field"
+        },
+        {
+          "match": "field"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "fieldset",
+        "_type": "fieldset",
+        "attributes": [
+          {
+            "name": "legend",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "fieldset"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "option",
+        "_type": "dropdown_option",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/option"
+        },
+        {
+          "match": "radiobuttons/option"
+        },
+        {
+          "match": "checkboxes/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "tokens",
+        "_type": "tokens",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "tokens"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "option",
+        "_type": "checkboxes_option",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/option"
+        },
+        {
+          "match": "radiobuttons/option"
+        },
+        {
+          "match": "checkboxes/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "options",
+        "_type": "checkboxes_options",
+        "attributes": [
+          {
+            "name": "source",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/options"
+        },
+        {
+          "match": "checkboxes/options"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "radiobuttons",
+        "_type": "radiobuttons",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Radiobuttons"
+      },
+      "xsl": [
+        {
+          "match": "radiobuttons"
+        },
+        {
+          "match": "radiobuttons/radiobutton"
+        },
+        {
+          "match": "radiobuttons/item"
+        },
+        {
+          "match": "radiobuttons/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "option",
+        "_type": "radiobuttons_option",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/option"
+        },
+        {
+          "match": "radiobuttons/option"
+        },
+        {
+          "match": "checkboxes/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "location-input",
+        "_type": "location-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "LocationInput"
+      },
+      "xsl": [
+        {
+          "match": "location-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "object-input",
+        "_type": "object-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "ObjectInput"
+      },
+      "xsl": [
+        {
+          "match": "object-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "objectlist",
+        "_type": "objectlist",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "ObjectList"
+      },
+      "xsl": [
+        {
+          "match": "objectlist"
+        },
+        {
+          "match": "objectlist/text"
+        },
+        {
+          "match": "objectlist/select"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "text",
+        "_type": "objectlist_text",
+        "attributes": [
+          {
+            "name": "label",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "text"
+        },
+        {
+          "match": "text/header"
+        },
+        {
+          "match": "text/h"
+        },
+        {
+          "match": "text/p"
+        },
+        {
+          "match": "bar//text"
+        },
+        {
+          "match": "objectlist/text"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "select",
+        "_type": "objectlist_select",
+        "attributes": [
+          {
+            "name": "label",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "objectlist/select"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "option",
+        "_type": "objectlist_option",
+        "attributes": [
+          {
+            "name": "text",
+            "type": "xs:string"
+          },
+          {
+            "name": "value",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "selection/option"
+        },
+        {
+          "match": "radiobuttons/option"
+        },
+        {
+          "match": "checkboxes/option"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "image-input",
+        "_type": "image-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "url",
+            "type": "xs:string"
+          },
+          {
+            "name": "size",
+            "type": "xs:positiveInteger"
+          }
+        ]
+      },
+      "js": {
+        "name": "ImageInput"
+      },
+      "xsl": [
+        {
+          "match": "image-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "datetime-input",
+        "_type": "datetime-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "return-type",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "DateTimeInput"
+      },
+      "xsl": [
+        {
+          "match": "datetime-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "link-input",
+        "_type": "link-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "LinkInput"
+      },
+      "xsl": [
+        {
+          "match": "link-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "type",
+        "_type": "link-input_type",
+        "attributes": [
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "label",
+            "type": "xs:string"
+          },
+          {
+            "name": "icon",
+            "type": "xs:string"
+          },
+          {
+            "name": "lookup-url",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": "code-input",
+        "_type": "code-input",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          },
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "height",
+            "type": ""
+          }
+        ]
+      },
+      "js": {
+        "name": "CodeInput"
+      },
+      "xsl": [
+        {
+          "match": "code-input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "style-editor",
+        "_type": "style-editor",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "StyleEditor"
+      },
+      "xsl": [
+        {
+          "match": "style-editor"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": "component",
+        "_type": "style-editor_component",
+        "attributes": [
+          {
+            "name": "key",
+            "type": "xs:string"
+          },
+          {
+            "name": "description",
+            "type": "xs:string"
+          }
+        ]
+      },
+      "js": {
+        "name": "Component"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Alert"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "ColorPicker"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "DragDrop"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Drawing"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "EditManager"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Editable"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Editor"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Emotion"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Flash"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "FontPicker"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "ImageViewer"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "InfoView"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Input"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "KeyboardNavigator"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Layout"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "LocationPicker"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "MarkupEditor"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Matrix"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "ModelEditor"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "NumberValidator"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Overlay"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Presentation"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "ProgressBar"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "ProgressIndicator"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "RevealingToolbar"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "StyleLength"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "Test"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "TokenField"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": "VideoPlayer"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "a"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "input"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "h3"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "h4"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "h5"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "h6"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "keyboard-navigator"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "layout"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "textfield"
+        }
+      ]
+    }
+  ],
+  "stray": [
+    {
+      "match": "a"
+    },
+    {
+      "match": "input"
+    },
+    {
+      "match": "h3"
+    },
+    {
+      "match": "h4"
+    },
+    {
+      "match": "h5"
+    },
+    {
+      "match": "h6"
+    },
+    {
+      "match": "keyboard-navigator"
+    },
+    {
+      "match": "layout"
+    },
+    {
+      "match": "textfield"
+    }
+  ]
+}

@@ -9,7 +9,8 @@
     "name": "Bar",
     "sass": "bar.scss",
     "css": "bar.css",
-    "htmlSample": "bar.html"
+    "htmlSample": "bar.html",
+    "xmlSample": "bar.xml"
   },
   {
     "name": "BoundPanel",
@@ -20,18 +21,21 @@
   {
     "name": "Box",
     "sass": "box.scss",
-    "css": "box.css"
+    "css": "box.css",
+    "xmlSample": "box.xml"
   },
   {
     "name": "Button",
     "sass": "button.scss",
     "css": "button.css",
-    "htmlSample": "button.html"
+    "htmlSample": "button.html",
+    "xmlSample": "button.xml"
   },
   {
     "name": "Calendar",
     "sass": "calendar.scss",
-    "css": "calendar.css"
+    "css": "calendar.css",
+    "xmlSample": "calendar.xml"
   },
   {
     "name": "Chart",
@@ -72,7 +76,8 @@
   {
     "name": "Columns",
     "sass": "columns.scss",
-    "css": "columns.css"
+    "css": "columns.css",
+    "xmlSample": "columns.xml"
   },
   {
     "name": "Component"
@@ -91,7 +96,8 @@
     "name": "Diagram",
     "sass": "diagram.scss",
     "css": "diagram.css",
-    "htmlSample": "diagram.html"
+    "htmlSample": "diagram.html",
+    "xmlSample": "diagram.xml"
   },
   {
     "name": "Dock",
@@ -108,7 +114,8 @@
   {
     "name": "DropDown",
     "sass": "dropdown.scss",
-    "css": "dropdown.css"
+    "css": "dropdown.css",
+    "xmlSample": "dropdown.xml"
   },
   {
     "name": "Editable"
@@ -147,12 +154,14 @@
     "name": "Formula",
     "sass": "formula.scss",
     "css": "formula.css",
-    "htmlSample": "formula.html"
+    "htmlSample": "formula.html",
+    "xmlSample": "formula.xml"
   },
   {
     "name": "Foundation",
     "sass": "foundation.scss",
-    "css": "foundation.css"
+    "css": "foundation.css",
+    "xmlSample": "foundation.xml"
   },
   {
     "name": "Fragment"
@@ -160,17 +169,20 @@
   {
     "name": "Gallery",
     "sass": "gallery.scss",
-    "css": "gallery.css"
+    "css": "gallery.css",
+    "xmlSample": "gallery.xml"
   },
   {
     "name": "Graph",
     "sass": "graph.scss",
-    "css": "graph.css"
+    "css": "graph.css",
+    "xmlSample": "graph.xml"
   },
   {
     "name": "Icon",
     "sass": "icon.scss",
-    "css": "icon.css"
+    "css": "icon.css",
+    "xmlSample": "icon.xml"
   },
   {
     "name": "IFrame"
@@ -203,7 +215,8 @@
   {
     "name": "Layout",
     "sass": "layout.scss",
-    "css": "layout.css"
+    "css": "layout.css",
+    "xmlSample": "layout.xml"
   },
   {
     "name": "Link",
@@ -218,12 +231,14 @@
   {
     "name": "Links",
     "sass": "links.scss",
-    "css": "links.css"
+    "css": "links.css",
+    "xmlSample": "links.xml"
   },
   {
     "name": "List",
     "sass": "list.scss",
-    "css": "list.css"
+    "css": "list.css",
+    "xmlSample": "list.xml"
   },
   {
     "name": "LocationInput",
@@ -290,7 +305,8 @@
   {
     "name": "Pages",
     "sass": "pages.scss",
-    "css": "pages.css"
+    "css": "pages.css",
+    "xmlSample": "pages.xml"
   },
   {
     "name": "Panel",
@@ -302,7 +318,8 @@
     "name": "Picker",
     "sass": "picker.scss",
     "css": "picker.css",
-    "htmlSample": "picker.html"
+    "htmlSample": "picker.html",
+    "xmlSample": "picker.xml"
   },
   {
     "name": "Presentation",
@@ -326,7 +343,8 @@
   {
     "name": "Rendering",
     "sass": "rendering.scss",
-    "css": "rendering.css"
+    "css": "rendering.css",
+    "xmlSample": "rendering.xml"
   },
   {
     "name": "RevealingToolbar",
@@ -336,7 +354,8 @@
   {
     "name": "Rows",
     "sass": "rows.scss",
-    "css": "rows.css"
+    "css": "rows.css",
+    "xmlSample": "rows.xml"
   },
   {
     "name": "SearchField",
@@ -366,12 +385,14 @@
   {
     "name": "Split",
     "sass": "split.scss",
-    "css": "split.css"
+    "css": "split.css",
+    "xmlSample": "split.xml"
   },
   {
     "name": "Structure",
     "sass": "structure.scss",
-    "css": "structure.css"
+    "css": "structure.css",
+    "xmlSample": "structure.xml"
   },
   {
     "name": "StyleEditor",
@@ -385,7 +406,8 @@
   {
     "name": "Tabs",
     "sass": "tabs.scss",
-    "css": "tabs.css"
+    "css": "tabs.css",
+    "xmlSample": "tabs.xml"
   },
   {
     "name": "Test"
@@ -398,12 +420,14 @@
   {
     "name": "Tiles",
     "sass": "tiles.scss",
-    "css": "tiles.css"
+    "css": "tiles.css",
+    "xmlSample": "tiles.xml"
   },
   {
     "name": "TimeLine",
     "sass": "timeline.scss",
-    "css": "timeline.css"
+    "css": "timeline.css",
+    "xmlSample": "timeline.xml"
   },
   {
     "name": "TokenField",
@@ -413,7 +437,8 @@
   {
     "name": "Toolbar",
     "sass": "toolbar.scss",
-    "css": "toolbar.css"
+    "css": "toolbar.css",
+    "xmlSample": "toolbar.xml"
   },
   {
     "name": "Upload",
