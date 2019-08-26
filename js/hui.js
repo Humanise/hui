@@ -1288,7 +1288,9 @@ hui.cls = {
     if (!element) {
       return;
     }
-    if (element.addClassName) {
+    if (element.classList) {
+      element.classList.add(className);
+    else if (element.addClassName) {
       element.addClassName(className);
     } else {
       hui.cls.remove(element, className);
