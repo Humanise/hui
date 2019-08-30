@@ -166,8 +166,6 @@
         </xsl:for-each>
       </script>
       <xsl:apply-templates select="gui:script"/>
-
-      <xsl:call-template name="dwr-setup"/>
     </head>
     <body>
       <xsl:attribute name="class">
@@ -186,25 +184,6 @@
     </body>
   </html>
 </xsl:template>
-
-<!--doc title:'DWR interface' module:'base'
-<dwr base="«url»">
-    <interface name="«text»"/>
-    <interface name="«text»"/>
-</dwr>
--->
-<xsl:template name="dwr-setup">
-  <xsl:if test="gui:dwr">
-    <script src="{$context}{gui:dwr/@base}engine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-    <xsl:for-each select="gui:dwr/gui:interface">
-      <script src="{$context}{../@base}interface/{@name}.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-    </xsl:for-each>
-    <script type="text/javascript">
-      dwr.engine.setErrorHandler(hui.ui.dwrErrorHandler);
-    </script>
-  </xsl:if>
-</xsl:template>
-
 
 <xsl:template name="gui:test-name">
   <xsl:if test="@test-name">
@@ -248,7 +227,7 @@
 
 
 <!--doc title:'Data source' class:'hui.ui.Source' module:'base'
-<source url="«url»" dwr="«text»" lazy="«boolean»">
+<source url="«url»" lazy="«boolean»">
     <parameter key="«text»" value="«expression»"/>
 </source>
 -->
@@ -266,7 +245,6 @@
         parameters : parameters
         <xsl:choose>
           <xsl:when test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:when>
-          <xsl:when test="@dwr">,dwr:'<xsl:value-of select="@dwr"/>'</xsl:when>
         </xsl:choose>
         <xsl:if test="@lazy='true'">,lazy:true</xsl:if>
       });
