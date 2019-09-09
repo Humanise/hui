@@ -1,0 +1,46 @@
+body.hui {
+  font-family: 'Open Sans', Arial, sans-serif;
+  margin: 20px 10px;
+  background: #fff;
+}
+
+.main {
+  text-align: center;
+}
+
+h1 {
+  font-weight: 100;
+  font-size: 48px;
+  font-size: 6vw;
+  line-height: 1;
+  color: rgba(255,255,255,0);
+  letter-spacing: -10px;
+  text-align: center;
+}
+
+h1 span {
+  display: inline-block;
+}
+
+h1 span:first-letter {
+  font-weight: 600;
+  color: #000;
+  z-index: 1;
+  position: relative;
+}
+
+.logo {
+  color: #999;
+  font-size: 20px;
+}
+.logo strong {
+  color: #000;
+  text-transform: uppercase;
+}
+
+.result {
+  display: block;
+  line-height: 1;
+  padding: 5px;
+  color: inherit;
+}
