@@ -28,6 +28,14 @@
     This is a button
   </a>
 
+  <a href="#" class="hui_button" data-hui='Button {"name":"someName","confirm":{"text":"Sure?"}}'>
+    This is a button
+  </a>
+
+  <hr/>
+
+  <textarea class="hui_textinput" data-hui='TextInput'></textarea>
+
   <script>
     hui.on(['hui.ui','hui.Color'],function() {
       hui.log('UI is ready: ' + hui.ui.getContext());
@@ -50,6 +58,7 @@
   <script src="../../js/hui_color.js"></script>
   <script src="../../js/ui.js"></script>
   <script src="../../js/Button.js"></script>
+  <script src="../../js/TextInput.js"></script>
   <script src="../../js/Overlay.js"></script>
 </body>
 </html>
