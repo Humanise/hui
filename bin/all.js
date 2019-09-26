@@ -1288,11 +1288,14 @@ hui.cls = {
     if (!element) {
       return;
     }
-    if (element.addClassName) {
+    if (element.classList && className.indexOf(' ') === -1) {
+      element.classList.add(className);
+    } else if (element.addClassName) {
       element.addClassName(className);
-    }
+    } else {
       hui.cls.remove(element, className);
       element.className += ' ' + className;
+    }
   },
   /**
    * Remove a class from an element
@@ -21438,14 +21441,20 @@ hui.on(function() {
     if (type) {
       var children = configs[i].childNodes;
       var options = {};
-      var attr = configs[i].getAttribute('data-options');
-      if (attr) {
-        options = hui.string.fromJSON(attr);
+      if (type.indexOf('{') !== -1) {
+        var parts = type.split(' ');
+        type = parts[0];
+        options = hui.string.fromJSON(parts[1]);
       } else {
-        for (var j = children.length - 1; j >= 0; j--) {
-          if (children[j].nodeType == 8) {
-            options = hui.string.fromJSON(children[j].nodeValue);
-            break;
+        var attr = configs[i].getAttribute('data-options');
+        if (attr) {
+          options = hui.string.fromJSON(attr);
+        } else {
+          for (var j = children.length - 1; j >= 0; j--) {
+            if (children[j].nodeType == 8) {
+              options = hui.string.fromJSON(children[j].nodeValue);
+              break;
+            }
           }
         }
       }

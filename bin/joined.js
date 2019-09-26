@@ -1288,11 +1288,14 @@ hui.cls = {
     if (!element) {
       return;
     }
-    if (element.addClassName) {
+    if (element.classList && className.indexOf(' ') === -1) {
+      element.classList.add(className);
+    } else if (element.addClassName) {
       element.addClassName(className);
-    }
+    } else {
       hui.cls.remove(element, className);
       element.className += ' ' + className;
+    }
   },
   /**
    * Remove a class from an element
