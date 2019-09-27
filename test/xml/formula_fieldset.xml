@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" padding="10" title="Formula">
+<gui xmlns="uri:hui" padding="10" title="Formula" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <controller name="controller" url="formula.js"/>
   <source name="itemsSource" url="data/source_items.xml"/>
   <box width="600" title="Title with toolbars" variant="textured" padding="10">

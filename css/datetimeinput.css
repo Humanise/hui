@@ -1,0 +1,15 @@
+.hui_datetimeinput {
+  display: block; }
+
+.hui_datetimeinput_selector {
+  position: absolute;
+  margin-left: -19px;
+  margin-top: 6px;
+  font-size: 0;
+  cursor: pointer;
+  background: url("../gfx/datetime14.png") no-repeat;
+  display: inline-block;
+  width: 14px;
+  height: 14px; }
+  .hui_datetimeinput_selector:hover {
+    background-position: 0 -14px; }

@@ -30,6 +30,23 @@ $gear-symbol: "\e607";
 $delete-symbol: "\e60e";
 $view-symbol: "\e60d";
 
+$symbols: (
+  "search" : $search-symbol,
+  "menu" : $menu-symbol,
+  "close" : $close-symbol,
+  "left" : $left-symbol,
+  "right" : $right-symbol,
+  "up" : $up-symbol,
+  "down" : $down-symbol,
+  "info" : $info-symbol,
+  "more" : $more-symbol,
+  "follow" : $follow-symbol,
+  "add" : $add-symbol,
+  "trash" : $trash-symbol,
+  "gear" : $gear-symbol,
+  "delete" : $delete-symbol,
+  "view" : $view-symbol
+);
 
 
 @mixin border-box {

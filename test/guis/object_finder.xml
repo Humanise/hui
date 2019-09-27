@@ -32,6 +32,8 @@
     </structure>
   </window>
   <script>
-    finder.show()
+    hui.on(function() {
+      finder.show()
+    })
   </script>
 </gui>

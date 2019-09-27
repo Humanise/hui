@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Tiles" background="white" padding="5">
+<gui xmlns="uri:hui" title="Tiles" background="white" padding="5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <style>
     body
     {

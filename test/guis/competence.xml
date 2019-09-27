@@ -25,13 +25,13 @@
           <datetime-input/>
         </field>
       </fields>
-        <buttons top="5">
-          <button text="Cancel"/>
-          <button text="Delete" click="hui.ui.showMessage({text:'Deleting...',busy:true,duration:3000})">
-            <confirm text="Are you sure?" ok="Yes, delete"/>
-          </button>
-          <button text="Create" highlighted="true"/>
-        </buttons>
+      <buttons top="5">
+        <button text="Cancel"/>
+        <button text="Delete" click="hui.ui.showMessage({text:'Deleting...',busy:true,duration:3000})">
+          <confirm text="Are you sure?" ok="Yes, delete"/>
+        </button>
+        <button text="Create" highlighted="true"/>
+      </buttons>
     </formula>
   </box>
 </gui>

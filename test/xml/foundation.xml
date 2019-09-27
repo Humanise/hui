@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Skeleton" adaptive="true">
+<gui xmlns="uri:hui" title="Skeleton" adaptive="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
 
   <controller name="controller" url="foundation.js"/>
   <source name="itemsSource" url="data/source_items.xml"/>

@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 require 'pathname'
 require 'json'
+require 'rexml/document'
 
 
 class Component
-  attr_accessor :name, :modern, :sass_path, :css_path, :html_example_path
+  attr_accessor :name, :modern, :sass_path, :css_path, :html_example_path, :xml_example_path, :js_path
 end
 
 class Inspector
@@ -29,6 +30,9 @@ class Inspector
       if component.html_example_path
         obj[:htmlSample] = component.html_example_path.basename.to_s
       end
+      if component.xml_example_path
+        obj[:xmlSample] = component.xml_example_path.basename.to_s
+      end
       obj
     })
     File.write(hui_path.join("info/components.json"), json)
@@ -50,6 +54,10 @@ class Inspector
         component.css_path = css_path if css_path.exist?
         html_test_path = directory.join("test/html/" + name.downcase + ".html")
         component.html_example_path = html_test_path if html_test_path.exist?
+        xml_test_path = directory.join("test/xml/" + name.downcase + ".xml")
+        component.xml_example_path = xml_test_path if xml_test_path.exist?
+        js_path = directory.join("js/" + name + ".js")
+        component.js_path = js_path if js_path.exist?
         components.push component
       end
     }

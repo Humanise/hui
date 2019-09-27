@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="test/xml/setup.xsl"?>
+<gui xmlns="uri:hui" title="Hmanise User Interface" padding="10">
+  <controller source="index.js"/>
+  <style url="index.css"/>
+
+  <div class="main">
+    <h1><span>Humanise</span> <span>User</span> <span>Interface</span></h1>
+    <p>The common language of humans and machines</p>
+      <searchfield width="200" expanded-width="300" name="search"/>
+      <div class="js-results"></div>
+    <div style="margin: 30px 0">
+      <button url="demo/index.html" text="Demonstration"/>
+      <button url="test/index.xml" text="Test site"/>
+      <button url="api/index.html" text="JavaScript API"/>
+      <button url="api/xml/index.html" text="XML api"/>
+    </div>
+  </div>
+  <div style="max-width: 700px; margin: 0 auto;">
+    <list name="components"/>
+  </div>
+</gui>

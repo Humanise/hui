@@ -166,8 +166,6 @@
         </xsl:for-each>
       </script>
       <xsl:apply-templates select="gui:script"/>
-
-      <xsl:call-template name="dwr-setup"/>
     </head>
     <body>
       <xsl:attribute name="class">
@@ -186,25 +184,6 @@
     </body>
   </html>
 </xsl:template>
-
-<!--doc title:'DWR interface' module:'base'
-<dwr base="«url»">
-    <interface name="«text»"/>
-    <interface name="«text»"/>
-</dwr>
--->
-<xsl:template name="dwr-setup">
-  <xsl:if test="gui:dwr">
-    <script src="{$context}{gui:dwr/@base}engine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-    <xsl:for-each select="gui:dwr/gui:interface">
-      <script src="{$context}{../@base}interface/{@name}.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-    </xsl:for-each>
-    <script type="text/javascript">
-      dwr.engine.setErrorHandler(hui.ui.dwrErrorHandler);
-    </script>
-  </xsl:if>
-</xsl:template>
-
 
 <xsl:template name="gui:test-name">
   <xsl:if test="@test-name">
@@ -248,7 +227,7 @@
 
 
 <!--doc title:'Data source' class:'hui.ui.Source' module:'base'
-<source url="«url»" dwr="«text»" lazy="«boolean»">
+<source url="«url»" lazy="«boolean»">
     <parameter key="«text»" value="«expression»"/>
 </source>
 -->
@@ -266,7 +245,6 @@
         parameters : parameters
         <xsl:choose>
           <xsl:when test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:when>
-          <xsl:when test="@dwr">,dwr:'<xsl:value-of select="@dwr"/>'</xsl:when>
         </xsl:choose>
         <xsl:if test="@lazy='true'">,lazy:true</xsl:if>
       });
@@ -2411,7 +2389,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       ···
   </toolbar>
   -->
-  <xsl:template match="gui:toolbar//gui:icon">
+  <xsl:template match="gui:toolbar//gui:icon | gui:bar//gui:tool">
     <a>
       <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
@@ -2488,10 +2466,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
       ···
   </toolbar>
   -->
-  <xsl:template match="gui:toolbar//gui:field | gui:toolbar//gui:item">
+  <xsl:template match="gui:toolbar//gui:field | gui:toolbar//gui:item | gui:bar//gui:item">
     <span class="hui_toolbar_item">
       <span class="hui_toolbar_item_body"><xsl:apply-templates/></span>
-      <span class="hui_toolbar_label"><xsl:value-of select="@label"/></span>
+      <span class="hui_toolbar_label"><xsl:value-of select="@label"/><xsl:value-of select="@text"/></span>
     </span>
   </xsl:template>
 
@@ -2817,10 +2795,32 @@ doc title:'Rich text' class:'hui.ui.RichText'
       ···
   </fields>
   -->
-  <xsl:template match="gui:fields[not(@labels='above')]">
-    <table class="hui_formula_fields">
-      <xsl:apply-templates/>
-    </table>
+  <xsl:template match="gui:fields">
+    <xsl:choose>
+      <xsl:when test="not(@labels='above')">
+        <table class="hui_formula_fields">
+          <xsl:call-template name="gui:id-attribute"/>
+          <xsl:apply-templates/>
+        </table>
+      </xsl:when>
+      <xsl:otherwise>
+        <div class="hui_formula_fields">
+          <xsl:call-template name="gui:id-attribute"/>
+          <xsl:apply-templates/>
+        </div>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="@name">
+    <script type="text/javascript">
+      (function() {
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Formula.Fields({
+          element:'<xsl:call-template name="gui:id"/>',
+          name:'<xsl:value-of select="@name"/>'
+        });
+        <xsl:call-template name="gui:createobject"/>
+      }());
+    </script>
+    </xsl:if>
   </xsl:template>
 
   <!--doc title:'Fieldset' module:'input'
@@ -2848,25 +2848,26 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </group>
   -->
   <xsl:template match="gui:fields/gui:field">
-    <tr>
+    <tr class="hui_formula_field">
         <xsl:attribute name="style">
           <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state) or @visible='false'">
             <xsl:text>display:none;</xsl:text>
           </xsl:if>
         </xsl:attribute>
-          <xsl:if test="@name">
-              <xsl:attribute name="id">
-                  <xsl:call-template name="gui:id"/>
-              </xsl:attribute>
-          </xsl:if>
+        <xsl:if test="@name">
+          <xsl:attribute name="id">
+            <xsl:call-template name="gui:id"/>
+          </xsl:attribute>
+        </xsl:if>
       <th>
+        <!--
         <xsl:if test="gui:text-input[not(@multiline='true') and not(@breaks='true')] | gui:dropdown | gui:checkbox | gui:datetime-input | gui:style-length-input | gui:number-input | gui:radiobuttons">
           <xsl:attribute name="class">hui_formula_middle</xsl:attribute>
-        </xsl:if>
-        <label class="hui_formula_field"><xsl:value-of select="@label"/></label>
+        </xsl:if>-->
+        <label class="hui_formula_field_label"><xsl:value-of select="@label"/></label>
       </th>
-      <td class="hui_formula_field">
-        <div class="hui_formula_field_body"><xsl:apply-templates/></div>
+      <td>
+        <xsl:apply-templates/>
         <xsl:if test="@hint"><p class="hui_formula_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
       </td>
     </tr>
@@ -2894,14 +2895,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <div>
       <xsl:attribute name="class">
         <xsl:text>hui_formula_field</xsl:text>
-        <xsl:if test="@compact='true'">
-          <xsl:text> hui_formula_field_compact</xsl:text>
-        </xsl:if>
       </xsl:attribute>
       <xsl:if test="@label">
-        <label class="hui_formula_field"><xsl:value-of select="@label"/></label>
+        <label class="hui_formula_field_label"><xsl:value-of select="@label"/></label>
       </xsl:if>
-      <div class="hui_formula_field_body"><xsl:apply-templates/></div>
+      <xsl:apply-templates/>
       <xsl:if test="@hint"><p class="hui_formula_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
     </div>
   </xsl:template>
@@ -2973,10 +2971,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <datetime-input name="«text»" key="«text»" return-type="«'date' | 'seconds'»"/>
   -->
   <xsl:template name="gui:datetime" match="gui:datetime-input">
-    <span class="hui_datetime">
+    <span class="hui_datetimeinput">
       <xsl:call-template name="gui:id-attribute"/>
       <input type="text" class="hui_textinput"/>
-      <a class="hui_datetime_selector" href="javascript://" tabindex="-1"><xsl:comment/></a>
+      <a class="hui_datetimeinput_selector" href="javascript://" tabindex="-1"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
       var <xsl:call-template name="gui:id"/>_obj = new hui.ui.DateTimeInput({
@@ -3360,19 +3358,6 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <span class="hui_checkbox_label"><xsl:value-of select="@title"/><xsl:value-of select="@text"/></span>
       </xsl:if>
     </a>
-  </xsl:template>
-
-
-
-  <xsl:template match="gui:fields[not(@labels='above')]/gui:buttons">
-    <tr>
-      <td class="hui_fields_buttons">
-        <xsl:if test="not(../@labels='above')">
-          <xsl:attribute name="colspan">2</xsl:attribute>
-        </xsl:if>
-        <xsl:call-template name="gui:buttons"/>
-      </td>
-    </tr>
   </xsl:template>
 
   <!--doc title:'Buttons' class:'hui.ui.Buttons' module:'action'

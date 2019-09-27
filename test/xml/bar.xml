@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Bar" padding="10">
+<gui xmlns="uri:hui" title="Bar" padding="10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
 
   <structure>
     <top>
       <bar>
-      <button icon="common/edit" text="Edit"/>
+        <button icon="common/edit" text="Edit"/>
+        <tool icon="common/folder" text="Folder" overlay="new" selected="true"/>
+        <tool icon="common/info" text="Info"/>
+        <item label="Info">
+          <dropdown value="1">
+            <option value="1" text="My option"/>
+          </dropdown>
+        </item>
+        <flexible/>
+        <item label="Search">
+          <searchfield expanded-width="200"/>
+        </item>
       </bar>
     </top>
     <middle>

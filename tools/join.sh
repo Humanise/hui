@@ -206,7 +206,9 @@ cssFiles = [
     'rows',
     'textinput',
     'pages',
-    'presentation'
+    'presentation',
+    'objectlist',
+    'datetimeinput'
 ]
 
 print('Joining JavaScript')

@@ -17,7 +17,23 @@
   </row>
   <row kind="icon">
     <cell icon="common/email">common/email</cell>
-    <cell></cell>
+    <cell>
+      <symbol name="search"/>
+      <symbol name="menu"/>
+      <symbol name="close"/>
+      <symbol name="left"/>
+      <symbol name="right"/>
+      <symbol name="up"/>
+      <symbol name="down"/>
+      <symbol name="info"/>
+      <symbol name="more"/>
+      <symbol name="follow"/>
+      <symbol name="add"/>
+      <symbol name="trash"/>
+      <symbol name="gear"/>
+      <symbol name="delete"/>
+      <symbol name="view"/>
+    </cell>
   </row>
   <row kind="icon">
     <cell icon="common/folder">common/folder

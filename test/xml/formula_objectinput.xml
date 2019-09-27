@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" padding="10" title="Object input">
+<gui xmlns="uri:hui" padding="10" title="Object input" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <source name="itemsSource" url="data/items_languages.xml"/>
   <box width="600" title="Object input" variant="textured" padding="10">
     <formula name="formula">

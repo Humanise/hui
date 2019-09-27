@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Links">
+<gui xmlns="uri:hui" title="Links" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <source name="pageSource" url="data/page_items.xml"/>
   <source name="fileSource" url="data/source_items.xml"/>
   <box width="300" title="Links" top="40">

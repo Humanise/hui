@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Bar">
+
+<gui xmlns="uri:hui" title="Bar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <style>
     .type {margin: 30px; font-size: 0}
     .type > h2 {margin-bottom: 10px; font-size: 24px; border-bottom: 1px solid #eee}
@@ -9,7 +11,7 @@
 
   <div class="type"><h2>Bar</h2>
     <bar>
-      <button icon="common/edit" text="Edit"/>
+      <button icon="common/edit" text="Edit" />
       <button icon="common/delete" text="Delete" selected="true"/>
       <button icon="common/color" text="Color"/>
       <button icon="common/internet"/>
