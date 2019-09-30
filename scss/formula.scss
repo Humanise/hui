@@ -58,11 +58,6 @@ table.hui_formula_fields {
 /********************************** Field *********************************/
 
 .hui_formula_field {
-  &_hint {
-    font-size: 9px;
-    color: #999;
-    margin: -5px 0 0 3px;
-  }
 
   &_label {
     color: #004A80;
@@ -70,6 +65,12 @@ table.hui_formula_fields {
     font-weight: normal;
     line-height: 18px;
     display: block;
+  }
+
+  &_hint {
+    font-size: 10px;
+    color: #999;
+    margin: 1px 0 0 0;
   }
 }
 

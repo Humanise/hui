@@ -591,17 +591,17 @@ table.hui_formula_fields {
   margin-top: 5px; }
 
 /********************************** Field *********************************/
-.hui_formula_field_hint {
-  font-size: 9px;
-  color: #999;
-  margin: -5px 0 0 3px; }
-
 .hui_formula_field_label {
   color: #004A80;
   font-size: 12px;
   font-weight: normal;
   line-height: 18px;
   display: block; }
+
+.hui_formula_field_hint {
+  font-size: 10px;
+  color: #999;
+  margin: 1px 0 0 0; }
 
 .hui_formula_field + .hui_formula_field,
 .hui_formula_field + script + .hui_formula_field {
@@ -728,6 +728,8 @@ body .hui_context_dark label.hui_formula_field,
     left: 0;
     background: #fff;
     border: 1px solid #ddd;
+    padding: 4px 0;
+    border-radius: 3px;
     font-size: 12px;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
     overflow: auto;

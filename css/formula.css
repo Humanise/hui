@@ -44,17 +44,17 @@ table.hui_formula_fields {
   margin-top: 5px; }
 
 /********************************** Field *********************************/
-.hui_formula_field_hint {
-  font-size: 9px;
-  color: #999;
-  margin: -5px 0 0 3px; }
-
 .hui_formula_field_label {
   color: #004A80;
   font-size: 12px;
   font-weight: normal;
   line-height: 18px;
   display: block; }
+
+.hui_formula_field_hint {
+  font-size: 10px;
+  color: #999;
+  margin: 1px 0 0 0; }
 
 .hui_formula_field + .hui_formula_field,
 .hui_formula_field + script + .hui_formula_field {
