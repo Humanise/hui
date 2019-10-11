@@ -1,144 +1,78 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-	<title>Humanise User Interface</title>
-  <link rel="stylesheet" href="bin/minimized.css" type="text/css" media="screen">
-  <style type="text/css" media="screen">
-
-  body {
-    font-family: 'Open Sans', Arial, sans-serif;
-    margin: 20px 10px;
-    text-align: center;
-  }
-
-  h1 {
-    font-weight: 100;
-    font-size: 48px;
-    font-size: 6vw;
-    line-height: 1;
-    color: rgba(255,255,255,0);
-    letter-spacing: -10px;
-  }
-
-  h1 span {
-    display: inline-block;
-  }
-
-  h1 span:first-letter {
-    font-weight: 600;
-    color: #000;
-    z-index: 1;
-    position: relative;
-  }
-
-  .logo {
-    color: #999;
-    font-size: 20px;
-  }
-  .logo strong {
-    color: #000;
-    text-transform: uppercase;
-  }
-
-  .result {
-    display: block;
-    line-height: 1;
-    padding: 5px;
-    color: inherit;
-  }
-  </style>
-  <script>hui={_:[],on:function(){this._.push(arguments)}};</script>
-</head>
-<body>
-  <h1><span>Humanise</span> <span>User</span> <span>Interface</span></h1>
-  <p>The common language of humans and machines</p>
-  <div class="js-search"></div>
-  <div class="js-results"></div>
-  <p>
-    <a href="demo/index.html" class="hui_button">Demonstration</a>
-    <a href="test/index.xml" class="hui_button">Test site</a>
-    <a href="api/index.html" class="hui_button">JavaScript API</a>
-    <a href="api/xml/index.html" class="hui_button">XML api</a>
-  </p>
-  <script>
-  hui.on(function() {
-    hui.build('link',{
-      href : 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800',
-      rel : 'stylesheet',
-      type : 'text/css',
-      parent : document.head
-    });
-    hui.on(['hui.animation','hui.Color'],function() {
-      hui.animate({
-        node : hui.find('h1'),
-        css : { 'letter-spacing' : '0px', color: '#ddd' },
-        ease : hui.ease.elastic,
-        duration : 2000,
-        $complete : function() {
-          hui.animate({
-            node : hui.find('h1'),
-            css : { color: '#000' },
-            duration : 300});
-        }
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" class="hui"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Hmanise User Interface</title><meta http-equiv="X-UA-Compatible" content="IE=edge"></meta><link rel="stylesheet" href="../../../hui/bin/development.css" type="text/css" media="screen" title="no title" charset="utf-8"></link><!--[if IE 8]>
+        <link rel="stylesheet" type="text/css" href="../../../hui/css/msie8.css"> </link>
+      <![endif]--><!--[if lt IE 7]>
+        <link rel="stylesheet" type="text/css" href="../../../hui/css/msie6.css"> </link>
+      <![endif]--><!--[if IE 7]>
+        <link rel="stylesheet" type="text/css" href="../../../hui/css/msie7.css"> </link>
+      <![endif]--><link rel="stylesheet" href="index.css" type="text/css" media="screen" title="no title" charset="utf-8"></link><!--[if lt IE 9]>
+        <script type="text/javascript" src="../../../hui/bin/compatibility.min.js"></script>
+      <![endif]--><script src="../../../hui/bin/development.js" type="text/javascript" charset="utf-8"></script><script src="index.js" type="text/javascript" charset="utf-8"></script><script type="text/javascript">
+        hui.ui.context = '../../..';
+        
+          hui.ui.language = 'en';
+        </script></head><body class="hui" style="padding:10px;"><div class="main">
+    <div class="logo"></div>
+    <h1><span>Humanise</span> <span>User</span> <span>Interface</span></h1>
+    <p>The common language of humans and machines</p>
+      <span id="id123456789idp140726345888936" class="hui_searchfield" style="width:200px;"><span class="hui_searchfield_placeholder"></span><a class="hui_searchfield_reset"></a><input class="hui_searchfield_input" type="text"></input></span><script type="text/javascript">
+      var id123456789idp140726345888936_obj = new hui.ui.SearchField({
+        element:'id123456789idp140726345888936',
+        name:'search'
+        ,expandedWidth:300
       });
-    })
-    hui.on(['hui.ui.SearchField'],function() {
-      var field = hui.ui.SearchField.create({expandedWidth:300, name:'search'});
-      hui.find('.js-search').appendChild(field.getElement());
-    })
-    hui.on(['hui.ui'],function() {
-      hui.ui.listen({
-        _ensureInfo : function() {
-          if (!this._loaded) {
-            this._loaded = true;
-            hui.ui.request({
-              url: 'info/components.json',
-              $object : function(obj) {
-                this.info = obj;
-                this._updateResults();
-              }.bind(this)
-            })
-          }
-        },
-        $valueChanged$search : function() {
-          this._ensureInfo();
-          this._updateResults();
-        },
-        _updateResults : function() {
-          if (!this.info) return;
-          var str = hui.ui.get('search').getValue();
-          var words = str.split(/\W+/).filter(function(str) {return str.length>0});
-          console.log(words)
-          var found = [];
-          this.info.forEach(function(obj) {
-            var index = 1000;
-            for (var i = 0; i < words.length; i++) {
-              var x = obj.name.toLowerCase().indexOf(words[i]);
-              if (x > -1) {
-                index = Math.min(index, x);
-              } else {
-                return;
-              }
-            }
-            if (index < 1000) {
-              found.push({index: index, component: obj})
-            }
-          });
-          var out = hui.find('.js-results');
-          out.innerHTML = ''
-          found.forEach(function(obj) {
-            hui.build('a.result', {text: obj.component.name, parent: out, href: 'api/hui.ui.'+obj.component.name+'.html'})
-          })
-        }
-      })
-    });
-  })
+      
+    if (window['search']===undefined) {
+      window['search'] = id123456789idp140726345888936_obj;
+    }
   </script>
-  <script type="text/javascript" src="js/hui.js" async="async"></script>
-  <script type="text/javascript" src="js/hui_animation.js" async="async"></script>
-  <script type="text/javascript" src="js/hui_color.js" async="async"></script>
-  <script type="text/javascript" src="js/ui.js" async="async"></script>
-  <script type="text/javascript" src="js/SearchField.js" async="async"></script>
-</body>
-</html>
+      <div class="js-results"></div>
+    <div style="margin: 30px 0">
+      <a href="javascript://" id="id123456789idp140726345890904" class="hui_button">Demonstration</a><script type="text/javascript">
+      var id123456789idp140726345890904_obj = new hui.ui.Button({
+        element:'id123456789idp140726345890904'
+        
+      });
+      id123456789idp140726345890904_obj.listen({$click:function() {document.location='demo/index.html'}});
+      </script>
+      <a href="javascript://" id="id123456789idp140726345891640" class="hui_button">Test site</a><script type="text/javascript">
+      var id123456789idp140726345891640_obj = new hui.ui.Button({
+        element:'id123456789idp140726345891640'
+        
+      });
+      id123456789idp140726345891640_obj.listen({$click:function() {document.location='test/index.xml'}});
+      </script>
+      <a href="javascript://" id="id123456789idp140726345892376" class="hui_button">JavaScript API</a><script type="text/javascript">
+      var id123456789idp140726345892376_obj = new hui.ui.Button({
+        element:'id123456789idp140726345892376'
+        
+      });
+      id123456789idp140726345892376_obj.listen({$click:function() {document.location='api/index.html'}});
+      </script>
+      <a href="javascript://" id="id123456789idp140726345893112" class="hui_button">XML api</a><script type="text/javascript">
+      var id123456789idp140726345893112_obj = new hui.ui.Button({
+        element:'id123456789idp140726345893112'
+        
+      });
+      id123456789idp140726345893112_obj.listen({$click:function() {document.location='api/xml/index.html'}});
+      </script>
+    </div>
+  </div><div style="max-width: 700px; margin: 0 auto;">
+    <div id="id123456789idp140726345894680" class="hui_list"><div class="hui_list_spinner"></div><div class="hui_list_navigation"><div class="hui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="hui_list_count"></span></div><div class="hui_list_body"><table class="hui_list_table"><thead><tr></tr></thead><tbody class="hui_list_selectable"></tbody></table></div></div><script type="text/javascript">
+    var id123456789idp140726345894680_obj = new hui.ui.List({
+      element:'id123456789idp140726345894680',
+      name:'components',
+      url:'',
+      
+      state:''
+      
+    });
+    with (id123456789idp140726345894680_obj) {
+      
+    }
+    
+    if (window['components']===undefined) {
+      window['components'] = id123456789idp140726345894680_obj;
+    }
+  </script>
+  </div></body></html>

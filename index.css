@@ -1,5 +1,5 @@
 body.hui {
-  font-family: 'Open Sans', Arial, sans-serif;
+  font-family: 'Inter', Arial, sans-serif;
   margin: 20px 10px;
   background: #fff;
 }
@@ -8,11 +8,20 @@ body.hui {
   text-align: center;
 }
 
+.logo {
+  background: url('gfx/logo_outline.svg') 50% no-repeat;
+  background-size: contain;
+  height: 35vh;
+  width: 60vw;
+  margin: 0 auto;
+}
+
 h1 {
-  font-weight: 100;
+  font-weight: 200;
   font-size: 48px;
   font-size: 6vw;
   line-height: 1;
+  margin: 20px 0 10px;
   color: rgba(255,255,255,0);
   letter-spacing: -10px;
   text-align: center;
@@ -23,7 +32,7 @@ h1 span {
 }
 
 h1 span:first-letter {
-  font-weight: 600;
+  font-weight: 700;
   color: #000;
   z-index: 1;
   position: relative;
