@@ -5812,7 +5812,7 @@ if (hui.define) hui.define('hui.Window',hui.Window);
 ;
 /**
  * @class
- * This is a formula
+ * This is a form
  */
 hui.ui.Form = function(options) {
   this.options = options;
@@ -19914,7 +19914,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
     this.options = options;
     this.root = hui.get(options.root);
     this.window = null;
-    this.formula = null;
+    this.form = null;
     this.saveButton = null;
     this.deleteButton = null;
     this.cancelButton = null;
@@ -19936,7 +19936,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
           this.window = cmp;
         }
         else if (hui.ui.is(cmp,hui.ui.Form)) {
-          this.formula = cmp;
+          this.form = cmp;
         }
         else if (hui.ui.is(cmp,hui.ui.Button)) {
           var role = cmp.getRole();
@@ -19959,7 +19959,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
           self.end();
         }
       });
-      this.formula.listen({
+      this.form.listen({
         $submit : function() {
           self._save();
         }
@@ -19978,13 +19978,13 @@ hui.ui.Chart.Util.convertData = function(obj) {
     makeNew : function() {
       this._reset();
       this.window.show();
-      this.formula.focus();
+      this.form.focus();
       this.deleteButton.disable();
     },
     _save : function() {
       this.window.setBusy(true);
       var self = this;
-      var values = this.formula.getValues();
+      var values = this.form.getValues();
       if (this.objectId !== undefined) {
         values.id = this.objectId;
       }
@@ -20000,7 +20000,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
       });
     },
     _reset : function() {
-      this.formula.reset();
+      this.form.reset();
       this.objectId = undefined;
     },
     _saveSuccess : function() {
@@ -20021,10 +20021,10 @@ hui.ui.Chart.Util.convertData = function(obj) {
         url : this.options.read.url,
         $object : function(obj) {
           self.objectId = obj.id;
-          self.formula.setValues(obj);
+          self.form.setValues(obj);
           self.deleteButton.setEnabled(true);
           self.window.show();
-          self.formula.focus();
+          self.form.focus();
         },
         $finally : function() {
           self.window.setBusy(false);

@@ -5812,7 +5812,7 @@ if (hui.define) hui.define('hui.Window',hui.Window);
 
 /**
  * @class
- * This is a formula
+ * This is a form
  */
 hui.ui.Form = function(options) {
   this.options = options;
