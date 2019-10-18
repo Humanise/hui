@@ -64,7 +64,7 @@
               <button text="Close" click="pages.next()" small="true"/>
             </bar>
             <box>
-            <formula>
+            <form>
               <fields>
                 <field label="Beskrivelse:">
                   <text-input breaks="true"/>
@@ -85,7 +85,7 @@
                   <checkbox/>
                 </field>
               </fields>
-            </formula>
+            </form>
             </box>
           </page>
         </pages>
@@ -97,13 +97,13 @@
   </structure>
 
   <window name="newPage" width="500" title="Ny side" padding="10">
-    <formula>
+    <form>
       <fields labels="before">
         <field label="Titel:">
           <text-input/>
         </field>
       </fields>
-    </formula>
+    </form>
     <space height="10"/>
     <wizard selection-width="150" name="wizard">
       <step title="Menupunkt" icon="common/hierarchy" frame="true">
@@ -121,7 +121,7 @@
       </step>
       <step title="Info" icon="common/info" frame="true">
         <overflow height="200">
-        <formula padding="10">
+        <form padding="10">
           <fields>
             <field label="Beskrivelse:">
               <text-input breaks="true"/>
@@ -150,7 +150,7 @@
               <checkbox/>
             </field>
           </fields>
-        </formula>
+        </form>
         </overflow>
       </step>
     </wizard>
@@ -176,7 +176,7 @@
         </picker>
       </step>
       <step title="Egenskaber">
-        <formula>
+        <form>
           <fields labels="above">
             <field label="Titel:">
               <text-input/>
@@ -185,7 +185,7 @@
               <text-input/>
             </field>
           </fields>
-        </formula>
+        </form>
       </step>
     </wizard>
     <buttons top="10" align="right">

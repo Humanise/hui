@@ -5,7 +5,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <box width="400">
     <tabs>
       <tab title="Large tabs" padding="10">
-        <formula>
+        <form>
           <fields>
             <field label="Username:">
               <text-input/>
@@ -14,14 +14,14 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
               <text-input/>
             </field>
           </fields>
-        </formula>
+        </form>
       </tab>
       <tab title="Large tabs" padding="10">
       </tab>
     </tabs>
     <tabs small="true">
       <tab title="Small tabs" padding="10">
-        <formula>
+        <form>
           <fields>
             <field label="Username:">
               <text-input/>
@@ -30,10 +30,10 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
               <text-input/>
             </field>
           </fields>
-        </formula>
+        </form>
       </tab>
       <tab title="Small tabs" padding="10">
-        <formula>
+        <form>
           <fields>
             <field label="Note:">
               <text-input breaks="true"/>
@@ -45,7 +45,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
               <tokens/>
             </field>
           </fields>
-        </formula>
+        </form>
       </tab>
     </tabs>
     <tabs centered="true">

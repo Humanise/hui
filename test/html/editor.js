@@ -21,7 +21,7 @@ hui.ui.listen({
   },
   $editRow : function(info) {
     var win = hui.ui.Window.create({padding:10});
-    var form = hui.ui.Formula.create();
+    var form = hui.ui.Form.create();
     var group = form.createGroup();
     var field = hui.ui.CodeInput.create();
     group.add(field)

@@ -4,7 +4,7 @@
 xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <source name="itemsSource" url="data/items_languages.xml"/>
   <box width="600" title="Object input" variant="textured" padding="10">
-    <formula name="formula">
+    <form name="formula">
       <fields labels="above">
         <field label="Author">
           <object-input key="author">
@@ -20,7 +20,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
           <code-input name="debug"/>
         </field>
       </fields>
-    </formula>
+    </form>
   </box>
 
   <script>

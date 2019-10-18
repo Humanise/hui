@@ -5,7 +5,7 @@
     <toolbar>
       <icon icon="common/save" text="Gem" name="saveButton" disabled="true"/>
     </toolbar>
-    <formula padding="10" name="formula">
+    <form padding="10" name="formula">
       <fields>
         <field label="Titel">
           <text-input/>
@@ -29,7 +29,7 @@
         </field>
         </fields>
       </fieldset>
-    </formula>
+    </form>
   </box>
 
   <script>

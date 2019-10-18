@@ -3328,8 +3328,8 @@
     },
     {
       "xml": {
-        "name": "formula",
-        "_type": "formula",
+        "name": "form",
+        "_type": "form",
         "attributes": [
           {
             "name": "name",
@@ -3346,14 +3346,14 @@
         ]
       },
       "js": {
-        "name": "Formula"
+        "name": "Form"
       },
       "xsl": [
         {
-          "match": "formula"
+          "match": "form"
         },
         {
-          "match": "formula//header"
+          "match": "form//header"
         }
       ]
     },
@@ -3902,7 +3902,7 @@
           "match": "header"
         },
         {
-          "match": "formula//header"
+          "match": "form//header"
         }
       ]
     },

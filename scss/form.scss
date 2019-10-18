@@ -1,13 +1,13 @@
 @import 'tools';
 
-.hui_formula {
+.hui_form {
   padding: 0px;
   margin: 0px;
   font-family: $font;
   text-align: left;
 }
 
-.hui_formula_header {
+.hui_form_header {
   color: #0077cd;
   font-size: 13pt;
   padding-bottom: 5px;
@@ -15,14 +15,14 @@
 
 /********************************** Field set *********************************/
 
-.hui_formula_fieldset {
+.hui_form_fieldset {
   border: 1px solid #ddd;
   padding: 10px 10px 5px;
   margin-top: 7px;
   background: #fff;
 }
 
-.hui_formula_fieldset_legend {
+.hui_form_fieldset_legend {
   position: absolute;
   margin-top: -19px;
   background: #fff;
@@ -33,11 +33,11 @@
   border-radius: 4px;
 }
 
-.hui_window .hui_formula_fieldset_legend {
+.hui_window .hui_form_fieldset_legend {
   background: #f0f0f0;
 }
 
-.hui_window .hui_formula_fieldset {
+.hui_window .hui_form_fieldset {
   background: #eee;
   border: 1px solid #ccc;
   border-radius: 3px 3px 3px 3px;
@@ -46,18 +46,18 @@
 
 /********************************** Fields *********************************/
 
-table.hui_formula_fields {
+table.hui_form_fields {
   width: 100%;
   border-collapse: collapse;
 }
 
-.hui_formula_fields + .hui_formula_fields {
+.hui_form_fields + .hui_form_fields {
   margin-top: 5px;
 }
 
 /********************************** Field *********************************/
 
-.hui_formula_field {
+.hui_form_field {
 
   &_label {
     color: #004A80;
@@ -74,22 +74,22 @@ table.hui_formula_fields {
   }
 }
 
-.hui_formula_field + .hui_formula_field,
-.hui_formula_field + script + .hui_formula_field {
+.hui_form_field + .hui_form_field,
+.hui_form_field + script + .hui_form_field {
   margin-top: 5px;
 }
 
-tr.hui_formula_field + tr.hui_formula_field {
+tr.hui_form_field + tr.hui_form_field {
   > td, > th {
     padding-top: 5px;
   }
 }
 
-form.hui_formula table.split {
+form.hui_form table.split {
   border-spacing: 5px 0px;
 }
 
-.hui_formula_fields th {
+.hui_form_fields th {
   width: 1%;
   vertical-align: top;
   padding-right: 5px;
@@ -104,11 +104,11 @@ form.hui_formula table.split {
 
 /************************************** Buttons *********************************/
 
-.hui_formula > .hui_buttons {
+.hui_form > .hui_buttons {
   margin-top: 10px;
 }
 
-.hui_formula .hui_buttons {
+.hui_form .hui_buttons {
   text-align: right;
 }
 
@@ -117,22 +117,22 @@ form.hui_formula table.split {
 
 
 
-div.hui_window label.hui_formula_field {
+div.hui_window label.hui_form_field {
   background: rgb(240, 240, 240);
 }
 
-div.hui_formula_fieldset label.hui_formula_field,
-div.hui_window_news label.hui_formula_field {
+div.hui_form_fieldset label.hui_form_field,
+div.hui_window_news label.hui_form_field {
   background: none;
 }
 
-div.hui_window_light label.hui_formula_field {
+div.hui_window_light label.hui_form_field {
   color: #004A80;
   background: none;
 }
 
 
-body .hui_context_dark label.hui_formula_field,
+body .hui_context_dark label.hui_form_field,
 .hui_context_dark .hui_checkbox,
 .hui_context_dark span.hui_radiobutton_label,
 .hui_context_dark th.hui_objectlist {

@@ -20,7 +20,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   </structure>
 
   <window name="dark" width="300" title="Bruger" padding="5" variant="dark">
-    <formula>
+    <form>
       <fields>
         <field label="Brugernavn:">
           <text-input/>
@@ -46,11 +46,11 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button text="Slet" click="dark.setBusy('Lorem ipsum')"/>
         <button text="Annuller"/>
       </buttons>
-    </formula>
+    </form>
   </window>
 
   <window name="standard" width="300" title="Bruger" icon="common/info" padding="5">
-    <formula>
+    <form>
       <fields>
         <field label="Brugernavn:">
           <text-input/>
@@ -76,11 +76,11 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button text="Slet" click="standard.setBusy('Lorem ipsum')"/>
         <button text="Annuller"/>
       </buttons>
-    </formula>
+    </form>
   </window>
 
   <window name="light" width="300" title="Bruger" padding="5" variant="light">
-    <formula>
+    <form>
       <fields>
         <field label="Brugernavn:">
           <text-input/>
@@ -106,13 +106,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button text="Slet" click="light.setBusy('Lorem ipsum')"/>
         <button text="Annuller"/>
       </buttons>
-    </formula>
+    </form>
   </window>
 
   <window name="flipper" width="300" title="Flipper" padding="5">
     <button click="flipper.flip()" text="Flip"/>
     <back>
-      <formula>
+      <form>
         <fields>
           <field label="Brugernavn:">
             <text-input/>
@@ -138,7 +138,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
           <button text="Slet"/>
           <button text="Annuller" click="flipper.flip()"/>
         </buttons>
-      </formula>
+      </form>
     </back>
   </window>
 

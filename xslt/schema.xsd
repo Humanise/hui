@@ -1031,7 +1031,7 @@
       <xs:element name="pages" type="pages"/>
       <xs:element name="list" type="list"/>
       <xs:element name="div" type="div"/>
-      <xs:element name="formula" type="formula"/>
+      <xs:element name="form" type="form"/>
       <xs:element name="overflow" type="overflow"/>
       <xs:element name="chart" type="chart"/>
     </xs:choice>
@@ -1264,7 +1264,7 @@
   <xs:complexType name="window">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="back" type="window_back"/>
-      <xs:element name="formula" type="formula"/>
+      <xs:element name="form" type="form"/>
       <xs:element name="fields" type="fields"/>
       <xs:element name="searchfield" type="searchfield"/>
       <xs:element name="text-input" type="text-input"/>
@@ -1387,10 +1387,10 @@
     <xs:attribute name="read-url" type="xs:string"/>
   </xs:complexType>
 
-  <!-- Formula -->
+  <!-- form -->
 
-  <xs:element name="formula" type="formula"/>
-  <xs:complexType name="formula">
+  <xs:element name="form" type="form"/>
+  <xs:complexType name="form">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="header"/>
       <xs:element name="fields" type="fields"/>

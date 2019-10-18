@@ -11,7 +11,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <icon icon="common/settings" text="Hep hey!" disabled="true"/>
       <icon icon="common/folder" text="Show window" click="win.show();"/>
     </toolbar>
-    <formula name="formula1">
+    <form name="formula1">
       <fieldset legend="This is a group">
         <fields labels="above">
           <field label="Brugernavn:">
@@ -55,6 +55,6 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button text="Slet"/>
         <button text="Annuller"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 </gui>

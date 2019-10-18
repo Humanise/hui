@@ -10,7 +10,7 @@
     </bar>
     <pages name="pages">
       <page key="text">
-        <formula name="textFormula" padding="10">
+        <form name="textFormula" padding="10">
           <fields>
           <field label="Size">
             <style-length-input adaptive="true"/>
@@ -42,10 +42,10 @@
             </segmented>
           </field>
           </fields>
-        </formula>
+        </form>
       </page>
       <page key="layout">
-        <formula name="layoutFormula" padding="10">
+        <form name="layoutFormula" padding="10">
           <fields>
             <field label="Width:">
               <style-length-input adaptive="true"/>
@@ -86,13 +86,13 @@
               </columns>
             </field>
           </fields>
-        </formula>
+        </form>
       </page>
       <page key="info">
         <space height="200"/>
       </page>
       <page key="advanced">
-        <formula name="layoutFormula" padding="10">
+        <form name="layoutFormula" padding="10">
           <fields>
             <field label="Class">
               <text-input/>
@@ -101,7 +101,7 @@
               <text-input breaks="true"/>
             </field>
           </fields>
-        </formula>
+        </form>
       </page>
     </pages>
   </window>

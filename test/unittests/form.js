@@ -2,7 +2,7 @@ QUnit.test( 'Building', function( assert ) {
   var now = new Date();
 
   var win = hui.ui.Window.create({title:'This is the window title',width:200,padding:10,name:'myWindow'});
-  var formula = hui.ui.Formula.create({name:'myForm'});
+  var formula = hui.ui.Form.create({name:'myForm'});
   win.add(formula);
   win.show();
 

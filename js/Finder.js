@@ -272,7 +272,7 @@ hui.ui.Finder.prototype = {
   },
   _showCreation : function(button) {
     if (!this._createPanel) {
-      var form = this._createForm = hui.ui.Formula.create({listen:{$submit:this._create.bind(this)}});
+      var form = this._createForm = hui.ui.Form.create({listen:{$submit:this._create.bind(this)}});
       form.buildGroup({above:true},this.options.creation.formula);
       var panel = this._createPanel = hui.ui.BoundPanel.create({padding:5,width:300,modal:true});
       panel.add(form);

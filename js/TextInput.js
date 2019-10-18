@@ -107,7 +107,7 @@ hui.ui.TextInput.prototype = {
     if (!this.multiline && e.keyCode === 13) {
       hui.stop(e);
       this.fire('submit');
-      var form = hui.ui.getAncestor(this,'hui_formula');
+      var form = hui.ui.getAncestor(this,'hui_form');
       if (form) {form.submit();}
       return;
     }
