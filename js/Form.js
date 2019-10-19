@@ -1,8 +1,8 @@
 /**
  * @class
- * This is a formula
+ * This is a form
  */
-hui.ui.Formula = function(options) {
+hui.ui.Form = function(options) {
   this.options = options;
   hui.ui.extend(this,options);
   this.addBehavior();
@@ -15,10 +15,10 @@ hui.ui.Formula = function(options) {
   }
 };
 
-/** @static Creates a new formula */
-hui.ui.Formula.create = function(o) {
+/** @static Creates a new form */
+hui.ui.Form.create = function(o) {
   o = o || {};
-  var atts = {'class':'hui_formula'};
+  var atts = {'class':'hui_form'};
   if (o.action) {
     atts.action=o.action;
   }
@@ -26,10 +26,10 @@ hui.ui.Formula.create = function(o) {
     atts.method=o.method;
   }
   o.element = hui.build('form',atts);
-  return new hui.ui.Formula(o);
+  return new hui.ui.Form(o);
 };
 
-hui.ui.Formula.prototype = {
+hui.ui.Form.prototype = {
   /** @private */
   addBehavior : function() {
     this.element.onsubmit=function() {return false;};
@@ -90,22 +90,22 @@ hui.ui.Formula.prototype = {
     this.element.appendChild(widget.getElement());
   },
   /** Creates a new form group and adds it to the form
-   * @returns {'hui.ui.Formula.Group'} group
+   * @returns {'hui.ui.Form.Group'} group
    */
   createGroup : function(options) {
-    var g = hui.ui.Formula.Group.create(options);
+    var g = hui.ui.Form.Group.create(options);
     this.add(g);
     return g;
   },
   /** Builds and adds a new group according to a recipe
-   * @returns {'hui.ui.Formula.Group'} group
+   * @returns {'hui.ui.Form.Group'} group
    */
   buildGroup : function(options,recipe) {
     var g = this.createGroup(options);
     hui.each(recipe, function(item) {
       var w;
-      if (hui.ui.Formula[item.type]) {
-        w = hui.ui.Formula[item.type].create(item.options);
+      if (hui.ui.Form[item.type]) {
+        w = hui.ui.Form[item.type].create(item.options);
         g.add(w, item.label);
       }
       else if (hui.ui[item.type]) {
@@ -142,7 +142,7 @@ hui.ui.Formula.prototype = {
  * A form group
  * @constructor
  */
-hui.ui.Formula.Group = function(options) {
+hui.ui.Form.Group = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
   this.tableMode = this.element.nodeName.toLowerCase() == 'table'
@@ -151,37 +151,37 @@ hui.ui.Formula.Group = function(options) {
 };
 
 /** Creates a new form group */
-hui.ui.Formula.Group.create = function(options) {
+hui.ui.Form.Group.create = function(options) {
   options = hui.override({above:true},options);
   var element;
   if (options.above) {
-    element = hui.build('div', {'class':'hui_formula_fields hui_formula_fields_above'});
+    element = hui.build('div', {'class':'hui_form_fields hui_form_fields_above'});
   } else {
-    element = hui.build('table.hui_formula_fields');
+    element = hui.build('table.hui_form_fields');
     element.appendChild(hui.build('tbody'));
   }
   options.element = element;
-  return new hui.ui.Formula.Group(options);
+  return new hui.ui.Form.Group(options);
 };
 
-hui.ui.Formula.Group.prototype = {
+hui.ui.Form.Group.prototype = {
   add : function(widget,label) {
     if (this.tableMode) {
-      var tr = hui.build('tr',{'class':'hui_formula_field'});
+      var tr = hui.build('tr',{'class':'hui_form_field'});
       hui.find('tbody', this.element).appendChild(tr);
       var td = hui.build('td');
       if (label) {
         label = hui.ui.getTranslated(label);
         var th = hui.build('th',{parent:tr});
-        hui.build('label',{className:'hui_formula_field_label',text:label,parent:th});
+        hui.build('label',{className:'hui_form_field_label',text:label,parent:th});
       }
       td.appendChild(widget.getElement());
       tr.appendChild(td);
     } else {
-      var field = hui.build('div.hui_formula_field');
+      var field = hui.build('div.hui_form_field');
       if (label) {
         label = hui.ui.getTranslated(label);
-        hui.build('label',{className:'hui_formula_field_label',text:label,parent:field});
+        hui.build('label',{className:'hui_form_field_label',text:label,parent:field});
       }
       field.appendChild(widget.getElement());
       this.element.appendChild(field);
@@ -189,8 +189,8 @@ hui.ui.Formula.Group.prototype = {
   }
 };
 
-// TODO: Should be hui.ui.Formula.Fields
-hui.ui.Formula.Fields = hui.ui.Formula.Group;
+// TODO: Should be hui.ui.Form.Fields
+hui.ui.Form.Fields = hui.ui.Form.Group;
 
 ///////////////////////// Field //////////////////////////
 
@@ -199,13 +199,13 @@ hui.ui.Formula.Fields = hui.ui.Formula.Group;
  * A form field
  * @constructor
  */
-hui.ui.Formula.Field = function(options) {
+hui.ui.Form.Field = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
   hui.ui.extend(this);
 };
 
-hui.ui.Formula.Field.prototype = {
+hui.ui.Form.Field.prototype = {
   setVisible : function(visible) {
     this.element.style.display = visible ? '' : 'none';
   }

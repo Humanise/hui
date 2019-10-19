@@ -120,7 +120,7 @@ hui.ui.Button.prototype = {
   _fireClick : function() {
     this.fire('click',this);
     if (this.options.submit) {
-      var form = hui.ui.getAncestor(this,'hui_formula');
+      var form = hui.ui.getAncestor(this,'hui_form');
       if (form) {
         form.submit();
       } else {

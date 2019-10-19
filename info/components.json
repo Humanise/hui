@@ -151,11 +151,10 @@
     "htmlSample": "fontpicker.html"
   },
   {
-    "name": "Formula",
-    "sass": "formula.scss",
-    "css": "formula.css",
-    "htmlSample": "formula.html",
-    "xmlSample": "formula.xml"
+    "name": "Form",
+    "sass": "form.scss",
+    "css": "form.css",
+    "xmlSample": "form.xml"
   },
   {
     "name": "Foundation",

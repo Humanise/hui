@@ -545,25 +545,25 @@ span.hui_disclosure_open:hover {
   color: #666; }
 
 
-.hui_formula {
+.hui_form {
   padding: 0px;
   margin: 0px;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   text-align: left; }
 
-.hui_formula_header {
+.hui_form_header {
   color: #0077cd;
   font-size: 13pt;
   padding-bottom: 5px; }
 
 /********************************** Field set *********************************/
-.hui_formula_fieldset {
+.hui_form_fieldset {
   border: 1px solid #ddd;
   padding: 10px 10px 5px;
   margin-top: 7px;
   background: #fff; }
 
-.hui_formula_fieldset_legend {
+.hui_form_fieldset_legend {
   position: absolute;
   margin-top: -19px;
   background: #fff;
@@ -573,76 +573,76 @@ span.hui_disclosure_open:hover {
   color: #666;
   border-radius: 4px; }
 
-.hui_window .hui_formula_fieldset_legend {
+.hui_window .hui_form_fieldset_legend {
   background: #f0f0f0; }
 
-.hui_window .hui_formula_fieldset {
+.hui_window .hui_form_fieldset {
   background: #eee;
   border: 1px solid #ccc;
   border-radius: 3px 3px 3px 3px;
   box-shadow: 0 1px 3px #DDDDDD inset; }
 
 /********************************** Fields *********************************/
-table.hui_formula_fields {
+table.hui_form_fields {
   width: 100%;
   border-collapse: collapse; }
 
-.hui_formula_fields + .hui_formula_fields {
+.hui_form_fields + .hui_form_fields {
   margin-top: 5px; }
 
 /********************************** Field *********************************/
-.hui_formula_field_hint {
-  font-size: 9px;
-  color: #999;
-  margin: -5px 0 0 3px; }
-
-.hui_formula_field_label {
+.hui_form_field_label {
   color: #004A80;
   font-size: 12px;
   font-weight: normal;
   line-height: 18px;
   display: block; }
 
-.hui_formula_field + .hui_formula_field,
-.hui_formula_field + script + .hui_formula_field {
+.hui_form_field_hint {
+  font-size: 10px;
+  color: #999;
+  margin: 1px 0 0 0; }
+
+.hui_form_field + .hui_form_field,
+.hui_form_field + script + .hui_form_field {
   margin-top: 5px; }
 
-tr.hui_formula_field + tr.hui_formula_field > td, tr.hui_formula_field + tr.hui_formula_field > th {
+tr.hui_form_field + tr.hui_form_field > td, tr.hui_form_field + tr.hui_form_field > th {
   padding-top: 5px; }
 
-form.hui_formula table.split {
+form.hui_form table.split {
   border-spacing: 5px 0px; }
 
-.hui_formula_fields th {
+.hui_form_fields th {
   width: 1%;
   vertical-align: top;
   padding-right: 5px;
   text-align: right;
   white-space: nowrap;
   line-height: 18px; }
-  .hui_formula_fields th > label {
+  .hui_form_fields th > label {
     margin-top: 4px; }
 
 /************************************** Buttons *********************************/
-.hui_formula > .hui_buttons {
+.hui_form > .hui_buttons {
   margin-top: 10px; }
 
-.hui_formula .hui_buttons {
+.hui_form .hui_buttons {
   text-align: right; }
 
 /************************* Override for windows *******************/
-div.hui_window label.hui_formula_field {
+div.hui_window label.hui_form_field {
   background: #f0f0f0; }
 
-div.hui_formula_fieldset label.hui_formula_field,
-div.hui_window_news label.hui_formula_field {
+div.hui_form_fieldset label.hui_form_field,
+div.hui_window_news label.hui_form_field {
   background: none; }
 
-div.hui_window_light label.hui_formula_field {
+div.hui_window_light label.hui_form_field {
   color: #004A80;
   background: none; }
 
-body .hui_context_dark label.hui_formula_field,
+body .hui_context_dark label.hui_form_field,
 .hui_context_dark .hui_checkbox,
 .hui_context_dark span.hui_radiobutton_label,
 .hui_context_dark th.hui_objectlist {
@@ -728,6 +728,8 @@ body .hui_context_dark label.hui_formula_field,
     left: 0;
     background: #fff;
     border: 1px solid #ddd;
+    padding: 4px 0;
+    border-radius: 3px;
     font-size: 12px;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
     overflow: auto;
@@ -3759,7 +3761,7 @@ div.hui_videoplayer_placeholder:hover span.hui_videoplayer_placeholder_info stro
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
     color: #fff; }
 
-.hui_formula_field .hui_segmented {
+.hui_form_field .hui_segmented {
   margin: 2px 0; }
 
 

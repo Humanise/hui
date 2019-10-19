@@ -802,7 +802,6 @@ hui.ui.List.prototype = {
       // TODO: Memory leak!
       var info = {id:r.id,kind:r.kind,icon:icon,title:title,index:i};
       tr.dragDropInfo = info;
-      hui.log(this._getData(tr));
       self.rows.push({id:r.id,kind:r.kind,icon:icon,title:title,index:i,data:r.data});
       this._addRowBehavior(tr,i);
     }.bind(this));

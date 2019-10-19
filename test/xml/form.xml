@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Formula" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
-  <controller name="controller" url="formula.js"/>
+  <controller name="controller" url="form.js"/>
   <source name="itemsSource" url="data/source_items.xml"/>
 
   <space all="30">
@@ -37,7 +37,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <space height="30"/>
 
   <box width="600" title="Special inputs" variant="textured" padding="10">
-    <formula name="formulatore">
+    <form name="formulatore">
       <fields labels="above">
         <field label="Color:">
           <color-input key="color"/>
@@ -71,13 +71,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button click='formulatore.setValues({color: "#ff2ead",location: {latitude: 56.64242820898831, longitude: 10.16157250976562}})' text="Set data"/>
         <button click="logForm(formulatore)" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Labels before" variant="textured" padding="10">
-    <formula>
+    <form>
       <fields>
         <field label="Text:">
           <dropdown>
@@ -129,13 +129,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button click="createDateInput()" text="Create"/>
         <button click="hui.log(dateForm.getValues())" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Fields + fields" variant="textured" padding="10">
-    <formula>
+    <form>
       <fields labels="above">
         <field label="Seconds:">
           <datetime-input key="date-seconds" return-type="seconds"/>
@@ -155,13 +155,39 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <buttons>
         <button text="Create"/>
       </buttons>
-    </formula>
+    </form>
+  </box>
+
+  <space height="30"/>
+
+  <box width="600" title="Hints" variant="textured" padding="10">
+    <form>
+      <fields labels="above">
+        <field label="Seconds:" hint="This is a hint">
+          <datetime-input key="date-seconds" return-type="seconds"/>
+        </field>
+        <field label="Date:">
+          <datetime-input key="date"/>
+        </field>
+      </fields>
+      <fields>
+        <field label="Seconds:" hint="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.">
+          <datetime-input key="date-seconds" return-type="seconds"/>
+        </field>
+        <field label="Date:">
+          <datetime-input key="date"/>
+        </field>
+      </fields>
+      <buttons>
+        <button text="Create"/>
+      </buttons>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Dates" variant="textured" padding="10">
-    <formula name="dateForm">
+    <form name="dateForm">
       <fields name="dateFields">
         <field label="Seconds:">
           <datetime-input key="date-seconds" return-type="seconds"/>
@@ -174,7 +200,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button click="createDateInput()" text="Create"/>
         <button click="hui.log(dateForm.getValues())" text="Data"/>
       </buttons>
-    </formula>
+    </form>
     <script>
       function createDateInput() {
         dateFields.add(hui.ui.DateTimeInput.create(), 'Created');
@@ -185,7 +211,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <space height="30"/>
 
   <box width="600" title="Location" variant="textured" padding="10">
-    <formula name="locationForm">
+    <form name="locationForm">
       <fields labels="above" name="locationFields">
         <field label="Seconds:">
           <location-input key="one"/>
@@ -198,7 +224,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button click="createLocationInput()" text="Create"/>
         <button click="hui.log(locationForm.getValues())" text="Data"/>
       </buttons>
-    </formula>
+    </form>
     <div class="locationContainer"></div>
     <script>
       function createLocationInput() {
@@ -210,7 +236,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <space height="30"/>
 
   <box width="600" title="Numbers" variant="textured" padding="10">
-    <formula name="numForm">
+    <form name="numForm">
       <fields labels="above">
         <field label="Number:">
           <number-input key="number"/>
@@ -231,13 +257,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <buttons>
         <button click="logForm(numForm)" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Style length" variant="textured" padding="10">
-    <formula name="styleForm">
+    <form name="styleForm">
       <fields labels="above">
         <field label="Pixels:">
           <style-length-input key="style1" value="300px"/>
@@ -252,13 +278,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <buttons>
         <button click="logForm(styleForm)" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Text input" variant="textured" padding="10">
-    <formula name="textForm">
+    <form name="textForm">
       <fields labels="above">
         <field label="Username:">
           <text-input key="username"/>
@@ -282,13 +308,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <buttons>
         <button click="logForm(textForm)" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Checkboxes" variant="textured" padding="10">
-    <formula name="checkForm">
+    <form name="checkForm">
       <fields labels="above">
         <field label="Internal access:">
           <checkbox key="internal"/>
@@ -306,13 +332,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <buttons>
         <button click="logForm(checkForm)" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Text" variant="textured" padding="10">
-    <formula name="otherForm">
+    <form name="otherForm">
       <fields labels="above">
         <field label="Style length:">
           <style-length-input key="style" value="15px"/>
@@ -331,13 +357,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <buttons>
         <button click="logForm(otherForm)" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Drop downs" variant="textured" padding="10">
-    <formula name="dateForm">
+    <form name="dateForm">
       <fields labels="above">
         <field label="No initial value:">
           <dropdown key="template" placeholder="Holding the place">
@@ -421,13 +447,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <buttons>
         <button click="hui.log(dateForm.getValues())" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
 
   <box width="600" title="Text" variant="textured" padding="10">
-    <formula name="objectListForm">
+    <form name="objectListForm">
       <fields labels="above">
         <field label="Object list">
           <objectlist key="objectlist">
@@ -443,7 +469,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <buttons>
         <button click="logForm(objectListForm)" text="Data"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="30"/>
@@ -457,7 +483,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
     </toolbar>
     <tabs>
       <tab title="Formula 1" padding="10">
-        <formula name="formula1">
+        <form name="formula1">
           <fields labels="above">
             <field label="Object list:">
               <objectlist key="objectlist">
@@ -475,10 +501,10 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
             <button text="Slet"/>
             <button text="Annuller"/>
           </buttons>
-        </formula>
+        </form>
       </tab>
       <tab title="Formula 2" padding="10">
-        <formula name="formula2">
+        <form name="formula2">
           <fields>
             <field label="Template:">
               <dropdown key="template" source="itemsSource" value="c"/>
@@ -535,10 +561,10 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
             <button text="Slet"/>
             <button text="Annuller"/>
           </buttons>
-        </formula>
+        </form>
       </tab>
       <tab title="Field" padding="10">
-        <formula name="formula2">
+        <form name="formula2">
           <fields>
             <field label="Language">
               <dropdown source="itemsSource" value="c"/>
@@ -547,7 +573,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
               <text-input key="username"/>
             </field>
           </fields>
-        </formula>
+        </form>
       </tab>
     </tabs>
   </box>
@@ -572,7 +598,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   </script>
 
   <window name="win" width="400" padding="10" variant="dark">
-    <formula name="formula2">
+    <form name="formula2">
       <fields>
         <field label="Template:">
           <dropdown key="template" source="itemsSource" value="c"/>
@@ -630,7 +656,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button text="News" click="win.setVariant('news')"/>
         <button text="Light" click="win.setVariant('light')" highlighted="true"/>
       </buttons>
-    </formula>
+    </form>
   </window>
   </space>
 </gui>

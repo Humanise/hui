@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Box">
   <box width="300" padding="10" top="100" variant="rounded">
-    <formula name="formula">
+    <form name="formula">
       <header>Log in to the system...</header>
       <space height="5"/>
       <fields>
@@ -17,7 +17,7 @@
         <button text="Annuller"/>
         <button text="Log in" name="login" submit="true" highlighted="true"/>
       </buttons>
-    </formula>
+    </form>
   </box>
   <listen>
     $ready : function() {

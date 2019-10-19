@@ -5812,9 +5812,9 @@ if (hui.define) hui.define('hui.Window',hui.Window);
 ;
 /**
  * @class
- * This is a formula
+ * This is a form
  */
-hui.ui.Formula = function(options) {
+hui.ui.Form = function(options) {
   this.options = options;
   hui.ui.extend(this,options);
   this.addBehavior();
@@ -5827,10 +5827,10 @@ hui.ui.Formula = function(options) {
   }
 };
 
-/** @static Creates a new formula */
-hui.ui.Formula.create = function(o) {
+/** @static Creates a new form */
+hui.ui.Form.create = function(o) {
   o = o || {};
-  var atts = {'class':'hui_formula'};
+  var atts = {'class':'hui_form'};
   if (o.action) {
     atts.action=o.action;
   }
@@ -5838,10 +5838,10 @@ hui.ui.Formula.create = function(o) {
     atts.method=o.method;
   }
   o.element = hui.build('form',atts);
-  return new hui.ui.Formula(o);
+  return new hui.ui.Form(o);
 };
 
-hui.ui.Formula.prototype = {
+hui.ui.Form.prototype = {
   /** @private */
   addBehavior : function() {
     this.element.onsubmit=function() {return false;};
@@ -5902,22 +5902,22 @@ hui.ui.Formula.prototype = {
     this.element.appendChild(widget.getElement());
   },
   /** Creates a new form group and adds it to the form
-   * @returns {'hui.ui.Formula.Group'} group
+   * @returns {'hui.ui.Form.Group'} group
    */
   createGroup : function(options) {
-    var g = hui.ui.Formula.Group.create(options);
+    var g = hui.ui.Form.Group.create(options);
     this.add(g);
     return g;
   },
   /** Builds and adds a new group according to a recipe
-   * @returns {'hui.ui.Formula.Group'} group
+   * @returns {'hui.ui.Form.Group'} group
    */
   buildGroup : function(options,recipe) {
     var g = this.createGroup(options);
     hui.each(recipe, function(item) {
       var w;
-      if (hui.ui.Formula[item.type]) {
-        w = hui.ui.Formula[item.type].create(item.options);
+      if (hui.ui.Form[item.type]) {
+        w = hui.ui.Form[item.type].create(item.options);
         g.add(w, item.label);
       }
       else if (hui.ui[item.type]) {
@@ -5954,7 +5954,7 @@ hui.ui.Formula.prototype = {
  * A form group
  * @constructor
  */
-hui.ui.Formula.Group = function(options) {
+hui.ui.Form.Group = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
   this.tableMode = this.element.nodeName.toLowerCase() == 'table'
@@ -5963,37 +5963,37 @@ hui.ui.Formula.Group = function(options) {
 };
 
 /** Creates a new form group */
-hui.ui.Formula.Group.create = function(options) {
+hui.ui.Form.Group.create = function(options) {
   options = hui.override({above:true},options);
   var element;
   if (options.above) {
-    element = hui.build('div', {'class':'hui_formula_fields hui_formula_fields_above'});
+    element = hui.build('div', {'class':'hui_form_fields hui_form_fields_above'});
   } else {
-    element = hui.build('table.hui_formula_fields');
+    element = hui.build('table.hui_form_fields');
     element.appendChild(hui.build('tbody'));
   }
   options.element = element;
-  return new hui.ui.Formula.Group(options);
+  return new hui.ui.Form.Group(options);
 };
 
-hui.ui.Formula.Group.prototype = {
+hui.ui.Form.Group.prototype = {
   add : function(widget,label) {
     if (this.tableMode) {
-      var tr = hui.build('tr',{'class':'hui_formula_field'});
+      var tr = hui.build('tr',{'class':'hui_form_field'});
       hui.find('tbody', this.element).appendChild(tr);
       var td = hui.build('td');
       if (label) {
         label = hui.ui.getTranslated(label);
         var th = hui.build('th',{parent:tr});
-        hui.build('label',{className:'hui_formula_field_label',text:label,parent:th});
+        hui.build('label',{className:'hui_form_field_label',text:label,parent:th});
       }
       td.appendChild(widget.getElement());
       tr.appendChild(td);
     } else {
-      var field = hui.build('div.hui_formula_field');
+      var field = hui.build('div.hui_form_field');
       if (label) {
         label = hui.ui.getTranslated(label);
-        hui.build('label',{className:'hui_formula_field_label',text:label,parent:field});
+        hui.build('label',{className:'hui_form_field_label',text:label,parent:field});
       }
       field.appendChild(widget.getElement());
       this.element.appendChild(field);
@@ -6001,8 +6001,8 @@ hui.ui.Formula.Group.prototype = {
   }
 };
 
-// TODO: Should be hui.ui.Formula.Fields
-hui.ui.Formula.Fields = hui.ui.Formula.Group;
+// TODO: Should be hui.ui.Form.Fields
+hui.ui.Form.Fields = hui.ui.Form.Group;
 
 ///////////////////////// Field //////////////////////////
 
@@ -6011,13 +6011,13 @@ hui.ui.Formula.Fields = hui.ui.Formula.Group;
  * A form field
  * @constructor
  */
-hui.ui.Formula.Field = function(options) {
+hui.ui.Form.Field = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
   hui.ui.extend(this);
 };
 
-hui.ui.Formula.Field.prototype = {
+hui.ui.Form.Field.prototype = {
   setVisible : function(visible) {
     this.element.style.display = visible ? '' : 'none';
   }
@@ -6827,7 +6827,6 @@ hui.ui.List.prototype = {
       // TODO: Memory leak!
       var info = {id:r.id,kind:r.kind,icon:icon,title:title,index:i};
       tr.dragDropInfo = info;
-      hui.log(this._getData(tr));
       self.rows.push({id:r.id,kind:r.kind,icon:icon,title:title,index:i,data:r.data});
       this._addRowBehavior(tr,i);
     }.bind(this));
@@ -7950,7 +7949,7 @@ hui.ui.Button.prototype = {
   _fireClick : function() {
     this.fire('click',this);
     if (this.options.submit) {
-      var form = hui.ui.getAncestor(this,'hui_formula');
+      var form = hui.ui.getAncestor(this,'hui_form');
       if (form) {
         form.submit();
       } else {
@@ -13350,7 +13349,7 @@ hui.ui.Links.prototype = {
   getEditWindow : function() {
     if (!this.editWindow) {
       var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:10});
-      var form = this.editForm = hui.ui.Formula.create();
+      var form = this.editForm = hui.ui.Form.create();
       var g = form.buildGroup({above:false},[
         {label:'Tekst',type:'TextInput',options:{key:'text'}}
       ]);
@@ -13651,7 +13650,7 @@ hui.ui.MarkupEditor.prototype = {
       });
     } else if (!this.linkEditor) {
       this.linkEditor = hui.ui.Window.create({padding:5,width:300});
-      this.linkForm = hui.ui.Formula.create();
+      this.linkForm = hui.ui.Form.create();
       this.linkEditor.add(this.linkForm);
       this.linkForm.buildGroup({},[
         {type : 'TextInput', options:{key:'url',label:'Address:'}}
@@ -15626,7 +15625,7 @@ hui.ui.TextInput.prototype = {
     if (!this.multiline && e.keyCode === 13) {
       hui.stop(e);
       this.fire('submit');
-      var form = hui.ui.getAncestor(this,'hui_formula');
+      var form = hui.ui.getAncestor(this,'hui_form');
       if (form) {form.submit();}
       return;
     }
@@ -16260,7 +16259,7 @@ hui.ui.Finder.prototype = {
   },
   _showCreation : function(button) {
     if (!this._createPanel) {
-      var form = this._createForm = hui.ui.Formula.create({listen:{$submit:this._create.bind(this)}});
+      var form = this._createForm = hui.ui.Form.create({listen:{$submit:this._create.bind(this)}});
       form.buildGroup({above:true},this.options.creation.formula);
       var panel = this._createPanel = hui.ui.BoundPanel.create({padding:5,width:300,modal:true});
       panel.add(form);
@@ -18748,7 +18747,7 @@ hui.ui.Tile.prototype = {
       var overflow = hui.ui.Overflow.create({height: 400});
       win.add(overflow);
       hui.each(this.components,function(component) {
-        var form = hui.ui.Formula.create();
+        var form = hui.ui.Form.create();
         form.buildGroup({above:false},[{
           type : 'DropDown', label: 'Display:', options : {key:'display', value:'', items:[
             {value:'',text:'Unchanged'}, {value:'block',text:'Block'}, {value:'flex',text:'Flex'}
@@ -19915,7 +19914,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
     this.options = options;
     this.root = hui.get(options.root);
     this.window = null;
-    this.formula = null;
+    this.form = null;
     this.saveButton = null;
     this.deleteButton = null;
     this.cancelButton = null;
@@ -19936,8 +19935,8 @@ hui.ui.Chart.Util.convertData = function(obj) {
         if (hui.ui.is(cmp,hui.ui.Window)) {
           this.window = cmp;
         }
-        else if (hui.ui.is(cmp,hui.ui.Formula)) {
-          this.formula = cmp;
+        else if (hui.ui.is(cmp,hui.ui.Form)) {
+          this.form = cmp;
         }
         else if (hui.ui.is(cmp,hui.ui.Button)) {
           var role = cmp.getRole();
@@ -19960,7 +19959,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
           self.end();
         }
       });
-      this.formula.listen({
+      this.form.listen({
         $submit : function() {
           self._save();
         }
@@ -19979,13 +19978,13 @@ hui.ui.Chart.Util.convertData = function(obj) {
     makeNew : function() {
       this._reset();
       this.window.show();
-      this.formula.focus();
+      this.form.focus();
       this.deleteButton.disable();
     },
     _save : function() {
       this.window.setBusy(true);
       var self = this;
-      var values = this.formula.getValues();
+      var values = this.form.getValues();
       if (this.objectId !== undefined) {
         values.id = this.objectId;
       }
@@ -20001,7 +20000,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
       });
     },
     _reset : function() {
-      this.formula.reset();
+      this.form.reset();
       this.objectId = undefined;
     },
     _saveSuccess : function() {
@@ -20022,10 +20021,10 @@ hui.ui.Chart.Util.convertData = function(obj) {
         url : this.options.read.url,
         $object : function(obj) {
           self.objectId = obj.id;
-          self.formula.setValues(obj);
+          self.form.setValues(obj);
           self.deleteButton.setEnabled(true);
           self.window.show();
-          self.formula.focus();
+          self.form.focus();
         },
         $finally : function() {
           self.window.setBusy(false);
@@ -21358,7 +21357,7 @@ hui.ui.Matrix.prototype = {
 
   hui.ui.ModelEditor.prototype = {
     _build : function() {
-      var form = this._form = hui.ui.Formula.create();
+      var form = this._form = hui.ui.Form.create();
       var group = form.createGroup();
       var model = this.options.model;
       hui.each(model.properties, function(prop) {

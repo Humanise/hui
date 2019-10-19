@@ -6,7 +6,7 @@
       <icon text="Margins" icon="common/info" selected="true"/>
       <icon text="Text" icon="common/info"/>
     </toolbar>
-    <formula padding="10">
+    <form padding="10">
       <fields labels="above">
         <field label="Left">
           <style-length-input/>
@@ -21,7 +21,7 @@
           <style-length-input/>
         </field>
       </fields>
-    </formula>
+    </form>
   </window>
   <script>
     hui.ui.listen({

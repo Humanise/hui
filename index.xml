@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="test/xml/setup.xsl"?>
-<gui xmlns="uri:hui" title="Hmanise User Interface" padding="10">
+<gui xmlns="uri:hui" title="Humanise User Interface" padding="10">
   <controller source="index.js"/>
   <style url="index.css"/>
 
   <div class="main">
+    <div class="logo"><!-- --></div>
     <h1><span>Humanise</span> <span>User</span> <span>Interface</span></h1>
     <p>The common language of humans and machines</p>
-      <searchfield width="200" expanded-width="300" name="search"/>
-      <div class="js-results"></div>
     <div style="margin: 30px 0">
-      <button url="demo/index.html" text="Demonstration"/>
-      <button url="test/index.xml" text="Test site"/>
-      <button url="api/index.html" text="JavaScript API"/>
-      <button url="api/xml/index.html" text="XML api"/>
+      <bar>
+        <flexible/>
+        <tool icon="common/info" text="About" click="document.location='https://www.humanise.dk/en/opensource/hui/'"/>
+        <tool icon="common/play" text="Demonstration" click="document.location='demo/index.html'"/>
+        <tool icon="common/lifebuoy" text="JavaScript API" click="document.location='api/index.html'"/>
+        <tool icon="common/gauge" text="Test site" click="document.location='test/index.xml'"/>
+        <tool icon="common/email" text="Contact" click="document.location='mailto:jonas@humanise.dk'"/>
+        <flexible/>
+      </bar>
     </div>
+    <searchfield width="200" expanded-width="300" name="search" placeholder="Filter components"/>
   </div>
-  <div style="max-width: 700px; margin: 0 auto;">
-    <list name="components"/>
+  <div style="max-width: 700px; margin: 20px auto;">
+    <list name="components" variant="light"/>
   </div>
 </gui>

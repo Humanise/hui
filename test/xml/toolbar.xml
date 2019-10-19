@@ -146,7 +146,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
               <icon icon="common/settings" text="Disbaled" disabled="true"/>
               <icon icon="common/view" text="Show hidden box"/>
             </toolbar>
-            <formula>
+            <form>
               <fields>
                 <field label="Brugernavn:">
                   <text-input/>
@@ -160,7 +160,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
                 <button text="Slet"/>
                 <button text="Gem" highlighted="true"/>
               </buttons>
-            </formula>
+            </form>
           </box>
 
         </overflow>
@@ -204,7 +204,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <icon icon="common/edit" text="Edit"/>
       </right>
     </toolbar>
-    <formula name="pageFormula" padding="5">
+    <form name="pageFormula" padding="5">
       <fields labels="above">
         <field label="Titel:">
           <text-input key="title"/>
@@ -220,6 +220,6 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         </button>
         <button name="savePage" text="Gem" highlighted="true"/>
       </buttons>
-    </formula>
+    </form>
   </window>
 </gui>

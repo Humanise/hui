@@ -13,7 +13,7 @@
 
   hui.ui.ModelEditor.prototype = {
     _build : function() {
-      var form = this._form = hui.ui.Formula.create();
+      var form = this._form = hui.ui.Form.create();
       var group = form.createGroup();
       var model = this.options.model;
       hui.each(model.properties, function(prop) {

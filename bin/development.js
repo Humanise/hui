@@ -25,7 +25,7 @@ document.write('<script type="text/javascript" src="'+_context+'/js/Component.js
 document.write('<script type="text/javascript" src="'+_context+'/js/Source.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/DragDrop.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Window.js"></script>');
-document.write('<script type="text/javascript" src="'+_context+'/js/Formula.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/Form.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/List.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Tabs.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/ObjectList.js"></script>');

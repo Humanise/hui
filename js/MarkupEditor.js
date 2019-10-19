@@ -212,7 +212,7 @@ hui.ui.MarkupEditor.prototype = {
       });
     } else if (!this.linkEditor) {
       this.linkEditor = hui.ui.Window.create({padding:5,width:300});
-      this.linkForm = hui.ui.Formula.create();
+      this.linkForm = hui.ui.Form.create();
       this.linkEditor.add(this.linkForm);
       this.linkForm.buildGroup({},[
         {type : 'TextInput', options:{key:'url',label:'Address:'}}

@@ -12,7 +12,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <icon icon="common/color" text="Refresh source" click="itemsSource.refresh()"/>
       <icon icon="common/folder" text="Build" name="build"/>
     </toolbar>
-    <formula name="formula">
+    <form name="formula">
       <fields labels="above">
         <field label="Predefined items:">
           <dropdown name="predefined" value="2">
@@ -29,6 +29,6 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
           <dropdown name="fromUrl" placeholder="Select something" url="data/items_loremipsum.xml"/>
         </field>
       </fields>
-    </formula>
+    </form>
   </box>
 </gui>

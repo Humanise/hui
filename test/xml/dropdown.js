@@ -5,7 +5,7 @@ var controller = {
   },
   $click$build : function() {
     var win = hui.ui.Window.create({width:300,padding:10});
-    var form = hui.ui.Formula.create();
+    var form = hui.ui.Form.create();
     win.add(form);
     var group = form.createGroup();
     var drop = hui.ui.DropDown.create({label:'Data from url',url:'data/items_loremipsum.xml'});

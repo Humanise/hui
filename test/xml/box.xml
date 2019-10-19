@@ -21,7 +21,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <icon icon="common/settings" text="Disbaled" disabled="true"/>
       <icon icon="common/view" text="Show hidden box" click="absoluteBox.show();"/>
     </toolbar>
-    <formula>
+    <form>
       <fields>
         <field label="Brugernavn:">
           <text-input/>
@@ -44,11 +44,11 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button text="Slet"/>
         <button text="Gem" highlighted="true"/>
       </buttons>
-    </formula>
+    </form>
   </box>
   <space height="40"/>
   <box width="400" padding="10" title="Title with no toolbar">
-    <formula>
+    <form>
       <fields>
         <field label="Brugernavn:">
           <text-input/>
@@ -71,13 +71,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button text="Slet"/>
         <button text="Annuller"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="40"/>
 
   <box width="400" padding="10" variant="textured">
-    <formula>
+    <form>
       <fields>
         <field label="Brugernavn:">
           <text-input/>
@@ -100,7 +100,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         <button text="Slet"/>
         <button text="Annuller"/>
       </buttons>
-    </formula>
+    </form>
   </box>
 
   <space height="40"/>

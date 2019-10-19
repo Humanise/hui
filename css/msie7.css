@@ -55,10 +55,10 @@ div.hui_window_content {
 div.hui_box_body {
   height: 1%; }
 
-input.hui_formula_text {
+input.hui_form_text {
   margin-top: 0; }
 
-textarea.hui_formula_text {
+textarea.hui_form_text {
   overflow-y: auto; }
 
 div.hui_list, div.hui_box_middle {
@@ -85,7 +85,7 @@ table.hui_layout_middle {
 td.hui_layout_center {
   width: 100%; }
 
-span.hui_formula_text_multiline {
+span.hui_form_text_multiline {
   position: relative;
   display: block; }
 

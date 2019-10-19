@@ -2,14 +2,14 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Formula (special)" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
-  <controller name="controller" url="formula_special.js"/>
+  <controller name="controller" url="form_special.js"/>
   <source name="itemsSource" url="data/items_languages.xml"/>
   <box width="600" title="Drop down" variant="textured" padding="10">
     <toolbar>
       <icon icon="common/folder" text="Show values" name="showValues"/>
       <icon icon="common/folder" text="Build" name="build"/>
     </toolbar>
-    <formula name="formula">
+    <form name="formula">
       <fields labels="above">
         <field label="Color">
           <color-input/>
@@ -39,6 +39,6 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
           <code-input name="code"/>
         </field>
       </fields>
-    </formula>
+    </form>
   </box>
 </gui>

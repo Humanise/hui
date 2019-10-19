@@ -11,7 +11,7 @@
   <script src="../../js/Bar.js"></script>
   <script src="../../js/Button.js"></script>
   <script src="../../js/Window.js"></script>
-  <script src="../../js/Formula.js"></script>
+  <script src="../../js/Form.js"></script>
   <script src="../../js/TextInput.js"></script>
   <script src="../../js/DropDown.js"></script>
   <script src="../../js/MarkupEditor.js"></script>
@@ -97,7 +97,7 @@
 
 
     var linkEditor = hui.ui.Window.create({padding:5,width:300});
-    var linkForm = hui.ui.Formula.create();
+    var linkForm = hui.ui.Form.create();
     linkEditor.add(linkForm);
     var group = linkForm.buildGroup({},[
       {type : 'TextInput',label:'Address:', options:{key:'url',name:'linkAddress'}},

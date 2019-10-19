@@ -2,119 +2,127 @@
 <options>
     <title title="Tests"/>
     <option icon="common/folder" text="Unit tests" value="Unit tests">
-        <option icon="common/page" text="animation" value="unittests/animation.html"/>
+        <option icon="common/page" text="window" value="unittests/window.html"/>
+        <option icon="common/page" text="markupeditor" value="unittests/markupeditor.html"/>
+        <option icon="common/page" text="list" value="unittests/list.html"/>
+        <option icon="common/page" text="hui" value="unittests/hui.html"/>
+        <option icon="common/page" text="validation" value="unittests/validation.html"/>
         <option icon="common/page" text="button" value="unittests/button.html"/>
-        <option icon="common/page" text="color" value="unittests/color.html"/>
+        <option icon="common/page" text="presentation" value="unittests/presentation.html"/>
+        <option icon="common/page" text="icon" value="unittests/icon.html"/>
+        <option icon="common/page" text="ui" value="unittests/ui.html"/>
         <option icon="common/page" text="component" value="unittests/component.html"/>
         <option icon="common/page" text="dom" value="unittests/dom.html"/>
-        <option icon="common/page" text="formula" value="unittests/formula.html"/>
-        <option icon="common/page" text="hui" value="unittests/hui.html"/>
-        <option icon="common/page" text="list" value="unittests/list.html"/>
-        <option icon="common/page" text="markupeditor" value="unittests/markupeditor.html"/>
-        <option icon="common/page" text="request" value="unittests/request.html"/>
-        <option icon="common/page" text="style" value="unittests/style.html"/>
+        <option icon="common/page" text="animation" value="unittests/animation.html"/>
         <option icon="common/page" text="test" value="unittests/test.html"/>
-        <option icon="common/page" text="validation" value="unittests/validation.html"/>
-        <option icon="common/page" text="window" value="unittests/window.html"/>
+        <option icon="common/page" text="style" value="unittests/style.html"/>
+        <option icon="common/page" text="query" value="unittests/query.html"/>
+        <option icon="common/page" text="panel" value="unittests/panel.html"/>
+        <option icon="common/page" text="onready" value="unittests/onready.html"/>
+        <option icon="common/page" text="form" value="unittests/form.html"/>
+        <option icon="common/page" text="color" value="unittests/color.html"/>
+        <option icon="common/page" text="request" value="unittests/request.html"/>
     </option>
     <option icon="common/folder" text="HTML tests" value="HTML tests">
-        <option icon="common/page" text="alert" value="html/alert.html"/>
-        <option icon="common/page" text="angular" value="html/angular.html"/>
-        <option icon="common/page" text="angular_todo" value="html/angular_todo.html"/>
-        <option icon="common/page" text="animation" value="html/animation.html"/>
-        <option icon="common/page" text="auto" value="html/auto.html"/>
-        <option icon="common/page" text="bar" value="html/bar.html"/>
+        <option icon="common/page" text="message" value="html/message.html"/>
         <option icon="common/page" text="boundpanel" value="html/boundpanel.html"/>
-        <option icon="common/page" text="boundpanel_long" value="html/boundpanel_long.html"/>
-        <option icon="common/page" text="button" value="html/button.html"/>
-        <option icon="common/page" text="chart" value="html/chart.html"/>
-        <option icon="common/page" text="colorpicker" value="html/colorpicker.html"/>
-        <option icon="common/page" text="diagram" value="html/diagram.html"/>
-        <option icon="common/page" text="diagram_huge" value="html/diagram_huge.html"/>
-        <option icon="common/page" text="drawing" value="html/drawing.html"/>
-        <option icon="common/page" text="drawing_animation" value="html/drawing_animation.html"/>
-        <option icon="common/page" text="drawing_animation_blue" value="html/drawing_animation_blue.html"/>
-        <option icon="common/page" text="drawing_line" value="html/drawing_line.html"/>
-        <option icon="common/page" text="editor" value="html/editor.html"/>
-        <option icon="common/page" text="effects" value="html/effects.html"/>
-        <option icon="common/page" text="finder" value="html/finder.html"/>
-        <option icon="common/page" text="fontpicker" value="html/fontpicker.html"/>
-        <option icon="common/page" text="force" value="html/force.html"/>
-        <option icon="common/page" text="formula" value="html/formula.html"/>
-        <option icon="common/page" text="graphviz" value="html/graphviz.html"/>
-        <option icon="common/page" text="imagepaster" value="html/imagepaster.html"/>
         <option icon="common/page" text="imageviewer" value="html/imageviewer.html"/>
-        <option icon="common/page" text="infoview" value="html/infoview.html"/>
-        <option icon="common/page" text="jquery" value="html/jquery.html"/>
-        <option icon="common/page" text="LocationPicker" value="html/LocationPicker.html"/>
-        <option icon="common/page" text="markupeditor" value="html/markupeditor.html"/>
-        <option icon="common/page" text="menu" value="html/menu.html"/>
-        <option icon="common/page" text="overlay" value="html/overlay.html"/>
-        <option icon="common/page" text="picker" value="html/picker.html"/>
-        <option icon="common/page" text="placement" value="html/placement.html"/>
-        <option icon="common/page" text="plupload" value="html/plupload.html"/>
-        <option icon="common/page" text="positions" value="html/positions.html"/>
         <option icon="common/page" text="profile" value="html/profile.html"/>
-        <option icon="common/page" text="progressbar" value="html/progressbar.html"/>
-        <option icon="common/page" text="progressindicator" value="html/progressindicator.html"/>
-        <option icon="common/page" text="protovis" value="html/protovis.html"/>
+        <option icon="common/page" text="colorpicker" value="html/colorpicker.html"/>
+        <option icon="common/page" text="window" value="html/window.html"/>
+        <option icon="common/page" text="positions" value="html/positions.html"/>
+        <option icon="common/page" text="drawing_animation" value="html/drawing_animation.html"/>
+        <option icon="common/page" text="markupeditor" value="html/markupeditor.html"/>
         <option icon="common/page" text="require" value="html/require.html"/>
-        <option icon="common/page" text="scrollto" value="html/scrollto.html"/>
+        <option icon="common/page" text="drawing_line" value="html/drawing_line.html"/>
+        <option icon="common/page" text="video" value="html/video.html"/>
+        <option icon="common/page" text="picker" value="html/picker.html"/>
+        <option icon="common/page" text="force" value="html/force.html"/>
         <option icon="common/page" text="selection" value="html/selection.html"/>
-        <option icon="common/page" text="slider" value="html/slider.html"/>
+        <option icon="common/page" text="progressindicator" value="html/progressindicator.html"/>
+        <option icon="common/page" text="auto" value="html/auto.html"/>
         <option icon="common/page" text="styleeditor" value="html/styleeditor.html"/>
+        <option icon="common/page" text="button" value="html/button.html"/>
+        <option icon="common/page" text="menu" value="html/menu.html"/>
+        <option icon="common/page" text="editor" value="html/editor.html"/>
+        <option icon="common/page" text="presentation" value="html/presentation.html"/>
+        <option icon="common/page" text="clipboard" value="html/clipboard.html"/>
+        <option icon="common/page" text="bar" value="html/bar.html"/>
+        <option icon="common/page" text="scrollto" value="html/scrollto.html"/>
+        <option icon="common/page" text="imagepaster" value="html/imagepaster.html"/>
+        <option icon="common/page" text="xslt" value="html/xslt.html"/>
+        <option icon="common/page" text="animation" value="html/animation.html"/>
+        <option icon="common/page" text="chart" value="html/chart.html"/>
+        <option icon="common/page" text="LocationPicker" value="html/LocationPicker.html"/>
+        <option icon="common/page" text="alert" value="html/alert.html"/>
+        <option icon="common/page" text="effects" value="html/effects.html"/>
+        <option icon="common/page" text="placement" value="html/placement.html"/>
+        <option icon="common/page" text="drawing_animation_blue" value="html/drawing_animation_blue.html"/>
+        <option icon="common/page" text="panel" value="html/panel.html"/>
+        <option icon="common/page" text="infoview" value="html/infoview.html"/>
+        <option icon="common/page" text="boundpanel_long" value="html/boundpanel_long.html"/>
+        <option icon="common/page" text="drawing" value="html/drawing.html"/>
+        <option icon="common/page" text="slider" value="html/slider.html"/>
+        <option icon="common/page" text="diagram_huge" value="html/diagram_huge.html"/>
+        <option icon="common/page" text="overlay" value="html/overlay.html"/>
+        <option icon="common/page" text="diagram" value="html/diagram.html"/>
+        <option icon="common/page" text="form" value="html/form.html"/>
+        <option icon="common/page" text="fontpicker" value="html/fontpicker.html"/>
+        <option icon="common/page" text="modeleditor" value="html/modeleditor.html"/>
         <option icon="common/page" text="touch" value="html/touch.html"/>
         <option icon="common/page" text="upload" value="html/upload.html"/>
-        <option icon="common/page" text="upload_webkit" value="html/upload_webkit.html"/>
-        <option icon="common/page" text="video" value="html/video.html"/>
-        <option icon="common/page" text="window" value="html/window.html"/>
-        <option icon="common/page" text="xslt" value="html/xslt.html"/>
+        <option icon="common/page" text="finder" value="html/finder.html"/>
+        <option icon="common/page" text="progressbar" value="html/progressbar.html"/>
     </option>
     <option icon="common/folder" text="XML tests" value="XML tests">
-        <option icon="common/page" text="all" value="xml/all.xml"/>
-        <option icon="common/page" text="bar" value="xml/bar.xml"/>
-        <option icon="common/page" text="box" value="xml/box.xml"/>
-        <option icon="common/page" text="button" value="xml/button.xml"/>
-        <option icon="common/page" text="calendar" value="xml/calendar.xml"/>
-        <option icon="common/page" text="columns" value="xml/columns.xml"/>
-        <option icon="common/page" text="diagram" value="xml/diagram.xml"/>
-        <option icon="common/page" text="dropdown" value="xml/dropdown.xml"/>
-        <option icon="common/page" text="formula" value="xml/formula.xml"/>
-        <option icon="common/page" text="formula_fieldset" value="xml/formula_fieldset.xml"/>
-        <option icon="common/page" text="formula_objectinput" value="xml/formula_objectinput.xml"/>
-        <option icon="common/page" text="formula_special" value="xml/formula_special.xml"/>
-        <option icon="common/page" text="graph" value="xml/graph.xml"/>
-        <option icon="common/page" text="layout" value="xml/layout.xml"/>
-        <option icon="common/page" text="links" value="xml/links.xml"/>
-        <option icon="common/page" text="list" value="xml/list.xml"/>
-        <option icon="common/page" text="media-simulator" value="xml/media-simulator.xml"/>
-        <option icon="common/page" text="pages" value="xml/pages.xml"/>
-        <option icon="common/page" text="picker" value="xml/picker.xml"/>
-        <option icon="common/page" text="rendering" value="xml/rendering.xml"/>
-        <option icon="common/page" text="rows" value="xml/rows.xml"/>
-        <option icon="common/page" text="skeleton" value="xml/skeleton.xml"/>
-        <option icon="common/page" text="split" value="xml/split.xml"/>
-        <option icon="common/page" text="structure-plain" value="xml/structure-plain.xml"/>
-        <option icon="common/page" text="structure" value="xml/structure.xml"/>
-        <option icon="common/page" text="style" value="xml/style.xml"/>
         <option icon="common/page" text="tabs" value="xml/tabs.xml"/>
-        <option icon="common/page" text="tiles" value="xml/tiles.xml"/>
-        <option icon="common/page" text="timeline" value="xml/timeline.xml"/>
+        <option icon="common/page" text="form_special" value="xml/form_special.xml"/>
+        <option icon="common/page" text="rendering" value="xml/rendering.xml"/>
+        <option icon="common/page" text="icon" value="xml/icon.xml"/>
+        <option icon="common/page" text="gallery" value="xml/gallery.xml"/>
+        <option icon="common/page" text="all" value="xml/all.xml"/>
         <option icon="common/page" text="toolbar" value="xml/toolbar.xml"/>
+        <option icon="common/page" text="list" value="xml/list.xml"/>
+        <option icon="common/page" text="columns" value="xml/columns.xml"/>
+        <option icon="common/page" text="layout" value="xml/layout.xml"/>
+        <option icon="common/page" text="graph" value="xml/graph.xml"/>
+        <option icon="common/page" text="structure" value="xml/structure.xml"/>
+        <option icon="common/page" text="picker" value="xml/picker.xml"/>
+        <option icon="common/page" text="calendar" value="xml/calendar.xml"/>
+        <option icon="common/page" text="timeline" value="xml/timeline.xml"/>
+        <option icon="common/page" text="form_objectinput" value="xml/form_objectinput.xml"/>
+        <option icon="common/page" text="dropdown" value="xml/dropdown.xml"/>
+        <option icon="common/page" text="rows" value="xml/rows.xml"/>
+        <option icon="common/page" text="foundation" value="xml/foundation.xml"/>
+        <option icon="common/page" text="media-simulator" value="xml/media-simulator.xml"/>
+        <option icon="common/page" text="links" value="xml/links.xml"/>
         <option icon="common/page" text="windows" value="xml/windows.xml"/>
+        <option icon="common/page" text="tiles" value="xml/tiles.xml"/>
+        <option icon="common/page" text="form" value="xml/form.xml"/>
+        <option icon="common/page" text="diagram" value="xml/diagram.xml"/>
+        <option icon="common/page" text="split" value="xml/split.xml"/>
+        <option icon="common/page" text="bar" value="xml/bar.xml"/>
+        <option icon="common/page" text="form_fieldset" value="xml/form_fieldset.xml"/>
+        <option icon="common/page" text="style" value="xml/style.xml"/>
+        <option icon="common/page" text="box" value="xml/box.xml"/>
+        <option icon="common/page" text="structure-plain" value="xml/structure-plain.xml"/>
+        <option icon="common/page" text="button" value="xml/button.xml"/>
+        <option icon="common/page" text="pages" value="xml/pages.xml"/>
     </option>
     <option icon="common/folder" text="Complete GUIs" value="Complete GUIs">
-        <option icon="common/page" text="animation" value="guis/animation.xml"/>
-        <option icon="common/page" text="articles" value="guis/articles.xml"/>
-        <option icon="common/page" text="competence" value="guis/competence.xml"/>
-        <option icon="common/page" text="editor_properties" value="guis/editor_properties.xml"/>
-        <option icon="common/page" text="login" value="guis/login.xml"/>
-        <option icon="common/page" text="model" value="guis/model.xml"/>
-        <option icon="common/page" text="object_finder" value="guis/object_finder.xml"/>
-        <option icon="common/page" text="objectchooser" value="guis/objectchooser.html"/>
+        <option icon="common/page" text="sites" value="guis/sites.xml"/>
         <option icon="common/page" text="person_part" value="guis/person_part.xml"/>
+        <option icon="common/page" text="login" value="guis/login.xml"/>
+        <option icon="common/page" text="animation" value="guis/animation.xml"/>
+        <option icon="common/page" text="model" value="guis/model.xml"/>
         <option icon="common/page" text="search_template" value="guis/search_template.xml"/>
         <option icon="common/page" text="section" value="guis/section.xml"/>
-        <option icon="common/page" text="sites" value="guis/sites.xml"/>
+        <option icon="common/page" text="editor_properties" value="guis/editor_properties.xml"/>
+        <option icon="common/page" text="object_finder" value="guis/object_finder.xml"/>
+        <option icon="common/page" text="articles" value="guis/articles.xml"/>
+        <option icon="common/page" text="integration" value="guis/integration.xml"/>
+        <option icon="common/page" text="objectchooser" value="guis/objectchooser.html"/>
+        <option icon="common/page" text="editor_panel" value="guis/editor_panel.xml"/>
+        <option icon="common/page" text="competence" value="guis/competence.xml"/>
     </option>
 </options>

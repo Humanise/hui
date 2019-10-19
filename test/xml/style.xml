@@ -29,7 +29,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
     </toolbar>
     <tabs>
       <tab title="Formula 1" padding="10">
-        <formula name="formula1">
+        <form name="formula1">
           <fields labels="above">
             <field label="Style length:">
               <style-length-input key="style" value="15px"/>
@@ -43,7 +43,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
             <button text="Annuller"/>
             <button text="Gem" highlighted="true"/>
           </buttons>
-        </formula>
+        </form>
         <segmented value="left" name="segmented">
           <option icon="edit/text_align_left" value="left"/>
           <option icon="edit/text_align_right" value="right"/>

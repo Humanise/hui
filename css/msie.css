@@ -4,16 +4,16 @@ div, h1, h2, h3, h4, h5, h6, ol, ul {
 div.hui_toolbar_icon div.hui_icon {
   margin: 0px; }
 
-form.hui_formula input.text, form.hui_formula textarea {
+form.hui_form input.text, form.hui_form textarea {
   text-indent: 0px; }
 
-form.hui_formula table.group label {
+form.hui_form table.group label {
   line-height: 16px; }
 
 table.hui_objectlist thead th.hui_objectlist {
   line-height: 11pt; }
 
-form.hui_formula .checkbox {
+form.hui_form .checkbox {
   padding: 2px 0px; }
 
 a.hui_button {

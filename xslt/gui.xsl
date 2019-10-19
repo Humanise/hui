@@ -2754,15 +2754,15 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
   </xsl:template>
 
-  <!--doc title:'Formula' class:'hui.ui.Formula' module:'input'
-  <formula name="«name»" state="«text»" padding="«pixels»">
+  <!--doc title:'Formula' class:'hui.ui.Form' module:'input'
+  <form name="«name»" state="«text»" padding="«pixels»">
       <fields···>
           ···
       </fields>
-  </formula>
+  </form>
   -->
-  <xsl:template match="gui:formula">
-    <form class="hui_formula hui_formula">
+  <xsl:template match="gui:form">
+    <form class="hui_form">
       <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="style">
         <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)">
@@ -2774,7 +2774,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </form>
     <script type="text/javascript">
       (function() {
-        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Formula({
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Form({
           element:'<xsl:call-template name="gui:id"/>',
           name:'<xsl:value-of select="@name"/>'
           <xsl:if test="@state">
@@ -2786,8 +2786,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </script>
   </xsl:template>
 
-  <xsl:template match="gui:formula//gui:header">
-    <div class="hui_formula_header"><xsl:apply-templates/></div>
+  <xsl:template match="gui:form//gui:header">
+    <div class="hui_form_header"><xsl:apply-templates/></div>
   </xsl:template>
 
   <!--doc title:'Fields' module:'input'
@@ -2798,13 +2798,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:fields">
     <xsl:choose>
       <xsl:when test="not(@labels='above')">
-        <table class="hui_formula_fields">
+        <table class="hui_form_fields">
           <xsl:call-template name="gui:id-attribute"/>
           <xsl:apply-templates/>
         </table>
       </xsl:when>
       <xsl:otherwise>
-        <div class="hui_formula_fields">
+        <div class="hui_form_fields">
           <xsl:call-template name="gui:id-attribute"/>
           <xsl:apply-templates/>
         </div>
@@ -2813,7 +2813,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <xsl:if test="@name">
     <script type="text/javascript">
       (function() {
-        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Formula.Fields({
+        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Form.Fields({
           element:'<xsl:call-template name="gui:id"/>',
           name:'<xsl:value-of select="@name"/>'
         });
@@ -2829,11 +2829,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </fieldset>
   -->
   <xsl:template match="gui:fieldset">
-    <div class="hui_formula_fieldset">
+    <div class="hui_form_fieldset">
       <xsl:if test="@top">
         <xsl:attribute name="style">margin-top: <xsl:value-of select="@top"/>px;</xsl:attribute>
       </xsl:if>
-      <div class="hui_formula_fieldset_legend"><xsl:value-of select="@legend"/></div>
+      <div class="hui_form_fieldset_legend"><xsl:value-of select="@legend"/></div>
       <xsl:apply-templates/>
     </div>
   </xsl:template>
@@ -2848,7 +2848,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </group>
   -->
   <xsl:template match="gui:fields/gui:field">
-    <tr class="hui_formula_field">
+    <tr class="hui_form_field">
         <xsl:attribute name="style">
           <xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state) or @visible='false'">
             <xsl:text>display:none;</xsl:text>
@@ -2862,19 +2862,19 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <th>
         <!--
         <xsl:if test="gui:text-input[not(@multiline='true') and not(@breaks='true')] | gui:dropdown | gui:checkbox | gui:datetime-input | gui:style-length-input | gui:number-input | gui:radiobuttons">
-          <xsl:attribute name="class">hui_formula_middle</xsl:attribute>
+          <xsl:attribute name="class">hui_form_middle</xsl:attribute>
         </xsl:if>-->
-        <label class="hui_formula_field_label"><xsl:value-of select="@label"/></label>
+        <label class="hui_form_field_label"><xsl:value-of select="@label"/></label>
       </th>
       <td>
         <xsl:apply-templates/>
-        <xsl:if test="@hint"><p class="hui_formula_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
+        <xsl:if test="@hint"><p class="hui_form_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
       </td>
     </tr>
       <xsl:if test="@name">
         <script type="text/javascript">
           (function() {
-            var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Formula.Field({
+            var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Form.Field({
               element:'<xsl:call-template name="gui:id"/>',
               name:'<xsl:value-of select="@name"/>'
               <xsl:if test="@state">
@@ -2894,13 +2894,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:field" name="gui:field">
     <div>
       <xsl:attribute name="class">
-        <xsl:text>hui_formula_field</xsl:text>
+        <xsl:text>hui_form_field</xsl:text>
       </xsl:attribute>
       <xsl:if test="@label">
-        <label class="hui_formula_field_label"><xsl:value-of select="@label"/></label>
+        <label class="hui_form_field_label"><xsl:value-of select="@label"/></label>
       </xsl:if>
       <xsl:apply-templates/>
-      <xsl:if test="@hint"><p class="hui_formula_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
+      <xsl:if test="@hint"><p class="hui_form_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
     </div>
   </xsl:template>
 

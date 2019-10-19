@@ -55,7 +55,7 @@
       var overflow = hui.ui.Overflow.create({height: 400});
       win.add(overflow);
       hui.each(this.components,function(component) {
-        var form = hui.ui.Formula.create();
+        var form = hui.ui.Form.create();
         form.buildGroup({above:false},[{
           type : 'DropDown', label: 'Display:', options : {key:'display', value:'', items:[
             {value:'',text:'Unchanged'}, {value:'block',text:'Block'}, {value:'flex',text:'Flex'}

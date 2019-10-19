@@ -5,7 +5,7 @@
     this.options = options;
     this.root = hui.get(options.root);
     this.window = null;
-    this.formula = null;
+    this.form = null;
     this.saveButton = null;
     this.deleteButton = null;
     this.cancelButton = null;
@@ -26,8 +26,8 @@
         if (hui.ui.is(cmp,hui.ui.Window)) {
           this.window = cmp;
         }
-        else if (hui.ui.is(cmp,hui.ui.Formula)) {
-          this.formula = cmp;
+        else if (hui.ui.is(cmp,hui.ui.Form)) {
+          this.form = cmp;
         }
         else if (hui.ui.is(cmp,hui.ui.Button)) {
           var role = cmp.getRole();
@@ -50,7 +50,7 @@
           self.end();
         }
       });
-      this.formula.listen({
+      this.form.listen({
         $submit : function() {
           self._save();
         }
@@ -69,13 +69,13 @@
     makeNew : function() {
       this._reset();
       this.window.show();
-      this.formula.focus();
+      this.form.focus();
       this.deleteButton.disable();
     },
     _save : function() {
       this.window.setBusy(true);
       var self = this;
-      var values = this.formula.getValues();
+      var values = this.form.getValues();
       if (this.objectId !== undefined) {
         values.id = this.objectId;
       }
@@ -91,7 +91,7 @@
       });
     },
     _reset : function() {
-      this.formula.reset();
+      this.form.reset();
       this.objectId = undefined;
     },
     _saveSuccess : function() {
@@ -112,10 +112,10 @@
         url : this.options.read.url,
         $object : function(obj) {
           self.objectId = obj.id;
-          self.formula.setValues(obj);
+          self.form.setValues(obj);
           self.deleteButton.setEnabled(true);
           self.window.show();
-          self.formula.focus();
+          self.form.focus();
         },
         $finally : function() {
           self.window.setBusy(false);
