@@ -12371,7 +12371,7 @@ hui.ui.Fragment.prototype = {
     hui.dom.runScripts(this.element);
     this.fireSizeChange();
   },
-  setContent : function(htmlWidgetOrNode) {
+  setContent : function(widgetOrNode) {
     this.element.innerHTML = '';
     this.add(widgetOrNode);
   },
