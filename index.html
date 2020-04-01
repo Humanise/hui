@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" class="hui"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Hmanise User Interface</title><meta http-equiv="X-UA-Compatible" content="IE=edge"></meta><link rel="stylesheet" href="../../../hui/bin/development.css" type="text/css" media="screen" title="no title" charset="utf-8"></link><!--[if IE 8]>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" class="hui"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Humanise User Interface</title><meta http-equiv="X-UA-Compatible" content="IE=edge"></meta><link rel="stylesheet" href="../../../hui/bin/development.css" type="text/css" media="screen" title="no title" charset="utf-8"></link><!--[if IE 8]>
         <link rel="stylesheet" type="text/css" href="../../../hui/css/msie8.css"> </link>
       <![endif]--><!--[if lt IE 7]>
         <link rel="stylesheet" type="text/css" href="../../../hui/css/msie6.css"> </link>
@@ -15,64 +15,77 @@
     <div class="logo"></div>
     <h1><span>Humanise</span> <span>User</span> <span>Interface</span></h1>
     <p>The common language of humans and machines</p>
-      <span id="id123456789idp140726345888936" class="hui_searchfield" style="width:200px;"><span class="hui_searchfield_placeholder"></span><a class="hui_searchfield_reset"></a><input class="hui_searchfield_input" type="text"></input></span><script type="text/javascript">
-      var id123456789idp140726345888936_obj = new hui.ui.SearchField({
-        element:'id123456789idp140726345888936',
+    <div style="margin: 30px 0">
+      <div id="id123456789idp140266947176416" class="hui_bar"><div class="hui_bar_left"><span class="hui_bar_flexible"></span><a id="id123456789idp140266947176960" class="hui_toolbar_icon"><span class="hui_icon" style="background-image: url('../../../hui/icons/common/info32.png');  background-image: -webkit-image-set(url('../../../hui/icons/common/info32.png') 1x, url('../../../hui/icons/common/info32x2.png') 2x);"></span><span class="hui_toolbar_icon_text">About</span></a><script type="text/javascript">
+      var id123456789idp140266947176960_obj = new hui.ui.Toolbar.Icon({
+        element : 'id123456789idp140266947176960',
+        name : ''
+        
+      });
+      id123456789idp140266947176960_obj.listen({$click:function() {document.location='https://www.humanise.dk/en/opensource/hui/'}});
+      </script><a id="id123456789idp140266947177984" class="hui_toolbar_icon"><span class="hui_icon" style="background-image: url('../../../hui/icons/common/play32.png');  background-image: -webkit-image-set(url('../../../hui/icons/common/play32.png') 1x, url('../../../hui/icons/common/play32x2.png') 2x);"></span><span class="hui_toolbar_icon_text">Demonstration</span></a><script type="text/javascript">
+      var id123456789idp140266947177984_obj = new hui.ui.Toolbar.Icon({
+        element : 'id123456789idp140266947177984',
+        name : ''
+        
+      });
+      id123456789idp140266947177984_obj.listen({$click:function() {document.location='demo/index.html'}});
+      </script><a id="id123456789idp140266947178992" class="hui_toolbar_icon"><span class="hui_icon" style="background-image: url('../../../hui/icons/common/lifebuoy32.png');  background-image: -webkit-image-set(url('../../../hui/icons/common/lifebuoy32.png') 1x, url('../../../hui/icons/common/lifebuoy32x2.png') 2x);"></span><span class="hui_toolbar_icon_text">JavaScript API</span></a><script type="text/javascript">
+      var id123456789idp140266947178992_obj = new hui.ui.Toolbar.Icon({
+        element : 'id123456789idp140266947178992',
+        name : ''
+        
+      });
+      id123456789idp140266947178992_obj.listen({$click:function() {document.location='api/index.html'}});
+      </script><a id="id123456789idp140266947180000" class="hui_toolbar_icon"><span class="hui_icon" style="background-image: url('../../../hui/icons/common/gauge32.png');  background-image: -webkit-image-set(url('../../../hui/icons/common/gauge32.png') 1x, url('../../../hui/icons/common/gauge32x2.png') 2x);"></span><span class="hui_toolbar_icon_text">Test site</span></a><script type="text/javascript">
+      var id123456789idp140266947180000_obj = new hui.ui.Toolbar.Icon({
+        element : 'id123456789idp140266947180000',
+        name : ''
+        
+      });
+      id123456789idp140266947180000_obj.listen({$click:function() {document.location='test/index.xml'}});
+      </script><a id="id123456789idp140266947181008" class="hui_toolbar_icon"><span class="hui_icon" style="background-image: url('../../../hui/icons/common/email32.png');  background-image: -webkit-image-set(url('../../../hui/icons/common/email32.png') 1x, url('../../../hui/icons/common/email32x2.png') 2x);"></span><span class="hui_toolbar_icon_text">Contact</span></a><script type="text/javascript">
+      var id123456789idp140266947181008_obj = new hui.ui.Toolbar.Icon({
+        element : 'id123456789idp140266947181008',
+        name : ''
+        
+      });
+      id123456789idp140266947181008_obj.listen({$click:function() {document.location='mailto:jonas@humanise.dk'}});
+      </script><span class="hui_bar_flexible"></span></div></div><script type="text/javascript">
+      var id123456789idp140266947176416_obj = new hui.ui.Bar({
+        element:'id123456789idp140266947176416',
+        name:''
+        
+      });
+      </script>
+    </div>
+    <span id="id123456789idp140266947182592" class="hui_searchfield" style="width:200px;"><span class="hui_searchfield_placeholder">Filter components</span><a class="hui_searchfield_reset"></a><input class="hui_searchfield_input" type="text"></input></span><script type="text/javascript">
+      var id123456789idp140266947182592_obj = new hui.ui.SearchField({
+        element:'id123456789idp140266947182592',
         name:'search'
         ,expandedWidth:300
       });
       
     if (window['search']===undefined) {
-      window['search'] = id123456789idp140726345888936_obj;
+      window['search'] = id123456789idp140266947182592_obj;
     }
   </script>
-      <div class="js-results"></div>
-    <div style="margin: 30px 0">
-      <a href="javascript://" id="id123456789idp140726345890904" class="hui_button">Demonstration</a><script type="text/javascript">
-      var id123456789idp140726345890904_obj = new hui.ui.Button({
-        element:'id123456789idp140726345890904'
-        
-      });
-      id123456789idp140726345890904_obj.listen({$click:function() {document.location='demo/index.html'}});
-      </script>
-      <a href="javascript://" id="id123456789idp140726345891640" class="hui_button">Test site</a><script type="text/javascript">
-      var id123456789idp140726345891640_obj = new hui.ui.Button({
-        element:'id123456789idp140726345891640'
-        
-      });
-      id123456789idp140726345891640_obj.listen({$click:function() {document.location='test/index.xml'}});
-      </script>
-      <a href="javascript://" id="id123456789idp140726345892376" class="hui_button">JavaScript API</a><script type="text/javascript">
-      var id123456789idp140726345892376_obj = new hui.ui.Button({
-        element:'id123456789idp140726345892376'
-        
-      });
-      id123456789idp140726345892376_obj.listen({$click:function() {document.location='api/index.html'}});
-      </script>
-      <a href="javascript://" id="id123456789idp140726345893112" class="hui_button">XML api</a><script type="text/javascript">
-      var id123456789idp140726345893112_obj = new hui.ui.Button({
-        element:'id123456789idp140726345893112'
-        
-      });
-      id123456789idp140726345893112_obj.listen({$click:function() {document.location='api/xml/index.html'}});
-      </script>
-    </div>
-  </div><div style="max-width: 700px; margin: 0 auto;">
-    <div id="id123456789idp140726345894680" class="hui_list"><div class="hui_list_spinner"></div><div class="hui_list_navigation"><div class="hui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="hui_list_count"></span></div><div class="hui_list_body"><table class="hui_list_table"><thead><tr></tr></thead><tbody class="hui_list_selectable"></tbody></table></div></div><script type="text/javascript">
-    var id123456789idp140726345894680_obj = new hui.ui.List({
-      element:'id123456789idp140726345894680',
+  </div><div style="max-width: 700px; margin: 20px auto;">
+    <div id="id123456789idp140266947184512" class="hui_list hui_list_light"><div class="hui_list_spinner"></div><div class="hui_list_navigation"><div class="hui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="hui_list_count"></span></div><div class="hui_list_body"><table class="hui_list_table"><thead><tr></tr></thead><tbody class="hui_list_selectable"></tbody></table></div></div><script type="text/javascript">
+    var id123456789idp140266947184512_obj = new hui.ui.List({
+      element:'id123456789idp140266947184512',
       name:'components',
       url:'',
       
       state:''
       
     });
-    with (id123456789idp140726345894680_obj) {
+    with (id123456789idp140266947184512_obj) {
       
     }
     
     if (window['components']===undefined) {
-      window['components'] = id123456789idp140726345894680_obj;
+      window['components'] = id123456789idp140266947184512_obj;
     }
   </script>
   </div></body></html>
