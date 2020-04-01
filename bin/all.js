@@ -1724,6 +1724,9 @@ hui.request = function(options) {
     headers : {Accept : 'application/json'}
   },options);
   var transport = new XMLHttpRequest();
+  if (options.credentials) {
+    transport.withCredentials = true;
+  }
   if (!transport) {return;}
   transport.onreadystatechange = function() {
     if (transport.readyState == 4) {
