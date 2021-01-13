@@ -2,6 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="test/xml/setup.xsl"?>
 <gui xmlns="uri:hui" title="Humanise User Interface" padding="10">
   <controller source="index.js"/>
+  <style url="https://fonts.googleapis.com/css2?family=Public+Sans:wght@200;400;700&amp;display=swap"/>
   <style url="index.css"/>
 
   <div class="main">

@@ -1,12 +1,12 @@
 hui.ui.listen({
   $ready : function() {
-    hui.build('link',{
-      //href : 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800',
-      href: 'https://rsms.me/inter/inter.css',
-      rel : 'stylesheet',
-      type : 'text/css',
-      parent : document.head
-    });
+    //hui.build('link',{
+    //  //href : 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800',
+    //  href: 'https://rsms.me/inter/inter.css',
+    //  rel : 'stylesheet',
+    //  type : 'text/css',
+    //  parent : document.head
+    //});
 
     hui.animate({
       node : hui.find('h1'),
