@@ -1,6 +1,19 @@
-div.hui_selection {
+.hui_selection {
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 0; }
+  .hui_selection_title {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 11px;
+    text-transform: uppercase;
+    margin: 10px 7px 5px;
+    letter-spacing: .5px; }
+  .hui_selection_badge {
+    float: right;
+    font-size: 11px;
+    margin-top: 2px;
+    margin-right: 3px;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.5); }
 
 .split_sidebar div.hui_selection {
   padding: 5px 0px; }
@@ -27,24 +40,8 @@ div.hui_selection_item span.hui_selection_label {
   padding: 1px 3px;
   vertical-align: middle; }
 
-strong.hui_selection_badge {
-  float: right;
-  background: #bcd;
-  color: #fff;
-  font-size: 11px;
-  padding: 0 4px;
-  border-radius: 7px;
-  min-width: 10px;
-  text-align: center;
-  height: 14px;
-  margin-top: 2px; }
-
-div.hui_selection:hover strong.hui_selection_badge {
-  background: #89b; }
-
-div.hui_selection div.hui_selected strong.hui_selection_badge {
-  background: #fff;
-  color: #3875d7; }
+.hui_selection .hui_selected .hui_selection_badge {
+  color: #fff; }
 
 .hui_selection_item:hover {
   background-color: #eee; }
@@ -72,17 +69,6 @@ div.hui_selection_inline div.hui_selected span.hui_selection_label {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   text-shadow: none; }
-
-.hui_selection_title {
-  background: url("../gfx/selection_separator.png") 3px 9px repeat-x;
-  color: #A0A9AF;
-  font-size: 13px;
-  margin: 3px 5px;
-  padding-left: 16px; }
-
-.hui_selection_title span {
-  background: #EBF0F7;
-  padding: 0px 4px; }
 
 .hui_selection div.hui_drop, .hui_selection div.hui_drop:hover {
   background: #779cd6 url("../gfx/hover_bg.png");

@@ -134,7 +134,9 @@ jsFiles = [
     'js/ObjectInput.js',
     'js/Rows.js',
     'js/Pages.js',
-    'js/Panel.js'
+    'js/Panel.js',
+    'js/Collection.js',
+    'js/Method.js'
 ]
 
 cssFiles = [
@@ -208,7 +210,8 @@ cssFiles = [
     'pages',
     'presentation',
     'objectlist',
-    'datetimeinput'
+    'datetimeinput',
+    'collection'
 ]
 
 print('Joining JavaScript')

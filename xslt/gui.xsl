@@ -192,7 +192,7 @@
 </xsl:template>
 
 <xsl:template name="gui:createobject">
-  <xsl:if test="@name and @name!='' and not(//gui:subgui[@globals='false'])">
+  <xsl:if test="@name and @name!='' and not(//gui:subgui[@globals='false']) and not(//gui:gui[@globals='false'])">
     if (window['<xsl:value-of select="@name"/>']===undefined) {
       window['<xsl:value-of select="@name"/>'] = <xsl:call-template name="gui:id"/>_obj;
     }
@@ -253,6 +253,18 @@
   </script>
 </xsl:template>
 
+<xsl:template match="gui:action">
+  <script type="text/javascript">
+    (function() {
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Action({
+        name : '<xsl:value-of select="@name"/>',
+        <xsl:if test="@method">,url:'<xsl:value-of select="@method"/>'</xsl:if>
+        <xsl:if test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:if>
+      });
+      <xsl:call-template name="gui:createobject"/>
+    })();
+  </script>
+</xsl:template>
 
 
 
@@ -319,7 +331,7 @@
     <xsl:choose>
       <xsl:when test="@on and @for">
         (function() {
-          hui.ui.listen({$<xsl:value-of select="@for"/>$<xsl:value-of select="@on"/>:function(event) {
+          hui.ui.listen({"$<xsl:value-of select="@for"/>$<xsl:value-of select="@on"/>":function(event) {
           <xsl:for-each select="gui:set">
             <xsl:for-each select="@*[not(name()='on')]">
               <xsl:value-of select="../@on"/>
@@ -581,7 +593,7 @@
     var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Selection.Items({
       element:'<xsl:call-template name="gui:id"/>'
       ,name:'<xsl:value-of select="@name"/>'
-      <xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
+      <xsl:if test="@source">,source:hui.ui.get('<xsl:value-of select="@source"/>')</xsl:if>
     });
     <xsl:call-template name="gui:createobject"/>
   </script>
@@ -593,6 +605,24 @@
 
 
 
+
+<xsl:template match="gui:collection">
+  <div>
+    <xsl:call-template name="gui:id-attribute"/>
+    <xsl:attribute name="class">
+      <xsl:text>hui_collection</xsl:text>
+    </xsl:attribute>
+  </div>
+  <script type="text/javascript">
+    (function() {
+    var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Collection({
+      element:'<xsl:call-template name="gui:id"/>',
+      name:'<xsl:value-of select="@name"/>'
+    });
+    <xsl:call-template name="gui:createobject"/>
+    })();
+  </script>
+</xsl:template>
 
 
 <!--doc title:'List' class:'hui.ui.List' module:'selection'
@@ -648,11 +678,12 @@
     </div>
   </div>
   <script type="text/javascript">
+    (function() {
     var <xsl:call-template name="gui:id"/>_obj = new hui.ui.List({
       element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>',
       url:'<xsl:value-of select="@url"/>',
-      <xsl:if test="@source">source:<xsl:value-of select="@source"/>,</xsl:if>
+      <xsl:if test="@source">source:hui.ui.get('<xsl:value-of select="@source"/>'),</xsl:if>
       <xsl:if test="@selectable">selectable:<xsl:value-of select="@selectable"/>,</xsl:if>
       state:'<xsl:value-of select="@state"/>'
       <xsl:if test="gui:window/@size">,windowSize:<xsl:value-of select="gui:window/@size"/></xsl:if>
@@ -666,6 +697,7 @@
       </xsl:for-each>
     }
     <xsl:call-template name="gui:createobject"/>
+    })();
   </script>
 </xsl:template>
 
@@ -875,6 +907,7 @@
     <xsl:if test="not(@closable='false')">
       <div class="hui_panel_close"><xsl:comment/></div>
     </xsl:if>
+    <div class="hui_panel_arrow"><xsl:comment/></div>
     <div class="hui_panel_titlebar">
       <xsl:if test="@icon">
         <span class="hui_icon hui_icon_16 hui_panel_icon">
@@ -3437,6 +3470,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
           <xsl:comment/>
         </span></xsl:if>
       <xsl:value-of select="@title"/><xsl:value-of select="@text"/>
+      <xsl:comment/>
     </a>
     <script type="text/javascript">
       var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Button({

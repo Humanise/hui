@@ -1,6 +1,6 @@
 # Humansie User Interface
 
-A library for web user interfaces developed by [Humanise](http://www.humanise.dk)
+A library for web user interfaces developed by [Humanise](https://www.humanise.dk)
 
 ## Development
 
@@ -10,7 +10,7 @@ A library for web user interfaces developed by [Humanise](http://www.humanise.dk
 
 **Build everything**
 
-    grunt build
+	grunt build
 
 **Run all unit tests**
 
@@ -19,3 +19,7 @@ A library for web user interfaces developed by [Humanise](http://www.humanise.dk
 **Run a single unit tests**
 
 	grunt test:color
+
+**Compile front page**
+
+	xsltproc index.xml > index.html

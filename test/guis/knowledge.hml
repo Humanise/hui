@@ -1,0 +1,137 @@
+ui title:Skeleton adaptive {
+
+  controller #controller url:knowledge.js
+  source #tagsSource url:data/languages.xml
+  source #list-source url:data/knowledge_list.json
+
+  method #update method=post" url=""
+
+  style {
+    .article {
+      padding: 15px;
+      font-family: Georgia;
+    }
+    .article_header {
+      font-weight: normal; margin: 0;
+    }
+    .header {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .header_title {
+      overflow: hidden;
+      font-family: Georgia;
+      font-size: 24px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  listen for="select" on="selection" {
+    foundation.submerge();
+  }
+
+  listen for="select" on="typeSelection" {
+    foundation.submerge();
+  }
+  listen for:click on:add-button {
+    #add-panel.show({target: #add-button.element})
+  }
+
+  foundation name="foundation" {
+    navigation {
+      overflow {
+        selection value="everything" name="selection" {
+          option icon:common/search text:Everything value:everything
+          option icon:common/search text:Inbox value:inbox
+          option icon:common/search text:Archive value:archive
+          option icon:common/search text:Favorites value:favorites
+        }
+      <selection value="any" name="typeSelection">
+        <title>Types</title>
+        <option icon="common/search" text="Any" value="any"/>
+        <option icon="common/search" text="Pages" value="pages"/>
+        <option icon="common/search" text="Statements" value="statements"/>
+        <option icon="common/search" text="Questions" value="questions"/>
+        <option icon="common/search" text="Hypothesis" value="hypothesis"/>
+      </selection>
+      <selection value="user" name="tagSelection">
+        <title>Tags</title>
+        <options source="tagsSource"/>
+      </selection>
+      </overflow>
+    </navigation>
+    results {
+      bar variant:layout {
+        searchfield adaptive
+      }
+      overflow {
+        <collection name="stuff" source="listSource"/>
+        <list name="list" url="data/list_pages.xml" variant="light"/>
+      }
+    }
+    <actions>
+      <bar>
+        <button #add-button text:Add small click:#add-panel.show(target: this)
+        <dropdown small="true">
+          <option text="Hello"/>
+        </dropdown>
+        <button icon="common/new"/>
+        <button icon="common/search"/>
+        <button symbol="add"/>
+        <symbol name="add"/>
+        <flexible/>
+        <segmented>
+          <option text="Text"/>
+          <option text="Formatted"/>
+          <option text="Web"/>
+        </segmented>
+        <!--
+        <symbol name="info"/>
+        <symbol name="gear"/>
+        <symbol name="more"/>
+        -->
+      </bar>
+    </actions>
+    <content>
+      <div class="header">
+        <div class="header_title">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+      </div>
+      <overflow shadow-variant="white">
+        <div class="article">
+          <h1 class="article_header">This is the content</h1>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+      </overflow>
+    </content>
+    <details>
+      <form padding="10">
+        <fields labels="above">
+          <field label="Title">
+            <text-input/>
+          </field>
+          <field label="Authors">
+            <object-input/>
+          </field>
+        </fields>
+      </form>
+    </details>
+  </foundation>
+
+  <panel name="add-panel" width="200" padding="10">
+    <form>
+      <fields labels="above">
+        <field label="Text or URL:">
+          <text-input breaks="true"/>
+        </field>
+      </fields>
+    </form>
+  </panel>
+</gui>

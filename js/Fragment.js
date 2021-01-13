@@ -20,14 +20,18 @@ hui.ui.Fragment.prototype = {
     hui.ui.callVisible(this);
   },
   setHTML : function(html) {
-    hui.ui.destroyDescendants(this.element);
+    this.clear();
     this.element.innerHTML = html;
     hui.dom.runScripts(this.element);
     this.fireSizeChange();
   },
   setContent : function(widgetOrNode) {
-    this.element.innerHTML = '';
+    this.clear();
     this.add(widgetOrNode);
+  },
+  clear : function() {
+    hui.ui.destroyDescendants(this.element);
+    this.element.innerHTML = '';
   },
   add : function(widgetOrNode) {
     this.element.appendChild(widgetOrNode.element ? widgetOrNode.element : widgetOrNode);

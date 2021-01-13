@@ -12369,14 +12369,18 @@ hui.ui.Fragment.prototype = {
     hui.ui.callVisible(this);
   },
   setHTML : function(html) {
-    hui.ui.destroyDescendants(this.element);
+    this.clear();
     this.element.innerHTML = html;
     hui.dom.runScripts(this.element);
     this.fireSizeChange();
   },
   setContent : function(widgetOrNode) {
-    this.element.innerHTML = '';
+    this.clear();
     this.add(widgetOrNode);
+  },
+  clear : function() {
+    hui.ui.destroyDescendants(this.element);
+    this.element.innerHTML = '';
   },
   add : function(widgetOrNode) {
     this.element.appendChild(widgetOrNode.element ? widgetOrNode.element : widgetOrNode);
@@ -17838,4 +17842,47 @@ hui.ui.Pages.prototype = {
   hui.define('hui.ui.Panel', hui.ui.Panel);
 
 })(hui.ui.Component);
+
+/**
+ * A collection of objects
+ * @constructor
+ * @param {Object} options The options
+ */
+hui.ui.Collection = function(options) {
+  this.options = hui.override({
+  }, options);
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  if (this.options.source) {
+    this.options.source.listen(this);
+  }
+  hui.ui.extend(this);
+};
+
+/**
+ * Creates a new instance of a collection
+ */
+hui.ui.Collection.create = function(options) {
+  options = hui.override({
+  }, options);
+
+  var element = options.element = hui.build('div', {
+    'class': 'hui_collection'
+  });
+  return obj;
+};
+
+hui.ui.Collection.prototype = {
+  setData : function() {
+    
+  },
+  _rebuild : function() {
+    
+  },
+  $$objectsLoaded : function(objects) {
+    console.log(objects)
+  }
+};
+
+
 
