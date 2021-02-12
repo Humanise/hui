@@ -12,11 +12,13 @@ hui.ui.Fragment = function(options) {
 
 hui.ui.Fragment.prototype = {
   show : function() {
-    this.element.style.display='block';
-    hui.ui.callVisible(this);
+    this.setVisible(true);
   },
   hide : function() {
-    this.element.style.display='none';
+    this.setVisible(false);
+  },
+  setVisible : function(visible) {
+    this.element.style.display = visible ? 'block' : 'none';
     hui.ui.callVisible(this);
   },
   setHTML : function(html) {

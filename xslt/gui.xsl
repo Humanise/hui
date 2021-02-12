@@ -612,6 +612,8 @@
     <xsl:attribute name="class">
       <xsl:text>hui_collection</xsl:text>
     </xsl:attribute>
+    <xsl:apply-templates select="gui:empty"/>
+    <div class="hui_collection_body"><xsl:comment/></div>
   </div>
   <script type="text/javascript">
     (function() {
@@ -624,6 +626,12 @@
   </script>
 </xsl:template>
 
+<xsl:template match="gui:collection/gui:empty">
+  <div class="hui_collection_empty">
+    <xsl:apply-templates/>
+    <xsl:comment/>
+  </div>
+</xsl:template>
 
 <!--doc title:'List' class:'hui.ui.List' module:'selection'
 <list name="«text»" state="«text»" url="«url»" source="«source»" selectable="«boolean»">
@@ -928,6 +936,7 @@
     var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Panel({
       element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>'
+      <xsl:if test="@auto-hide='true'">,autoHide: true</xsl:if>
     });
     <xsl:call-template name="gui:createobject"/>
   </script>
@@ -3469,6 +3478,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
           </xsl:attribute>
           <xsl:comment/>
         </span></xsl:if>
+        <xsl:if test="@symbol">
+          <xsl:call-template name="gui:symbol">
+            <xsl:with-param name="name"><xsl:value-of select="@symbol"/></xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
       <xsl:value-of select="@title"/><xsl:value-of select="@text"/>
       <xsl:comment/>
     </a>

@@ -52,6 +52,9 @@
     background-size: contain;
     top: 2px;
     left: 2px; }
+  .hui_checkbox-disabled {
+    opacity: .5;
+    cursor: default; }
 
 .hui_checkbox + .hui_checkbox,
 .hui_checkbox + script + .hui_checkbox {

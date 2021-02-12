@@ -120,22 +120,25 @@
         this._ensureInView();
       }
     },
-    show : function(options) {
-      var element = this.element;
-      options = options || {};
-      this._target = options.target;
-      this._adjustSize();
+    _placeOnTop : function() {
       if (this.visible) {
-        hui.style.set(element,{
+        hui.style.set(this.element,{
           zIndex : hui.ui.nextPanelIndex()
         });
       } else {
-        hui.style.set(element,{
+        hui.style.set(this.element,{
           zIndex : hui.ui.nextPanelIndex(),
           visibility : 'hidden',
           display : 'block'
         });
       }
+    },
+    show : function(options) {
+      var element = this.element;
+      options = options || {};
+      this._target = options.target;
+      this._adjustSize();
+      this._placeOnTop();
       if (this._target) {
         if (!this.visible) {
           this._positionAtTarget();
@@ -199,9 +202,12 @@
         width: this.element.clientWidth,
         height: this.element.clientHeight
       };
-      var target = hui.position.get(this._target);
-      target.height = this._target.offsetHeight || this._target.clientHeight;
-      target.width = this._target.offsetWidth || this._target.clientWidth;
+      var target = this._target;
+      if (target.nodeType===1) {
+        target = hui.position.get(this._target);
+        target.height = this._target.offsetHeight || this._target.clientHeight;
+        target.width = this._target.offsetWidth || this._target.clientWidth;
+      }
       var view = {
         height: hui.window.getViewHeight(),
         width: hui.window.getViewWidth(),

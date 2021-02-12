@@ -15,7 +15,7 @@
  * @constructor
  */
 hui.ui.TextInput = function(options) {
-  this.options = hui.override({key:null,lines:1,maxHeight:100,animateUserChange:true},options);
+  this.options = hui.override({key:null,lines:1,maxHeight:100,animateUserChange:true,submitOnEnter:null},options);
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
@@ -104,12 +104,14 @@ hui.ui.TextInput.prototype = {
     hui.cls.set(this.element,'hui_field_dirty',this.value.length>0);
   },
   _onKeyDown : function(e) {
-    if (!this.multiline && e.keyCode === 13) {
+    if (e.keyCode === 13) {
+      if (this.multiline && !(e.ctrlKey || e.metaKey)) {
+        return;
+      }
       hui.stop(e);
       this.fire('submit');
       var form = hui.ui.getAncestor(this,'hui_form');
       if (form) {form.submit();}
-      return;
     }
   },
   _onChange : function(e) {

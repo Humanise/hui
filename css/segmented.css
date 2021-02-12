@@ -26,6 +26,8 @@
   .hui_segmented_text {
     font-size: 12px;
     padding: 0 4px; }
+  .hui_segmented.hui-is-disabled {
+    opacity: .5; }
   .hui_segmented-standard {
     border-radius: 3px;
     background: #fff;

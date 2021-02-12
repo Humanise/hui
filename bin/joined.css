@@ -363,6 +363,12 @@ span.hui_disclosure_open:hover {
   .hui_button_icon_notext {
     margin: 4px -3px 0px -3px; }
 
+.hui_button > .hui_symbol {
+  width: 12px;
+  height: 12px;
+  margin: 0 -2px;
+  vertical-align: top; }
+
 .hui_button_light {
   border: 1px solid #ddd;
   border-radius: 3px;
@@ -3687,6 +3693,8 @@ div.hui_videoplayer_placeholder:hover span.hui_videoplayer_placeholder_info stro
   .hui_segmented_text {
     font-size: 12px;
     padding: 0 4px; }
+  .hui_segmented.hui-is-disabled {
+    opacity: .5; }
   .hui_segmented-standard {
     border-radius: 3px;
     background: #fff;
@@ -4301,6 +4309,9 @@ div.hui_colorpicker_swatches a {
     background-size: contain;
     top: 2px;
     left: 2px; }
+  .hui_checkbox-disabled {
+    opacity: .5;
+    cursor: default; }
 
 .hui_checkbox + .hui_checkbox,
 .hui_checkbox + script + .hui_checkbox {

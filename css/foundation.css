@@ -314,6 +314,8 @@
     display: block; } }
 
 @media screen and (min-width: 1400px) {
+  .hui_foundation.hui-is-details-open .hui_foundation_actions {
+    padding-right: 0; }
   .hui_foundation.hui-is-details-open .hui_foundation_details {
     width: 20%;
     box-shadow: none; }

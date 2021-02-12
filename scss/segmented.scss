@@ -39,6 +39,10 @@
     padding: 0 4px;
   }
 
+  &.hui-is-disabled {
+    opacity: .5;
+  }
+
   /* Standard variant */
 
   &-standard {

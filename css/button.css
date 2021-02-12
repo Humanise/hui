@@ -105,6 +105,12 @@
   .hui_button_icon_notext {
     margin: 4px -3px 0px -3px; }
 
+.hui_button > .hui_symbol {
+  width: 12px;
+  height: 12px;
+  margin: 0 -2px;
+  vertical-align: top; }
+
 .hui_button_light {
   border: 1px solid #ddd;
   border-radius: 3px;

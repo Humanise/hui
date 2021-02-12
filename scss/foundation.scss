@@ -400,6 +400,10 @@
 
     &.hui-is-details-open & {
 
+      &_actions {
+        padding-right: 0;
+      }
+
       &_details {
         width: 20%;
         box-shadow: none;

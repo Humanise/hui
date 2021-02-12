@@ -6,6 +6,7 @@ hui.ui.Checkbox = function(o) {
   this.element = hui.get(o.element);
   this.control = hui.get.firstByTag(this.element,'span');
   this.options = o;
+  this.enabled = true;
   this.name = o.name;
   this.value = o.value==='true' || o.value===true;
   hui.ui.extend(this);
@@ -36,6 +37,7 @@ hui.ui.Checkbox.prototype = {
   },
   _click : function(e) {
     hui.stop(e);
+    if (!this.enabled) { return }
     this.element.focus();
     this.value = !this.value;
     this._updateUI();
@@ -44,7 +46,8 @@ hui.ui.Checkbox.prototype = {
     hui.ui.firePropertyChange(this,'value',this.value);
   },
   _updateUI : function() {
-    hui.cls.set(this.element,'hui_checkbox_selected',this.value);
+    hui.cls.set(this.element, 'hui_checkbox_selected', this.value);
+    hui.cls.set(this.element, 'hui_checkbox-disabled', !this.enabled);
   },
   /** Sets the value
    * @param {Boolean} value Whether the checkbox is checked
@@ -58,6 +61,13 @@ hui.ui.Checkbox.prototype = {
    */
   getValue : function() {
     return this.value;
+  },
+  /** Enables or disables the button
+   * @param enabled {Boolean} If the button should be enabled
+   */
+  setEnabled : function(enabled) {
+    this.enabled = enabled;
+    this._updateUI();
   },
   /** Resets the checkbox */
   reset : function() {

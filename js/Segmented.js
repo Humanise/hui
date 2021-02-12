@@ -7,6 +7,10 @@ hui.ui.Segmented = function(options) {
   this.element = hui.get(options.element);
   this.name = options.name;
   this.value = this.options.value;
+  this.state = {
+    enabled: true,
+    visible: true
+  };
   hui.ui.extend(this);
   hui.listen(this.element,'click',this._click.bind(this));
 };
@@ -33,6 +37,7 @@ hui.ui.Segmented.create = function(options) {
 
 hui.ui.Segmented.prototype = {
   _click : function(e) {
+    if (!this.enabled) { return; }
     e = new hui.Event(e);
     var a = e.findByTag('a');
     if (a) {
@@ -55,6 +60,19 @@ hui.ui.Segmented.prototype = {
         this.fireValueChange();
       }
     }
+  },
+  _draw : function() {
+    var state = this.state, element = this.element;
+    hui.cls.set(element,'hui-is-disabled', !state.enabled);
+    element.style.display = state.visible ? '' : 'none';
+  },
+  setEnabled : function(enabled) {
+    this.state.enabled = enabled;
+    this._draw();
+  },
+  setVisible : function(visible) {
+    this.state.visible = visible;
+    this._draw();
   },
   setValue : function(value) {
     if (value===undefined) {

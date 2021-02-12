@@ -12361,11 +12361,13 @@ hui.ui.Fragment = function(options) {
 
 hui.ui.Fragment.prototype = {
   show : function() {
-    this.element.style.display='block';
-    hui.ui.callVisible(this);
+    this.setVisible(true);
   },
   hide : function() {
-    this.element.style.display='none';
+    this.setVisible(false);
+  },
+  setVisible : function(visible) {
+    this.element.style.display = visible ? 'block' : 'none';
     hui.ui.callVisible(this);
   },
   setHTML : function(html) {
@@ -13027,6 +13029,10 @@ hui.ui.Segmented = function(options) {
   this.element = hui.get(options.element);
   this.name = options.name;
   this.value = this.options.value;
+  this.state = {
+    enabled: true,
+    visible: true
+  };
   hui.ui.extend(this);
   hui.listen(this.element,'click',this._click.bind(this));
 };
@@ -13053,6 +13059,7 @@ hui.ui.Segmented.create = function(options) {
 
 hui.ui.Segmented.prototype = {
   _click : function(e) {
+    if (!this.enabled) { return; }
     e = new hui.Event(e);
     var a = e.findByTag('a');
     if (a) {
@@ -13075,6 +13082,19 @@ hui.ui.Segmented.prototype = {
         this.fireValueChange();
       }
     }
+  },
+  _draw : function() {
+    var state = this.state, element = this.element;
+    hui.cls.set(element,'hui-is-disabled', !state.enabled);
+    element.style.display = state.visible ? '' : 'none';
+  },
+  setEnabled : function(enabled) {
+    this.state.enabled = enabled;
+    this._draw();
+  },
+  setVisible : function(visible) {
+    this.state.visible = visible;
+    this._draw();
   },
   setValue : function(value) {
     if (value===undefined) {
@@ -15017,6 +15037,7 @@ hui.ui.Checkbox = function(o) {
   this.element = hui.get(o.element);
   this.control = hui.get.firstByTag(this.element,'span');
   this.options = o;
+  this.enabled = true;
   this.name = o.name;
   this.value = o.value==='true' || o.value===true;
   hui.ui.extend(this);
@@ -15047,6 +15068,7 @@ hui.ui.Checkbox.prototype = {
   },
   _click : function(e) {
     hui.stop(e);
+    if (!this.enabled) { return }
     this.element.focus();
     this.value = !this.value;
     this._updateUI();
@@ -15055,7 +15077,8 @@ hui.ui.Checkbox.prototype = {
     hui.ui.firePropertyChange(this,'value',this.value);
   },
   _updateUI : function() {
-    hui.cls.set(this.element,'hui_checkbox_selected',this.value);
+    hui.cls.set(this.element, 'hui_checkbox_selected', this.value);
+    hui.cls.set(this.element, 'hui_checkbox-disabled', !this.enabled);
   },
   /** Sets the value
    * @param {Boolean} value Whether the checkbox is checked
@@ -15069,6 +15092,13 @@ hui.ui.Checkbox.prototype = {
    */
   getValue : function() {
     return this.value;
+  },
+  /** Enables or disables the button
+   * @param enabled {Boolean} If the button should be enabled
+   */
+  setEnabled : function(enabled) {
+    this.enabled = enabled;
+    this._updateUI();
   },
   /** Resets the checkbox */
   reset : function() {
@@ -15540,7 +15570,7 @@ hui.ui.NumberInput.prototype = {
  * @constructor
  */
 hui.ui.TextInput = function(options) {
-  this.options = hui.override({key:null,lines:1,maxHeight:100,animateUserChange:true},options);
+  this.options = hui.override({key:null,lines:1,maxHeight:100,animateUserChange:true,submitOnEnter:null},options);
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
@@ -15629,12 +15659,14 @@ hui.ui.TextInput.prototype = {
     hui.cls.set(this.element,'hui_field_dirty',this.value.length>0);
   },
   _onKeyDown : function(e) {
-    if (!this.multiline && e.keyCode === 13) {
+    if (e.keyCode === 13) {
+      if (this.multiline && !(e.ctrlKey || e.metaKey)) {
+        return;
+      }
       hui.stop(e);
       this.fire('submit');
       var form = hui.ui.getAncestor(this,'hui_form');
       if (form) {form.submit();}
-      return;
     }
   },
   _onChange : function(e) {
@@ -17600,22 +17632,25 @@ hui.ui.Pages.prototype = {
         this._ensureInView();
       }
     },
-    show : function(options) {
-      var element = this.element;
-      options = options || {};
-      this._target = options.target;
-      this._adjustSize();
+    _placeOnTop : function() {
       if (this.visible) {
-        hui.style.set(element,{
+        hui.style.set(this.element,{
           zIndex : hui.ui.nextPanelIndex()
         });
       } else {
-        hui.style.set(element,{
+        hui.style.set(this.element,{
           zIndex : hui.ui.nextPanelIndex(),
           visibility : 'hidden',
           display : 'block'
         });
       }
+    },
+    show : function(options) {
+      var element = this.element;
+      options = options || {};
+      this._target = options.target;
+      this._adjustSize();
+      this._placeOnTop();
       if (this._target) {
         if (!this.visible) {
           this._positionAtTarget();
@@ -17679,9 +17714,12 @@ hui.ui.Pages.prototype = {
         width: this.element.clientWidth,
         height: this.element.clientHeight
       };
-      var target = hui.position.get(this._target);
-      target.height = this._target.offsetHeight || this._target.clientHeight;
-      target.width = this._target.offsetWidth || this._target.clientWidth;
+      var target = this._target;
+      if (target.nodeType===1) {
+        target = hui.position.get(this._target);
+        target.height = this._target.offsetHeight || this._target.clientHeight;
+        target.width = this._target.offsetWidth || this._target.clientWidth;
+      }
       var view = {
         height: hui.window.getViewHeight(),
         width: hui.window.getViewWidth(),
@@ -17843,46 +17881,80 @@ hui.ui.Pages.prototype = {
 
 })(hui.ui.Component);
 
-/**
- * A collection of objects
- * @constructor
- * @param {Object} options The options
- */
-hui.ui.Collection = function(options) {
-  this.options = hui.override({
-  }, options);
-  this.element = hui.get(options.element);
-  this.name = options.name;
-  if (this.options.source) {
-    this.options.source.listen(this);
-  }
-  hui.ui.extend(this);
-};
+(function (_super) {
+  /**
+   * A collection of objects
+   * @constructor
+   * @param {Object} options The options
+   */
+  hui.ui.Collection = function(options) {
+    _super.call(this, options);
+    if (options && options.source) {
+      options.source.listen(this);
+    }
+    this.data = [];
+    this.items = [];
+    this._attach();
+  };
 
-/**
- * Creates a new instance of a collection
- */
-hui.ui.Collection.create = function(options) {
-  options = hui.override({
-  }, options);
+  /**
+   * Creates a new instance of a collection
+   */
+  hui.ui.Collection.create = function(options) {
+    options = hui.override({}, options);
+    options.element = hui.build('div', {
+      'class': 'hui_collection',
+      html: '<div class="hui_collection_body"></div>'
+    });
+    return new hui.ui.Collection(options);
+  };
 
-  var element = options.element = hui.build('div', {
-    'class': 'hui_collection'
-  });
-  return obj;
-};
+  hui.ui.Collection.prototype = {
+    nodes : {
+      body : '.hui_collection_body',
+      empty : '.hui_collection_empty',
+    },
+    _attach : function() {
+      hui.listen(this.element, 'click', this._click.bind(this));
+    },
+    setData : function(data) {
+      this.data = data;
+      this._clear();
+      this.items = [];
+      for (var i = 0; i < data.length; i++) {
+        var node = hui.build('div.hui_collection_item');
+        var rendition = hui.ui.callDelegates(this, 'render', data[i]);
+        if (rendition) {
+          node.appendChild(rendition);
+        }
+        this.items.push(node);
+        this.nodes.body.appendChild(node);
+      }
+      this.nodes.body.style.display = this.items.length ? '' : 'none';
+      if (this.nodes.empty) {
+        this.nodes.empty.style.display = this.items.length ? 'none' : '';      
+      }
+    },
+    _clear : function() {
+      hui.ui.destroyDescendants(this.body);
+      this.nodes.body.innerHTML = '';
+    },
+    $$objectsLoaded : function(objects) {
+      this.setData(objects)
+    },
+    _click : function(e) {
+      e = hui.event(e);
+      var item = e.closest('.hui_collection_item');
+      if (item) {
+        var idx = this.items.indexOf(item);
+        this.fire('select', {data: this.data[idx]});
+      }
+    }
+  };
 
-hui.ui.Collection.prototype = {
-  setData : function() {
-    
-  },
-  _rebuild : function() {
-    
-  },
-  $$objectsLoaded : function(objects) {
-    console.log(objects)
-  }
-};
+  hui.extend(hui.ui.Collection, _super);
+
+})(hui.ui.Component);
 
 
 
