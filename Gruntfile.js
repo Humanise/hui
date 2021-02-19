@@ -118,26 +118,38 @@ module.exports = function(grunt) {
         }
       }
     },
-    typescript: {
-      base: {
-        src: ['ts/**/*.ts'],
-        dest: 'js/ts',
-        options: {
-          module: 'amd', //or commonjs
-          target: 'es3', //or es3
-          basePath: 'ts',
-          sourceMap: true,
-          declaration: true
-        }
+    ts: {
+      default : {
+        src: ["ts/*.ts", "!node_modules/**"],
+        dest: 'ts',
+        rootDir: 'ts'
       }
     },
     jsbeautifier : {
-        files : ["js/Alert.js", "js/Bar.js", "js/BoundPanel.js", "js/DropDown.js", "js/VideoPlayer.js"],
-        options : {
-          js: {
-            indentSize: 2
+      files : ["js/Alert.js", "js/Bar.js", "js/BoundPanel.js", "js/DropDown.js", "js/VideoPlayer.js"],
+      options : {
+        js: {
+          indentSize: 2
+        }
+      }
+    },
+    connect: {
+      server: {
+        options: {
+          port: 8888,
+          base: '../',
+          keepalive: !true,
+          middleware: function(connect, options, middlewares) {
+            // inject a custom middleware into the array of default middlewares
+            middlewares.unshift(function(req, res, next) {
+              req.method = 'GET';
+              return next();
+            });
+
+            return middlewares;
           }
         }
+      }
     }
   });
 
@@ -150,8 +162,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-typescript');
   grunt.loadNpmTasks("grunt-jsbeautifier");
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-ts');
 
   // Default task(s).
   grunt.registerTask('default', 'Watch', ['sass','watch']);
@@ -161,12 +174,13 @@ module.exports = function(grunt) {
   grunt.registerTask('doc', 'Build', ['jsdoc']);
 
   grunt.registerTask('test', 'Run tests', function(testname) {
+    grunt.task.run('connect');
     var tests = grunt.file.expand('test/unittests/*.html');
     if (!!testname) {
       tests = ['test/unittests/' + testname + '.html'];
     }
     for (var i = 0; i < tests.length; i++) {
-      tests[i] = 'http://hui.local/hui/' + tests[i];
+      tests[i] = 'http://0.0.0.0:8888/hui/' + tests[i];
     }
     grunt.config('qunit.live.options.urls', tests);
     grunt.task.run('qunit:live');

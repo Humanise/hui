@@ -26,6 +26,7 @@ hui.ui.listen({
   _loadInfo : function() {
     hui.ui.request({
       url: 'info/info.json',
+      method: 'GET',
       $object : function(obj) {
         this._buildData(obj)
       }.bind(this)
