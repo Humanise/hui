@@ -3745,7 +3745,11 @@
       "js": {
         "name": null
       },
-      "xsl": []
+      "xsl": [
+        {
+          "match": "collection/empty"
+        }
+      ]
     },
     {
       "xml": {
@@ -4514,6 +4518,17 @@
         "attributes": []
       },
       "js": {
+        "name": "Collection"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
         "name": "ColorPicker"
       },
       "xsl": []
@@ -4701,6 +4716,17 @@
         "attributes": []
       },
       "js": {
+        "name": "Method"
+      },
+      "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
         "name": "ModelEditor"
       },
       "xsl": []
@@ -4814,6 +4840,36 @@
         "name": "VideoPlayer"
       },
       "xsl": []
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "action"
+        }
+      ]
+    },
+    {
+      "xml": {
+        "name": null,
+        "_type": null,
+        "attributes": []
+      },
+      "js": {
+        "name": null
+      },
+      "xsl": [
+        {
+          "match": "collection"
+        }
+      ]
     },
     {
       "xml": {
@@ -4952,6 +5008,12 @@
     }
   ],
   "stray": [
+    {
+      "match": "action"
+    },
+    {
+      "match": "collection"
+    },
     {
       "match": "a"
     },

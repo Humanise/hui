@@ -1,76 +1,47 @@
-/**
- * A check box
- * @constructor
- */
-hui.ui.Checkbox = function(o) {
-  this.element = hui.get(o.element);
-  this.control = hui.get.firstByTag(this.element,'span');
-  this.options = o;
-  this.enabled = true;
-  this.name = o.name;
-  this.value = o.value==='true' || o.value===true;
-  hui.ui.extend(this);
-  this._attach();
-};
-
-/**
- * Creates a new checkbox
- */
-hui.ui.Checkbox.create = function(options) {
-  var e = options.element = hui.build('a.hui_checkbox',{href: '#', html: '<span class="hui_checkbox_button"></span>'});
-  if (options.value) {
-    hui.cls.add(e, 'hui_checkbox_selected');
-  }
-  if (options.testName) {
-    e.setAttribute('data-test', options.testName);
-  }
-  if (options.label) {
-    hui.build('span.hui_checkbox_label',{parent: e, text: hui.ui.getTranslated(options.label)});
-  }
-  return new hui.ui.Checkbox(options);
-};
-
-hui.ui.Checkbox.prototype = {
-  _attach : function() {
-    hui.ui.addFocusClass({element:this.element,'class':'hui_checkbox_focused'});
-    hui.listen(this.element,'click',this._click.bind(this));
+hui.component('Checkbox', {
+  with: [
+    'value', 'enabled', 'key'
+  ],
+  state : {
+    text: undefined
   },
-  _click : function(e) {
-    hui.stop(e);
-    if (!this.enabled) { return }
+  nodes: {
+    label: '.hui_checkbox_label'
+  },
+  create : function() {
+    return hui.build('a.hui_checkbox', { href: '#', html: '<span class="hui_checkbox_button"></span>' });
+  },
+  init : function(options) {
+    hui.ui.addFocusClass({element: this.element, 'class': 'hui_checkbox_focused'});
+  },
+  '!click' : function(e) {
+    e.prevent();
+    if (!this.isEnabled()) { return }
     this.element.focus();
-    this.value = !this.value;
-    this._updateUI();
-    hui.ui.callAncestors(this,'childValueChanged',this.value);
-    this.fire('valueChanged',this.value);
-    hui.ui.firePropertyChange(this,'value',this.value);
+    this.setValue(!this.getValue());
+    this.tellValueChange();
   },
-  _updateUI : function() {
-    hui.cls.set(this.element, 'hui_checkbox_selected', this.value);
-    hui.cls.set(this.element, 'hui_checkbox-disabled', !this.enabled);
+  draw : function(changed) {
+    ('value' in changed) && hui.cls.set(this.element, 'hui_checkbox_selected', this.getValue());
+    ('enabled' in changed) && hui.cls.set(this.element, 'hui_checkbox-disabled', !this.isEnabled());
+    ('text' in changed) && this._drawText();    
   },
-  /** Sets the value
-   * @param {Boolean} value Whether the checkbox is checked
-   */
-  setValue : function(value) {
-    this.value = value===true || value==='true';
-    this._updateUI();
+  _drawText : function() {
+    if (this.state.text && !this.nodes.label) {
+      this.nodes.label = hui.build('span.hui_checkbox_label', {parent: this.element, text: hui.ui.getTranslated(this.state.text)})
+    } else if (!this.state.text && this.nodes.label) {
+      hui.dom.remove(this.nodes.label);
+      this.nodes.label = undefined;
+    } else {
+      hui.dom.setText(this.nodes.label, hui.ui.getTranslated(this.state.text));
+    }
   },
-  /** Gets the value
-   * @return {Boolean} Whether the checkbox is checked
-   */
-  getValue : function() {
-    return this.value;
-  },
-  /** Enables or disables the button
-   * @param enabled {Boolean} If the button should be enabled
-   */
-  setEnabled : function(enabled) {
-    this.enabled = enabled;
-    this._updateUI();
+  setText : function(txt) {
+    this.change({text: txt});
   },
   /** Resets the checkbox */
   reset : function() {
     this.setValue(false);
   }
-};
+
+});

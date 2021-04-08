@@ -1784,7 +1784,7 @@ hui.request = function(options) {
     for (var j = 0; j < options.files.length; j++) {
       body.append('file'+j, options.files[j]);
     }
-  } else if (method=='POST' && options.parameters) {
+  } else if (options.parameters) {
     body = hui.request._buildPostBody(options.parameters);
     transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
   } else {

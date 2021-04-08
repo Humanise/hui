@@ -32,7 +32,7 @@ hui.ui.Selection = function(options) {
  */
 hui.ui.Selection.create = function(options) {
   options = hui.override({width:0},options);
-  var e = options.element = hui.build('div',{'class':'hui_selection'});
+  var e = options.element = hui.build('div', {'class':'hui_selection'});
   if (options.width>0) {
     e.style.width = options.width+'px';
   }
@@ -326,17 +326,22 @@ hui.ui.Selection.Items.prototype = {
         var self = this;
         subOpen = this.disclosed[item.value];
         var cls = this.disclosed[item.value] ? 'hui_disclosure hui_disclosure_open' : 'hui_disclosure';
-        var disc = hui.build('span',{'class':cls,parent:node});
+        var disc = hui.build('span', {'class': cls, parent: node});
         hui.listen(disc,'click',function(e) {
           hui.stop(e);
           self.toggle(disc,item);
         });
       }
-      var inner = hui.build('span',{'class':'hui_selection_label',text:text});
-      if (item.icon) {
-        node.appendChild(hui.ui.createIcon(item.icon, 16));
+      var rendition = hui.ui.callDelegates(this.parent, 'render', item);
+      if (rendition) {
+        node.appendChild(rendition);
+      } else {
+        var inner = hui.build('span', {'class':'hui_selection_label', text: text});
+        if (item.icon) {
+          node.appendChild(hui.ui.createIcon(item.icon, 16));
+        }
+        node.appendChild(inner);        
       }
-      node.appendChild(inner);
       hui.listen(node,'click',function(e) {
         this.parent.itemWasClicked(item);
       }.bind(this));

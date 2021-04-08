@@ -3,6 +3,7 @@
 .hui_selection {
   font-family: $font;
   font-size: 0;
+  line-height: 16px;
 
   &_title {
     color: rgba(0,0,0,.5);
@@ -21,7 +22,7 @@
   }
 }
 
-.split_sidebar div.hui_selection {
+.split_sidebar .hui_selection {
   padding: 5px 0px;
 }
 
@@ -36,16 +37,16 @@
   cursor: pointer;
 }
 
-div.hui_selection span.hui_disclosure {
+.hui_selection .hui_disclosure {
   margin-right: 2px;
   opacity: .3;
 }
 
-div.hui_selection:hover span.hui_disclosure {
+.hui_selection:hover .hui_disclosure {
   opacity: 1;
 }
 
-div.hui_selection_item span.hui_selection_label {
+.hui_selection_label {
   margin: 0 0 0 1px;
   padding: 1px 3px;
   vertical-align: middle;
@@ -53,7 +54,7 @@ div.hui_selection_item span.hui_selection_label {
 
 
 .hui_selection .hui_selected .hui_selection_badge {
-  color: #fff;
+  color: inherit;
 }
 
 .hui_selection_item:hover {
@@ -68,7 +69,8 @@ div.hui_selection_item span.hui_selection_label {
   @include icon-hover;
 }
 
-div.hui_selection div.hui_selected, div.hui_selection div.hui_selected:hover {
+.hui_selection_item.hui_selected,
+.hui_selection_item.hui_selected:hover {
   background-color: #3875d7;
   background: url('../gfx/selection_blue.png') left top repeat-x;
   background: -moz-linear-gradient(top, #92BCFA, #5580ee);
@@ -77,11 +79,11 @@ div.hui_selection div.hui_selected, div.hui_selection div.hui_selected:hover {
   -webkit-box-shadow: inset 0 1px 0 #7FA9F6;
 }
 
-div.hui_selection div.hui_selected span.hui_selection_label {
+.hui_selection_item.hui_selected .hui_selection_label {
   text-shadow: 0 1px 0 #5070cc;
 }
 
-div.hui_selection_inline div.hui_selected span.hui_selection_label {
+.hui_selection_inline .hui_selected .hui_selection_label {
   background-color: #3875d7;
   color: #fff;
   -moz-border-radius: 3px;
@@ -91,27 +93,27 @@ div.hui_selection_inline div.hui_selected span.hui_selection_label {
 
 
 
-.hui_selection div.hui_drop, .hui_selection div.hui_drop:hover {
+.hui_selection .hui_drop, .hui_selection .hui_drop:hover {
   background: #779cd6 url('../gfx/hover_bg.png');
   /*-webkit-border-radius: 4px;*/
   cursor: default;
 }
 
-div.hui_selection_busy span.hui_selection_label {
+.hui_selection_busy .hui_selection_label {
   color: #999;
 }
 
-div.hui_selection_busy div.hui_selected span.hui_selection_label {
+.hui_selection_busy .hui_selected .hui_selection_label {
   color: #fff;
 }
 
 /** Layout specifics **/
 
-td.hui_layout_left div.hui_selection {
+.hui_layout_left .hui_selection {
   margin-top: 4px;
 }
 
-td.hui_layout_left .hui_selection_title {
+.hui_layout_left .hui_selection_title {
   margin-top: 10px;
 }
 

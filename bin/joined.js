@@ -1784,7 +1784,7 @@ hui.request = function(options) {
     for (var j = 0; j < options.files.length; j++) {
       body.append('file'+j, options.files[j]);
     }
-  } else if (method=='POST' && options.parameters) {
+  } else if (options.parameters) {
     body = hui.request._buildPostBody(options.parameters);
     transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
   } else {
@@ -5193,6 +5193,7 @@ hui.on(function() {
 hui.ui.Component = function(options) {
   options = options || {};
   this.name = options.name;
+  this.state = hui.override({}, this.state);
   if (!this.name) {
     hui.ui.latestObjectIndex++;
     this.name = 'unnamed'+hui.ui.latestObjectIndex;
@@ -5262,6 +5263,105 @@ hui.ui.Component.prototype = {
    */
   fireSizeChange : function() {
     hui.ui.callAncestors(this,'$$childSizeChanged');
+  },
+  change : function(newState) {
+    var changed = {};
+    for (key in newState) {
+      if (newState.hasOwnProperty(key) && this.state.hasOwnProperty(key) ) {
+        if (this.state[key] !== newState[key]) {
+          this.state[key] = newState[key];
+          changed[key] = newState[key];
+        }
+      }
+    }
+    if (changed!={} && this.draw) {
+      this.draw(changed);
+    }
+  }
+};
+
+hui.component = function(name, spec) {
+  hui.ui[name] = function(options) {
+    options = options || {};
+    hui.ui.Component.call(this, options);
+    this.init && this.init(options);
+    this.change(options);
+    this.attach && this.attach();
+
+    for (key in this) {
+      if (key[0] == '!' && typeof(this[key]) == 'function') {
+        (function(self, key) {
+          hui.listen(self.element, key.substr(1), function(e) {
+            e = hui.event(e);
+            self[key](e);
+          });
+        })(this, key)
+      }
+    }
+  }
+  var component = hui.ui[name]
+  component.create = function(state) {
+    var cp = {element: spec.create()};
+    hui.extend(cp, state);
+    if (state.testName) {
+      cp.element.setAttribute('data-test', state.testName);
+    }
+    var obj = new component(cp);
+    obj.change(state);
+    return obj;
+  }
+  component.prototype = spec
+  hui.extend(component.prototype, hui.ui.Component.prototype);
+  if (spec.with) {
+    for (var i = 0; i < spec.with.length; i++) {
+      var mixin = hui.component[spec.with[i]];
+      for (prop in mixin) {
+        if (typeof(mixin[prop]) == 'function') {
+          component.prototype[prop] = mixin[prop]
+        }
+      }
+      if (mixin.state) {
+        for (prop in mixin.state) {
+          if (component.prototype.state[prop] === undefined) {
+            component.prototype.state[prop] = mixin.state[prop]
+          }
+        }
+      }
+    }
+  }
+};
+
+hui.component.value = {
+  state: {value: undefined},
+  setValue : function(v) {
+    this.change({value: v});
+  },
+  getValue : function() {
+    return this.state.value;
+  },
+  /* TODO: Already a fireValueChange */
+  tellValueChange : function(){
+    var v = this.state.value;
+    hui.ui.callAncestors(this, 'childValueChanged', v);
+    this.fire('valueChanged', v);
+    hui.ui.firePropertyChange(this, 'value', v);
+  }
+};
+
+hui.component.enabled = {
+  state: {enabled: true},
+  setEnabled : function(v) {
+    this.change({enabled: !!v});
+  },
+  isEnabled : function() {
+    return !!this.state.enabled;
+  }
+};
+
+hui.component.key = {
+  state: {key: undefined},
+  getKey: function() {
+    return this.state.key;
   }
 };
 
@@ -5860,6 +5960,8 @@ hui.ui.Form.prototype = {
       var widget = d[i];
       if (widget.options && widget.options.key && widget.getValue) {
         data[widget.options.key] = widget.getValue();
+      } else if (widget.getKey && widget.getKey() && widget.getValue) {
+        data[widget.getKey()] = widget.getValue();
       } else if (widget.name && widget.getValue) {
         data[widget.name] = widget.getValue();
       }
@@ -5873,11 +5975,16 @@ hui.ui.Form.prototype = {
     }
     var d = hui.ui.getDescendants(this);
     for (var i=0; i < d.length; i++) {
-      if (d[i].options && (d[i].options.key || d[i].options.name)) {
-        var key = d[i].options.key || d[i].options.name;
-        if (key && values[key]!==undefined) {
-          d[i].setValue(values[key]);
+      var key = (function(obj) {
+        if (obj.getKey && obj.getKey()) {
+          return obj.getKey();
         }
+        if (obj.options) {
+          return obj.options.key || obj.options.name;
+        }
+      })(d[i]);
+      if (key && values[key]!==undefined) {
+        d[i].setValue(values[key]);
       }
     }
   },
@@ -8098,7 +8205,7 @@ hui.ui.Selection = function(options) {
  */
 hui.ui.Selection.create = function(options) {
   options = hui.override({width:0},options);
-  var e = options.element = hui.build('div',{'class':'hui_selection'});
+  var e = options.element = hui.build('div', {'class':'hui_selection'});
   if (options.width>0) {
     e.style.width = options.width+'px';
   }
@@ -8392,17 +8499,22 @@ hui.ui.Selection.Items.prototype = {
         var self = this;
         subOpen = this.disclosed[item.value];
         var cls = this.disclosed[item.value] ? 'hui_disclosure hui_disclosure_open' : 'hui_disclosure';
-        var disc = hui.build('span',{'class':cls,parent:node});
+        var disc = hui.build('span', {'class': cls, parent: node});
         hui.listen(disc,'click',function(e) {
           hui.stop(e);
           self.toggle(disc,item);
         });
       }
-      var inner = hui.build('span',{'class':'hui_selection_label',text:text});
-      if (item.icon) {
-        node.appendChild(hui.ui.createIcon(item.icon, 16));
+      var rendition = hui.ui.callDelegates(this.parent, 'render', item);
+      if (rendition) {
+        node.appendChild(rendition);
+      } else {
+        var inner = hui.build('span', {'class':'hui_selection_label', text: text});
+        if (item.icon) {
+          node.appendChild(hui.ui.createIcon(item.icon, 16));
+        }
+        node.appendChild(inner);        
       }
-      node.appendChild(inner);
       hui.listen(node,'click',function(e) {
         this.parent.itemWasClicked(item);
       }.bind(this));
@@ -13059,11 +13171,11 @@ hui.ui.Segmented.create = function(options) {
 
 hui.ui.Segmented.prototype = {
   _click : function(e) {
-    if (!this.enabled) { return; }
     e = new hui.Event(e);
+    e.stop();
+    if (!this.state.enabled) { return; }
     var a = e.findByTag('a');
     if (a) {
-      e.stop();
       var changed = false;
       var value = a.getAttribute('rel');
       var x = hui.get.byClass(this.element,'hui-is-selected');
@@ -15029,82 +15141,53 @@ hui.ui.TokenField.prototype = {
   }
 };
 
-/**
- * A check box
- * @constructor
- */
-hui.ui.Checkbox = function(o) {
-  this.element = hui.get(o.element);
-  this.control = hui.get.firstByTag(this.element,'span');
-  this.options = o;
-  this.enabled = true;
-  this.name = o.name;
-  this.value = o.value==='true' || o.value===true;
-  hui.ui.extend(this);
-  this._attach();
-};
-
-/**
- * Creates a new checkbox
- */
-hui.ui.Checkbox.create = function(options) {
-  var e = options.element = hui.build('a.hui_checkbox',{href: '#', html: '<span class="hui_checkbox_button"></span>'});
-  if (options.value) {
-    hui.cls.add(e, 'hui_checkbox_selected');
-  }
-  if (options.testName) {
-    e.setAttribute('data-test', options.testName);
-  }
-  if (options.label) {
-    hui.build('span.hui_checkbox_label',{parent: e, text: hui.ui.getTranslated(options.label)});
-  }
-  return new hui.ui.Checkbox(options);
-};
-
-hui.ui.Checkbox.prototype = {
-  _attach : function() {
-    hui.ui.addFocusClass({element:this.element,'class':'hui_checkbox_focused'});
-    hui.listen(this.element,'click',this._click.bind(this));
+hui.component('Checkbox', {
+  with: [
+    'value', 'enabled', 'key'
+  ],
+  state : {
+    text: undefined
   },
-  _click : function(e) {
-    hui.stop(e);
-    if (!this.enabled) { return }
+  nodes: {
+    label: '.hui_checkbox_label'
+  },
+  create : function() {
+    return hui.build('a.hui_checkbox', { href: '#', html: '<span class="hui_checkbox_button"></span>' });
+  },
+  init : function(options) {
+    hui.ui.addFocusClass({element: this.element, 'class': 'hui_checkbox_focused'});
+  },
+  '!click' : function(e) {
+    e.prevent();
+    if (!this.isEnabled()) { return }
     this.element.focus();
-    this.value = !this.value;
-    this._updateUI();
-    hui.ui.callAncestors(this,'childValueChanged',this.value);
-    this.fire('valueChanged',this.value);
-    hui.ui.firePropertyChange(this,'value',this.value);
+    this.setValue(!this.getValue());
+    this.tellValueChange();
   },
-  _updateUI : function() {
-    hui.cls.set(this.element, 'hui_checkbox_selected', this.value);
-    hui.cls.set(this.element, 'hui_checkbox-disabled', !this.enabled);
+  draw : function(changed) {
+    ('value' in changed) && hui.cls.set(this.element, 'hui_checkbox_selected', this.getValue());
+    ('enabled' in changed) && hui.cls.set(this.element, 'hui_checkbox-disabled', !this.isEnabled());
+    ('text' in changed) && this._drawText();    
   },
-  /** Sets the value
-   * @param {Boolean} value Whether the checkbox is checked
-   */
-  setValue : function(value) {
-    this.value = value===true || value==='true';
-    this._updateUI();
+  _drawText : function() {
+    if (this.state.text && !this.nodes.label) {
+      this.nodes.label = hui.build('span.hui_checkbox_label', {parent: this.element, text: hui.ui.getTranslated(this.state.text)})
+    } else if (!this.state.text && this.nodes.label) {
+      hui.dom.remove(this.nodes.label);
+      this.nodes.label = undefined;
+    } else {
+      hui.dom.setText(this.nodes.label, hui.ui.getTranslated(this.state.text));
+    }
   },
-  /** Gets the value
-   * @return {Boolean} Whether the checkbox is checked
-   */
-  getValue : function() {
-    return this.value;
-  },
-  /** Enables or disables the button
-   * @param enabled {Boolean} If the button should be enabled
-   */
-  setEnabled : function(enabled) {
-    this.enabled = enabled;
-    this._updateUI();
+  setText : function(txt) {
+    this.change({text: txt});
   },
   /** Resets the checkbox */
   reset : function() {
     this.setValue(false);
   }
-};
+
+});
 
 /////////////////////////// Checkboxes ////////////////////////////////
 
@@ -17715,10 +17798,14 @@ hui.ui.Pages.prototype = {
         height: this.element.clientHeight
       };
       var target = this._target;
+      var scrollOffset;
       if (target.nodeType===1) {
+        scrollOffset = hui.position.getScrollOffset(this._target);
         target = hui.position.get(this._target);
         target.height = this._target.offsetHeight || this._target.clientHeight;
         target.width = this._target.offsetWidth || this._target.clientWidth;
+      } else {
+        scrollOffset = {top: 0, left: 0};
       }
       var view = {
         height: hui.window.getViewHeight(),
@@ -17749,6 +17836,8 @@ hui.ui.Pages.prototype = {
         pos.top = target.top + target.height/2 - panel.height/2;
         pos.left = target.left + target.width + 5;
       }
+      pos.top -= scrollOffset.top;
+      pos.left -= scrollOffset.left;
       var gutter = 5;
       pos.top = hui.between(gutter, pos.top, view.scrollTop + view.height - panel.height - gutter);
       pos.left = hui.between(gutter, pos.left, view.scrollLeft + view.width - panel.width - gutter);
@@ -17881,80 +17970,74 @@ hui.ui.Pages.prototype = {
 
 })(hui.ui.Component);
 
-(function (_super) {
-  /**
-   * A collection of objects
-   * @constructor
-   * @param {Object} options The options
-   */
-  hui.ui.Collection = function(options) {
-    _super.call(this, options);
-    if (options && options.source) {
+hui.component('Collection', {
+
+  init : function(options) {
+    if (options.source) {
       options.source.listen(this);
+      this.source = options.source;
     }
-    this.data = [];
+    this.selectable = options.selectable;
+    this.selectionClass = options.selectionClass || 'hui-is-selected';
     this.items = [];
-    this._attach();
-  };
-
-  /**
-   * Creates a new instance of a collection
-   */
-  hui.ui.Collection.create = function(options) {
-    options = hui.override({}, options);
-    options.element = hui.build('div', {
-      'class': 'hui_collection',
-      html: '<div class="hui_collection_body"></div>'
-    });
-    return new hui.ui.Collection(options);
-  };
-
-  hui.ui.Collection.prototype = {
-    nodes : {
-      body : '.hui_collection_body',
-      empty : '.hui_collection_empty',
-    },
-    _attach : function() {
-      hui.listen(this.element, 'click', this._click.bind(this));
-    },
-    setData : function(data) {
-      this.data = data;
-      this._clear();
-      this.items = [];
-      for (var i = 0; i < data.length; i++) {
-        var node = hui.build('div.hui_collection_item');
-        var rendition = hui.ui.callDelegates(this, 'render', data[i]);
-        if (rendition) {
-          node.appendChild(rendition);
-        }
-        this.items.push(node);
-        this.nodes.body.appendChild(node);
+  },
+  nodes : {
+    empty : '.hui_collection_empty'
+  },
+  setData : function(data) {
+    data = data || [];
+    this.data = data;
+    this._clear();
+    this.items = [];
+    for (var i = 0; i < data.length; i++) {
+      var rendition = hui.ui.callDelegates(this, 'render', data[i]);
+      if (!rendition) {
+        rendition = hui.build('div', {text: data[i].toString()});
       }
-      this.nodes.body.style.display = this.items.length ? '' : 'none';
-      if (this.nodes.empty) {
-        this.nodes.empty.style.display = this.items.length ? 'none' : '';      
+      hui.cls.add(rendition,'hui_collection_item')
+      if (this.selectable) {
+        hui.cls.set(rendition, this.selectionClass, this._isSelected(i))
       }
-    },
-    _clear : function() {
-      hui.ui.destroyDescendants(this.body);
-      this.nodes.body.innerHTML = '';
-    },
-    $$objectsLoaded : function(objects) {
-      this.setData(objects)
-    },
-    _click : function(e) {
-      e = hui.event(e);
-      var item = e.closest('.hui_collection_item');
-      if (item) {
-        var idx = this.items.indexOf(item);
-        this.fire('select', {data: this.data[idx]});
+      this.items.push(rendition);
+      this.element.appendChild(rendition);
+    }
+    if (this.nodes.empty) {
+      this.nodes.empty.style.display = this.items.length ? 'none' : '';
+    }
+  },
+  _clear : function() {
+    //hui.ui.destroyDescendants(this.body);
+    for (var i = 0; i < this.items.length; i++) {
+      hui.dom.remove(this.items[i]);
+    }
+  },
+  $objectsLoaded : function(objects) {
+    this.setData(objects)
+  },
+  refresh : function() {
+    if (this.source) {
+      this.source.refresh();
+    }
+  },
+  _isSelected : function(i) {
+    return hui.ui.callDelegates(this, 'isSelected', this.data[i]);
+  },
+  updateSelection : function() {
+    if (this.selectable) {
+      for (var i = 0; i < this.items.length; i++) {
+        hui.cls.set(this.items[i], this.selectionClass, this._isSelected(i));
       }
     }
-  };
-
-  hui.extend(hui.ui.Collection, _super);
-
-})(hui.ui.Component);
+  },
+  '!click' : function(e) {
+    var item = e.closest('.hui_collection_item');
+    if (item) {
+      var idx = this.items.indexOf(item);
+      this.fire('select', {data: this.data[idx]});
+      this.updateSelection();
+    }
+  }
+});
 
 
 

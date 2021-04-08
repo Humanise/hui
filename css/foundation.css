@@ -147,6 +147,22 @@
     left: 0;
     bottom: 0;
     transition: left .3s, right .3s; }
+    .hui_foundation_main:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: url("../gfx/progress/spinner_white.svg") center center no-repeat;
+      background-size: 48px;
+      z-index: 2;
+      background-color: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      transition: opacity .5s;
+      transition-delay: .3s; }
+  .hui_foundation_main.hui-is-busy:before {
+    bottom: 0;
+    opacity: 1; }
   .hui_foundation_actions {
     background-color: #fff;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
@@ -162,9 +178,11 @@
     border-bottom: 1px solid #ddd;
     right: 0;
     left: 0;
-    padding: 0 30px; }
+    padding: 0 0 0 30px; }
     .hui_foundation_actions .hui_button, .hui_foundation_actions .hui_dropdown {
       box-shadow: none; }
+    .hui_foundation_actions-details {
+      padding-right: 30px; }
   .hui_foundation_content {
     top: 31px;
     left: 0;
@@ -315,7 +333,7 @@
 
 @media screen and (min-width: 1400px) {
   .hui_foundation.hui-is-details-open .hui_foundation_actions {
-    padding-right: 0; }
+    padding-right: 5px; }
   .hui_foundation.hui-is-details-open .hui_foundation_details {
     width: 20%;
     box-shadow: none; }

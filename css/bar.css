@@ -3,7 +3,8 @@
   font-size: 0;
   display: flex;
   justify-content: space-between;
-  min-height: 30px; }
+  min-height: 30px;
+  padding: 0 2px; }
   .hui_bar_right {
     float: right;
     display: flex;
@@ -27,21 +28,25 @@
     left: -1000px;
     top: -1000px; }
   .hui_bar .hui_button, .hui_bar .hui_checkbox, .hui_bar .hui_dropdown {
-    margin: 2px 3px; }
+    margin: 2px 2px; }
+  .hui_bar .hui_checkbox {
+    padding-left: 2px;
+    padding-right: 2px; }
   .hui_bar .hui_button_small, .hui_bar .hui_searchfield, .hui_bar .hui_segmented {
-    margin: 4px 4px; }
+    margin: 4px 2px; }
 
 /*************** Button **************/
 .hui_bar_button {
   display: inline-block;
   height: 30px;
   line-height: 30px;
-  padding: 0 10px;
+  padding: 0 3px;
   text-decoration: none;
   vertical-align: middle;
   cursor: pointer;
   color: #444;
-  white-space: nowrap; }
+  white-space: nowrap;
+  margin: 0 2px; }
   .hui_bar_button:focus {
     outline: none; }
   .hui_bar_button_text {
@@ -89,7 +94,8 @@
   background-image: -o-linear-gradient(top, #fff, #f0f0f0);
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-  min-height: 24px; }
+  min-height: 24px;
+  padding: 0; }
 
 .hui_window_light .hui_bar-window_mini {
   background: #fafafa;
@@ -110,7 +116,8 @@
   background: none;
   border: 1px solid transparent;
   border-width: 0 1px;
-  padding: 0 4px; }
+  padding: 0 4px;
+  margin: 0; }
 
 .hui_bar-window_mini .hui_bar_button:hover {
   background: #eee;
@@ -162,13 +169,15 @@
   min-height: 22px;
   background: #fafafa;
   border: 1px solid #ddd;
-  border-radius: 3px; }
+  border-radius: 3px;
+  padding: 0; }
   .hui_bar-mini .hui_bar_left, .hui_bar-mini .hui_bar_right {
     height: 22px; }
   .hui_bar-mini .hui_bar_button {
     height: 22px;
     line-height: 22px;
-    padding: 0 3px; }
+    padding: 0 3px;
+    margin: 0; }
     .hui_bar-mini .hui_bar_button:hover {
       background: #ddd; }
     .hui_bar-mini .hui_bar_button_text {
@@ -192,7 +201,8 @@
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
   min-height: 22px;
-  border-bottom: 1px solid #ddd; }
+  border-bottom: 1px solid #ddd;
+  padding: 0; }
   .hui_bar-layout_mini .hui_bar_right {
     height: 22px;
     background: none; }
@@ -204,7 +214,8 @@
     background: none;
     border: 1px solid transparent;
     border-width: 0 1px;
-    padding: 0 5px; }
+    padding: 0 5px;
+    margin: 0; }
     .hui_bar-layout_mini .hui_bar_button:hover {
       background: #eee;
       border-color: #ddd; }

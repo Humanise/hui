@@ -45,6 +45,8 @@ hui.ui.Form.prototype = {
       var widget = d[i];
       if (widget.options && widget.options.key && widget.getValue) {
         data[widget.options.key] = widget.getValue();
+      } else if (widget.getKey && widget.getKey() && widget.getValue) {
+        data[widget.getKey()] = widget.getValue();
       } else if (widget.name && widget.getValue) {
         data[widget.name] = widget.getValue();
       }
@@ -58,11 +60,16 @@ hui.ui.Form.prototype = {
     }
     var d = hui.ui.getDescendants(this);
     for (var i=0; i < d.length; i++) {
-      if (d[i].options && (d[i].options.key || d[i].options.name)) {
-        var key = d[i].options.key || d[i].options.name;
-        if (key && values[key]!==undefined) {
-          d[i].setValue(values[key]);
+      var key = (function(obj) {
+        if (obj.getKey && obj.getKey()) {
+          return obj.getKey();
         }
+        if (obj.options) {
+          return obj.options.key || obj.options.name;
+        }
+      })(d[i]);
+      if (key && values[key]!==undefined) {
+        d[i].setValue(values[key]);
       }
     }
   },

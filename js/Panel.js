@@ -203,10 +203,14 @@
         height: this.element.clientHeight
       };
       var target = this._target;
+      var scrollOffset;
       if (target.nodeType===1) {
+        scrollOffset = hui.position.getScrollOffset(this._target);
         target = hui.position.get(this._target);
         target.height = this._target.offsetHeight || this._target.clientHeight;
         target.width = this._target.offsetWidth || this._target.clientWidth;
+      } else {
+        scrollOffset = {top: 0, left: 0};
       }
       var view = {
         height: hui.window.getViewHeight(),
@@ -237,6 +241,8 @@
         pos.top = target.top + target.height/2 - panel.height/2;
         pos.left = target.left + target.width + 5;
       }
+      pos.top -= scrollOffset.top;
+      pos.left -= scrollOffset.left;
       var gutter = 5;
       pos.top = hui.between(gutter, pos.top, view.scrollTop + view.height - panel.height - gutter);
       pos.left = hui.between(gutter, pos.left, view.scrollLeft + view.width - panel.width - gutter);

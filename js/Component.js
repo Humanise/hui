@@ -9,6 +9,7 @@
 hui.ui.Component = function(options) {
   options = options || {};
   this.name = options.name;
+  this.state = hui.override({}, this.state);
   if (!this.name) {
     hui.ui.latestObjectIndex++;
     this.name = 'unnamed'+hui.ui.latestObjectIndex;
@@ -78,5 +79,104 @@ hui.ui.Component.prototype = {
    */
   fireSizeChange : function() {
     hui.ui.callAncestors(this,'$$childSizeChanged');
+  },
+  change : function(newState) {
+    var changed = {};
+    for (key in newState) {
+      if (newState.hasOwnProperty(key) && this.state.hasOwnProperty(key) ) {
+        if (this.state[key] !== newState[key]) {
+          this.state[key] = newState[key];
+          changed[key] = newState[key];
+        }
+      }
+    }
+    if (changed!={} && this.draw) {
+      this.draw(changed);
+    }
+  }
+};
+
+hui.component = function(name, spec) {
+  hui.ui[name] = function(options) {
+    options = options || {};
+    hui.ui.Component.call(this, options);
+    this.init && this.init(options);
+    this.change(options);
+    this.attach && this.attach();
+
+    for (key in this) {
+      if (key[0] == '!' && typeof(this[key]) == 'function') {
+        (function(self, key) {
+          hui.listen(self.element, key.substr(1), function(e) {
+            e = hui.event(e);
+            self[key](e);
+          });
+        })(this, key)
+      }
+    }
+  }
+  var component = hui.ui[name]
+  component.create = function(state) {
+    var cp = {element: spec.create()};
+    hui.extend(cp, state);
+    if (state.testName) {
+      cp.element.setAttribute('data-test', state.testName);
+    }
+    var obj = new component(cp);
+    obj.change(state);
+    return obj;
+  }
+  component.prototype = spec
+  hui.extend(component.prototype, hui.ui.Component.prototype);
+  if (spec.with) {
+    for (var i = 0; i < spec.with.length; i++) {
+      var mixin = hui.component[spec.with[i]];
+      for (prop in mixin) {
+        if (typeof(mixin[prop]) == 'function') {
+          component.prototype[prop] = mixin[prop]
+        }
+      }
+      if (mixin.state) {
+        for (prop in mixin.state) {
+          if (component.prototype.state[prop] === undefined) {
+            component.prototype.state[prop] = mixin.state[prop]
+          }
+        }
+      }
+    }
+  }
+};
+
+hui.component.value = {
+  state: {value: undefined},
+  setValue : function(v) {
+    this.change({value: v});
+  },
+  getValue : function() {
+    return this.state.value;
+  },
+  /* TODO: Already a fireValueChange */
+  tellValueChange : function(){
+    var v = this.state.value;
+    hui.ui.callAncestors(this, 'childValueChanged', v);
+    this.fire('valueChanged', v);
+    hui.ui.firePropertyChange(this, 'value', v);
+  }
+};
+
+hui.component.enabled = {
+  state: {enabled: true},
+  setEnabled : function(v) {
+    this.change({enabled: !!v});
+  },
+  isEnabled : function() {
+    return !!this.state.enabled;
+  }
+};
+
+hui.component.key = {
+  state: {key: undefined},
+  getKey: function() {
+    return this.state.key;
   }
 };

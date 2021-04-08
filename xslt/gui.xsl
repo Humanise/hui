@@ -41,7 +41,7 @@
           <link rel="stylesheet" href="{$context}/hui/{$pathVersion}bin/minimized.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         </xsl:otherwise>
       </xsl:choose>
-
+      <!--
       <xsl:comment><![CDATA[[if IE 8]>
         <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie8.css]]><![CDATA["> </link>
       <![endif]]]></xsl:comment>
@@ -51,7 +51,7 @@
       <xsl:comment><![CDATA[[if IE 7]>
         <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie7.css]]><![CDATA["> </link>
       <![endif]]]></xsl:comment>
-
+      -->
       <xsl:if test="//gui:graph">
         <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/graph.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
@@ -81,11 +81,11 @@
         <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:for-each>
       <xsl:apply-templates select="gui:style"/>
-
+      <!--
       <xsl:comment><![CDATA[[if lt IE 9]>
         <script type="text/javascript" src="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[bin/compatibility.min.js]]><![CDATA["></script>
       <![endif]]]></xsl:comment>
-
+      -->
 
       <xsl:choose>
         <xsl:when test="$dev='true'">
@@ -249,7 +249,7 @@
         <xsl:if test="@lazy='true'">,lazy:true</xsl:if>
       });
       <xsl:call-template name="gui:createobject"/>
-    })()
+    })();
   </script>
 </xsl:template>
 
@@ -559,16 +559,26 @@
   <div>
     <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">hui_selection_item<xsl:if test="@value=../@value"> hui_selected</xsl:if></xsl:attribute>
-    <xsl:if test="@badge"><strong class="hui_selection_badge"><xsl:value-of select="@badge"/></strong></xsl:if>
-    <xsl:if test="@icon">
-      <span class="hui_icon_16">
-        <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
-        <xsl:comment/>
-      </span>
-    </xsl:if>
-    <span class="hui_selection_label">
-    <xsl:value-of select="@title"/><xsl:value-of select="@text"/> <!-- TODO title is deprecated -->
-    </span>
+    <xsl:choose>
+      <xsl:when test="child::*">
+        <xsl:copy-of select="child::*|child::text()"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:if test="@badge"><strong class="hui_selection_badge"><xsl:value-of select="@badge"/></strong></xsl:if>
+        <xsl:if test="@icon">
+          <span class="hui_icon_16">
+            <xsl:call-template name="gui:icon-style">
+              <xsl:with-param name="icon" select="@icon"/>
+              <xsl:with-param name="size" select="16"/>
+            </xsl:call-template>
+            <xsl:comment/>
+          </span>
+        </xsl:if>
+        <span class="hui_selection_label">
+          <xsl:value-of select="@title"/><xsl:value-of select="@text"/> <!-- TODO title is deprecated -->
+        </span>
+      </xsl:otherwise>
+    </xsl:choose>
   </div>
 </xsl:template>
 
@@ -611,15 +621,21 @@
     <xsl:call-template name="gui:id-attribute"/>
     <xsl:attribute name="class">
       <xsl:text>hui_collection</xsl:text>
+      <xsl:if test="@class">
+        <xsl:text> </xsl:text><xsl:value-of select="@class"/>
+      </xsl:if>
     </xsl:attribute>
     <xsl:apply-templates select="gui:empty"/>
-    <div class="hui_collection_body"><xsl:comment/></div>
+    <xsl:comment/>
   </div>
   <script type="text/javascript">
     (function() {
     var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Collection({
       element:'<xsl:call-template name="gui:id"/>',
       name:'<xsl:value-of select="@name"/>'
+      <xsl:if test="@source">,source:hui.ui.get('<xsl:value-of select="@source"/>')</xsl:if>
+      <xsl:if test="@selectable='true'">,selectable:true</xsl:if>
+      <xsl:if test="@selection-class">,selectionClass:'<xsl:value-of select="@selection-class"/>'</xsl:if>
     });
     <xsl:call-template name="gui:createobject"/>
     })();
@@ -1149,7 +1165,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:copy-of select="child::*|child::text()"/>
 </xsl:template>
 
-<xsl:template match="gui:div|gui:span|gui:strong|gui:p|gui:em|gui:a|gui:input|gui:h1|gui:h2|gui:h3|gui:h4|gui:h5|gui:h6">
+<xsl:template match="gui:div|gui:span|gui:strong|gui:p|gui:em|gui:a|gui:br|gui:input|gui:h1|gui:h2|gui:h3|gui:h4|gui:h5|gui:h6">
   <xsl:element name="{name()}">
     <xsl:if test="@style">
       <xsl:attribute name="style"><xsl:value-of select="@style"/></xsl:attribute>
@@ -2310,17 +2326,25 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <div class="hui_foundation_resize hui_foundation_resize_overlay"><xsl:comment/></div>
       </div>
       <div class="hui_foundation_main">
-        <div class="hui_foundation_actions">
+        <div>
+          <xsl:attribute name="class">
+            <xsl:text>hui_foundation_actions</xsl:text>
+            <xsl:if test="gui:details">
+              <xsl:text> hui_foundation_actions-details</xsl:text>
+            </xsl:if>
+          </xsl:attribute>
           <xsl:apply-templates select="gui:actions"/>
         </div>
         <div class="hui_foundation_content">
           <xsl:apply-templates select="gui:content"/>
         </div>
       </div>
+      <xsl:if test="gui:details">
       <div class="hui_foundation_details">
         <div class="hui_foundation_details_toggle"><xsl:comment/></div>
         <xsl:apply-templates select="gui:details"/>
       </div>
+      </xsl:if>
     </div>
     <script type="text/javascript">
       (function() {
@@ -3340,7 +3364,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
         element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         'key':'<xsl:value-of select="@key"/>',
-        'value':'<xsl:value-of select="@value"/>'
+        'value': ('<xsl:value-of select="@value"/>' === 'true')
       });
       <xsl:call-template name="gui:createobject"/>
     </script>

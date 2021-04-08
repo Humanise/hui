@@ -1784,7 +1784,7 @@ hui.request = function(options) {
     for (var j = 0; j < options.files.length; j++) {
       body.append('file'+j, options.files[j]);
     }
-  } else if (method=='POST' && options.parameters) {
+  } else if (options.parameters) {
     body = hui.request._buildPostBody(options.parameters);
     transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
   } else {
@@ -2450,7 +2450,7 @@ hui._onReady(function() {
   }
   delete hui._;
 });
-;
+
 hui = window.hui || {};
 
 /////////////////////////// Animation ///////////////////////////
@@ -3062,7 +3062,7 @@ if (!Date.now) {
 hui.on(function() {
   hui.define('hui.animation',hui.animation);
 });
-;
+
 hui = window.hui || {};
 
 /** @constructor
@@ -3320,7 +3320,7 @@ hui.Color.rgb2hex = function(rgbary) {
 hui.on(function() {
   hui.define('hui.Color',hui.Color);
 });
-;
+
 /*
   * $script.js v1.3
   * https://github.com/ded/script.js
@@ -3428,7 +3428,7 @@ hui.on(function() {
 
 }(this, document, setTimeout);
 
-;
+
 hui.parallax = {
 
   _listeners : [],
@@ -3495,7 +3495,7 @@ hui.parallax = {
 hui.on(function() {
   hui.define('hui.parallax', hui.parallax);
 });
-;
+
 hui.store = {
 
   isSupported: function() {
@@ -3524,7 +3524,7 @@ hui.store = {
     return hui.string.fromJSON(this.get(key));
   }
 };
-;
+
 hui = window.hui || {};
 
 /** @namespace */
@@ -3567,7 +3567,7 @@ hui.cookie = {
     this.set(name, "", -1);
   }
 };
-;
+
 hui.xml = {
 /*  transform : function(xml,xsl) {
     if (window.ActiveXObject) {
@@ -3631,7 +3631,7 @@ hui.xml = {
     return null;
   }
 };
-;
+
 /**
  * A preloader for images
  * @constructor
@@ -3697,7 +3697,7 @@ hui.Preloader.prototype = {
     }
   }
 };
-;
+
 /*
  * Copyright (C) 2004 Baron Schwartz <baron at sequent dot org>
  *
@@ -4107,7 +4107,7 @@ Date.patterns = {
     UniversalSortableDateTimePattern: "Y-m-d H:i:sO",
     YearMonthPattern: "F, Y"};
 
-;
+
 hui = window.hui || {};
 
 /**
@@ -5181,7 +5181,7 @@ hui.on(function() {
 });
 
 
-;
+
 /**
  * A component
  * @constructor
@@ -5193,6 +5193,7 @@ hui.on(function() {
 hui.ui.Component = function(options) {
   options = options || {};
   this.name = options.name;
+  this.state = hui.override({}, this.state);
   if (!this.name) {
     hui.ui.latestObjectIndex++;
     this.name = 'unnamed'+hui.ui.latestObjectIndex;
@@ -5262,9 +5263,108 @@ hui.ui.Component.prototype = {
    */
   fireSizeChange : function() {
     hui.ui.callAncestors(this,'$$childSizeChanged');
+  },
+  change : function(newState) {
+    var changed = {};
+    for (key in newState) {
+      if (newState.hasOwnProperty(key) && this.state.hasOwnProperty(key) ) {
+        if (this.state[key] !== newState[key]) {
+          this.state[key] = newState[key];
+          changed[key] = newState[key];
+        }
+      }
+    }
+    if (changed!={} && this.draw) {
+      this.draw(changed);
+    }
   }
 };
-;
+
+hui.component = function(name, spec) {
+  hui.ui[name] = function(options) {
+    options = options || {};
+    hui.ui.Component.call(this, options);
+    this.init && this.init(options);
+    this.change(options);
+    this.attach && this.attach();
+
+    for (key in this) {
+      if (key[0] == '!' && typeof(this[key]) == 'function') {
+        (function(self, key) {
+          hui.listen(self.element, key.substr(1), function(e) {
+            e = hui.event(e);
+            self[key](e);
+          });
+        })(this, key)
+      }
+    }
+  }
+  var component = hui.ui[name]
+  component.create = function(state) {
+    var cp = {element: spec.create()};
+    hui.extend(cp, state);
+    if (state.testName) {
+      cp.element.setAttribute('data-test', state.testName);
+    }
+    var obj = new component(cp);
+    obj.change(state);
+    return obj;
+  }
+  component.prototype = spec
+  hui.extend(component.prototype, hui.ui.Component.prototype);
+  if (spec.with) {
+    for (var i = 0; i < spec.with.length; i++) {
+      var mixin = hui.component[spec.with[i]];
+      for (prop in mixin) {
+        if (typeof(mixin[prop]) == 'function') {
+          component.prototype[prop] = mixin[prop]
+        }
+      }
+      if (mixin.state) {
+        for (prop in mixin.state) {
+          if (component.prototype.state[prop] === undefined) {
+            component.prototype.state[prop] = mixin.state[prop]
+          }
+        }
+      }
+    }
+  }
+};
+
+hui.component.value = {
+  state: {value: undefined},
+  setValue : function(v) {
+    this.change({value: v});
+  },
+  getValue : function() {
+    return this.state.value;
+  },
+  /* TODO: Already a fireValueChange */
+  tellValueChange : function(){
+    var v = this.state.value;
+    hui.ui.callAncestors(this, 'childValueChanged', v);
+    this.fire('valueChanged', v);
+    hui.ui.firePropertyChange(this, 'value', v);
+  }
+};
+
+hui.component.enabled = {
+  state: {enabled: true},
+  setEnabled : function(v) {
+    this.change({enabled: !!v});
+  },
+  isEnabled : function() {
+    return !!this.state.enabled;
+  }
+};
+
+hui.component.key = {
+  state: {key: undefined},
+  getKey: function() {
+    return this.state.key;
+  }
+};
+
 /** A data source
  * @constructor
  */
@@ -5480,7 +5580,7 @@ hui.ui.Source.prototype = {
     this.refreshLater();
   }
 };
-;
+
 /** Send a global drag and drop message */
 hui.ui.callDelegatesDrop = function(dragged,dropped) {
   for (var i=0; i < hui.ui.delegates.length; i++) {
@@ -5597,7 +5697,7 @@ hui.ui.dropOutListener = function(event) {
     //this.style.backgroundColor='';
   }
 };
-;
+
 /**
  * @constructor
  */
@@ -5812,7 +5912,7 @@ hui.ui.Window.prototype = {
 };
 
 if (hui.define) hui.define('hui.Window',hui.Window);
-;
+
 /**
  * @class
  * This is a form
@@ -5860,6 +5960,8 @@ hui.ui.Form.prototype = {
       var widget = d[i];
       if (widget.options && widget.options.key && widget.getValue) {
         data[widget.options.key] = widget.getValue();
+      } else if (widget.getKey && widget.getKey() && widget.getValue) {
+        data[widget.getKey()] = widget.getValue();
       } else if (widget.name && widget.getValue) {
         data[widget.name] = widget.getValue();
       }
@@ -5873,11 +5975,16 @@ hui.ui.Form.prototype = {
     }
     var d = hui.ui.getDescendants(this);
     for (var i=0; i < d.length; i++) {
-      if (d[i].options && (d[i].options.key || d[i].options.name)) {
-        var key = d[i].options.key || d[i].options.name;
-        if (key && values[key]!==undefined) {
-          d[i].setValue(values[key]);
+      var key = (function(obj) {
+        if (obj.getKey && obj.getKey()) {
+          return obj.getKey();
         }
+        if (obj.options) {
+          return obj.options.key || obj.options.name;
+        }
+      })(d[i]);
+      if (key && values[key]!==undefined) {
+        d[i].setValue(values[key]);
       }
     }
   },
@@ -6025,7 +6132,7 @@ hui.ui.Form.Field.prototype = {
     this.element.style.display = visible ? '' : 'none';
   }
 };
-;
+
 /**
  * A list
  * <pre><strong>options:</strong> {
@@ -6973,7 +7080,7 @@ hui.ui.List.prototype = {
     }
   }
 };
-;
+
 /**
  * @constructor
  */
@@ -7062,7 +7169,7 @@ hui.ui.Tab.prototype = {
     }
   }
 };
-;
+
 /**
  * @constructor
  */
@@ -7267,7 +7374,7 @@ hui.ui.ObjectList.Select.prototype = {
     this.options.push({value:value,label:label});
   }
 };
-;
+
 ////////////////////////// DropDown ///////////////////////////
 
 /**
@@ -7609,7 +7716,7 @@ hui.ui.DropDown.prototype = {
   }
 };
 
-;
+
 /**
  * An alert
  * @constructor
@@ -7829,7 +7936,7 @@ hui.ui.Alert.alert = function(options) {
   this.alertBoxButton.setText(options.button ? options.button : 'OK');
   this.alertBox.show();
 };
-;
+
 hui = window.hui || {}; hui.ui = hui.ui || {};
 
 /**
@@ -8063,7 +8170,7 @@ hui.ui.Buttons.prototype = {
 hui.on(['hui.ui'],function() {
   hui.define('hui.ui.Button',hui.ui.Button);
 });
-;
+
 /**
  * @constructor
  * @param {Object} options The options : {value:null}
@@ -8098,7 +8205,7 @@ hui.ui.Selection = function(options) {
  */
 hui.ui.Selection.create = function(options) {
   options = hui.override({width:0},options);
-  var e = options.element = hui.build('div',{'class':'hui_selection'});
+  var e = options.element = hui.build('div', {'class':'hui_selection'});
   if (options.width>0) {
     e.style.width = options.width+'px';
   }
@@ -8392,17 +8499,22 @@ hui.ui.Selection.Items.prototype = {
         var self = this;
         subOpen = this.disclosed[item.value];
         var cls = this.disclosed[item.value] ? 'hui_disclosure hui_disclosure_open' : 'hui_disclosure';
-        var disc = hui.build('span',{'class':cls,parent:node});
+        var disc = hui.build('span', {'class': cls, parent: node});
         hui.listen(disc,'click',function(e) {
           hui.stop(e);
           self.toggle(disc,item);
         });
       }
-      var inner = hui.build('span',{'class':'hui_selection_label',text:text});
-      if (item.icon) {
-        node.appendChild(hui.ui.createIcon(item.icon, 16));
+      var rendition = hui.ui.callDelegates(this.parent, 'render', item);
+      if (rendition) {
+        node.appendChild(rendition);
+      } else {
+        var inner = hui.build('span', {'class':'hui_selection_label', text: text});
+        if (item.icon) {
+          node.appendChild(hui.ui.createIcon(item.icon, 16));
+        }
+        node.appendChild(inner);        
       }
-      node.appendChild(inner);
       hui.listen(node,'click',function(e) {
         this.parent.itemWasClicked(item);
       }.bind(this));
@@ -8484,7 +8596,7 @@ hui.ui.Selection.Items.prototype = {
     this.fireProperty('value',null);
   }
 };
-;
+
 
 /** @constructor */
 hui.ui.Toolbar = function(options) {
@@ -8659,7 +8771,7 @@ hui.ui.Toolbar.More.prototype = {
     hui.cls.toggle(this.element,'hui_is_expanded');
   }
 };
-;
+
 /**
   Used to choose an image
   @constructor
@@ -8741,7 +8853,7 @@ hui.ui.ImageInput.prototype = {
     this.fireValueChange();
   }
 };
-;
+
 /**
  * A bound panel is a panel that is shown at a certain place
  * @constructor
@@ -9118,7 +9230,7 @@ hui.ui.BoundPanel.prototype = {
   }
 };
 
-;
+
 /**
  * An image slideshow viewer
  * <pre><strong>options:</strong> {
@@ -9719,7 +9831,7 @@ hui.ui.ImageViewer.prototype = {
 };
 
 hui.define('hui.ui.ImageViewer',hui.ui.ImageViewer);
-;
+
 /** @constructor */
 hui.ui.Picker = function(options) {
   options = this.options = hui.override({itemWidth:100,itemHeight:150,itemsVisible:null,shadow:true,valueProperty:'value'},options);
@@ -9897,7 +10009,7 @@ hui.ui.Picker.prototype = {
     this._updatePages();
   }
 };
-;
+
 /**
  * @constructor
  */
@@ -10058,7 +10170,7 @@ hui.ui.Menu.prototype = {
     hui.unListen(document.body,'click',this.hider);
   }
 };
-;
+
 /**
  * @constructor
  */
@@ -10210,7 +10322,7 @@ hui.ui.Overlay.prototype = {
     this.element.innerHTML='';
   }
 };
-;
+
 /**
  * A component for uploading files
  * <pre><strong>options:</strong> {
@@ -10807,7 +10919,7 @@ hui.ui.Upload.HTML5.prototype = {
     this.form.reset();
   }
 };
-;
+
 /** A progress bar is a widget that shows progress from 0% to 100%
   @constructor
 */
@@ -10871,7 +10983,7 @@ hui.ui.ProgressBar.prototype = {
     this.element.style.display = 'block';
   }
 };
-;
+
 /** @constructor */
 hui.ui.Gallery = function(options) {
   this.options = options || {};
@@ -11151,7 +11263,7 @@ hui.ui.Gallery.prototype = {
     }
   }
 };
-;
+
 /**
  * @constructor
  */
@@ -11422,7 +11534,7 @@ hui.ui.Calendar.prototype = {
     }
   }
 };
-;
+
 /**
   Fires dateChanged(date) when the user changes the date
   @constructor
@@ -11584,7 +11696,7 @@ Date.dayNames =
     "T",
     "F",
     "L"];
-;
+
 /**
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
@@ -11660,7 +11772,7 @@ hui.ui.Layout.prototype = {
     cell.style.height = height+'px';
   }
 };
-;
+
 (function (_super) {
 
   /**
@@ -11770,7 +11882,7 @@ hui.ui.Layout.prototype = {
   hui.define('hui.ui.Dock', hui.ui.Dock);
 
 })(hui.ui.Component);
-;
+
 /**
  * @constructor
  * @param {Object} options The options : {modal:false}
@@ -11901,7 +12013,7 @@ hui.ui.Box.prototype = {
     }
   }
 };
-;
+
 /**
  * A wizard with a number of steps
  * @constructor
@@ -11976,7 +12088,7 @@ hui.ui.Wizard.prototype = {
     }
   }
 };
-;
+
 /** @constructor */
 hui.ui.Input = function(options) {
   this.options = hui.override({placeholderElement:null,validator:null},options);
@@ -12090,7 +12202,7 @@ hui.ui.Input.prototype = {
     }
   }
 };
-;
+
 /** @constructor */
 hui.ui.InfoView = function(options) {
   this.options = hui.override({clickObjects:false},options);
@@ -12155,7 +12267,7 @@ hui.ui.InfoView.prototype = {
     }
   }
 };
-;
+
 /**
  * Overflow with scroll bars
  * @param options {Object} The options
@@ -12222,7 +12334,7 @@ hui.ui.Overflow.prototype = {
     }
   }
 };
-;
+
 hui.on(['hui.ui'],function() {
 
   /** @constructor */
@@ -12346,7 +12458,7 @@ hui.on(['hui.ui'],function() {
 
   hui.define('hui.ui.SearchField',hui.ui.SearchField);
 });
-;
+
 /**
  * Simple container
  * @param {Object} The options
@@ -12389,7 +12501,7 @@ hui.ui.Fragment.prototype = {
     this.fireSizeChange();
   }
 };
-;
+
 /**
   Used to get a geografical location
   @constructor
@@ -12483,7 +12595,7 @@ hui.ui.LocationPicker.prototype = {
     return new google.maps.LatLng(loc.latitude, loc.longitude);
   }
 };
-;
+
 /**
  * A bar
  * <pre><strong>options:</strong> {
@@ -12740,7 +12852,7 @@ hui.ui.Bar.Text.prototype = {
   }
 };
 
-;
+
 /**
  * A dock
  * @param {Object} The options
@@ -12780,7 +12892,7 @@ hui.ui.IFrame.prototype = {
     this.element.style.display='none';
   }
 };
-;
+
 /** A video player
  * @constructor
  */
@@ -13019,7 +13131,7 @@ hui.ui.VideoPlayer.Embedded.prototype = {
   }
 };
 
-;
+
 /**
  * @constructor
  * @param {Object} options The options
@@ -13059,11 +13171,11 @@ hui.ui.Segmented.create = function(options) {
 
 hui.ui.Segmented.prototype = {
   _click : function(e) {
-    if (!this.enabled) { return; }
     e = new hui.Event(e);
+    e.stop();
+    if (!this.state.enabled) { return; }
     var a = e.findByTag('a');
     if (a) {
-      e.stop();
       var changed = false;
       var value = a.getAttribute('rel');
       var x = hui.get.byClass(this.element,'hui-is-selected');
@@ -13115,7 +13227,7 @@ hui.ui.Segmented.prototype = {
     return this.value;
   }
 };
-;
+
 /** @namespace */
 hui.ui.Flash = {
 
@@ -13244,7 +13356,7 @@ hui.ui.Flash = {
     return version;
   }
 };
-;
+
 /**
  * A link
  * @constructor
@@ -13269,7 +13381,7 @@ hui.ui.Link.prototype = {
     });
   }
 };
-;
+
 /**
  * Simple container
  * @param {Object} The options
@@ -13462,7 +13574,7 @@ hui.ui.Links.prototype = {
     });
   }
 };
-;
+
 /**
  * @constructor
  * @param options {Object} The options
@@ -14240,7 +14352,7 @@ hui.ui.MarkupEditor.util = {
     }
   }
 };
-;
+
 /**
  * @constructor
  */
@@ -14506,7 +14618,7 @@ hui.ui.ColorPicker.prototype = {
     this._hoverColor(hui.Color.rgb2hex(rgb));
   }
 };
-;
+
 /**
  * An input component for geo-location
  * @constructor
@@ -14591,7 +14703,7 @@ hui.ui.LocationInput.prototype = {
     hui.ui.callAncestors(this,'childValueChanged',this.value);
   }
 };
-;
+
 /////////////////////////// Style length /////////////////////////
 
 /**
@@ -14727,7 +14839,7 @@ hui.ui.StyleLength.prototype = {
     this.setValue('');
   }
 };
-;
+
 /**
  * A date and time field
  * @constructor
@@ -14942,7 +15054,7 @@ hui.ui.DateTimeInput.prototype = {
     }
   }
 };
-;
+
 /**
  * A tokens component
  * @constructor
@@ -15028,84 +15140,55 @@ hui.ui.TokenField.prototype = {
     });
   }
 };
-;
-/**
- * A check box
- * @constructor
- */
-hui.ui.Checkbox = function(o) {
-  this.element = hui.get(o.element);
-  this.control = hui.get.firstByTag(this.element,'span');
-  this.options = o;
-  this.enabled = true;
-  this.name = o.name;
-  this.value = o.value==='true' || o.value===true;
-  hui.ui.extend(this);
-  this._attach();
-};
 
-/**
- * Creates a new checkbox
- */
-hui.ui.Checkbox.create = function(options) {
-  var e = options.element = hui.build('a.hui_checkbox',{href: '#', html: '<span class="hui_checkbox_button"></span>'});
-  if (options.value) {
-    hui.cls.add(e, 'hui_checkbox_selected');
-  }
-  if (options.testName) {
-    e.setAttribute('data-test', options.testName);
-  }
-  if (options.label) {
-    hui.build('span.hui_checkbox_label',{parent: e, text: hui.ui.getTranslated(options.label)});
-  }
-  return new hui.ui.Checkbox(options);
-};
-
-hui.ui.Checkbox.prototype = {
-  _attach : function() {
-    hui.ui.addFocusClass({element:this.element,'class':'hui_checkbox_focused'});
-    hui.listen(this.element,'click',this._click.bind(this));
+hui.component('Checkbox', {
+  with: [
+    'value', 'enabled', 'key'
+  ],
+  state : {
+    text: undefined
   },
-  _click : function(e) {
-    hui.stop(e);
-    if (!this.enabled) { return }
+  nodes: {
+    label: '.hui_checkbox_label'
+  },
+  create : function() {
+    return hui.build('a.hui_checkbox', { href: '#', html: '<span class="hui_checkbox_button"></span>' });
+  },
+  init : function(options) {
+    hui.ui.addFocusClass({element: this.element, 'class': 'hui_checkbox_focused'});
+  },
+  '!click' : function(e) {
+    e.prevent();
+    if (!this.isEnabled()) { return }
     this.element.focus();
-    this.value = !this.value;
-    this._updateUI();
-    hui.ui.callAncestors(this,'childValueChanged',this.value);
-    this.fire('valueChanged',this.value);
-    hui.ui.firePropertyChange(this,'value',this.value);
+    this.setValue(!this.getValue());
+    this.tellValueChange();
   },
-  _updateUI : function() {
-    hui.cls.set(this.element, 'hui_checkbox_selected', this.value);
-    hui.cls.set(this.element, 'hui_checkbox-disabled', !this.enabled);
+  draw : function(changed) {
+    ('value' in changed) && hui.cls.set(this.element, 'hui_checkbox_selected', this.getValue());
+    ('enabled' in changed) && hui.cls.set(this.element, 'hui_checkbox-disabled', !this.isEnabled());
+    ('text' in changed) && this._drawText();    
   },
-  /** Sets the value
-   * @param {Boolean} value Whether the checkbox is checked
-   */
-  setValue : function(value) {
-    this.value = value===true || value==='true';
-    this._updateUI();
+  _drawText : function() {
+    if (this.state.text && !this.nodes.label) {
+      this.nodes.label = hui.build('span.hui_checkbox_label', {parent: this.element, text: hui.ui.getTranslated(this.state.text)})
+    } else if (!this.state.text && this.nodes.label) {
+      hui.dom.remove(this.nodes.label);
+      this.nodes.label = undefined;
+    } else {
+      hui.dom.setText(this.nodes.label, hui.ui.getTranslated(this.state.text));
+    }
   },
-  /** Gets the value
-   * @return {Boolean} Whether the checkbox is checked
-   */
-  getValue : function() {
-    return this.value;
-  },
-  /** Enables or disables the button
-   * @param enabled {Boolean} If the button should be enabled
-   */
-  setEnabled : function(enabled) {
-    this.enabled = enabled;
-    this._updateUI();
+  setText : function(txt) {
+    this.change({text: txt});
   },
   /** Resets the checkbox */
   reset : function() {
     this.setValue(false);
   }
-};
-;
+
+});
+
 /////////////////////////// Checkboxes ////////////////////////////////
 
 /**
@@ -15313,7 +15396,7 @@ hui.ui.Checkboxes.Items.prototype = {
     return false;
   }
 };
-;
+
 /**
  * @constructor
  */
@@ -15371,7 +15454,7 @@ hui.ui.Radiobuttons.prototype = {
     };
   }
 };
-;
+
 /**
  * A number field
  * @constructor
@@ -15552,7 +15635,7 @@ hui.ui.NumberInput.prototype = {
     }
   }
 };
-;
+
 ///////////////////////// Text /////////////////////////
 
 /**
@@ -15790,7 +15873,7 @@ hui.ui.TextInput.prototype = {
     return t.clientHeight + 2;
   }
 };
-;
+
 /** @constructor */
 hui.ui.Rendering = function(options) {
   this.options = hui.override({clickObjects:false},options);
@@ -15809,7 +15892,7 @@ hui.ui.Rendering.prototype = {
     this.element.innerHTML = html;
   }
 };
-;
+
 hui.on(['hui.ui'], function() { hui.ui.make(
 
   /** @lends hui.ui.Icon.prototype */
@@ -15851,7 +15934,7 @@ hui.on(['hui.ui'], function() { hui.ui.make(
   }
 
 );});
-;
+
 /////////////////////////// Color input /////////////////////////
 
 /**
@@ -15962,7 +16045,7 @@ hui.ui.ColorInput.prototype = {
     return this.panel ? [this.panel] : [];
   }
 };
-;
+
 /**
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
@@ -16023,7 +16106,7 @@ hui.ui.Columns.prototype = {
     return hui.get.children(this.body)[index];
   }
 };
-;
+
 ////////////////////////// Finder ///////////////////////////
 
 /**
@@ -16339,7 +16422,7 @@ hui.ui.Finder.prototype = {
 };
 
 if (window.define) {define('hui.ui.Finder',hui.ui.Finder);}
-;
+
 /**
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
@@ -16384,7 +16467,7 @@ hui.ui.Structure.prototype = {
     }
   }
 };
-;
+
 /**
  * @constructor
  * @param {Object} options The options : {modal:false}
@@ -16464,7 +16547,7 @@ hui.ui.Slider.prototype = {
     this.position = this.value = pos;
   }
 };
-;
+
 /**
  * A code editor
  * @constructor
@@ -16654,7 +16737,7 @@ hui.ui.CodeInput.prototype = {
   }
 
 };
-;
+
 /**
  * An input for a link
  * @constructor
@@ -16810,7 +16893,7 @@ hui.ui.LinkInput.prototype = {
     this.setValue(null);
   }
 };
-;
+
 /**
  * A component for font input
  * @constructor
@@ -16902,7 +16985,7 @@ hui.ui.FontInput.prototype = {
     return a;
   }
 };
-;
+
 /**
   @constructor
   @param options The options (non)
@@ -17033,7 +17116,7 @@ hui.ui.FontPicker.prototype = {
     return this.previews;
   }
 };
-;
+
 /**
  * A bar
  * <pre><strong>options:</strong> {
@@ -17143,7 +17226,7 @@ hui.ui.Split.prototype = {
     }
   }
 };
-;
+
 /** @constructor */
 hui.ui.NumberValidator = function(options) {
   hui.override({allowNull:false,min:0,max:10},options);
@@ -17169,7 +17252,7 @@ hui.ui.NumberValidator.prototype = {
     return {valid:true,value:number};
   }
 };
-;
+
 ;(function (_super) {
 
   /**
@@ -17278,7 +17361,7 @@ hui.ui.NumberValidator.prototype = {
 
 })(hui.ui.Component);
 
-;
+
 (function (_super) {
 
   /**
@@ -17354,7 +17437,7 @@ hui.ui.NumberValidator.prototype = {
   hui.extend(hui.ui.Rows, _super);
 
 })(hui.ui.Component);
-;
+
 /**
  * Pages
  * @constructor
@@ -17509,7 +17592,7 @@ hui.ui.Pages.prototype = {
     });
   }
 };
-;
+
 (function (_super) {
 
   var ns = 'hui_panel';
@@ -17715,10 +17798,14 @@ hui.ui.Pages.prototype = {
         height: this.element.clientHeight
       };
       var target = this._target;
+      var scrollOffset;
       if (target.nodeType===1) {
+        scrollOffset = hui.position.getScrollOffset(this._target);
         target = hui.position.get(this._target);
         target.height = this._target.offsetHeight || this._target.clientHeight;
         target.width = this._target.offsetWidth || this._target.clientWidth;
+      } else {
+        scrollOffset = {top: 0, left: 0};
       }
       var view = {
         height: hui.window.getViewHeight(),
@@ -17749,6 +17836,8 @@ hui.ui.Pages.prototype = {
         pos.top = target.top + target.height/2 - panel.height/2;
         pos.left = target.left + target.width + 5;
       }
+      pos.top -= scrollOffset.top;
+      pos.left -= scrollOffset.left;
       var gutter = 5;
       pos.top = hui.between(gutter, pos.top, view.scrollTop + view.height - panel.height - gutter);
       pos.left = hui.between(gutter, pos.left, view.scrollLeft + view.width - panel.width - gutter);
@@ -17880,1409 +17969,78 @@ hui.ui.Pages.prototype = {
   hui.define('hui.ui.Panel', hui.ui.Panel);
 
 })(hui.ui.Component);
-;
-(function (_super) {
-  /**
-   * A collection of objects
-   * @constructor
-   * @param {Object} options The options
-   */
-  hui.ui.Collection = function(options) {
-    _super.call(this, options);
-    if (options && options.source) {
+
+hui.component('Collection', {
+
+  init : function(options) {
+    if (options.source) {
       options.source.listen(this);
+      this.source = options.source;
     }
-    this.data = [];
+    this.selectable = options.selectable;
+    this.selectionClass = options.selectionClass || 'hui-is-selected';
     this.items = [];
-    this._attach();
-  };
-
-  /**
-   * Creates a new instance of a collection
-   */
-  hui.ui.Collection.create = function(options) {
-    options = hui.override({}, options);
-    options.element = hui.build('div', {
-      'class': 'hui_collection',
-      html: '<div class="hui_collection_body"></div>'
-    });
-    return new hui.ui.Collection(options);
-  };
-
-  hui.ui.Collection.prototype = {
-    nodes : {
-      body : '.hui_collection_body',
-      empty : '.hui_collection_empty',
-    },
-    _attach : function() {
-      hui.listen(this.element, 'click', this._click.bind(this));
-    },
-    setData : function(data) {
-      this.data = data;
-      this._clear();
-      this.items = [];
-      for (var i = 0; i < data.length; i++) {
-        var node = hui.build('div.hui_collection_item');
-        var rendition = hui.ui.callDelegates(this, 'render', data[i]);
-        if (rendition) {
-          node.appendChild(rendition);
-        }
-        this.items.push(node);
-        this.nodes.body.appendChild(node);
-      }
-      this.nodes.body.style.display = this.items.length ? '' : 'none';
-      if (this.nodes.empty) {
-        this.nodes.empty.style.display = this.items.length ? 'none' : '';      
-      }
-    },
-    _clear : function() {
-      hui.ui.destroyDescendants(this.body);
-      this.nodes.body.innerHTML = '';
-    },
-    $$objectsLoaded : function(objects) {
-      this.setData(objects)
-    },
-    _click : function(e) {
-      e = hui.event(e);
-      var item = e.closest('.hui_collection_item');
-      if (item) {
-        var idx = this.items.indexOf(item);
-        this.fire('select', {data: this.data[idx]});
-      }
-    }
-  };
-
-  hui.extend(hui.ui.Collection, _super);
-
-})(hui.ui.Component);
-;
-
-;
-/**
- * @constructor
- */
-hui.ui.Drawing = function(options) {
-  this.options = hui.override({width:200,height:200},options);
-  this.element = hui.get(options.element);
-  hui.log({width:options.width,height:options.height});
-  this.svg = hui.ui.Drawing._build({tag:'svg',parent:this.element,attributes:{width:options.width,height:options.height}});
-  this.element.appendChild(this.svg);
-  this.name = options.name;
-  hui.ui.extend(this);
-};
-
-hui.ui.Drawing.create = function(options) {
-  options = options || {};
-  var e = options.element = hui.build('div',{'class':'hui_drawing',style:'position: relative; overflow: hidden;'});
-  if (options.height) {
-    e.style.height = options.height+'px';
-  }
-  if (options.width) {
-    e.style.width = options.width+'px';
-  }
-  if (options.parent) {
-    hui.get(options.parent).appendChild(e);
-  }
-  return new hui.ui.Drawing(options);
-};
-
-hui.ui.Drawing.prototype = {
-  setSize : function(width,height) {
-    this.svg.setAttribute('width',width);
-    this.svg.setAttribute('height',height);
-    this.svg.style.width = width+'px';
-    this.svg.style.height = height+'px';
-    this.element.style.width = width+'px';
-    this.element.style.height = height+'px';
   },
-  clear : function() {
-    hui.dom.clear(this.svg);
+  nodes : {
+    empty : '.hui_collection_empty'
   },
-  addLine : function(options) {
-    options.parent = this.svg;
-    return hui.ui.Drawing.Line.create(options);
-  },
-  addRect : function(options) {
-    options.parent = this.svg;
-    return hui.ui.Drawing.Rect.create(options);
-  },
-  addCircle : function(options) {
-    options.parent = this.svg;
-    return hui.ui.Drawing.Circle.create(options);
-  },
-  addArc : function(options) {
-    options.parent = this.svg;
-    return hui.ui.Drawing.Arc.create(options);
-  },
-  addElement : function(options) {
-    var node = hui.build('div',{style:'position:absolute;left:0;top:0;',parent:this.element,html:options.html}),
-      element = new hui.ui.Drawing.Element(node);
-    if (options.movable) {
-      hui.drag.register({
-        element : node,
-        onBeforeMove : function(e) {
-          this.fire('shapeWillMove',{shape:element,event:e});
-        }.bind(this),
-        onMove : function(e) {
-          node.style.left = e.getLeft()+'px';
-          node.style.top = e.getTop()+'px';
-          this.fire('shapeMoved',{shape:element,event:e});
-        }.bind(this),
-        onAfterMove : function(e) {
-          this.fire('shapeWasMoved',{shape:element,event:e});
-        }.bind(this)
-      });
-    }
-    return element;
-  }
-};
-
-hui.ui.Drawing._build = function(options) {
-  var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
-  if (options.attributes) {
-    for (var att in options.attributes) {
-      node.setAttribute(att,options.attributes[att]);
-    }
-  }
-  if (options.parent) {
-    options.parent.appendChild(node);
-  }
-  return node;
-};
-
-
-// Line
-
-hui.ui.Drawing.Line = function(options) {
-  this.node = options.node;
-  this.endNode = options.endNode;
-  this.from = options.from;
-  this.to = options.to;
-  this._updateEnds();
-};
-
-hui.ui.Drawing.Line.create = function(options) {
-  if (!options.from) {
-    options.from = {x:options.x1,y:options.y1};
-  }
-  if (!options.to) {
-    options.to = {x:options.x2,y:options.y2};
-  }
-
-  var attributes = {
-    x1 : options.from.x.toFixed(10),
-    y1 : options.from.y.toFixed(10),
-    x2 : options.to.x.toFixed(10),
-    y2 : options.to.y.toFixed(10),
-    style : 'stroke:'+(options.color || '#000')+';stroke-width:'+(options.width || 1)
-  };
-
-  options.node = hui.ui.Drawing._build({
-    tag : 'line',
-    parent : options.parent,
-    attributes : attributes
-  });
-  if (options.end) {
-    options.endNode = hui.ui.Drawing._build({
-      tag : 'path',
-      parent : options.parent,
-      attributes : {d:'M 0 -1 L 5 10 L -5 10',fill:options.color || '#000'}
-    });
-  }
-  return new hui.ui.Drawing.Line(options);
-};
-
-hui.ui.Drawing.Line.prototype = {
-  setFrom : function(point) {
-    this.from = point;
-    this.node.setAttribute('x1',point.x.toFixed(10));
-    this.node.setAttribute('y1',point.y.toFixed(10));
-    this._updateEnds();
-  },
-  getFrom : function() {
-    return this.from;
-  },
-  setTo : function(point) {
-    this.to = point;
-    this.node.setAttribute('x2',point.x.toFixed(10));
-    this.node.setAttribute('y2',point.y.toFixed(10));
-    this._updateEnds();
-  },
-  getTo : function() {
-    return this.to;
-  },
-  _updateEnds : function() {
-    //var deg = Math.atan((this.from.y-this.to.y) / (this.from.x-this.to.x)) * 180/Math.PI;
-    if (this.endNode) {
-      var deg = -90 + Math.atan2(this.from.y - this.to.y, this.from.x - this.to.x) * 180 / Math.PI;
-      this.endNode.setAttribute('transform','translate('+ ( this.to.x.toFixed(10)) + ',' + ( this.to.y.toFixed(10) ) + ') rotate(' + (deg) + ')');
-
-    }
-  },
-  getDegree : function() {
-    return Math.atan((this.from.y - this.to.y) / (this.from.x - this.to.x)) * 180 / Math.PI;
-  }
-};
-
-
-
-// Circle
-
-hui.ui.Drawing.Circle = function(options) {
-  this.node = options.node;
-  this.properties = {};
-};
-
-hui.ui.Drawing.Circle.create = function(options) {
-  var css = [];
-  if (options.stroke) {
-    if (options.stroke.color) {
-      css.push('stroke:' + options.stroke.color);
-    }
-    if (options.stroke.width) {
-      css.push('stroke-width:' + options.stroke.width);
-    }
-  }
-  if (options.fill) {
-    css.push('fill:' + options.fill);
-  }
-  options.node = hui.ui.Drawing._build({
-    tag : 'circle',
-    parent : options.parent,
-    attributes : {
-      cx : options.cx,
-      cy : options.cy,
-      r : options.r,
-      style : css.join(';')
-    }
-  });
-  return new hui.ui.Drawing.Circle(options);
-};
-
-hui.ui.Drawing.Circle.prototype = {
-  setRadius : function(radius) {
-    this.node.setAttribute("r", radius);
-  },
-
-  setCenter : function(point) {
-    this.node.setAttribute('cx', point.x);
-    this.node.setAttribute('cy', point.y);
-  }
-};
-
-
-
-// Rect
-
-hui.ui.Drawing.Rect = function(options) {
-  this.node = options.node;
-};
-
-hui.ui.Drawing.Rect.create = function(options) {
-  var css = [];
-  if (options.stroke) {
-    if (options.stroke.color) {
-      css.push('stroke:'+options.stroke.color);
-    }
-    if (options.stroke.width) {
-      css.push('stroke-width:'+options.stroke.width);
-    }
-  }
-  if (options.fill) {
-    css.push('fill:'+options.fill);
-  }
-  options.node = hui.ui.Drawing._build({
-    tag : 'rect',
-    parent : options.parent,
-    attributes : {
-      x : options.x,
-      y : options.y,
-      width : options.width,
-      height : options.height,
-      style : css.join(';')
-    }
-  });
-  return new hui.ui.Drawing.Circle(options);
-};
-
-hui.ui.Drawing.Rect.prototype = {
-  setPosition : function(point) {
-    this.node.setAttribute('x',point.x);
-    this.node.setAttribute('y',point.y);
-  }
-};
-
-
-// Arc
-hui.ui.Drawing.Arc = function(options) {
-  this.node = options.node;
-  this.options = hui.override({
-    center : {x:100,y:100},
-    startDegrees : 0,
-    endDegrees : 0,
-    innerRadius : 0,
-    outerRadius : 0,
-    skew: 0,
-    fill : '#eee'
-  },options);
-  this._redraw();
-};
-
-hui.ui.Drawing.Arc.create = function(options) {
-  var css = [];
-  if (options.stroke) {
-    if (options.stroke.color) {
-      css.push('stroke:'+options.stroke.color);
-    }
-    if (options.stroke.width) {
-      css.push('stroke-width:'+options.stroke.width);
-    }
-  }
-  options.node = hui.ui.Drawing._build({ tag : 'path' ,parent : options.parent, attributes : {fill : options.fill || '#000', style:css.join(';')}});
-  var arc = new hui.ui.Drawing.Arc(options);
-  return arc;
-};
-
-hui.ui.Drawing.Arc.prototype = {
-
-  update : function(options) {
-    this.options = hui.override(this.options,options);
-    this._redraw();
-  },
-  _redraw : function() {
-    var o = this.options,
-      cx = o.center.x,
-      cy = o.center.y,
-      startRadians = (o.startDegrees || 0) * Math.PI/180,
-      closeRadians = (o.endDegrees   || 0) * Math.PI/180,
-      r1 = o.innerRadius,
-      r2 = o.outerRadius;
-    var points = [
-      [
-        cx + r2 * Math.cos(startRadians),
-        cy + r2 * Math.sin(startRadians)
-      ],
-      [
-        cx + r2 * Math.cos(closeRadians),
-        cy + r2 * Math.sin(closeRadians)
-      ],
-      [
-        cx + r1 * Math.cos(closeRadians - o.skew),
-        cy + r1 * Math.sin(closeRadians - o.skew)
-      ],
-      [
-        cx + r1 * Math.cos(startRadians + o.skew),
-        cy + r1 * Math.sin(startRadians + o.skew)
-      ]
-    ];
-
-    var angleDiff = closeRadians - startRadians;
-    var largeArc = (angleDiff % (Math.PI*2)) > Math.PI ? 1 : 0;
-    var cmds = [
-      "M"+points[0].join(),                 // Move to P0
-      "A"+[r2,r2,0,largeArc,1,points[1]].join(),        // Arc to  P1
-      "L"+points[2].join(),                 // Line to P2
-      "A"+[r1,r1,0,largeArc,0,points[3]].join(),        // Arc to  P3
-      "z"                                           // Close path (Line to P0)
-    ];
-    this.node.setAttribute('d',cmds.join(' '));
-  }
-};
-
-
-
-// Element
-
-hui.ui.Drawing.Element = function(node) {
-  this.node = node;
-};
-
-hui.ui.Drawing.Element.prototype = {
-  setPosition : function(point) {
-    this.node.style.left = point.x+'px';
-    this.node.style.top = point.y+'px';
-  },
-  setCenter : function(point) {
-    this.node.style.left = (point.x - this.node.clientWidth/2)+'px';
-    this.node.style.top = (point.y - this.node.clientHeight/2)+'px';
-  }
-};
-
-
-hui.geometry = {
-  intersectLineLine : function(a1, a2, b1, b2) {
-
-    var ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x);
-    var ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x);
-    var u_b  = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
-
-    if ( u_b !== 0 ) {
-      var ua = ua_t / u_b;
-      var ub = ub_t / u_b;
-
-      if ( 0 <= ua && ua <= 1 && 0 <= ub && ub <= 1 ) {
-        return {
-          x : a1.x + ua * (a2.x - a1.x),
-          y : a1.y + ua * (a2.y - a1.y)
-        };
-      }
-    }
-    return null;
-  },
-  intersectLineRectangle : function(a1, a2, r1, r2) {
-    var min        = {x : Math.min(r1.x,r2.x),y : Math.min(r1.y,r2.y)};
-    var max        = {x : Math.max(r1.x,r2.x),y : Math.max(r1.y,r2.y)};
-    var topRight   = {x: max.x, y: min.y };
-    var bottomLeft = {x: min.x, y: max.y };
-
-    var inter1 = hui.geometry.intersectLineLine(min, topRight, a1, a2);
-    var inter2 = hui.geometry.intersectLineLine(topRight, max, a1, a2);
-    var inter3 = hui.geometry.intersectLineLine(max, bottomLeft, a1, a2);
-    var inter4 = hui.geometry.intersectLineLine(bottomLeft, min, a1, a2);
-
-    var result = [];
-
-    if (inter1 !== null) result.push(inter1);
-    if (inter2 !== null) result.push(inter2);
-    if (inter3 !== null) result.push(inter3);
-    if (inter4 !== null) result.push(inter4);
-    return result;
-  },
-  distance : function( point1, point2 ) {
-    var xs = point2.x - point1.x;
-
-    var ys = point2.y - point1.y;
-
-    return Math.sqrt( xs * xs + ys * ys );
-  }
-};
-;
-/** A progress indictator that shows progress from 0% to 100%
-  @constructor
-*/
-hui.ui.ProgressIndicator = function(options) {
-  this.element = hui.get(options.element);
-  this.options = options || {};
-  this.size = options.size;
-  this.name = options.name;
-  this.value = 0;
-  this._renderedValue = 0;
-  hui.ui.extend(this);
-  this._init();
-};
-
-/** Creates a new progress bar:
-  @param o {Object} Options : {small:false}
-*/
-hui.ui.ProgressIndicator.create = function(options) {
-  options = options || {};
-  options.element = hui.build('div',{'class':'hui_progressindicator',style:'display: inline-block; vertical-align: middle; width:'+options.size+'px;height:'+options.size+'px;'});
-  return new hui.ui.ProgressIndicator(options);
-};
-
-hui.ui.ProgressIndicator.prototype = {
-  _init : function() {
-    this.drawing = hui.ui.Drawing.create({parent:this.element,width:this.size,height:this.size});
-    this.arc = this.drawing.addArc({
-      center : {x:this.size/2,y:this.size/2},
-        startDegrees : -90,
-      endDegrees : -90,
-        innerRadius : this.size/4,
-      outerRadius : this.size/2,
-      fill : 'rgba(0,0,0,.1)'
-    });
-  },
-  setValue : function(value) {
-    if (value==this.value) {
-      return;
-    }
-    var start = this._renderedValue;
-    var dur = Math.max(200,Math.abs(value-start)*1000);
-    hui.animate({
-      node : this.element,
-      duration : dur,
-      ease: hui.ease.cubicOut,
-      callback : function(node,pos) {
-        var p = start+(value-start)*pos;
-        this._renderedValue = p;
-        this._draw(p);
-      }.bind(this)
-    });
-    this.value = value;
-  },
-  _draw : function(value) {
-    this.arc.update({
-      center : {x:this.size/2,y:this.size/2},
-      startDegrees : -90,
-      endDegrees : Math.min(-90 + value * 360, 269.9999),
-      innerRadius : this.size/3,
-      outerRadius : this.size/2,
-      fill : '#eee'
-    });
-  },
-  reset : function() {
-    var start = this._renderedValue;
-    this._renderedValue = this.value = 0;
-    hui.animate({
-      node : this.element,
-      duration : 300,
-      ease : hui.ease.fastSlow,
-      callback : function(node,pos) {
-        var x = 1 - pos;
-        this.arc.update({
-          center : {x:this.size/2,y:this.size/2},
-          startDegrees : -90,
-          endDegrees : Math.min(-90 + (start+(1-start)*pos) * 360, 269.9999),
-          innerRadius : this.size/4 * x,
-          outerRadius : this.size/2 * x,
-          fill : '#eee'
-        });
-      }.bind(this)
-    });
-  }
-};
-;
-/** A graph
- * @constructor
- */
-hui.ui.Graph = function(options) {
-  this.options = options;
-  this.name = options.name;
-  this.element = hui.get(options.element);
-  this.ready = false;
-  this.defered = [];
-
-  this.impl = hui.ui.Graph.D3;
-
-  hui.ui.extend(this);
-  hui.log('Initializing implementation...');
-  this.impl.init(this);
-  if (options.source) {
-    options.source.listen(this);
-  }
-};
-
-hui.ui.Graph.prototype = {
   setData : function(data) {
-    this._defer(function() {
-      this.impl.setData(data);
-    }.bind(this));
-  },
-  _defer : function(func) {
-    if (this.ready) {
-      func();
-    } else {
-      hui.log('Defering function');
-      this.defered.push(func);
+    data = data || [];
+    this.data = data;
+    this._clear();
+    this.items = [];
+    for (var i = 0; i < data.length; i++) {
+      var rendition = hui.ui.callDelegates(this, 'render', data[i]);
+      if (!rendition) {
+        rendition = hui.build('div', {text: data[i].toString()});
+      }
+      hui.cls.add(rendition,'hui_collection_item')
+      if (this.selectable) {
+        hui.cls.set(rendition, this.selectionClass, this._isSelected(i))
+      }
+      this.items.push(rendition);
+      this.element.appendChild(rendition);
+    }
+    if (this.nodes.empty) {
+      this.nodes.empty.style.display = this.items.length ? 'none' : '';
     }
   },
-  /** @private */
-  $objectsLoaded : function(data) {
-    hui.log('Data loaded');
-    this.setData(data);
-  },
-  /** @private */
-  implIsReady : function() {
-    hui.log('Implementation is ready!');
-    this.ready = true;
-    for (var i=0; i < this.defered.length; i++) {
-      this.defered[i]();
+  _clear : function() {
+    //hui.ui.destroyDescendants(this.body);
+    for (var i = 0; i < this.items.length; i++) {
+      hui.dom.remove(this.items[i]);
     }
   },
-  /** @private */
-  implNodeWasClicked : function(node) {
-    this.fire('clickNode',node);
-  },
-  /** @private */
-  $sourceShouldRefresh : function() {
-    return hui.dom.isVisible(this.element);
+  $objectsLoaded : function(objects) {
+    this.setData(objects)
   },
   refresh : function() {
-    if (this.options.source) {
-      this.options.source.refresh();
+    if (this.source) {
+      this.source.refresh();
     }
   },
-  show : function() {
-    this.element.style.display='block';
-    this.refresh();
+  _isSelected : function(i) {
+    return hui.ui.callDelegates(this, 'isSelected', this.data[i]);
   },
-  hide : function() {
-    this.element.style.display='none';
-  },
-  /** @private */
-  $visibilityChanged : function() {
-    if (this.options.source && hui.dom.isVisible(this.element)) {
-      // If there is a source, make sure it is initially
-      this.options.source.refreshFirst();
-    }
-  },
-  /** @private */
-  $$layout : function() {
-    hui.log('graph.layoutChanged');
-    window.setTimeout(function(){
-      this.impl.resize(this.element.parentNode.clientWidth,this.element.parentNode.clientHeight);
-    }.bind(this),100);
-  }
-};
-
-/** @namespace */
-hui.ui.Graph.D3 = {
-  init : function(parent) {
-    this.parent = parent;
-    var self = this;
-    hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.js'),function() {
-      self._init();
-      parent.implIsReady();
-    });
-  },
-  resize : function(width,height) {
-    if (this.vis) {
-      this.vis.attr('width',width);
-      this.vis.attr('height',height);
-    }
-    if (this.layout) {
-      this.layout.size([width,height]);
-      this.layout.start();
-    }
-  },
-  _init : function() {
-    hui.log('Creating visualization...');
-    var w = this.parent.element.clientWidth,
-      h = this.parent.element.clientHeight,
-      fill = d3.scale.category20();
-
-    this.vis = d3.select(this.parent.element)
-      .append("svg:svg")
-      .attr("width", w)
-      .attr("height", h);
-
-  },
-  _onClickNode : function(node) {
-    this.parent.implNodeWasClicked(node);
-  },
-  _findById : function(nodes,id) {
-    for (var i = nodes.length - 1; i >= 0; i--){
-      if (nodes[i].id===id) {
-        return i;
+  updateSelection : function() {
+    if (this.selectable) {
+      for (var i = 0; i < this.items.length; i++) {
+        hui.cls.set(this.items[i], this.selectionClass, this._isSelected(i));
       }
     }
-    return null;
   },
-  _convert : function(data) {
-    var nodes = data.nodes;
-    data.links = data.edges;
-    for (var i = data.links.length - 1; i >= 0; i--){
-      var link = data.links[i];
-      link.source = this._findById(nodes,link.from);
-      link.target = this._findById(nodes,link.to);
-    }
-    return data;
-  },
-
-  clear : function() {
-    if (this.layout) {
-      this.layout.stop();
-      this.vis.remove();
-      this._init();
-    }
-  },
-
-  setData : function(data) {
-    this.clear();
-    var w = this.parent.element.clientWidth,
-      h = this.parent.element.clientHeight;
-    var json = this._convert(data);
-
-    var force = this.layout = d3.layout.force()
-      .charge(-200)
-      .gravity(0.10)
-      .distance(100)
-      .nodes(json.nodes)
-      .links(json.links)
-      .size([w, h]);
-    var link = this.vis.selectAll("line.link")
-      .data(json.links)
-      .enter().append("svg:line")
-      .attr("class", "hui_graph_link")
-      .style("stroke-width", function(d) { return d.label=='Friends' ? 3 : 1; })
-      .attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
-
-    var node = this.vis.selectAll("circle.node")
-      .data(json.nodes)
-      .enter()
-      .append("svg:g")
-      .attr('class','hui_node')
-      .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; })
-      .style("fill",'none')
-      .call(force.drag);
-      node.on('click',this._onClickNode.bind(this));
-    var self = this;
-    node.each(function(individual) {
-      var x = d3.select(this);
-      var icon = self.buildIcon(individual.icon,x);
-    });
-//      node.attr("transform", "translate("+(w*Math.random())+","+(h*Math.random())+")")
-
-      /*var circle = node
-        .append('svg:circle').attr('r',10)
-        .attr("class", "node")
-        //.attr("cx", function(d) { return d.x; })
-            //.attr("cy", function(d) { return d.y; })
-          .style("fill", function(d) { return fill(d.group); })
-            ;*/
-    var text = node
-      .append('svg:text')
-      .attr('class','hui_graph_label')
-      .attr("dx", "13")
-      .attr("dy", "5")
-    .text(function(d) { return d.label; });
-
-    node.append("svg:title").text(function(d) { return d.name; });
-
-      this.vis.style("opacity", 1e-6)
-        .transition()
-      .duration(2000)
-      .style("opacity", 1);
-
-    force.on("tick", function() {
-      link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
-
-        node.attr("transform", function(d) { return "translate("+d.x+","+d.y+")"; });
-    });
-    force.start();
-    hui.log('Starting...');
-  },
-  buildIcon : function(icon,parent) {
-    var node;
-    if (icon=='monochrome/person') {
-      node = parent.append('svg:path').attr('class','hui_graph_icon');
-      node.attr('d','M-9.315,10c0,0-0.575-2.838,1.863-3.951c1.763-0.799,2.174-0.949,2.512-1.2 c0.138-0.087,0.263-0.198,0.438-0.351c0.661-0.561,0.562-1.324,1.038-1.562c0.474-0.225,0.424,0.238,0.524,0 c0.101-0.225-0.075-1.799,0-1.551c0.062,0.252-0.863-1.636-0.901-2.611C-3.888-2.439-4.702-2.99-4.613-3.651 c0.212-1.513,1.472-2.322,1.472-2.322s-2.423-0.454-1.36-1.478c1.062-1.012,1.474-1.4,2.6-2.076c1.138-0.663,2.674-0.599,4.163,0 C3.749-8.914,4.124-8.489,4.61-7.602c0.425,0.762,0.45,1.326,0.413,1.813C4.986-5.314,5.049-4.926,5.049-4.926 s0.499,0.112,0.513,0.837c0.013,0.687-0.175,1.699-0.551,2.162C4.861-1.752,4.599-1.114,4.197-0.264 C3.812,0.574,3.3,1.898,3.3,1.898s0.012,0.725,0,0.926c-0.039,0.45,0.649,0.012,0.962,0.512c0.312,0.501,0.1,0.85,0.799,1.162 c0.688,0.312,2.639,1.562,3.588,2.151C9.762,7.337,9.262,10,9.262,10H-9.315z').attr('fill-rule','evenodd');
-    } else if (icon=='monochrome/folder') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:polygon').attr('fill','#fff').attr('points','9.464,-3.309 9.464,-6.384 -0.354,-6.384 -3.433,-9.462 -9.462,-9.462 -9.462,-3.309 -11.153,-3.309 -9.329,9.462 9.331,9.462 11.153,-3.309');
-      node.append('svg:polygon').attr('points','-9.999,-2.309 -8.461,8.462 8.464,8.462 10.001,-2.309');
-      node.append('svg:polygon').attr('points','8.464,-5.384 -0.769,-5.384 -3.846,-8.462 -8.461,-8.462 -8.461,-5.384 -8.461,-3.846 8.464,-3.846');
-      //node.append('svg:rect').attr('cx','0').attr('cy','0').attr('r','12').attr('fill','#fff');
-      //node.append('svg:polygon').attr('points','-10,-2 -8.461,8 8.461,8 10,-2');
-      //node.append('svg:polygon').attr('points','8,-5 -0.77,-5 -3.846,-8 -8,-8 -8,-5.384 -8,-4 8,-4');
-    } else if (icon=='monochrome/image') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:rect').attr('x','-11').attr('y','-9').attr('width','22').attr('height','18').attr('fill','#fff');
-      node.append('svg:path').attr('d','M8-6V6H-8V-6H8 M10-8h-20V8h20V-8L10-8z');
-      node.append('svg:circle').attr('cx','-2.818').attr('cy','-2.693').attr('r','1.875');
-      node.append('svg:path').attr('d','M-7,5H7v-5.033L4.271-3.625L1.585,2.18L0,0.561c0,0-2.193,0.814-2.917,2.064c-1.151-0.625-1.776,0-1.776,0L-7,5z');
-    } else if (icon=='monochrome/news') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:path').attr('d','M10.523-9.273l-1.25-1.25C8.967-10.831,8.559-11,8.125-11s-0.842,0.169-1.148,0.477L5.625-9.173 l-1.352-1.351C3.968-10.83,3.56-11,3.125-11c-0.367,0-0.727,0.126-1.014,0.354L0-8.956l-2.109-1.688 C-2.396-10.873-2.757-11-3.124-11c-0.435,0-0.843,0.169-1.149,0.477l-1.352,1.351l-1.352-1.351C-7.283-10.831-7.691-11-8.125-11 s-0.842,0.169-1.148,0.477l-1.25,1.25C-10.831-8.967-11-8.559-11-8.125v16.25c0,0.434,0.169,0.841,0.477,1.148l1.25,1.25 c0.307,0.307,0.715,0.476,1.148,0.476s0.842-0.169,1.148-0.476l1.352-1.351l1.352,1.351c0.309,0.308,0.716,0.476,1.149,0.476 c0.366,0,0.726-0.125,1.012-0.354L0,8.956l2.109,1.688C2.394,10.873,2.755,11,3.125,11c0.44,0,0.852-0.172,1.157-0.485l1.343-1.342 l1.352,1.351c0.307,0.307,0.715,0.476,1.148,0.476s0.842-0.169,1.148-0.476l1.25-1.25C10.831,8.966,11,8.559,11,8.125v-16.25 C11-8.559,10.831-8.967,10.523-9.273z').attr('fill','#fff');
-      node.append('svg:path').attr('d','M9.816-8.566l-1.25-1.25c-0.244-0.244-0.639-0.244-0.883,0L5.625-7.759L3.566-9.816c-0.225-0.226-0.583-0.245-0.832-0.047 L0-7.675l-2.734-2.188c-0.248-0.198-0.606-0.179-0.832,0.047l-2.059,2.058l-2.059-2.058c-0.244-0.244-0.639-0.244-0.883,0 l-1.25,1.25C-9.934-8.449-10-8.291-10-8.125v16.25c0,0.166,0.066,0.324,0.184,0.441l1.25,1.25c0.244,0.244,0.639,0.244,0.883,0 l2.059-2.058l2.059,2.058c0.226,0.225,0.584,0.244,0.832,0.047L0,7.676l2.734,2.188C2.85,9.956,2.987,10,3.125,10 c0.161,0,0.321-0.061,0.441-0.184l2.059-2.058l2.059,2.058c0.244,0.244,0.639,0.244,0.883,0l1.25-1.25 C9.934,8.449,10,8.291,10,8.125v-16.25C10-8.291,9.934-8.449,9.816-8.566z M-1.25,3.75H-7.5V-2.5h6.25V3.75z M7.5,3.75H0V2.5h7.5 V3.75z M7.5,1.25H0V0h7.5V1.25z M7.5-1.25H0V-2.5h7.5V-1.25z M7.5-3.75h-15V-5h15V-3.75z');
-    } else if (icon=='monochrome/warning') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:path').attr('d','M10.672,7.15L2.321-9.432C1.913-10.386,0.984-11-0.057-11c-0.882,0-1.693,0.445-2.173,1.19 c-0.099,0.156-0.176,0.309-0.234,0.459l-8.152,16.403C-10.867,7.46-11,7.929-11,8.411C-11,9.839-9.841,11-8.416,11H8.416 C9.841,11,11,9.839,11,8.411C11,7.969,10.887,7.533,10.672,7.15z').attr('fill','#fff');
-      node.append('svg:path').attr('d','M9.8,7.639L1.411-9.013C1.175-9.592,0.607-10-0.057-10c-0.558,0-1.049,0.291-1.333,0.731 c-0.062,0.1-0.116,0.206-0.156,0.316L-9.744,7.543C-9.908,7.795-10,8.091-10,8.411C-10,9.286-9.294,10-8.416,10H8.416 C9.291,10,10,9.286,10,8.411C10,8.13,9.928,7.867,9.8,7.639 M1.613-5.456L1.166,3.906H-1.15l-0.444-9.362H1.613z M0.009,8.869 h-0.02c-1.077,0-1.808-0.792-1.808-1.855c0-1.1,0.751-1.855,1.827-1.855c1.077,0,1.788,0.756,1.81,1.855 C1.818,8.077,1.107,8.869,0.009,8.869');
-    } else if (icon=='monochrome/globe') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','11').attr('fill','#fff');
-      node.append('svg:path').attr('d','M0.048-9.91c-5.496,0-9.955,4.456-9.955,9.954S-5.448,10,0.048,10 S10,5.542,10,0.044S5.544-9.91,0.048-9.91 M6.974-5.686C7.083-5.721,7.47-5.287,7.556-5.406c0.113-0.149-0.407-0.515-0.407-0.668 c0-0.21,0.978,0.964,1.032,1.057c0.013,0.021-0.27-0.136-0.276-0.108C7.883-4.966,7.852-4.809,7.813-4.65 C7.402-4.612,6.57-5.55,6.974-5.686 M2.82,4.227c-0.755,0.929-0.313,1.975-1.71,2.39C0.392,6.831,0.7,8.332-0.506,7.959 c0.069,0.07,0.069,0.171,0.239,0.28c-0.266,0.19-0.57,0.228-0.885,0.322c0.077,0.088,0.285,0.672,0.468,0.605 C-2.344,10-2.666,6.858-3.027,6c-0.271-0.653-1.199-0.954-1.596-1.555C-4.869,4.069-5.025,3.651-5.262,3.27 c-0.565-0.908,0.843-1.993,0.208-2.791C-5.307,0.159-5.762,0.667-6.25,0.026c-0.127-0.167-0.172-0.534-0.226-0.732 C-6.811-0.622-7.312-1.351-7.42-1.242c-0.375,0.375-0.934-0.514-0.891-0.845c0.128-0.971-0.375-1.522,0.148-2.444 c0.793-1.392,1.738-2.674,3.156-3.475c0.827-0.467,2.369-1.355,3.358-1.085C-1.83-9.02-3.658-8.137-3.457-8.079 c0.175,0.052,0.582-0.202,0.69,0.064c0.003,0.118-0.025,0.225-0.089,0.323c0.203,0.299,1.448-0.978,1.707-1.078 c0.506-0.2,0.744,0.327,1.312,0.132c0.396-0.135,0.213,0.623,0.172,0.623c0.066,0,0.53-0.203,0.503,0.042 C0.77-7.379-1.377-8.058-1.604-7.367c-0.061,0.188,0.697-0.175,0.82-0.063c-0.051,0.083-0.109,0.16-0.173,0.236 c0.059,0.117,0.523,0.265,0.573,0.158C-0.434-6.93-1.781-6.76-2.012-6.664c-0.393,0.162-1.07,0.585-1.436,0.911 c-0.217,0.197-0.126,0.482-0.376,0.659c-0.274,0.194-0.561,0.381-0.811,0.608C-4.96-4.19-4.667-3.286-5.028-3.119 c0.102-0.047-0.356-1.584-0.97-0.84C-6.243-3.661-6.733-3.787-7.11-3.42c-0.335,0.327-0.454,0.969-0.391,1.412 c0.149,1.05,0.815-0.293,1.221-0.293c0.271,0-0.46,0.972-0.247,1.128C-6.086-0.85-5.801-1.399-5.96-0.417 c-0.236,1.433,2.149,0.1,2.071-0.053c0.112,0.226-0.282,0.441-0.009,0.629c0.11,0.075,0.096-0.386,0.17-0.464 c0.24-0.251,0.339,0.118,0.551,0.202c0.269,0.11,1.516,0.09,1.595,0.495c0.206,1.011,2.215,0.385,1.633,1.951 c0.065-0.041,0.134-0.066,0.208-0.078c0.485,0.127,0.933,0.55,1.366,0.498C2.539,2.651,3.563,3.32,2.82,4.227 M7.309,0.806 c-1.176-1.099-1.178-3.391-0.12-4.486c-0.12-0.761,0.75-0.87,1.163-0.548c0.3,0.23,0.628,0.978,0.741,1.332 c0.683,2.116,0.578,4.827-0.563,6.78C8.935,3.006,8.911,2.22,9.108,1.319C9.436-0.147,7.744,1.213,7.309,0.806');
-    } else if (icon=='monochrome/dot') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','11').attr('fill','#fff');
-      node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','10');
-    } else if (icon=='monochrome/page') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:polygon').attr('fill','#fff').attr('points','-9,11 -9,-11 3,-11 9,-5 9,11');
-      node.append('svg:polygon').attr('points','3,-9.5 3,-5 7.5,-5');
-      node.append('svg:polygon').attr('points','-8,-10 2,-10 2,-4 8,-4 8,10 -8,10');
-
-      node.append('svg:rect').attr('x','-6').attr('y','-8').attr('width','6').attr('height','1').attr('fill','#fff');
-      node.append('svg:rect').attr('x','-6').attr('y','-5').attr('width','6').attr('height','1').attr('fill','#fff');
-      node.append('svg:rect').attr('x','-6').attr('y','-2').attr('width','12').attr('height','1').attr('fill','#fff');
-      node.append('svg:rect').attr('x','-6').attr('y','7').attr('width','12').attr('height','1').attr('fill','#fff');
-      node.append('svg:rect').attr('x','-6').attr('y','4').attr('width','12').attr('height','1').attr('fill','#fff');
-      node.append('svg:rect').attr('x','-6').attr('y','1').attr('width','12').attr('height','1').attr('fill','#fff');
-    } else if (icon=='monochrome/hierarchy') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:path').attr('fill','#fff').attr('d','M8.574,4L3.527,0.971V-11h-7V0.939L-8.575,4H-11v7h22V4H8.574z');
-      node.append('svg:polygon').attr('points','8.297,5 2.526,1.537 2.526,-2.5 0.651,-2.5 0.651,-5 2.526,-5 2.526,-10 -2.474,-10 -2.474,-5 -0.599,-5 -0.599,-2.5 -2.474,-2.5 -2.474,1.505 -8.298,5 -10,5 -10,10 -5,10 -5,5 -5.868,5 -1.702,2.5 -0.599,2.5 -0.599,5 -2.474,5 -2.474,10 2.526,10 2.526,5 0.651,5 0.651,2.5 1.702,2.5 5.869,5 5,5 5,10 10,10 10,5');
-    } else if (icon=='monochrome/email') {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:path').attr('fill','#fff').attr('d','M10.727-1.695C10.727-7.086,6.645-11,1.02-11c-6.696,0-11.746,5.137-11.746,11.949 C-10.727,7.549-5.713,11-0.76,11c2.283,0,3.872-0.314,5.668-1.121L5.707,9.52L4.701,6.158C8.271,5.922,10.727,2.76,10.727-1.695z');
-      node.append('svg:path').attr('d','M4.498,8.967C2.773,9.742,1.281,10-0.76,10c-4.771,0-8.967-3.418-8.967-9.051C-9.727-4.912-5.445-10,1.02-10 c5.086,0,8.707,3.479,8.707,8.305c0,4.225-2.355,6.869-5.459,6.869c-1.35,0-2.328-0.719-2.471-2.211H1.74 C0.82,4.398-0.445,5.174-1.996,5.174c-1.84,0-3.219-1.408-3.219-3.764c0-3.535,2.613-6.695,6.754-6.695 c1.262,0,2.699,0.314,3.391,0.688L4.066,0.748c-0.258,1.695-0.059,2.473,0.748,2.5c1.234,0.057,2.787-1.523,2.787-4.855 c0-3.766-2.414-6.639-6.867-6.639c-4.426,0-8.248,3.42-8.248,8.938c0,4.828,3.045,7.529,7.328,7.529 c1.467,0,3.045-0.318,4.193-0.893L4.498,8.967z M1.969-2.9C1.74-2.957,1.422-3.016,1.078-3.016c-1.898,0-3.391,1.867-3.391,4.08 c0,1.092,0.488,1.781,1.408,1.781c1.092,0,2.213-1.35,2.443-3.018L1.969-2.9z');
-    } else {
-      node = parent.append('svg:g').attr('class','hui_graph_icon');
-      node.append('svg:polygon').attr('fill','#fff').attr('points','0.09,-11 -9.182,-11 -9.182,11 9.182,11 9.182,-1.909');
-      node.append('svg:polygon').attr('points','0.91,-8.182 0.91,-2.727 6.365,-2.727');
-      node.append('svg:polygon').attr('points','-8.182,-10 -0.91,-10 -0.91,-0.909 8.182,-0.909 8.182,10 -8.182,10');
-    }
-
-  }
-};
-;
-/**
- * Tiles
- * @constructor
- */
-hui.ui.Tiles = function(options) {
-  this.options = options || {};
-  this.element = hui.get(options.element);
-  this.name = options.name;
-  this.tiles = hui.get.children(this.element);
-  hui.ui.extend(this);
-  this._addBehavior();
-  if (this.options.reveal) {
-    hui.onReady(this._reveal.bind(this));
-  }
-};
-
-hui.ui.Tiles.prototype = {
-  _addBehavior : function() {
-  },
-  _reveal : function() {
-    for (var i=0; i < this.tiles.length; i++) {
-      var tile = this.tiles[i];
-      this._bounce(tile);
-    }
-  },
-  _bounce : function(tile) {
-    hui.effect.fadeIn({element:tile,delay:Math.random()*500});
-  }
-};
-
-hui.ui.Tile = function(options) {
-  this.options = options || {};
-  this.element = hui.get(options.element);
-  this.name = options.name;
-  hui.ui.extend(this);
-  this.fullScreen = false;
-  this.initial = {
-    width : this.element.style.width,
-    height : this.element.style.height,
-    top : this.element.style.top,
-    left : this.element.style.left
-  };
-  this._addBehavior();
-};
-
-hui.ui.Tile._zIndex = 0;
-
-hui.ui.Tile.prototype = {
-  _addBehavior : function() {
-    hui.listen(this.element,'click',function(e) {
-      e = hui.event(e);
-      if (hui.cls.has(e.element,'hui_tile_icon')) {
-        var key = e.element.getAttribute('data-hui-key');
-        this.fire('clickIcon',{key:key,tile:this});
-      }
-    }.bind(this));
-  },
-  isFullScreen : function() {
-    return this.fullScreen;
-  },
-  toggleFullScreen : function() {
-    if (this.fullScreen) {
-      hui.animate({
-        node : this.element,
-        css : this.initial,
-        duration : 1000,
-        ease : hui.ease.elastic,
-        onComplete : function() {
-          hui.ui.reLayout();
-        }
-      });
-    } else {
-      hui.ui.Tile._zIndex++;
-      this.element.style.zIndex = hui.ui.Tile._zIndex;
-      hui.animate({
-        node : this.element,
-        css : {top:'0%',left:'0%',width:'100%',height:'100%'},
-        duration : 1000,
-        ease : hui.ease.elastic,
-        onComplete : function() {
-          hui.ui.reLayout();
-        }
-      });
-    }
-    this.fullScreen = !this.fullScreen;
-  }
-};
-;
-(function (_super) {
-
-  /**
-   * Vertical rows
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   */
-  hui.ui.StyleEditor = function(options) {
-    _super.call(this, options);
-    this.value = null;
-    this.components = options.components;
-    this.queryEditors = [];
-    this._attach();
-  };
-
-  hui.ui.StyleEditor.create = function(options) {
-    options = options || {};
-    var element = hui.build('div.hui_styleeditor',{html:'<div class="hui_styleeditor_list"></div>'});
-    options.element = element;
-    return new hui.ui.StyleEditor(options);
-  };
-
-  hui.ui.StyleEditor.prototype = {
-    nodes : {
-      list : '.hui_styleeditor_list'
-    },
-    _attach : function() {
-      var self = this;
-      hui.on(this.element, 'click', function(e) {
-        e = hui.event(e);
-        var query = e.findByClass('hui_styleeditor_query');
-        if (query) {
-          self.editQuery(parseInt(query.getAttribute('data-index'), 10));
-        }
-      });
-      var button = hui.ui.Button.create({text:'Add', small:true});
-      this.element.appendChild(button.element);
-      button.listen({$click:this.add.bind(this)});
-    },
-    editQuery : function(index) {
-      var query = this.value.queries[index];
-      win = this.queryEditors[index];
-      if (win) {
-        win.show();
-        return;
-      }
-      win = hui.ui.Window.create({
-        title : this._getQueryDescription(query),
-        width: 400,
-        padding: 10
-      });
-      this.queryEditors[index] = win;
-      var self = this;
-      var overflow = hui.ui.Overflow.create({height: 400});
-      win.add(overflow);
-      hui.each(this.components,function(component) {
-        var form = hui.ui.Form.create();
-        form.buildGroup({above:false},[{
-          type : 'DropDown', label: 'Display:', options : {key:'display', value:'', items:[
-            {value:'',text:'Unchanged'}, {value:'block',text:'Block'}, {value:'flex',text:'Flex'}
-          ]}
-        },{
-          type : 'DropDown', label: 'Flex direction:', options : {key:'flex-direction', value:'', items:[
-            {value:'',text:'Unchanged'},
-            {value:'row',text:'Row'},{value:'row-reverse',text:'Row reverse'},{value:'Column',text:'column'},{value:'column-reverse',text:'Column reverse'},
-            {value:'inherit',text:'Inherit'}, {value:'initial',text:'Initial'}, {value:'unset',text:'Unset'}, {value:'revert',text:'Revert'}
-          ]}
-        },{
-          type : 'StyleLength', label: 'Width:', options : {key:'width', value:''}
-        },{
-          type : 'ColorInput', label: 'Text color:', options : {key:'color', value:''}
-        },{
-          type : 'StyleLength', label: 'Max width:', options : {key:'max-width', value:''}
-        },{
-          type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
-        }]);
-        overflow.add(hui.build('div',{text:component.description, style: 'text-transform: uppercase; font-size: 12px;'}));
-        form.setValues(self._getComponentValues(query, component));
-        overflow.add(form);
-        var values = {};
-        form.listen({
-          $valuesChanged : function(values) {
-            var rules = self._getRulesFor({query:index, component:component.name});
-            hui.log(component.name, values, rules);
-            hui.each(rules,function(rule) {
-              if (values[rule.name]!==undefined) {
-                rule.value = values[rule.name];
-                values[rule.name] = undefined;
-              }
-            });
-            hui.each(values,function(key,value) {
-              // TODO We filter out unnamed (could be text filed inside color or other stuff)
-              if (key.indexOf('unnamed')!==0 && !hui.isBlank(value)) {
-                rules.push({name:key, value:value});
-              }
-            });
-            self.fireValueChange();
-          }
-        });
-      });
-      win.show();
-    },
-    _getComponentValues : function(query,component) {
-      var values = {};
-      if (query.components) {
-        var found = query.components.find(function(other) {
-          return other.name == component.name;
-        });
-        if (found) {
-          found.rules.forEach(function(rule) {
-            values[rule.name] = rule.value;
-          });
-        }
-      }
-      return values;
-    },
-    add : function() {
-      this.value.queries.push({components:[]});
-      this.draw();
-    },
-    setValue : function(value) {
-      this.value = value;
-      this.draw();
-    },
-    _getRulesFor : function(params) {
-      var query = this.value.queries[params.query];
-      var comps = query.components;
-      for (var i = 0; i < comps.length; i++) {
-        if (comps[i].name == params.component) {
-          if (!comps[i].rules) {
-            comps[i].rules = [];
-          }
-          return comps[i].rules;
-        }
-      }
-      var rules = [];
-      query.components.push({name:params.component, rules:rules});
-      return rules;
-    },
-    draw : function() {
-      this.nodes.list.innerHTML = '';
-      if (this.value && this.value.queries) {
-        for (var i = 0; i < this.value.queries.length; i++) {
-          var query = this.value.queries[i];
-          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.nodes.list, 'data-index':i});
-        }
-      }
-    },
-    _getQueryDescription : function(query) {
-      var text = [];
-      var props = ['max-width','min-width','max-height','min-height'];
-      for (var i = 0; i < props.length; i++) {
-        var prop = props[i];
-        if (query[prop]) {
-          text.push(prop + ': ' + query[prop]);
-        }
-      }
-      if (!text.length) {
-        text.push('Anything');
-      }
-      return text.join(', ');
-    },
-    $$childSizeChanged : function() {
-    },
-    $$layout : function() {
-    }
-  };
-
-  hui.extend(hui.ui.StyleEditor, _super);
-
-})(hui.ui.Component);
-;
-/** @namespace */
-hui.test = {
-  status : null,
-  busy : 0,
-  run : function(recipe) {
-    this.errorHandler = hui.listen(window,'error',function(e) {
-      hui.log(e);
-      hui.ui.msg.fail({text:'Error ('+e.message+') ['+e.lineno+']'});
-      throw e;
-    });
-    this.status = {failures:0,successes:0};
-    this.busy = 0;
-    hui.ui.msg({text:'Running test',busy:true});
-    this._next(0,recipe);
-
-  },
-  _next : function(num,recipe) {
-    if (recipe[num]===undefined) {
-      this._stop();
-      return;
-    }
-    hui.ui.msg({text:'Running test ('+num+')',busy:true});
-    if(typeof(recipe[num])=='function') {
-      recipe[num]();
-      this._next(num+1,recipe);
-    } else {
-      window.setTimeout(function(){
-        this._next(num + 1, recipe);
-      }.bind(this), recipe[num]);
-    }
-  },
-  _stop : function() {
-    if (this.busy>0) {
-      window.setTimeout(this._stop.bind(this),100);
-      return;
-    }
-    if (this.status.failures>0) {
-      hui.ui.msg.fail({text:'Failure',duration:2000});
-    } else {
-      hui.ui.msg.success({text:'Success',duration:2000});
-    }
-    hui.unListen(window,'error',this.errorHandler);
-  },
-  click : function(node,func) {
-    this.busy++;
-    Syn.click(node,function() {
-      if (func) {func();}
-      this.busy--;
-    }.bind(this));
-  },
-  type : function(node,text,func) {
-    this.busy++;
-    Syn.type(node,text,function() {
-      if (func) {func();}
-      this.busy--;
-    }.bind(this));
-  },
-  _succeed : function(msg) {
-    if (window.console) {
-      console.info(msg);
-    }
-    this._log(msg);
-    this.status.successes++;
-  },
-  _fail : function(msg,obj1,obj2) {
-    if (window.console) {
-      console.error(msg);
-      console.info('Object 1:');
-      console.info(obj1);
-    }
-      console.info('Object 2:');
-      console.info(obj2);
-    this._log(msg,true);
-    this.status.failures++;
-  },
-  _log : function(msg,fail) {
-    if (!this.log) {
-      var log = this.log = hui.build('div',{parent:document.body,style:'border: 1px solid #eee; padding: 5px; position: fixed; bottom:20px;right:20px; width: 200px; max-height: 200px; overflow: auto; white-space: nowrap; font-family: Monaco, monospace; font-size: 9px; color: #00ff00; background: #000'});
-      hui.listen(this.log,'click',function() {
-        if (log.style.left=='20px') {
-          log.style.left='';
-          log.style.top='';
-          log.style.width='200px';
-          log.style.maxHeight='200px';
-        } else {
-          log.style.left='20px';
-          log.style.top='20px';
-          log.style.width='';
-          log.style.maxHeight='';
-        }
-      });
-    }
-    hui.build('div',{parent:this.log,text:msg,style:fail?'color:red;':''});
-  },
-
-  // Assertion...
-
-  assert : {
-    equals : function(obj1,obj2,msg) {
-      return hui.test.assertEquals(obj1,obj2,msg);
-    },
-    notEquals : function(obj1,obj2,msg) {
-      return hui.test.assertNotEquals(obj1,obj2,msg);
-    },
-    'false' : function(value,msg) {
-      return hui.test.assertFalse(value,msg);
-    },
-    'true' : function(value,msg) {
-      return hui.test.assertTrue(value,msg);
-    },
-    'defined' : function(value,msg) {
-      return hui.test.assertDefined(value,msg);
-    }
-  },
-
-  assertTrue : function(value,msg) {
-    if (value!==true) {
-      this._fail('Failure ('+msg+'), not true...',value);
-    } else {
-      this._succeed('Success, true'+(msg ? ': '+msg : ''));
-    }
-  },
-  assertFalse : function(value,msg) {
-    if (value!==false) {
-      this._fail('Failure ('+msg+'), not false...',value);
-    } else {
-      this._succeed('Success, false'+(msg ? ': '+msg : ''));
-    }
-  },
-  assertDefined : function(value,msg) {
-    if (value===null || value===undefined) {
-      this._fail('Failure ('+msg+'), defined...',value);
-    } else {
-      this._succeed('Success, defined: '+msg);
-    }
-  },
-  assertEquals : function(obj1,obj2,msg) {
-    if (obj1!==obj2) {
-      this._fail('Failure ('+msg+') - '+obj1+'!=='+obj2+', not equal...',obj1,obj2);
-    } else {
-      this._succeed('Success, equal: '+obj1+'==='+obj2+(msg ? ', '+msg : ''));
-    }
-  },
-  assertNotEquals : function(obj1,obj2,msg) {
-    if (obj1===obj2) {
-      this._fail('Failure ('+msg+'), not not equal...',obj1,obj2);
-    } else {
-      this._succeed('Success, not equal: '+obj1+'!=='+obj2+', '+msg);
-    }
-  },
-  assertVisible : function(node,msg) {
-    if (node.style.display==='none') {
-      this._fail('Failure ('+msg+'), not visible...',node);
-    } else {
-      this._succeed('Success, visible: '+msg);
-    }
-  },
-  assertNotVisible : function(node,msg) {
-    if (node.style.display!=='none') {
-      this._fail('Failure ('+msg+'), visible...',node);
-    } else {
-      this._succeed('Success, not visible: '+msg);
+  '!click' : function(e) {
+    var item = e.closest('.hui_collection_item');
+    if (item) {
+      var idx = this.items.indexOf(item);
+      this.fire('select', {data: this.data[idx]});
+      this.updateSelection();
     }
   }
-};
-;
-(function (_super) {
+});
 
-  /**
-   * A base foundation
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   */
-  hui.ui.Foundation = function(options) {
-    _super.call(this, options);
-    this._attach();
-  };
 
-  hui.ui.Foundation.prototype = {
-    nodes : {
-      resizeNavigation : '.hui_foundation_resize_navigation',
-      resizeResults : '.hui_foundation_resize_overlay',
-      navigation : '.hui_foundation_navigation',
-      results : '.hui_foundation_results',
-      content : '.hui_foundation_content',
-      main : '.hui_foundation_main',
-      actions : '.hui_foundation_actions',
-      overlay : '.hui_foundation_overlay',
-      toggle : '.hui_foundation_overlay_toggle',
-      close : '.hui_foundation_overlay_close',
-      details : '.hui_foundation_details',
-      detailsToggle : '.hui_foundation_details_toggle',
-      back : '.hui_foundation_back'
-    },
-    _attach : function() {
-      var initial = 0,
-        navigation = this.nodes.navigation,
-        results = this.nodes.results,
-        content = this.nodes.content,
-        actions = this.nodes.actions,
-        overlay = this.nodes.overlay,
-        main = this.nodes.main,
-        navWidth, fullWidth, resultsWidth, overlayWidth,
-        self = this;
 
-      hui.on(this.nodes.toggle,'tap',this._toggleOverlay,this);
-      hui.on(this.nodes.close,'tap',this._toggleOverlay,this);
-      hui.on(this.nodes.detailsToggle,'tap',this._toggleDetails,this);
-      hui.on(this.nodes.back,'tap',this._back,this);
-
-      hui.drag.attach({
-        element : this.nodes.resizeNavigation,
-        touch: true,
-        $startMove : function(e) {
-          initial = e.getLeft();
-          navWidth = navigation.clientWidth;
-          overlayWidth = overlay.clientWidth;
-          fullWidth = self.element.clientWidth;
-          navigation.style.transition = 'none';
-          results.style.transition = 'none';
-        },
-        $move : function(e) {
-          var diff = e.getLeft() - initial;
-          var ratio = (navWidth + diff) / overlayWidth;
-          ratio = hui.between(0.3, ratio, 0.7);
-          navigation.style.width = (ratio * 100) + '%';
-          results.style.left = (ratio * 100) + '%';
-          results.style.width = (100 - ratio * 100) + '%';
-        },
-        $finally : function() {
-          navigation.style.transition = '';
-          results.style.transition = '';
-        }
-      });
-
-      hui.drag.attach({
-        element : this.nodes.resizeResults,
-        touch: true,
-        $startMove : function(e) {
-          initial = e.getLeft();
-          fullWidth = self.element.clientWidth;
-          overlayWidth = overlay.clientWidth;
-          overlay.style.transition = 'none';
-          main.style.transition = 'none';
-        },
-        $move : function(e) {
-          var diff = e.getLeft() - initial;
-          var ratio = (overlayWidth + diff) / fullWidth;
-          ratio = hui.between(0.2, ratio, 0.7);
-          overlay.style.width = (ratio * 100) + '%';
-          main.style.left = (ratio * 100) + '%';
-        },
-        $finally : function() {
-          overlay.style.transition = '';
-          main.style.transition = '';
-        }
-      });
-    },
-    _toggleOverlay : function() {
-      hui.cls.toggle(this.element, 'hui-is-open');
-    },
-    _toggleDetails : function() {
-      hui.cls.toggle(this.element, 'hui-is-details-open');
-    },
-    _back : function() {
-      hui.cls.remove(this.element, 'hui-is-submerged');
-    },
-    _break : -1,
-    $$layout : function() {
-      var breaks = [0, 600, 800, 1100, 1400];
-      var w = this.element.clientWidth;
-      var curr = -1;
-      for (var i = 0; i < breaks.length; i++) {
-        if (breaks[i] > w) { break; }
-        curr = breaks[i];
-      }
-      if (curr !== this._break) {
-        this.nodes.main.style.left = '';
-        this.nodes.overlay.style.width = '';
-        this.nodes.results.style.width = '';
-        this.nodes.results.style.left = '';
-        this.nodes.navigation.style.width = '';
-        this._break = curr;
-      }
-    },
-    disposeOverlay : function() {
-      hui.cls.remove(this.element, 'hui-is-open');
-    },
-    submerge : function() {
-      hui.cls.add(this.element,'hui-is-submerged');
-    }
-  };
-
-  hui.extend(hui.ui.Foundation, _super);
-
-})(hui.ui.Component);
-;
 /**
  * A chart (line / column etc.)
  * <pre><strong>options:</strong> {
@@ -20028,7 +18786,1081 @@ hui.ui.Chart.Util.convertData = function(obj) {
   }
   return data;
 };
-;
+
+(function (_super) {
+
+  /**
+   * Vertical rows
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.Clipboard = function(options) {
+    options = options || {};
+    _super.call(this, options);
+    this.value = null;
+    this._attach();
+  };
+
+  hui.ui.Clipboard.prototype = {
+    _attach : function() {
+      hui.on(document, 'paste', this._onPaste.bind(this));
+    },
+    _onPaste : function(e) {
+      this.fire('paste',e);
+      console.log('Paste event', e);
+      console.log('Clipboard data', e.clipboardData)
+      var items = e.clipboardData.items;
+      console.log('Clipboard data items', items)
+      if (items) {
+        console.log('items:', items)
+        for (var i = 0; i < items.length; i++) {
+          console.log(items[i]);
+          if (items[i].type == 'file') {
+            this._readFile(items[i].getAsFile());
+          }
+          if (items[i].type == 'text/plain') {
+            items[i].getAsString(function(x) {
+              this.fire('text', {text:x});
+            }.bind(this));
+          }
+        }
+      }
+      var files = e.clipboardData.files;
+      console.log('files:', files)
+      if (files) {
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          this._readFile(file);
+        }
+      }
+
+      var types = e.clipboardData.types;
+      console.log('Clipboard data types:', types)
+      if (types) {
+        for (var i = 0; i < types.length; i++) {
+          var data = e.clipboardData.getData(types[i], console.log);
+          console.log(data)
+        }
+      }
+      console.log(arguments)
+    },
+    _readFile : function(file) {
+      console.log(file.type)
+      var self = this;
+      if (/image\//.test(file.type)) {
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          self.fire('image', {base64:reader.result});
+        }
+        reader.readAsDataURL(file);
+      } else if (/text\//.test(file.type)) {
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          self.fire('text', {text:reader.result});
+        }
+        reader.readAsText(file);
+      } else {
+        self.fire('file', {file:file});
+      }
+    }
+
+  };
+
+  hui.extend(hui.ui.Clipboard, _super);
+  hui.define('hui.ui.Clipboard', hui.ui.Clipboard);
+
+})(hui.ui.Component);
+
+/** A diagram
+ * @constructor
+ */
+hui.ui.Diagram = function(options) {
+  this.options = hui.override({layout: 'D3'}, options);
+  this.name = options.name;
+  this.nodes = [];
+  this.lines = [];
+  this.data = {};
+  this.translation = {x:0,y:0};
+  this.element = hui.get(options.element);
+  this.width = this.element.clientWidth;
+  this.height = this.element.clientHeight;
+  this.layout = hui.ui.Diagram[this.options.layout];
+  this.layout.diagram = this;
+  hui.ui.extend(this);
+  if (options.source) {
+    options.source.listen(this);
+  }
+  this._init();
+};
+
+hui.ui.Diagram.create = function(options) {
+  options = hui.override({width: null, height: null}, options);
+
+  options.element = hui.build('div', {
+    'class': 'hui_diagram',
+    parent: options.parent,
+    style: {height: options.height + 'px'}
+  });
+
+  return new hui.ui.Diagram(options);
+};
+
+hui.ui.Diagram.prototype = {
+  _init : function() {
+    this.background = hui.ui.Drawing.create({
+      width: this.width || 0,
+      height: this.height || 0
+    });
+    this.element.appendChild(this.background.element);
+    this.fire('added');
+  },
+  $$layout : function() {
+    var newWidth = this.element.clientWidth;
+    var newHeight = this.element.clientHeight;
+    if (newWidth === this.width && newHeight === this.height) {
+      // Only re-layout if size actually changed
+      return;
+    }
+    this.width = newWidth;
+    this.height = newHeight;
+    this.background.setSize(this.width,this.height);
+    this.layout.resize();
+    this.layout.resume();
+  },
+  _getMagnet : function(from,to,node) {
+    var margin = 1;
+    var size = node.getSize();
+    var center = node.getCenter();
+    var topLeft = {
+        x : center.x - size.width/2 - margin,
+        y : center.y - size.height/2 - margin
+      },
+      bottomRight = {
+        x : topLeft.x + size.width + margin * 2,
+        y : topLeft.y + size.height + margin * 2
+      };
+    var hits = [];
+    hits = hui.geometry.intersectLineRectangle(from,to,topLeft,bottomRight);
+    if (hits.length>0) {
+      return hits[0];
+    }
+    return to;
+  },
+
+  // Data ...
+
+  /** @private */
+  $objectsLoaded : function(data) {
+    this.setData(data);
+  },
+  setData : function(data) {
+    this.data = data;
+    this.clear();
+    var nodes = data.nodes,
+      lines = data.lines || data.edges;
+    if (!nodes || !lines) {
+      return;
+    }
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      if (nodes[i].type=='icon') {
+        this.addIcon(nodes[i]);
+      } else {
+        this.addBox(nodes[i]);
+      }
+    }
+    for (i = 0; i < lines.length; i++) {
+      this.addLine(lines[i]);
+    }
+    if (this.layout.loaded) {
+      this.layout.populate();
+    } else {
+      this.play();
+    }
+  },
+  /** Deprecated */
+  play : function() {
+    this.layout.start();
+  },
+  resume : function() {
+    if (this.layout.resume) { this.layout.resume(); }
+  },
+  expand : function() {
+    if (this.layout.expand) { this.layout.expand(); }
+  },
+  contract : function() {
+    if (this.layout.contract) { this.layout.contract(); }
+  },
+  /** @private */
+  $sourceShouldRefresh : function() {
+    return hui.dom.isVisible(this.element);
+  },
+  /** @private */
+  $visibilityChanged : function() {
+    if (hui.dom.isVisible(this.element)) {
+      this.width = this.element.clientWidth;
+      this.height = this.element.clientHeight;
+      this.background.setSize(this.width,this.height);
+      if (this.options.source) {
+        this.options.source.refreshFirst();
+      }
+    }
+  },
+  clear : function() {
+    this.layout.clear();
+    this.selection = null;
+    this.background.clear();
+    this.lines = [];
+    for (var i = this.nodes.length - 1; i >= 0; i--) {
+      hui.dom.remove(this.nodes[i].element);
+    }
+    this.nodes = [];
+    var lines = hui.get.byClass(this.element,'hui_diagram_line_label');
+    for (var j = lines.length - 1; j >= 0; j--) {
+      hui.dom.remove(lines[j]);
+    }
+  },
+
+  addBox : function(options) {
+    var box = hui.ui.Diagram.Box.create(options,this);
+    this.add(box);
+  },
+
+  addIcon : function(options) {
+    var box = hui.ui.Diagram.Icon.create(options,this);
+    this.add(box);
+  },
+  add : function(widget) {
+    var e = widget.element;
+    this.element.appendChild(e);
+    widget.setCenter({x: this.width / 2, y : this.height / 2});
+    this.nodes.push(widget);
+  },
+  addLine : function(options) {
+    var from = this.getNode(options.from),
+      to = this.getNode(options.to);
+    if (from === null || to === null) {
+      hui.log('Unable to build line...');
+      hui.log(options);
+      return;
+    }
+    var fromCenter = this._getCenter(from),
+      toCenter = this._getCenter(to);
+    var lineNode = this.background.addLine({
+        from: fromCenter,
+        to: toCenter,
+        color: options.color || '#999' ,end:{}
+      }),
+      line = {
+        from: options.from,
+        fromNode : from,
+        to: options.to,
+        toNode : to,
+        node: lineNode
+      };
+    if (options.label) {
+      line.label = hui.build('span',{
+        parent: this.element,
+        'class': 'hui_diagram_line_label',
+        text: options.label
+      });
+      this._updateLine(line);
+    }
+    this.lines.push(line);
+  },
+
+
+  _getCenter : function(widget) {
+    return widget.getCenter();
+  },
+  getNode : function(id) {
+    return this._getNode(id,this.nodes);
+  },
+  getDataNode : function(id) {
+    return this._getNode(id,this.data.nodes);
+  },
+  _getNode : function(id,nodes) {
+    if (nodes) {
+      for (var i=0; i < nodes.length; i++) {
+        if (nodes[i].id == id) {
+          return nodes[i];
+        }
+      }
+    }
+    return null;
+  },
+
+  // Drawing...
+
+  _updateLine : function(line) {
+    if (!line.label) {
+      return;
+    }
+    var from = line.node.getFrom(),
+      to = line.node.getTo(),
+      label = line.label;
+    var middle = { x : from.x+(to.x-from.x)/2, y : from.y+(to.y-from.y)/2 };
+    //var deg = Math.atan((from.y-to.y) / (from.x-to.x)) * 180/Math.PI;
+    line.label.style.webkitTransform='rotate('+line.node.getDegree()+'deg)';
+    //line.label.innerHTML = Math.round(hui.geometry.distance(from,to));
+    var width = Math.round(hui.geometry.distance(from,to)-30);
+    // TODO: cache width + height
+    var w = label.huiWidth = label.huiWidth || label.clientWidth;
+    var h = label.huiHeight = label.huiHeight || label.clientHeight;
+    w = Math.min(w,width);
+    hui.style.set(line.label,{
+      left : (middle.x - w / 2) + 'px',
+      top : (middle.y - h / 2) + 'px',
+      maxWidth : Math.max(0, width) + 'px',
+      visibility : width > 10 ? '' : 'hidden'
+    });
+  },
+  __nodeMoved : function(widget) {
+    var center = this._getCenter(widget);
+    for (var i=0; i < this.lines.length; i++) {
+      var line = this.lines[i];
+      var magnet, magnet2;
+      if (line.from == widget.id) {
+        magnet = this._getMagnet(line.node.getTo(),center,widget);
+        line.node.setFrom(magnet);
+        magnet2 = this._getMagnet(center,this._getCenter(line.toNode),line.toNode);
+        line.node.setTo(magnet2);
+        this._updateLine(line);
+      }
+      else if (line.to == widget.id) {
+        magnet = this._getMagnet(line.node.getFrom(),center,widget);
+        line.node.setTo(magnet);
+        magnet2 = this._getMagnet(center,this._getCenter(line.fromNode),line.fromNode);
+        line.node.setFrom(magnet2);
+        this._updateLine(line);
+      }
+    }
+  },
+  __select : function(widget) {
+    if (this.selection) {
+      this.selection.setSelected(false);
+    }
+    this.selection = widget;
+    this.selection.setSelected(true);
+  },
+  __nodeOpen : function(widget) {
+    this.fire('open',this.getDataNode(widget.id));
+  }
+};
+
+hui.ui.Diagram.D3 = {
+  loaded : false,
+  diagram : null,
+
+  _load : function() {
+    hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.min.js'),function() {
+      this.loaded = true;
+      this.start();
+    }.bind(this));
+  },
+
+  resize : function() {
+    if (this.layout) {
+      this.layout.size([this.diagram.width,this.diagram.height]);
+    }
+  },
+
+  start : function() {
+    if (!this.loaded) {
+      this._load();
+      return;
+    }
+    var diagram = this.diagram,
+      nodes = diagram.nodes,
+      lines = diagram.lines,
+      width = diagram.element.clientWidth,
+      height = diagram.element.clientHeight;
+
+    for (var i=0; i < lines.length; i++) {
+      lines[i].source = this._findById(nodes,lines[i].from);
+      lines[i].target = this._findById(nodes,lines[i].to);
+    }
+
+    var force = this.layout = d3.layout.force()
+            .linkDistance(100)
+            .friction(0.9)
+            .gravity(0.1)
+            .theta(0.3)
+            .linkStrength(0.2)
+      .charge(-1000)
+      .distance(100)
+      .nodes(this.diagram.nodes)
+      .links(this.diagram.lines)
+      .size([width, height]);
+
+    var ticker = function() {
+      var sel = diagram.selection ? diagram.selection.id : null;
+      var nodes = force.nodes(),
+        links = force.links();
+      for (var i=0; i < nodes.length; i++) {
+        var node = diagram.nodes[nodes[i].index];
+        if (node.id!=sel) {
+          node.setCenter(nodes[i]);
+        }
+      }
+      for (var j=0; j < links.length; j++) {
+        var link = links[j];
+        var source = link.source,
+          sourceCenter = link.source.center;
+        var target = link.target,
+          targetCenter = link.target;
+        if (source==diagram.selection) {
+          sourceCenter = diagram._getCenter(diagram.selection);
+        }
+        if (target==diagram.selection) {
+          targetCenter = diagram._getCenter(diagram.selection);
+        }
+        var from = diagram._getMagnet(sourceCenter,targetCenter,source);
+        var to = diagram._getMagnet(targetCenter,sourceCenter,target);
+        link.node.setFrom(from);
+        link.node.setTo(to);
+        diagram._updateLine(link);
+      }
+    };
+    force.start();
+    force.gravity(0.5);
+    for (var k=0; k < 10000; k++) {
+      force.tick();
+    }
+    force.gravity(0.1);
+
+    force.on("tick", ticker);
+
+    force.start();
+  },
+
+  resume : function() {
+    if (this.layout) { this.layout.start(); }
+  },
+  expand : function() {
+    if (this.layout) {
+      this.layout.linkDistance(this.layout.linkDistance() * 1.3);
+      this.layout.charge(this.layout.charge() * 1.3);
+      this.layout.start();
+    }
+  },
+  contract : function() {
+    if (this.layout) {
+      this.layout.linkDistance(Math.max(0,this.layout.linkDistance() * 0.9));
+      this.layout.charge(Math.min(0,this.layout.charge() * 0.9));
+      this.layout.start();
+    }
+  },
+
+  _findById : function(nodes,id) {
+    for (var i = nodes.length - 1; i >= 0; i--){
+      if (nodes[i].id===id) {
+        return i;
+      }
+    }
+    return null;
+  },
+  _convert : function(data) {
+    var nodes = data.nodes;
+    data.links = data.edges;
+    for (var i = data.links.length - 1; i >= 0; i--){
+      var link = data.links[i];
+      link.source = this._findById(nodes,link.from);
+      link.target = this._findById(nodes,link.to);
+    }
+    return data;
+  },
+  populate : function() {
+    this.start();
+  },
+  clear : function() {
+    if (this.layout) {
+      this.layout.stop();
+    }
+  }
+
+};
+
+
+/** A box in a diagram
+ * @constructor
+ */
+hui.ui.Diagram.Box = function(options) {
+  this.options = options;
+  this.id = options.id;
+  this.name = options.name;
+  this.element = hui.get(options.element);
+  this.center = {};
+  this.size = null;
+  hui.ui.extend(this);
+  hui.ui.Diagram.util.enableDragging(this);
+};
+
+hui.ui.Diagram.Box.create = function(options,diagram) {
+  options = hui.override({title: 'Untitled', diagram: diagram}, options);
+  var e = options.element = hui.build('div', {'class': 'hui_diagram_box'});
+  hui.build('h1',{text: options.title, parent: e});
+  if (options.properties) {
+    var table = hui.build('table', {parent: e});
+    for (var i=0; i < options.properties.length; i++) {
+      var p = options.properties[i];
+      var tr = hui.build('tr',{parent: table});
+      hui.build('th',{parent: tr,text: p.label});
+      var td = hui.build('td',{parent: tr,text: p.value || ''});
+      if (p.hint) {
+        hui.build('em',{parent: td, text: p.hint});
+      }
+    }
+  }
+  return new hui.ui.Diagram.Box(options);
+};
+
+hui.ui.Diagram.Box.prototype = {
+  _syncSize : function() {
+    if (this.size) {
+      return;
+    }
+    this.size = {
+      width : this.element.offsetWidth,
+      height : this.element.offsetHeight
+    };
+  },
+  getSize : function() {
+    this._syncSize();
+    return this.size;
+  },
+  getCenter : function() {
+    return this.center;
+  },
+  setCenter : function(point) {
+    this._syncSize();
+    this.center = {x : point.x, y : point.y};
+    this._updateCenter();
+  },
+  _updateCenter : function() {
+    this.element.style.top = Math.round(this.center.y - this.size.height / 2) + 'px';
+    this.element.style.left = Math.round(this.center.x - this.size.width / 2) + 'px';
+  },
+  setSelected : function(selected) {
+    hui.cls.set(this.element,'hui_diagram_box_selected', selected);
+  }
+};
+
+if (hui.browser.webkit) {
+  hui.ui.Diagram.Box.prototype._updateCenter = function() {
+    this.element.style.WebkitTransform = 'translate3d(' + Math.round(this.center.x - this.size.width/2) + 'px,' + Math.round(this.center.y - this.size.height/2) + 'px,0)';
+  };
+}
+
+
+
+
+/** A box in a diagram
+ * @constructor
+ */
+hui.ui.Diagram.Icon = function(options) {
+  this.options = options;
+  this.id = options.id;
+  this.name = options.name;
+  this.element = hui.get(options.element);
+  this.center = {};
+  hui.ui.extend(this);
+  hui.ui.Diagram.util.enableDragging(this);
+};
+
+hui.ui.Diagram.Icon.create = function(options,diagram) {
+  options = hui.override({icon:'common/folder',diagram:diagram},options);
+  var e = options.element = hui.build('div',{'class':'hui_diagram_icon'});
+  e.appendChild(hui.ui.createIcon(options.icon,32));
+  if (options.title) {
+    hui.build('strong',{parent: e, text: options.title});
+  }
+  return new hui.ui.Diagram.Icon(options);
+};
+
+hui.ui.Diagram.Icon.prototype = {
+  _syncSize : function() {
+    if (this.size) {
+      return;
+    }
+    this.size = {
+      width : this.element.offsetWidth,
+      height : this.element.offsetHeight
+    };
+  },
+  getSize : function() {
+    this._syncSize();
+    return this.size;
+  },
+  getCenter : function() {
+    return this.center;
+  },
+  setCenter : function(point) {
+    var e = this.element;
+    e.style.top = Math.round(point.y - e.clientHeight / 2) + 'px';
+    e.style.left = Math.round(point.x - e.clientWidth / 2) + 'px';
+    this.center = {x : point.x, y : point.y};
+  },
+  setSelected : function(selected) {
+    hui.cls.set(this.element, 'hui_diagram_icon_selected', selected);
+  }
+};
+
+/** Utilities **/
+
+hui.ui.Diagram.util = {
+  enableDragging : function(obj) {
+    var diagram = obj.options.diagram;
+    hui.cls.add(obj.element, 'hui_diagram_dragable');
+    var dragState = null;
+    hui.drag.register({
+      touch : true,
+      element : obj.element,
+      onStart : function() {
+        hui.cls.add(obj.element,'hui_diagram_dragging');
+        obj.fixed = true;
+      },
+      onNotMoved : function() {
+        diagram.__select(obj);
+        diagram.fire('select', obj.id);
+      },
+      onBeforeMove : function(e) {
+        diagram.__nodeMoved(obj);
+        e = hui.event(e);
+        obj.element.style.zIndex = hui.ui.nextPanelIndex();
+        var pos = obj.getCenter();
+        var size = obj.getSize();
+        pos = {left: pos.x - size.width / 2, top: pos.y - size.height / 2};
+        var diagramPosition = hui.position.get(diagram.element);
+        dragState = {
+          left : e.getLeft() - pos.left,
+          top : e.getTop()-pos.top
+        };
+        obj.element.style.right = 'auto';
+      },
+      onMove : function(e) {
+        var top = (e.getTop()-dragState.top);
+        var left = (e.getLeft()-dragState.left);
+        var size = obj.getSize();
+        top += size.height/2;
+        left += size.width/2;
+        obj.setCenter({x:left,y:top});
+        obj.px = left;
+        obj.py = top;
+        diagram.__nodeMoved(obj);
+      },
+      onEnd : function() {
+        hui.cls.remove(obj.element,'hui_diagram_dragging');
+        obj.fixed = false;
+        hui.log('end');
+      }
+    });
+    hui.listen(obj.element,'dblclick',function(e) {
+      diagram.__nodeOpen(obj);
+    });
+  }
+};
+
+/**
+ * @constructor
+ */
+hui.ui.Drawing = function(options) {
+  this.options = hui.override({width:200,height:200},options);
+  this.element = hui.get(options.element);
+  hui.log({width:options.width,height:options.height});
+  this.svg = hui.ui.Drawing._build({tag:'svg',parent:this.element,attributes:{width:options.width,height:options.height}});
+  this.element.appendChild(this.svg);
+  this.name = options.name;
+  hui.ui.extend(this);
+};
+
+hui.ui.Drawing.create = function(options) {
+  options = options || {};
+  var e = options.element = hui.build('div',{'class':'hui_drawing',style:'position: relative; overflow: hidden;'});
+  if (options.height) {
+    e.style.height = options.height+'px';
+  }
+  if (options.width) {
+    e.style.width = options.width+'px';
+  }
+  if (options.parent) {
+    hui.get(options.parent).appendChild(e);
+  }
+  return new hui.ui.Drawing(options);
+};
+
+hui.ui.Drawing.prototype = {
+  setSize : function(width,height) {
+    this.svg.setAttribute('width',width);
+    this.svg.setAttribute('height',height);
+    this.svg.style.width = width+'px';
+    this.svg.style.height = height+'px';
+    this.element.style.width = width+'px';
+    this.element.style.height = height+'px';
+  },
+  clear : function() {
+    hui.dom.clear(this.svg);
+  },
+  addLine : function(options) {
+    options.parent = this.svg;
+    return hui.ui.Drawing.Line.create(options);
+  },
+  addRect : function(options) {
+    options.parent = this.svg;
+    return hui.ui.Drawing.Rect.create(options);
+  },
+  addCircle : function(options) {
+    options.parent = this.svg;
+    return hui.ui.Drawing.Circle.create(options);
+  },
+  addArc : function(options) {
+    options.parent = this.svg;
+    return hui.ui.Drawing.Arc.create(options);
+  },
+  addElement : function(options) {
+    var node = hui.build('div',{style:'position:absolute;left:0;top:0;',parent:this.element,html:options.html}),
+      element = new hui.ui.Drawing.Element(node);
+    if (options.movable) {
+      hui.drag.register({
+        element : node,
+        onBeforeMove : function(e) {
+          this.fire('shapeWillMove',{shape:element,event:e});
+        }.bind(this),
+        onMove : function(e) {
+          node.style.left = e.getLeft()+'px';
+          node.style.top = e.getTop()+'px';
+          this.fire('shapeMoved',{shape:element,event:e});
+        }.bind(this),
+        onAfterMove : function(e) {
+          this.fire('shapeWasMoved',{shape:element,event:e});
+        }.bind(this)
+      });
+    }
+    return element;
+  }
+};
+
+hui.ui.Drawing._build = function(options) {
+  var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
+  if (options.attributes) {
+    for (var att in options.attributes) {
+      node.setAttribute(att,options.attributes[att]);
+    }
+  }
+  if (options.parent) {
+    options.parent.appendChild(node);
+  }
+  return node;
+};
+
+
+// Line
+
+hui.ui.Drawing.Line = function(options) {
+  this.node = options.node;
+  this.endNode = options.endNode;
+  this.from = options.from;
+  this.to = options.to;
+  this._updateEnds();
+};
+
+hui.ui.Drawing.Line.create = function(options) {
+  if (!options.from) {
+    options.from = {x:options.x1,y:options.y1};
+  }
+  if (!options.to) {
+    options.to = {x:options.x2,y:options.y2};
+  }
+
+  var attributes = {
+    x1 : options.from.x.toFixed(10),
+    y1 : options.from.y.toFixed(10),
+    x2 : options.to.x.toFixed(10),
+    y2 : options.to.y.toFixed(10),
+    style : 'stroke:'+(options.color || '#000')+';stroke-width:'+(options.width || 1)
+  };
+
+  options.node = hui.ui.Drawing._build({
+    tag : 'line',
+    parent : options.parent,
+    attributes : attributes
+  });
+  if (options.end) {
+    options.endNode = hui.ui.Drawing._build({
+      tag : 'path',
+      parent : options.parent,
+      attributes : {d:'M 0 -1 L 5 10 L -5 10',fill:options.color || '#000'}
+    });
+  }
+  return new hui.ui.Drawing.Line(options);
+};
+
+hui.ui.Drawing.Line.prototype = {
+  setFrom : function(point) {
+    this.from = point;
+    this.node.setAttribute('x1',point.x.toFixed(10));
+    this.node.setAttribute('y1',point.y.toFixed(10));
+    this._updateEnds();
+  },
+  getFrom : function() {
+    return this.from;
+  },
+  setTo : function(point) {
+    this.to = point;
+    this.node.setAttribute('x2',point.x.toFixed(10));
+    this.node.setAttribute('y2',point.y.toFixed(10));
+    this._updateEnds();
+  },
+  getTo : function() {
+    return this.to;
+  },
+  _updateEnds : function() {
+    //var deg = Math.atan((this.from.y-this.to.y) / (this.from.x-this.to.x)) * 180/Math.PI;
+    if (this.endNode) {
+      var deg = -90 + Math.atan2(this.from.y - this.to.y, this.from.x - this.to.x) * 180 / Math.PI;
+      this.endNode.setAttribute('transform','translate('+ ( this.to.x.toFixed(10)) + ',' + ( this.to.y.toFixed(10) ) + ') rotate(' + (deg) + ')');
+
+    }
+  },
+  getDegree : function() {
+    return Math.atan((this.from.y - this.to.y) / (this.from.x - this.to.x)) * 180 / Math.PI;
+  }
+};
+
+
+
+// Circle
+
+hui.ui.Drawing.Circle = function(options) {
+  this.node = options.node;
+  this.properties = {};
+};
+
+hui.ui.Drawing.Circle.create = function(options) {
+  var css = [];
+  if (options.stroke) {
+    if (options.stroke.color) {
+      css.push('stroke:' + options.stroke.color);
+    }
+    if (options.stroke.width) {
+      css.push('stroke-width:' + options.stroke.width);
+    }
+  }
+  if (options.fill) {
+    css.push('fill:' + options.fill);
+  }
+  options.node = hui.ui.Drawing._build({
+    tag : 'circle',
+    parent : options.parent,
+    attributes : {
+      cx : options.cx,
+      cy : options.cy,
+      r : options.r,
+      style : css.join(';')
+    }
+  });
+  return new hui.ui.Drawing.Circle(options);
+};
+
+hui.ui.Drawing.Circle.prototype = {
+  setRadius : function(radius) {
+    this.node.setAttribute("r", radius);
+  },
+
+  setCenter : function(point) {
+    this.node.setAttribute('cx', point.x);
+    this.node.setAttribute('cy', point.y);
+  }
+};
+
+
+
+// Rect
+
+hui.ui.Drawing.Rect = function(options) {
+  this.node = options.node;
+};
+
+hui.ui.Drawing.Rect.create = function(options) {
+  var css = [];
+  if (options.stroke) {
+    if (options.stroke.color) {
+      css.push('stroke:'+options.stroke.color);
+    }
+    if (options.stroke.width) {
+      css.push('stroke-width:'+options.stroke.width);
+    }
+  }
+  if (options.fill) {
+    css.push('fill:'+options.fill);
+  }
+  options.node = hui.ui.Drawing._build({
+    tag : 'rect',
+    parent : options.parent,
+    attributes : {
+      x : options.x,
+      y : options.y,
+      width : options.width,
+      height : options.height,
+      style : css.join(';')
+    }
+  });
+  return new hui.ui.Drawing.Circle(options);
+};
+
+hui.ui.Drawing.Rect.prototype = {
+  setPosition : function(point) {
+    this.node.setAttribute('x',point.x);
+    this.node.setAttribute('y',point.y);
+  }
+};
+
+
+// Arc
+hui.ui.Drawing.Arc = function(options) {
+  this.node = options.node;
+  this.options = hui.override({
+    center : {x:100,y:100},
+    startDegrees : 0,
+    endDegrees : 0,
+    innerRadius : 0,
+    outerRadius : 0,
+    skew: 0,
+    fill : '#eee'
+  },options);
+  this._redraw();
+};
+
+hui.ui.Drawing.Arc.create = function(options) {
+  var css = [];
+  if (options.stroke) {
+    if (options.stroke.color) {
+      css.push('stroke:'+options.stroke.color);
+    }
+    if (options.stroke.width) {
+      css.push('stroke-width:'+options.stroke.width);
+    }
+  }
+  options.node = hui.ui.Drawing._build({ tag : 'path' ,parent : options.parent, attributes : {fill : options.fill || '#000', style:css.join(';')}});
+  var arc = new hui.ui.Drawing.Arc(options);
+  return arc;
+};
+
+hui.ui.Drawing.Arc.prototype = {
+
+  update : function(options) {
+    this.options = hui.override(this.options,options);
+    this._redraw();
+  },
+  _redraw : function() {
+    var o = this.options,
+      cx = o.center.x,
+      cy = o.center.y,
+      startRadians = (o.startDegrees || 0) * Math.PI/180,
+      closeRadians = (o.endDegrees   || 0) * Math.PI/180,
+      r1 = o.innerRadius,
+      r2 = o.outerRadius;
+    var points = [
+      [
+        cx + r2 * Math.cos(startRadians),
+        cy + r2 * Math.sin(startRadians)
+      ],
+      [
+        cx + r2 * Math.cos(closeRadians),
+        cy + r2 * Math.sin(closeRadians)
+      ],
+      [
+        cx + r1 * Math.cos(closeRadians - o.skew),
+        cy + r1 * Math.sin(closeRadians - o.skew)
+      ],
+      [
+        cx + r1 * Math.cos(startRadians + o.skew),
+        cy + r1 * Math.sin(startRadians + o.skew)
+      ]
+    ];
+
+    var angleDiff = closeRadians - startRadians;
+    var largeArc = (angleDiff % (Math.PI*2)) > Math.PI ? 1 : 0;
+    var cmds = [
+      "M"+points[0].join(),                 // Move to P0
+      "A"+[r2,r2,0,largeArc,1,points[1]].join(),        // Arc to  P1
+      "L"+points[2].join(),                 // Line to P2
+      "A"+[r1,r1,0,largeArc,0,points[3]].join(),        // Arc to  P3
+      "z"                                           // Close path (Line to P0)
+    ];
+    this.node.setAttribute('d',cmds.join(' '));
+  }
+};
+
+
+
+// Element
+
+hui.ui.Drawing.Element = function(node) {
+  this.node = node;
+};
+
+hui.ui.Drawing.Element.prototype = {
+  setPosition : function(point) {
+    this.node.style.left = point.x+'px';
+    this.node.style.top = point.y+'px';
+  },
+  setCenter : function(point) {
+    this.node.style.left = (point.x - this.node.clientWidth/2)+'px';
+    this.node.style.top = (point.y - this.node.clientHeight/2)+'px';
+  }
+};
+
+
+hui.geometry = {
+  intersectLineLine : function(a1, a2, b1, b2) {
+
+    var ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x);
+    var ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x);
+    var u_b  = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
+
+    if ( u_b !== 0 ) {
+      var ua = ua_t / u_b;
+      var ub = ub_t / u_b;
+
+      if ( 0 <= ua && ua <= 1 && 0 <= ub && ub <= 1 ) {
+        return {
+          x : a1.x + ua * (a2.x - a1.x),
+          y : a1.y + ua * (a2.y - a1.y)
+        };
+      }
+    }
+    return null;
+  },
+  intersectLineRectangle : function(a1, a2, r1, r2) {
+    var min        = {x : Math.min(r1.x,r2.x),y : Math.min(r1.y,r2.y)};
+    var max        = {x : Math.max(r1.x,r2.x),y : Math.max(r1.y,r2.y)};
+    var topRight   = {x: max.x, y: min.y };
+    var bottomLeft = {x: min.x, y: max.y };
+
+    var inter1 = hui.geometry.intersectLineLine(min, topRight, a1, a2);
+    var inter2 = hui.geometry.intersectLineLine(topRight, max, a1, a2);
+    var inter3 = hui.geometry.intersectLineLine(max, bottomLeft, a1, a2);
+    var inter4 = hui.geometry.intersectLineLine(bottomLeft, min, a1, a2);
+
+    var result = [];
+
+    if (inter1 !== null) result.push(inter1);
+    if (inter2 !== null) result.push(inter2);
+    if (inter3 !== null) result.push(inter3);
+    if (inter4 !== null) result.push(inter4);
+    return result;
+  },
+  distance : function( point1, point2 ) {
+    var xs = point2.x - point1.x;
+
+    var ys = point2.y - point1.y;
+
+    return Math.sqrt( xs * xs + ys * ys );
+  }
+};
+
 (function(_super, hui) {
 
   hui.ui.EditManager = function(options) {
@@ -20174,7 +20006,2614 @@ hui.ui.Chart.Util.convertData = function(obj) {
   hui.extend(hui.ui.EditManager, _super);
 })(hui.ui.Component, hui);
 
-;
+
+(function(_super) {
+
+  /**
+   * A component with a value
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   * @param {any} options.value The value
+   */
+  hui.ui.Editable = function(options) {
+    _super.call(this, options);
+    this.value = options.value;
+  };
+
+  hui.ui.Editable.prototype = {
+    setValue : function(value) {
+      var changed = value !== this.value;
+      this.value = value;
+      if (changed) {
+        this.fireValueChange();
+      }
+    },
+    getValue : function() {
+      return this.value;
+    },
+    fireValueChange : function() {
+      this.fire('valueChanged', this.value);
+      hui.ui.firePropertyChange(this, 'value', this.value);
+      hui.ui.callAncestors(this, 'childValueChanged', this.value);
+    }
+  };
+
+  hui.extend(hui.ui.Editable, _super);
+
+})(hui.ui.Component);
+
+/**
+ * Editing of documents composed of different parts
+ *
+ * @constructor
+ * @fires hui.ui.Editor#editPart
+ * @fires hui.ui.Editor#cancelPart
+ * @fires hui.ui.Editor#savePart
+ * @fires hui.ui.Editor#addPart
+ */
+hui.ui.Editor = function() {
+  this.name = 'huiEditor';
+  this.options = {rowClass:'row',columnClass:'column',partClass:'part'};
+  this.parts = [];
+  this.rows = [];
+  this.partControllers = [];
+  this.activePart = null;
+  this.active = false;
+  this.live = true;
+  this.enableStructure = true;
+  hui.ui.extend(this);
+};
+
+/**
+ * Get the one and only editor instance
+ * @return {hui.ui.Editor}
+ */
+hui.ui.Editor.get = function() {
+  if (!hui.ui.Editor.instance) {
+    hui.ui.Editor.instance = new hui.ui.Editor();
+  }
+  return hui.ui.Editor.instance;
+};
+
+hui.ui.Editor.prototype = {
+  /** Start the editor */
+  ignite : function() {
+    //hui.listen(window,'keydown',this._onKeyDown.bind(this));
+    //hui.listen(window,'keyup',this._onKeyUp.bind(this));
+    this.reload();
+  },
+  /*
+  _onKeyDown : function(e) {
+    e = hui.event(e);
+    //this.live = e.altKey;
+  },
+  _onKeyUp : function(e) {
+    //this.live = false;
+  },*/
+
+  addPartController : function(key,title,controller) {
+    this.partControllers.push({key:key,'title':title,'controller':controller});
+  },
+  setOptions : function(options) {
+    hui.override(this.options,options);
+  },
+  _getPartController : function(key) {
+    var ctrl = null;
+    hui.each(this.partControllers,function(item) {
+      if (item.key==key) {ctrl=item;}
+    });
+    return ctrl;
+  },
+  reload : function() {
+    if (this.partControls) {
+      this.partControls.hide();
+    }
+    var self = this;
+    this.parts = [];
+    var rows = hui.get.byClass(document.body,this.options.rowClass);
+    hui.each(rows,function(row,i) {
+      var columns = hui.get.byClass(row,self.options.columnClass);
+      self._reloadColumns(columns,i);
+      hui.each(columns,function(column,j) {
+        var parts = hui.get.byClass(column,self.options.partClass);
+        self._reloadParts(parts,i,j);
+      });
+    });
+    /*
+    var parts = hui.get.byClass(document.body,this.options.partClass);
+    hui.each(this.parts,function(part) {
+      var i = parts.indexOf(part.element);
+      if (i!=-1) {
+        delete(parts[i]);
+      }
+    });
+    this._reloadParts(parts,-1,-1);
+    */
+  },
+  _reloadColumns : function(columns,rowIndex) {
+    var self = this;
+    hui.each(columns,function(column,columnIndex) {
+      hui.listen(column,'mouseover',function() {
+        self._onHoverColumn(column);
+      });
+      hui.listen(column,'mouseout',function(e) {
+        self._onBlurColumn(e);
+      });
+      if (self.enableStructure)
+      hui.listen(column,'contextmenu',function(e) {
+        self.contextColumn(column,rowIndex,columnIndex,e);
+      });
+    });
+  },
+  _reloadParts : function(parts,row,column) {
+    var self = this;
+    var reg = new RegExp(this.options.partClass+"_([\\w]+)","i");
+    hui.each(parts,function(element,partIndex) {
+      if (!element) return;
+      var match = element.className.match(reg);
+      if (match && match[1]) {
+        var handler = self._getPartController(match[1]);
+        if (handler) {
+          var part = new handler.controller({element:element});
+          part.type = match[1];
+          hui.listen(element,'click',function(e) {
+            e = hui.event(e);
+            if (!e.findByTag('a') && e.altKey) {
+              self._editPart(part);
+            }
+          });
+          hui.listen(element,'mouseover',function(e) {
+            self.hoverPart(part);
+          });
+          hui.listen(element,'mouseout',function(e) {
+            self.blurPart(e);
+          });
+          self.parts.push(part);
+        }
+        hui.listen(element,'mousedown',function(e) {
+          self._startPartDrag({
+            element : element,
+            event : e
+          });
+        });
+      }
+    });
+  },
+  activate : function() {
+    this.active = true;
+  },
+  deactivate : function() {
+    this.active = false;
+    if (this.activePart) {
+      this._deactivatePart(this.activePart);
+    }
+    if (this.partControls) {
+      this.partControls.hide();
+    }
+  },
+
+
+  ///////////////////////// Columns ////////////////////////
+
+  _onHoverColumn : function(column) {
+    if (this.hoveredColumn) {
+      hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
+    }
+    this.hoveredColumn = column;
+    if (!this.active || this.activePart) {
+      return;
+    }
+    hui.cls.add(column,'hui_editor_column_hover');
+  },
+
+  _onBlurColumn : function(e) {
+    if (!this.active || !this.hoveredColumn || hui.ui.isWithin(e,this.hoveredColumn)) return;
+    hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
+  },
+
+  contextColumn : function(column,rowIndex,columnIndex,e) {
+    if (!this.active || this.activePart) return;
+    if (!this.columnMenu) {
+      var menu = hui.ui.Menu.create({name:'huiEditorColumnMenu'});
+      menu.addItem({title:'Edit part',value:'editSection'});
+      menu.addDivider();
+      menu.addItem({title:'Edit column',value:'editColumn'});
+      menu.addItem({title:'Remove column',value:'removeColumn'});
+      menu.addItem({title:'Add column',value:'addColumn'});
+      menu.addDivider();
+      menu.addItem({title:'Edit row',value:'editRow'});
+      menu.addDivider();
+      for (var i=0; i < this.partControllers.length; i++) {
+        var ctrl = this.partControllers[i];
+        menu.addItem({title:ctrl.title,value:ctrl.key});
+      }
+      this.columnMenu = menu;
+      menu.listen(this);
+    }
+    this.hoveredRow=rowIndex;
+    this.hoveredColumnIndex=columnIndex;
+    this.columnMenu.showAtPointer(e);
+  },
+  /** @private */
+  $select$huiEditorColumnMenu : function(value) {
+    if (value=='editSection') {
+      this._editPart(this.hoveredPart);
+    } else if (value=='removeColumn') {
+      this.fire('removeColumn',{'row':this.hoveredRow,'column':this.hoveredColumnIndex});
+    } else if (value=='editColumn') {
+      this.editColumn(this.hoveredRow,this.hoveredColumnIndex);
+    } else if (value=='addColumn') {
+      this.fire('addColumn',{'row':this.hoveredRow,'position':this.hoveredColumnIndex+1});
+    } else if (value=='editRow') {
+      this.editRow(this.hoveredRow);
+    } else {
+      this.fire('addPart',{'row':this.hoveredRow,'column':this.hoveredColumnIndex,'position':0,type:value});
+    }
+  },
+
+  ///////////////////// Rows //////////////////////
+
+  _editedRow : null,
+
+  editRow : function(rowIndex) {
+    this.stopRowEditing();
+    var node = hui.get.byClass(this.element,this.options.rowClass)[rowIndex];
+    hui.cls.add(node,'hui_editor_row_edit');
+    this._editedRow = node;
+    var self = this;
+    this.fire('editRow',{'index' : rowIndex, node: node});
+  },
+  stopRowEditing : function() {
+    if (this._editedRow) {
+      hui.cls.remove(this._editedRow,'hui_editor_row_edit');
+      this._editedRow = null;
+    }
+  },
+
+  ///////////////////// Columns //////////////////////
+
+  _editedColumn : null,
+
+  editColumn : function(rowIndex,columnIndex) {
+    this.stopColumnEditing();
+    var row = hui.get.byClass(this.element,this.options.rowClass)[rowIndex];
+    if (row) {
+      var node = hui.get.byClass(row,this.options.columnClass)[columnIndex];
+      if (node) {
+        this._editedColumn = node;
+        hui.cls.add(node,'hui_editor_column_edit');
+        this.fire('editColumn',{'rowIndex' : rowIndex, 'index' : columnIndex, node: node});
+      }
+    }
+  },
+  stopColumnEditing : function() {
+    if (this._editedColumn) {
+      hui.cls.remove(this._editedColumn,'hui_editor_column_edit');
+      this._editedColumn = null;
+    }
+  },
+
+  ///////////////////////// Parts //////////////////////////
+
+  hoverPart : function(part,event) {
+    if (!this.active || this.activePart || !this.live || this.dragging || this.busy) {
+      return;
+    }
+    this.hoveredPart = part;
+    hui.cls.add(part.element,'hui_editor_part_hover');
+    var self = this;
+    this.partControlTimer = window.setTimeout(function() {self.showPartControls();},200);
+  },
+  blurPart : function(e) {
+    window.clearTimeout(this.partControlTimer);
+    if (hui.ui.isWithin(e,this.hoveredPart.element)) {
+      return;
+    }
+    if (!this.active) return;
+    if (this.partControls && !hui.ui.isWithin(e,this.partControls.element)) {
+      this._hidePartControls();
+      hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
+    }
+    if (!this.partControls && this.hoveredPart) {
+      hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
+    }
+  },
+  showPartEditControls : function() {
+    if (!this.partEditControls) {
+      this.partEditControls = hui.ui.Overlay.create({name:'huiEditorPartEditActions',variant:'light',zIndex:100});
+      this.partEditControls.element.style.zIndex = '99999999';
+      this.partEditControls.addIcon('save','common/ok');
+      this.partEditControls.addIcon('cancel','common/undo');
+      this.partEditControls.addIcon('info','common/info');
+      this.partEditControls.listen(this);
+      var self = this;
+      hui.on(window,'resize',function() {
+        hui.onDraw(function() {
+          self._positionEditControls();
+        });
+      });
+    }
+    this._positionEditControls();
+  },
+  _positionEditControls : function() {
+    if (this.activePart) {
+      this.partEditControls.showAtElement(this.activePart.element,{'horizontal':'right','vertical':'topOutside'});
+    }
+  },
+  showPartControls : function() {
+    if (!this.partControls) {
+      this.partControls = hui.ui.Overlay.create({name:'huiEditorPartActions',variant:'light'});
+      this.partControls.addIcon('edit','common/edit');
+      this.partControls.addIcon('new','common/new');
+      this.partControls.addIcon('delete','common/delete');
+      hui.listen(this.partControls.getElement(),'mouseout',this._blurControls.bind(this));
+      hui.listen(this.partControls.getElement(),'mouseover',this._hoverControls.bind(this));
+      this.partControls.listen(this);
+    }
+    if (this.hoveredPart.column==-1 || true) {
+      this.partControls.hideIcons(['new','delete']);
+    } else {
+      this.partControls.showIcons(['new','delete']);
+    }
+    this.partControls.showAtElement(this.hoveredPart.element,{'horizontal':'right'});
+  },
+  _hoverControls : function(e) {
+    hui.cls.add(this.hoveredPart.element,'hui_editor_part_hover');
+  },
+  _blurControls : function(e) {
+    hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
+    if (!hui.ui.isWithin(e,this.hoveredPart.element)) {
+      this._hidePartControls();
+    }
+  },
+  /** @private */
+  $iconWasClicked$huiEditorPartActions : function(key,event) {
+    if (key=='delete') {
+      this.deletePart(this.hoveredPart);
+    } else if (key=='new') {
+      this.newPart(event);
+    } else if (key=='edit') {
+      this._editPart(this.hoveredPart);
+    }
+  },
+  /** @private */
+  $iconWasClicked$huiEditorPartEditActions : function(key,event) {
+    if (key=='cancel') {
+      this.cancelPart(this.activePart);
+    } else if (key=='save') {
+      this.savePart(this.activePart);
+    } else if (key=='info') {
+      this.fire('toggleInfo');
+    }
+  },
+  _hidePartControls : function() {
+    if (this.partControls) {
+      this.partControls.hide();
+    }
+  },
+  _hidePartEditControls : function() {
+    if (this.partEditControls) {
+      this.partEditControls.hide();
+    }
+  },
+  _editPart : function(part) {
+    if (!this.active || this.activePart) return;
+    if (this.activePart) {
+      this._deactivatePart(this.activePart);
+    }
+    if (this.hoveredPart) {
+      hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
+    }
+    this.activePart = part;
+    this.showPartEditControls();
+    hui.cls.add(part.element,'hui_editor_part_active');
+    hui.ui.msg({text:{en:'Loading...',da:'Indlæser...'},delay:300,busy:true});
+    part.activate(function() {
+      hui.ui.hideMessage();
+    });
+    window.clearTimeout(this.partControlTimer);
+    this._hidePartControls();
+    if (this.hoveredColumn) {
+      hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
+    }
+    this.fire('editPart',part);
+  },
+  cancelPart : function(part) {
+    part.cancel();
+    this._deactivatePart(this.activePart);
+    this.activePart = null;
+    this.fire('cancelPart',part);
+  },
+  savePart : function(part) {
+    this.busy = true;
+    hui.ui.msg({text:{en:'Saving...',da:'Gemmer...'},delay:300,busy:true});
+    part.save({
+      callback : function() {
+        hui.ui.hideMessage();
+        this.activePart = null;
+        this.busy = false;
+        this._deactivatePart(part);
+        this.partChanged(part);
+        this.fire('savePart',part);
+      }.bind(this)
+    });
+  },
+  getEditorForElement : function(element) {
+    for (var i=0; i < this.parts.length; i++) {
+      if (this.parts[i].element==element) {
+        return this.parts[i];
+      }
+    }
+    return null;
+  },
+  _deactivatePart : function(part) {
+    part.deactivate(function() {
+      this.partDidDeactivate(part);
+      this.fire('deactivatePart',part);
+    }.bind(this));
+  },
+  partDidDeactivate : function(part) {
+    hui.cls.remove(part.element,'hui_editor_part_active');
+    this.activePart = null;
+    this._hidePartEditControls();
+  },
+  partChanged : function(part) {
+    hui.ui.callDelegates(part,'partChanged');
+  },
+  deletePart : function(part) {
+    hui.ui.callDelegates(part,'deletePart');
+    this.partControls.hide();
+  },
+  newPart : function(e) {
+    if (!this.newPartMenu) {
+      var menu = hui.ui.Menu.create({name:'huiEditorNewPartMenu'});
+      hui.each(this.partControllers,function(item) {
+        menu.addItem({title:item.title,value:item.key});
+      });
+      menu.listen(this);
+      this.newPartMenu=menu;
+    }
+    this.newPartMenu.showAtPointer(e);
+  },
+  $itemWasClicked$huiEditorNewPartMenu : function(value) {
+    var info = {row:this.hoveredPart.row,column:this.hoveredPart.column,position:this.hoveredPart.position+1,type:value};
+    hui.ui.callDelegates(this,'addPart',info);
+  },
+
+
+
+
+
+
+  /**** Dragging ****/
+
+  _dragInfo : null,
+
+  _dropInfo : null,
+
+  dragProxy : null,
+
+  _startPartDrag : function(info) {
+    if (!this.active || this.activePart || !this.live) {
+      return true;
+    }
+    var e = hui.event(info.event),
+      element = info.element;
+    if (!e.altKey) {
+      return;
+    }
+    e.stop();
+
+    if (!this.dragProxy) {
+      this.dragProxy = hui.build('div',{'class':'hui_editor_dragproxy',parent:document.body,style:'display:none;'});
+    }
+    var proxy = this.dragProxy;
+    proxy.innerHTML = element.innerHTML;
+
+    var pos = this._getPartPosition(element);
+    if (!pos) {
+      return;
+    }
+
+    this._dragInfo = {
+      diffLeft : e.getLeft() - hui.position.getLeft(element),
+      diffTop : e.getTop() - hui.position.getTop(element),
+      draggedElement : element,
+      partIndex : pos.partIndex,
+      rowIndex : pos.rowIndex,
+      columnIndex : pos.columnIndex,
+      initialHeight : element.clientHeight
+    };
+    hui.log('startDrag');
+    hui.drag.start({
+      element : proxy,
+      onBeforeMove : this._onBeforeDrag.bind(this),
+      onMove : this._onDrag.bind(this),
+      onAfterMove : this._onAfterDrag.bind(this),
+      onEnd : function() {
+
+      }
+    },e);
+  },
+  _onBeforeDrag : function() {
+    var dragged = this._dragInfo.draggedElement,
+      proxy = this.dragProxy;
+
+
+    this._insertDropPlaceholders();
+
+    hui.style.set(proxy,{
+      display : 'block',
+      visibility : 'visible',
+      height  : dragged.clientHeight+'px',
+      width  : dragged.clientWidth+'px',
+      transform : 'scale(1)',
+      background : 'rgba(255,255,255,.5)',
+      padding : '1px',
+      opacity: 1
+    });
+
+    //hui.animate({node:this.dragProxy,css:{transform:'scale(1.1)'},duration:1000,ease:hui.ease.slowFastSlow});
+
+    hui.style.setOpacity(dragged,0.5);
+
+    this._dragging = true;
+
+    if (!this._dropMarker) {
+      this._dropMarker = hui.build('div',{'class':'hui_editor_dropmarker',parent:document.body});
+    }
+  },
+  _onDrag : function(e) {
+    var left = e.getLeft();
+    var top = e.getTop();
+    this.dragProxy.style.left = (left - this._dragInfo.diffLeft) + 'px';
+    this.dragProxy.style.top = (top - this._dragInfo.diffTop) + 'px';
+    for (var i=0; i < this.dropTargets.length; i++) {
+      var info = this.dropTargets[i];
+      if (info.left<left && info.right>left && info.top<top && info.bottom>top) {
+        //if (info.placeholder!=this._activeDragPlaceholder) {
+          var h = this._dragColumnHeights[info.rowIndex+'-'+info.columnIndex];
+          //hui.log(info.columnIndex+': '+h)
+          //info.debug.style.borderColor='blue'
+          //hui.animate({node:info.placeholder,css:{height : h+'px'},duration:500,ease:hui.ease.slowFastSlow});
+          if (this._latestProxyColumn!=info.columnIndex || this._latestProxyRow!=info.rowIndex) {
+            hui.animate({node:this.dragProxy,css:{width:(info.right-info.left)+'px'},duration:300,ease:hui.ease.fastSlow});
+            this._latestProxyColumn = info.columnIndex;
+            this._latestProxyrow = info.rowIndex;
+          }
+          //this._activeDragPlaceholder = info.placeholder;
+          this._dropInfo = info;
+          hui.style.set(this._dropMarker,{width:(info.right-info.left)+'px',left:info.left+'px',top:info.position+'px',display:'block'});
+        //}
+        break;
+      }
+    }
+  },
+  _onAfterDrag : function(e) {
+    var proxy = this.dragProxy,
+      dragInfo = this._dragInfo,
+      dragged = this._dragInfo.draggedElement,
+      dropInfo = this._dropInfo;
+
+    if (dropInfo) {
+      var newHeight = this._dragColumnHeights[dropInfo.rowIndex+'-'+dropInfo.columnIndex];
+
+      var top = dropInfo.position,
+        left = dropInfo.left;
+
+      if ((dragInfo.columnIndex == dropInfo.columnIndex && dragInfo.partIndex < dropInfo.partIndex) || dragInfo.rowIndex < dropInfo.rowIndex) {
+        top = top - dragInfo.initialHeight;
+      }
+      //top+=3;
+      left++;
+      // Move the proxy to new position
+      hui.animate({
+        node : proxy,
+        css : {
+          left : left+'px',
+          top : top+'px',
+          opacity : 0.5
+          },
+        duration : 500,
+        ease : hui.ease.slowFastSlow
+      });
+
+      var column = this._getColumn(dropInfo.rowIndex,dropInfo.columnIndex);
+
+      var parts = hui.get.byClass(column,this.options.partClass);
+
+      if (parts[dropInfo.partIndex] != dragged) {
+        var partIndex = dropInfo.partIndex;
+        if (dragInfo.columnIndex == dropInfo.columnIndex && dragInfo.partIndex < dropInfo.partIndex) {
+          partIndex--;
+        }
+        this.fire('partWasMoved',{dragged:dragged,rowIndex : dropInfo.rowIndex,columnIndex : dropInfo.columnIndex,partIndex : partIndex,
+          $success : function() {
+            dragged.style.webkitTransformOrigin='0 0';
+            var dummy = hui.build('div');
+            if (dropInfo.partIndex>=parts.length) {
+              hui.animate({node:dragged,css:{height:'0px'},duration:500,ease:hui.ease.slowFastSlow,onComplete:function() {
+                hui.dom.remove(dragged);
+                column.appendChild(dragged);
+                hui.animate({node:dragged,css:{transform:'scale(1)',height:newHeight+'px'},duration:500,ease:hui.ease.slowFastSlow,onComplete:function() {
+                  dragged.style.height='';
+                }});
+              }});
+            } else {
+              hui.dom.insertBefore(parts[dropInfo.partIndex],dummy);
+              hui.animate({node:dummy,css:{height:newHeight+'px'},duration:600,ease:hui.ease.slowFastSlow,onComplete:function() {
+                hui.dom.remove(dragged);
+                hui.dom.replaceNode(dummy,dragged);
+                hui.style.set(dragged,{transform:'scale(1)',opacity:0,height:''});
+                hui.animate({node:dragged,css:{opacity:1},duration:500,ease:hui.ease.slowFastSlow});
+              }});
+              hui.animate({node:dragged,css:{transform:'scale(0)',height:'0px'},duration:500,ease:hui.ease.slowFastSlow});
+            }
+            this._cleanDrag();
+          }.bind(this),
+          $failure : function() {
+            this._cleanDrag();
+          }.bind(this)
+        });
+      } else {
+        this._cleanDrag();
+      }
+    }
+  },
+  _cleanDrag : function() {
+    var proxy = this.dragProxy;
+    hui.animate({node:proxy,css:{opacity:0},duration:500,delay:500,ease:hui.ease.slowFastSlow,onComplete:function() {
+        proxy.style.display='none';
+      }
+    });
+    hui.style.setOpacity(this._dragInfo.draggedElement,1);
+    var p = hui.get.byClass(document.body,'hui_editor_drop_placeholder');
+    for (var i=0; i < p.length; i++) {
+      hui.dom.remove(p[i]);
+    }
+    this.dropTargets = [];
+    this._dragging = false;
+    if (this._dropMarker) {
+      this._dropMarker.style.display='none';
+    }
+  },
+  _getColumn : function(rowIndex,columnIndex) {
+    var rows = hui.get.byClass(document.body,this.options.rowClass);
+    var row = rows[rowIndex];
+    var columns = hui.get.byClass(row,this.options.columnClass);
+    return columns[columnIndex];
+  },
+  _getPartPosition : function(element) {
+    var rows = hui.get.byClass(document.body,this.options.rowClass);
+    for (var i=0; i < rows.length; i++) {
+
+      var columns = hui.get.byClass(rows[i],this.options.columnClass);
+      for (var j=0; j < columns.length; j++) {
+        var parts = hui.get.byClass(columns[j],this.options.partClass);
+        for (var k=0; k < parts.length; k++) {
+          if (element===parts[k]) {
+            return {rowIndex:i,columnIndex:j,partIndex:k};
+          }
+        }
+      }
+    }
+    return null;
+  },
+
+
+  _activeDragPlaceholder : null,
+
+  _dragColumnHeights : null,
+
+  _insertDropPlaceholders : function() {
+    var infos = this.dropTargets = [];
+    var colHeights = this._dragColumnHeights = {};
+    var proxy = this.dragProxy;
+    var draggedPart = this._dragInfo.draggedElement;
+    var rows = hui.get.byClass(document.body,this.options.rowClass);
+    for (var i=0; i < rows.length; i++) {
+      var row = rows[i];
+      var columns = hui.get.byClass(row,this.options.columnClass);
+      for (var j=0; j < columns.length; j++) {
+        var column = columns[j];
+        hui.style.set(proxy,{
+          width : column.clientWidth+'px',
+          height : '',
+          visibility : 'hidden',
+          display : 'block'
+        });
+        var height = colHeights[i+'-'+j] = proxy.clientHeight;
+        var parts = hui.get.byClass(column,this.options.partClass);
+        var min = hui.position.getTop(column);
+        var max = min+column.clientHeight;
+        var current = min;
+        var k = 0;
+        var previous = null;
+        var left, right, top;
+        var part;
+        for (; k < parts.length; k++) {
+          part = parts[k];
+          var next = parts[k+1];
+          previous = parts[k-1];
+          left = hui.position.getLeft(part);
+          right = left + part.clientWidth;
+          top = previous ? hui.position.getTop(previous)+previous.clientHeight/2 : min;
+          var bottom = hui.position.getTop(part)+part.clientHeight/2;
+
+          var info = {
+            rowIndex : i,
+            columnIndex : j,
+            partIndex : k,
+            part : part,
+            left : left,
+            right : right,
+            top : top,
+            bottom : bottom,
+            position : hui.position.getTop(part)
+          };
+          current += part.clientHeight;
+          infos.push(info);
+          previous = part;
+        }
+        var last = parts.length>0 ? parts[parts.length-1] : null;
+        var position;
+        if (last) {
+          top = hui.position.getTop(last)+last.clientHeight/2;
+          position = hui.position.getTop(last)+last.clientHeight;
+        } else {
+          top = min;
+          position = min;
+          left = hui.position.getLeft(column);
+          right = left + column.clientWidth;
+        }
+        if (part) {
+          current += part.clientHeight;
+        }
+        infos.push({
+          rowIndex : i,
+          columnIndex : j,
+          partIndex : k, // TODO 
+          part : part,
+          left : left,
+          right : right,
+          top : top,
+          position : position,
+          bottom : max-top > 20 ? max : top+20
+        });
+      }
+    }
+  }
+};
+
+hui.ui.Editor.getPartId = function(element) {
+  var data = hui.string.fromJSON(element.getAttribute('data'));
+  return data ? data.id : null;
+};
+
+////////////////////////////////// Header editor ////////////////////////////////
+
+/**
+ * @constructor
+ */
+hui.ui.Editor.Header = function(options) {
+  this.element = hui.get(options.element);
+  this.id = hui.ui.Editor.getPartId(this.element);
+  this.header = hui.get.firstByTag(this.element,'*');
+  this.field = null;
+};
+
+hui.ui.Editor.Header.prototype = {
+  activate : function(callback) {
+    this.value = this.header.innerHTML;
+    this.field = hui.build('textarea',{className:'hui_editor_header'});
+    this.field.value = this.value;
+    this.header.style.visibility='hidden';
+    this.updateFieldStyle();
+    this.element.insertBefore(this.field,this.header);
+    this.field.focus();
+    this.field.select();
+    hui.listen(this.field,'keydown',function(e) {
+      if (e.keyCode==Event.KEY_RETURN) {
+        this.save();
+      }
+    }.bind(this));
+    callback();
+  },
+  save : function(options) {
+    var value = this.field.value;
+    this.header.innerHTML = value;
+    if (value!=this.value) {
+      this.value = value;
+    }
+    options.callback();
+  },
+  cancel : function() {
+
+  },
+  deactivate : function(callback) {
+    this.header.style.visibility='';
+    this.element.removeChild(this.field);
+    callback();
+  },
+  updateFieldStyle : function() {
+    hui.style.set(this.field,{width:this.header.clientWidth+'px',height:this.header.clientHeight+'px'});
+    hui.style.copy(this.header,this.field,['font-size','line-height','margin-top','font-weight','font-family','text-align','color','font-style']);
+  },
+  getValue : function() {
+    return this.value;
+  }
+};
+
+////////////////////////////////// Html editor ////////////////////////////////
+
+/**
+ * @constructor
+ */
+hui.ui.Editor.Html = function(options) {
+  this.element = hui.get(options.element);
+  this.id = hui.ui.Editor.getPartId(this.element);
+  this.field = null;
+};
+
+hui.ui.Editor.Html.prototype = {
+  activate : function(callback) {
+    this.value = this.element.innerHTML;
+    this.element.innerHTML='';
+    var style = this.buildStyle();
+    this.editor = hui.ui.MarkupEditor.create({autoHideToolbar:false,style:style});
+    this.element.appendChild(this.editor.getElement());
+    this.editor.listen(this);
+    this.editor.setValue(this.value);
+    this.editor.focus();
+    callback();
+  },
+  buildStyle : function() {
+    return {
+      'textAlign' : hui.style.get(this.element,'text-align'),
+      'fontFamily' : hui.style.get(this.element,'font-family'),
+      'fontSize' : hui.style.get(this.element,'font-size'),
+      'fontWeight' : hui.style.get(this.element,'font-weight'),
+      'color' : hui.style.get(this.element,'color')
+    };
+  },
+  cancel : function() {
+    this.element.innerHTML = this.value;
+  },
+  save : function(options) {
+    var value = this.editor.getValue();
+    if (value!=this.value) {
+      this.value = value;
+    }
+    this.element.innerHTML = this.value;
+    options.callback();
+  },
+  deactivate : function(callback) {
+    if (this.editor) {
+      this.editor.destroy();
+      this.element.innerHTML = this.value;
+    }
+    callback();
+  },
+  getValue : function() {
+    return this.value;
+  }
+};
+
+(function (_super) {
+
+  var NS = 'http://www.w3.org/2000/svg';
+
+  /**
+   * Emotion
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.Emotion = function(options) {
+    options = options || {};
+    _super.call(this, options);
+    this.value = null;
+    this._attach();
+  };
+
+  hui.ui.Emotion.create = function() {
+    var node = document.createElementNS(ns,'svg');
+    node.addAttribute('width','100');
+    node.addAttribute('height','100');
+    return new hui.ui.Emotion({element: node})
+  }
+
+  hui.ui.Emotion.prototype = {
+
+  };
+
+  hui.extend(hui.ui.Emotion, _super);
+  hui.define('hui.ui.Emotion', hui.ui.Emotion);
+
+})(hui.ui.Component);
+
+(function (_super) {
+
+  /**
+   * A base foundation
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.Foundation = function(options) {
+    _super.call(this, options);
+    this._attach();
+  };
+
+  hui.ui.Foundation.prototype = {
+    nodes : {
+      resizeNavigation : '.hui_foundation_resize_navigation',
+      resizeResults : '.hui_foundation_resize_overlay',
+      navigation : '.hui_foundation_navigation',
+      results : '.hui_foundation_results',
+      content : '.hui_foundation_content',
+      main : '.hui_foundation_main',
+      actions : '.hui_foundation_actions',
+      overlay : '.hui_foundation_overlay',
+      toggle : '.hui_foundation_overlay_toggle',
+      close : '.hui_foundation_overlay_close',
+      details : '.hui_foundation_details',
+      detailsToggle : '.hui_foundation_details_toggle',
+      back : '.hui_foundation_back'
+    },
+    _attach : function() {
+      var initial = 0,
+        navigation = this.nodes.navigation,
+        results = this.nodes.results,
+        content = this.nodes.content,
+        actions = this.nodes.actions,
+        overlay = this.nodes.overlay,
+        main = this.nodes.main,
+        navWidth, fullWidth, resultsWidth, overlayWidth,
+        self = this;
+
+      hui.on(this.nodes.toggle,'tap',this._toggleOverlay,this);
+      hui.on(this.nodes.close,'tap',this._toggleOverlay,this);
+      hui.on(this.nodes.detailsToggle,'tap',this._toggleDetails,this);
+      hui.on(this.nodes.back,'tap',this._back,this);
+
+      hui.drag.attach({
+        element : this.nodes.resizeNavigation,
+        touch: true,
+        $startMove : function(e) {
+          initial = e.getLeft();
+          navWidth = navigation.clientWidth;
+          overlayWidth = overlay.clientWidth;
+          fullWidth = self.element.clientWidth;
+          navigation.style.transition = 'none';
+          results.style.transition = 'none';
+        },
+        $move : function(e) {
+          var diff = e.getLeft() - initial;
+          var ratio = (navWidth + diff) / overlayWidth;
+          ratio = hui.between(0.3, ratio, 0.7);
+          navigation.style.width = (ratio * 100) + '%';
+          results.style.left = (ratio * 100) + '%';
+          results.style.width = (100 - ratio * 100) + '%';
+        },
+        $finally : function() {
+          navigation.style.transition = '';
+          results.style.transition = '';
+        }
+      });
+
+      hui.drag.attach({
+        element : this.nodes.resizeResults,
+        touch: true,
+        $startMove : function(e) {
+          initial = e.getLeft();
+          fullWidth = self.element.clientWidth;
+          overlayWidth = overlay.clientWidth;
+          overlay.style.transition = 'none';
+          main.style.transition = 'none';
+        },
+        $move : function(e) {
+          var diff = e.getLeft() - initial;
+          var ratio = (overlayWidth + diff) / fullWidth;
+          ratio = hui.between(0.2, ratio, 0.7);
+          overlay.style.width = (ratio * 100) + '%';
+          main.style.left = (ratio * 100) + '%';
+        },
+        $finally : function() {
+          overlay.style.transition = '';
+          main.style.transition = '';
+        }
+      });
+    },
+    _toggleOverlay : function() {
+      hui.cls.toggle(this.element, 'hui-is-open');
+    },
+    _toggleDetails : function() {
+      hui.cls.toggle(this.element, 'hui-is-details-open');
+    },
+    _back : function() {
+      hui.cls.remove(this.element, 'hui-is-submerged');
+    },
+    _break : -1,
+    $$layout : function() {
+      var breaks = [0, 600, 800, 1100, 1400];
+      var w = this.element.clientWidth;
+      var curr = -1;
+      for (var i = 0; i < breaks.length; i++) {
+        if (breaks[i] > w) { break; }
+        curr = breaks[i];
+      }
+      if (curr !== this._break) {
+        this.nodes.main.style.left = '';
+        this.nodes.overlay.style.width = '';
+        this.nodes.results.style.width = '';
+        this.nodes.results.style.left = '';
+        this.nodes.navigation.style.width = '';
+        this._break = curr;
+      }
+    },
+    disposeOverlay : function() {
+      hui.cls.remove(this.element, 'hui-is-open');
+    },
+    submerge : function() {
+      hui.cls.add(this.element,'hui-is-submerged');
+    },
+    setBusyMain : function(busy) {
+      hui.cls.set(this.nodes.main, 'hui-is-busy', busy);
+    }
+  };
+
+  hui.extend(hui.ui.Foundation, _super);
+
+})(hui.ui.Component);
+
+/** A graph
+ * @constructor
+ */
+hui.ui.Graph = function(options) {
+  this.options = options;
+  this.name = options.name;
+  this.element = hui.get(options.element);
+  this.ready = false;
+  this.defered = [];
+
+  this.impl = hui.ui.Graph.D3;
+
+  hui.ui.extend(this);
+  hui.log('Initializing implementation...');
+  this.impl.init(this);
+  if (options.source) {
+    options.source.listen(this);
+  }
+};
+
+hui.ui.Graph.prototype = {
+  setData : function(data) {
+    this._defer(function() {
+      this.impl.setData(data);
+    }.bind(this));
+  },
+  _defer : function(func) {
+    if (this.ready) {
+      func();
+    } else {
+      hui.log('Defering function');
+      this.defered.push(func);
+    }
+  },
+  /** @private */
+  $objectsLoaded : function(data) {
+    hui.log('Data loaded');
+    this.setData(data);
+  },
+  /** @private */
+  implIsReady : function() {
+    hui.log('Implementation is ready!');
+    this.ready = true;
+    for (var i=0; i < this.defered.length; i++) {
+      this.defered[i]();
+    }
+  },
+  /** @private */
+  implNodeWasClicked : function(node) {
+    this.fire('clickNode',node);
+  },
+  /** @private */
+  $sourceShouldRefresh : function() {
+    return hui.dom.isVisible(this.element);
+  },
+  refresh : function() {
+    if (this.options.source) {
+      this.options.source.refresh();
+    }
+  },
+  show : function() {
+    this.element.style.display='block';
+    this.refresh();
+  },
+  hide : function() {
+    this.element.style.display='none';
+  },
+  /** @private */
+  $visibilityChanged : function() {
+    if (this.options.source && hui.dom.isVisible(this.element)) {
+      // If there is a source, make sure it is initially
+      this.options.source.refreshFirst();
+    }
+  },
+  /** @private */
+  $$layout : function() {
+    hui.log('graph.layoutChanged');
+    window.setTimeout(function(){
+      this.impl.resize(this.element.parentNode.clientWidth,this.element.parentNode.clientHeight);
+    }.bind(this),100);
+  }
+};
+
+/** @namespace */
+hui.ui.Graph.D3 = {
+  init : function(parent) {
+    this.parent = parent;
+    var self = this;
+    hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.js'),function() {
+      self._init();
+      parent.implIsReady();
+    });
+  },
+  resize : function(width,height) {
+    if (this.vis) {
+      this.vis.attr('width',width);
+      this.vis.attr('height',height);
+    }
+    if (this.layout) {
+      this.layout.size([width,height]);
+      this.layout.start();
+    }
+  },
+  _init : function() {
+    hui.log('Creating visualization...');
+    var w = this.parent.element.clientWidth,
+      h = this.parent.element.clientHeight,
+      fill = d3.scale.category20();
+
+    this.vis = d3.select(this.parent.element)
+      .append("svg:svg")
+      .attr("width", w)
+      .attr("height", h);
+
+  },
+  _onClickNode : function(node) {
+    this.parent.implNodeWasClicked(node);
+  },
+  _findById : function(nodes,id) {
+    for (var i = nodes.length - 1; i >= 0; i--){
+      if (nodes[i].id===id) {
+        return i;
+      }
+    }
+    return null;
+  },
+  _convert : function(data) {
+    var nodes = data.nodes;
+    data.links = data.edges;
+    for (var i = data.links.length - 1; i >= 0; i--){
+      var link = data.links[i];
+      link.source = this._findById(nodes,link.from);
+      link.target = this._findById(nodes,link.to);
+    }
+    return data;
+  },
+
+  clear : function() {
+    if (this.layout) {
+      this.layout.stop();
+      this.vis.remove();
+      this._init();
+    }
+  },
+
+  setData : function(data) {
+    this.clear();
+    var w = this.parent.element.clientWidth,
+      h = this.parent.element.clientHeight;
+    var json = this._convert(data);
+
+    var force = this.layout = d3.layout.force()
+      .charge(-200)
+      .gravity(0.10)
+      .distance(100)
+      .nodes(json.nodes)
+      .links(json.links)
+      .size([w, h]);
+    var link = this.vis.selectAll("line.link")
+      .data(json.links)
+      .enter().append("svg:line")
+      .attr("class", "hui_graph_link")
+      .style("stroke-width", function(d) { return d.label=='Friends' ? 3 : 1; })
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+    var node = this.vis.selectAll("circle.node")
+      .data(json.nodes)
+      .enter()
+      .append("svg:g")
+      .attr('class','hui_node')
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; })
+      .style("fill",'none')
+      .call(force.drag);
+      node.on('click',this._onClickNode.bind(this));
+    var self = this;
+    node.each(function(individual) {
+      var x = d3.select(this);
+      var icon = self.buildIcon(individual.icon,x);
+    });
+//      node.attr("transform", "translate("+(w*Math.random())+","+(h*Math.random())+")")
+
+      /*var circle = node
+        .append('svg:circle').attr('r',10)
+        .attr("class", "node")
+        //.attr("cx", function(d) { return d.x; })
+            //.attr("cy", function(d) { return d.y; })
+          .style("fill", function(d) { return fill(d.group); })
+            ;*/
+    var text = node
+      .append('svg:text')
+      .attr('class','hui_graph_label')
+      .attr("dx", "13")
+      .attr("dy", "5")
+    .text(function(d) { return d.label; });
+
+    node.append("svg:title").text(function(d) { return d.name; });
+
+      this.vis.style("opacity", 1e-6)
+        .transition()
+      .duration(2000)
+      .style("opacity", 1);
+
+    force.on("tick", function() {
+      link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+        node.attr("transform", function(d) { return "translate("+d.x+","+d.y+")"; });
+    });
+    force.start();
+    hui.log('Starting...');
+  },
+  buildIcon : function(icon,parent) {
+    var node;
+    if (icon=='monochrome/person') {
+      node = parent.append('svg:path').attr('class','hui_graph_icon');
+      node.attr('d','M-9.315,10c0,0-0.575-2.838,1.863-3.951c1.763-0.799,2.174-0.949,2.512-1.2 c0.138-0.087,0.263-0.198,0.438-0.351c0.661-0.561,0.562-1.324,1.038-1.562c0.474-0.225,0.424,0.238,0.524,0 c0.101-0.225-0.075-1.799,0-1.551c0.062,0.252-0.863-1.636-0.901-2.611C-3.888-2.439-4.702-2.99-4.613-3.651 c0.212-1.513,1.472-2.322,1.472-2.322s-2.423-0.454-1.36-1.478c1.062-1.012,1.474-1.4,2.6-2.076c1.138-0.663,2.674-0.599,4.163,0 C3.749-8.914,4.124-8.489,4.61-7.602c0.425,0.762,0.45,1.326,0.413,1.813C4.986-5.314,5.049-4.926,5.049-4.926 s0.499,0.112,0.513,0.837c0.013,0.687-0.175,1.699-0.551,2.162C4.861-1.752,4.599-1.114,4.197-0.264 C3.812,0.574,3.3,1.898,3.3,1.898s0.012,0.725,0,0.926c-0.039,0.45,0.649,0.012,0.962,0.512c0.312,0.501,0.1,0.85,0.799,1.162 c0.688,0.312,2.639,1.562,3.588,2.151C9.762,7.337,9.262,10,9.262,10H-9.315z').attr('fill-rule','evenodd');
+    } else if (icon=='monochrome/folder') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:polygon').attr('fill','#fff').attr('points','9.464,-3.309 9.464,-6.384 -0.354,-6.384 -3.433,-9.462 -9.462,-9.462 -9.462,-3.309 -11.153,-3.309 -9.329,9.462 9.331,9.462 11.153,-3.309');
+      node.append('svg:polygon').attr('points','-9.999,-2.309 -8.461,8.462 8.464,8.462 10.001,-2.309');
+      node.append('svg:polygon').attr('points','8.464,-5.384 -0.769,-5.384 -3.846,-8.462 -8.461,-8.462 -8.461,-5.384 -8.461,-3.846 8.464,-3.846');
+      //node.append('svg:rect').attr('cx','0').attr('cy','0').attr('r','12').attr('fill','#fff');
+      //node.append('svg:polygon').attr('points','-10,-2 -8.461,8 8.461,8 10,-2');
+      //node.append('svg:polygon').attr('points','8,-5 -0.77,-5 -3.846,-8 -8,-8 -8,-5.384 -8,-4 8,-4');
+    } else if (icon=='monochrome/image') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:rect').attr('x','-11').attr('y','-9').attr('width','22').attr('height','18').attr('fill','#fff');
+      node.append('svg:path').attr('d','M8-6V6H-8V-6H8 M10-8h-20V8h20V-8L10-8z');
+      node.append('svg:circle').attr('cx','-2.818').attr('cy','-2.693').attr('r','1.875');
+      node.append('svg:path').attr('d','M-7,5H7v-5.033L4.271-3.625L1.585,2.18L0,0.561c0,0-2.193,0.814-2.917,2.064c-1.151-0.625-1.776,0-1.776,0L-7,5z');
+    } else if (icon=='monochrome/news') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:path').attr('d','M10.523-9.273l-1.25-1.25C8.967-10.831,8.559-11,8.125-11s-0.842,0.169-1.148,0.477L5.625-9.173 l-1.352-1.351C3.968-10.83,3.56-11,3.125-11c-0.367,0-0.727,0.126-1.014,0.354L0-8.956l-2.109-1.688 C-2.396-10.873-2.757-11-3.124-11c-0.435,0-0.843,0.169-1.149,0.477l-1.352,1.351l-1.352-1.351C-7.283-10.831-7.691-11-8.125-11 s-0.842,0.169-1.148,0.477l-1.25,1.25C-10.831-8.967-11-8.559-11-8.125v16.25c0,0.434,0.169,0.841,0.477,1.148l1.25,1.25 c0.307,0.307,0.715,0.476,1.148,0.476s0.842-0.169,1.148-0.476l1.352-1.351l1.352,1.351c0.309,0.308,0.716,0.476,1.149,0.476 c0.366,0,0.726-0.125,1.012-0.354L0,8.956l2.109,1.688C2.394,10.873,2.755,11,3.125,11c0.44,0,0.852-0.172,1.157-0.485l1.343-1.342 l1.352,1.351c0.307,0.307,0.715,0.476,1.148,0.476s0.842-0.169,1.148-0.476l1.25-1.25C10.831,8.966,11,8.559,11,8.125v-16.25 C11-8.559,10.831-8.967,10.523-9.273z').attr('fill','#fff');
+      node.append('svg:path').attr('d','M9.816-8.566l-1.25-1.25c-0.244-0.244-0.639-0.244-0.883,0L5.625-7.759L3.566-9.816c-0.225-0.226-0.583-0.245-0.832-0.047 L0-7.675l-2.734-2.188c-0.248-0.198-0.606-0.179-0.832,0.047l-2.059,2.058l-2.059-2.058c-0.244-0.244-0.639-0.244-0.883,0 l-1.25,1.25C-9.934-8.449-10-8.291-10-8.125v16.25c0,0.166,0.066,0.324,0.184,0.441l1.25,1.25c0.244,0.244,0.639,0.244,0.883,0 l2.059-2.058l2.059,2.058c0.226,0.225,0.584,0.244,0.832,0.047L0,7.676l2.734,2.188C2.85,9.956,2.987,10,3.125,10 c0.161,0,0.321-0.061,0.441-0.184l2.059-2.058l2.059,2.058c0.244,0.244,0.639,0.244,0.883,0l1.25-1.25 C9.934,8.449,10,8.291,10,8.125v-16.25C10-8.291,9.934-8.449,9.816-8.566z M-1.25,3.75H-7.5V-2.5h6.25V3.75z M7.5,3.75H0V2.5h7.5 V3.75z M7.5,1.25H0V0h7.5V1.25z M7.5-1.25H0V-2.5h7.5V-1.25z M7.5-3.75h-15V-5h15V-3.75z');
+    } else if (icon=='monochrome/warning') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:path').attr('d','M10.672,7.15L2.321-9.432C1.913-10.386,0.984-11-0.057-11c-0.882,0-1.693,0.445-2.173,1.19 c-0.099,0.156-0.176,0.309-0.234,0.459l-8.152,16.403C-10.867,7.46-11,7.929-11,8.411C-11,9.839-9.841,11-8.416,11H8.416 C9.841,11,11,9.839,11,8.411C11,7.969,10.887,7.533,10.672,7.15z').attr('fill','#fff');
+      node.append('svg:path').attr('d','M9.8,7.639L1.411-9.013C1.175-9.592,0.607-10-0.057-10c-0.558,0-1.049,0.291-1.333,0.731 c-0.062,0.1-0.116,0.206-0.156,0.316L-9.744,7.543C-9.908,7.795-10,8.091-10,8.411C-10,9.286-9.294,10-8.416,10H8.416 C9.291,10,10,9.286,10,8.411C10,8.13,9.928,7.867,9.8,7.639 M1.613-5.456L1.166,3.906H-1.15l-0.444-9.362H1.613z M0.009,8.869 h-0.02c-1.077,0-1.808-0.792-1.808-1.855c0-1.1,0.751-1.855,1.827-1.855c1.077,0,1.788,0.756,1.81,1.855 C1.818,8.077,1.107,8.869,0.009,8.869');
+    } else if (icon=='monochrome/globe') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','11').attr('fill','#fff');
+      node.append('svg:path').attr('d','M0.048-9.91c-5.496,0-9.955,4.456-9.955,9.954S-5.448,10,0.048,10 S10,5.542,10,0.044S5.544-9.91,0.048-9.91 M6.974-5.686C7.083-5.721,7.47-5.287,7.556-5.406c0.113-0.149-0.407-0.515-0.407-0.668 c0-0.21,0.978,0.964,1.032,1.057c0.013,0.021-0.27-0.136-0.276-0.108C7.883-4.966,7.852-4.809,7.813-4.65 C7.402-4.612,6.57-5.55,6.974-5.686 M2.82,4.227c-0.755,0.929-0.313,1.975-1.71,2.39C0.392,6.831,0.7,8.332-0.506,7.959 c0.069,0.07,0.069,0.171,0.239,0.28c-0.266,0.19-0.57,0.228-0.885,0.322c0.077,0.088,0.285,0.672,0.468,0.605 C-2.344,10-2.666,6.858-3.027,6c-0.271-0.653-1.199-0.954-1.596-1.555C-4.869,4.069-5.025,3.651-5.262,3.27 c-0.565-0.908,0.843-1.993,0.208-2.791C-5.307,0.159-5.762,0.667-6.25,0.026c-0.127-0.167-0.172-0.534-0.226-0.732 C-6.811-0.622-7.312-1.351-7.42-1.242c-0.375,0.375-0.934-0.514-0.891-0.845c0.128-0.971-0.375-1.522,0.148-2.444 c0.793-1.392,1.738-2.674,3.156-3.475c0.827-0.467,2.369-1.355,3.358-1.085C-1.83-9.02-3.658-8.137-3.457-8.079 c0.175,0.052,0.582-0.202,0.69,0.064c0.003,0.118-0.025,0.225-0.089,0.323c0.203,0.299,1.448-0.978,1.707-1.078 c0.506-0.2,0.744,0.327,1.312,0.132c0.396-0.135,0.213,0.623,0.172,0.623c0.066,0,0.53-0.203,0.503,0.042 C0.77-7.379-1.377-8.058-1.604-7.367c-0.061,0.188,0.697-0.175,0.82-0.063c-0.051,0.083-0.109,0.16-0.173,0.236 c0.059,0.117,0.523,0.265,0.573,0.158C-0.434-6.93-1.781-6.76-2.012-6.664c-0.393,0.162-1.07,0.585-1.436,0.911 c-0.217,0.197-0.126,0.482-0.376,0.659c-0.274,0.194-0.561,0.381-0.811,0.608C-4.96-4.19-4.667-3.286-5.028-3.119 c0.102-0.047-0.356-1.584-0.97-0.84C-6.243-3.661-6.733-3.787-7.11-3.42c-0.335,0.327-0.454,0.969-0.391,1.412 c0.149,1.05,0.815-0.293,1.221-0.293c0.271,0-0.46,0.972-0.247,1.128C-6.086-0.85-5.801-1.399-5.96-0.417 c-0.236,1.433,2.149,0.1,2.071-0.053c0.112,0.226-0.282,0.441-0.009,0.629c0.11,0.075,0.096-0.386,0.17-0.464 c0.24-0.251,0.339,0.118,0.551,0.202c0.269,0.11,1.516,0.09,1.595,0.495c0.206,1.011,2.215,0.385,1.633,1.951 c0.065-0.041,0.134-0.066,0.208-0.078c0.485,0.127,0.933,0.55,1.366,0.498C2.539,2.651,3.563,3.32,2.82,4.227 M7.309,0.806 c-1.176-1.099-1.178-3.391-0.12-4.486c-0.12-0.761,0.75-0.87,1.163-0.548c0.3,0.23,0.628,0.978,0.741,1.332 c0.683,2.116,0.578,4.827-0.563,6.78C8.935,3.006,8.911,2.22,9.108,1.319C9.436-0.147,7.744,1.213,7.309,0.806');
+    } else if (icon=='monochrome/dot') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','11').attr('fill','#fff');
+      node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','10');
+    } else if (icon=='monochrome/page') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:polygon').attr('fill','#fff').attr('points','-9,11 -9,-11 3,-11 9,-5 9,11');
+      node.append('svg:polygon').attr('points','3,-9.5 3,-5 7.5,-5');
+      node.append('svg:polygon').attr('points','-8,-10 2,-10 2,-4 8,-4 8,10 -8,10');
+
+      node.append('svg:rect').attr('x','-6').attr('y','-8').attr('width','6').attr('height','1').attr('fill','#fff');
+      node.append('svg:rect').attr('x','-6').attr('y','-5').attr('width','6').attr('height','1').attr('fill','#fff');
+      node.append('svg:rect').attr('x','-6').attr('y','-2').attr('width','12').attr('height','1').attr('fill','#fff');
+      node.append('svg:rect').attr('x','-6').attr('y','7').attr('width','12').attr('height','1').attr('fill','#fff');
+      node.append('svg:rect').attr('x','-6').attr('y','4').attr('width','12').attr('height','1').attr('fill','#fff');
+      node.append('svg:rect').attr('x','-6').attr('y','1').attr('width','12').attr('height','1').attr('fill','#fff');
+    } else if (icon=='monochrome/hierarchy') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:path').attr('fill','#fff').attr('d','M8.574,4L3.527,0.971V-11h-7V0.939L-8.575,4H-11v7h22V4H8.574z');
+      node.append('svg:polygon').attr('points','8.297,5 2.526,1.537 2.526,-2.5 0.651,-2.5 0.651,-5 2.526,-5 2.526,-10 -2.474,-10 -2.474,-5 -0.599,-5 -0.599,-2.5 -2.474,-2.5 -2.474,1.505 -8.298,5 -10,5 -10,10 -5,10 -5,5 -5.868,5 -1.702,2.5 -0.599,2.5 -0.599,5 -2.474,5 -2.474,10 2.526,10 2.526,5 0.651,5 0.651,2.5 1.702,2.5 5.869,5 5,5 5,10 10,10 10,5');
+    } else if (icon=='monochrome/email') {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:path').attr('fill','#fff').attr('d','M10.727-1.695C10.727-7.086,6.645-11,1.02-11c-6.696,0-11.746,5.137-11.746,11.949 C-10.727,7.549-5.713,11-0.76,11c2.283,0,3.872-0.314,5.668-1.121L5.707,9.52L4.701,6.158C8.271,5.922,10.727,2.76,10.727-1.695z');
+      node.append('svg:path').attr('d','M4.498,8.967C2.773,9.742,1.281,10-0.76,10c-4.771,0-8.967-3.418-8.967-9.051C-9.727-4.912-5.445-10,1.02-10 c5.086,0,8.707,3.479,8.707,8.305c0,4.225-2.355,6.869-5.459,6.869c-1.35,0-2.328-0.719-2.471-2.211H1.74 C0.82,4.398-0.445,5.174-1.996,5.174c-1.84,0-3.219-1.408-3.219-3.764c0-3.535,2.613-6.695,6.754-6.695 c1.262,0,2.699,0.314,3.391,0.688L4.066,0.748c-0.258,1.695-0.059,2.473,0.748,2.5c1.234,0.057,2.787-1.523,2.787-4.855 c0-3.766-2.414-6.639-6.867-6.639c-4.426,0-8.248,3.42-8.248,8.938c0,4.828,3.045,7.529,7.328,7.529 c1.467,0,3.045-0.318,4.193-0.893L4.498,8.967z M1.969-2.9C1.74-2.957,1.422-3.016,1.078-3.016c-1.898,0-3.391,1.867-3.391,4.08 c0,1.092,0.488,1.781,1.408,1.781c1.092,0,2.213-1.35,2.443-3.018L1.969-2.9z');
+    } else {
+      node = parent.append('svg:g').attr('class','hui_graph_icon');
+      node.append('svg:polygon').attr('fill','#fff').attr('points','0.09,-11 -9.182,-11 -9.182,11 9.182,11 9.182,-1.909');
+      node.append('svg:polygon').attr('points','0.91,-8.182 0.91,-2.727 6.365,-2.727');
+      node.append('svg:polygon').attr('points','-8.182,-10 -0.91,-10 -0.91,-0.909 8.182,-0.909 8.182,10 -8.182,10');
+    }
+
+  }
+};
+
+hui.ui.KeyboardNavigator = function(options) {
+  options = options || {};
+  this.text = '';
+  this.items = [];
+  this.index = null;
+  this.name = options.name;
+  hui.listen(window,'keydown',this._onKeyDown.bind(this));
+  this.element = hui.build('div',{'class':'hui_keyboardnavigator',parent:document.body});
+  this.input = hui.build('p',{'class':'hui_keyboardnavigator_input',parent:this.element});
+  this.list = hui.build('ul',{parent:this.element});
+  this.listNodes = [];
+  hui.ui.extend(this);
+};
+
+hui.ui.KeyboardNavigator.prototype = {
+  _onKeyDown : function(e) {
+    e = hui.event(e.key);
+    if (e.metaKey || e.altKey || e.shiftKey || e.leftKey || e.rightKey) {
+      return;
+    } else if (e.downKey) {
+      this._selectNext();
+      return;
+    } else if (e.upKey) {
+      this._selectPrevious();
+      return;
+    } else if (e.returnKey || e.enterKey) {
+      this._select();
+      this.text = '';
+      this._render();
+      return;
+    }
+    if (e.escapeKey) {
+      this.text = '';
+    } else if (e.backspaceKey) {
+      e.stop();
+      if (this.text.length>0) {
+        this.text = this.text.substring(0,this.text.length-1);
+      } else {
+        return;
+      }
+    } else {
+      this.text+=String.fromCharCode(e.keyCode).toLowerCase();
+    }
+    this._render();
+    if (this.text.length>0) {
+      this._complete();
+    }
+  },
+  _select : function() {
+    if (this.index!==null) {
+      this.fire('select',this.items[this.index]);
+    }
+  },
+  _selectPrevious : function() {
+    if (this.items.length === 0) {
+      return;
+    }
+    if (this.index === null) {
+      this.index = 0;
+    } else {
+      hui.cls.remove(this.listNodes[this.index],'hui_keyboardnavigator_selected');
+    }
+    this.index--;
+    if (this.index < 0) {
+      this.index = this.items.length-1;
+    }
+    hui.cls.add(this.listNodes[this.index],'hui_keyboardnavigator_selected');
+  },
+  _selectNext : function() {
+    if (this.items.length === 0) {
+      return;
+    }
+    if (this.index===null) {
+      this.index = -1;
+    } else {
+      hui.cls.remove(this.listNodes[this.index],'hui_keyboardnavigator_selected');
+    }
+    this.index++;
+    if (this.index>this.items.length-1) {
+      this.index = 0;
+    }
+    hui.cls.add(this.listNodes[this.index],'hui_keyboardnavigator_selected');
+  },
+  _render : function() {
+    if (!this.text) {
+      this.element.style.display='none';
+      return;
+    }
+    hui.dom.setText(this.input,this.text);
+    hui.dom.clear(this.list);
+    this.listNodes = [];
+    this.index = Math.min(this.index,this.items.length-1);
+    for (var i=0; i < this.items.length; i++) {
+      var item = this.items[i];
+      var node = hui.build('li',{text:item.text,parent:this.list});
+      this.listNodes.push(node);
+    }
+    if (this.index>-1) {
+      hui.cls.add(this.listNodes[this.index],'hui_keyboardnavigator_selected');
+    } else {
+      this.index = null;
+    }
+    this.element.style.display = 'block';
+    this.element.style.marginLeft = (this.element.clientWidth/-2)+'px';
+    hui.animate({node:this.element,duration:300,ease:hui.ease.slowFastSlow,css:{marginTop:(this.element.clientHeight/-2)+'px'}});
+  },
+  _complete : function() {
+    this.fire('complete',{
+      text : this.text,
+      callback : function(items) {
+        this.items = items;
+        this._render();
+      }.bind(this)
+    });
+  }
+};
+
+hui.ui.Matrix = function(options) {
+  this.options = options = options || {};
+  this.element = hui.get(options.element);
+  hui.ui.extend(this);
+  if (this.options.source) {
+    this.options.source.listen(this);
+  }
+};
+
+hui.ui.Matrix.create = function(options) {
+  options.element = hui.build('div',{'class':'hui_matrix',parent:hui.get(options.parent),style:'width: 100%; height: 100%;'});
+  return new hui.ui.Matrix(options);
+};
+
+hui.ui.Matrix.prototype = {
+  $$layout : function() {
+
+  },
+  $objectsLoaded : function(data) {
+    this.setData(data);
+    this.render();
+  }
+};
+
+/**
+ * Media simulator
+ * @class
+ * @augments hui.ui.Component
+ * @param {Object} options
+ */
+hui.ui.MediaSimulator = function(options) {
+  hui.ui.Component.call(this, options);
+  this.base = hui.find('.hui_mediasimulator_base',this.element);
+  this.left = hui.find('.hui_mediasimulator_base',this.element);
+  this._attach();
+};
+
+hui.ui.MediaSimulator.prototype = {
+  _attach : function() {
+    var self = this;
+    hui.drag.attach({
+      element : hui.find('.hui_mediasimulator_handle-right', this.element),
+      $startMove : function(e) {
+        this.left = e.getLeft();
+        this.width = self.base.clientWidth;
+        hui.cls.add(self.element,'is-resizing');
+      },
+      $move : function(e) {
+        self.base.style.maxWidth = Math.max(300, (this.width + ((e.getLeft() - this.left)) * 2)) + 'px';
+      },
+      $finally : function() {
+        hui.cls.remove(self.element,'is-resizing');
+      }
+    });
+
+    hui.drag.attach({
+      element : hui.find('.hui_mediasimulator_handle-bottom', this.element),
+      $startMove : function(e) {
+        this.top = e.getTop();
+        this.height = self.base.clientHeight;
+        hui.cls.add(self.element,'is-resizing');
+      },
+      $move : function(e) {
+        self.base.style.maxHeight = Math.max(300, (this.height + ((e.getTop() - this.top)))) + 'px';
+      },
+      $finally : function() {
+        hui.cls.remove(self.element,'is-resizing');
+      }
+    });
+  },
+  setSize : function(size) {
+    this.base.style.maxWidth = size.width ? size.width + 'px' : '';
+    this.base.style.maxHeight = size.height ? size.height + 'px' : '';
+  },
+  /**
+   * @return {Window} The window object of the iframe
+   */
+  getFrameWindow : function() {
+    return hui.frame.getWindow(hui.find('iframe', this.element));
+  },
+  $$childSizeChanged : function() {
+  },
+  $$layout : function() {
+    hui.log('Layout changed');
+  },
+  $$draw : function() {
+    hui.log('Draw!');
+  }
+};
+
+hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
+
+(function (_super) {
+
+  /**
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.ModelEditor = function(options) {
+    this.options = options;
+    _super.call(this, options);
+    this._build();
+  };
+
+  hui.ui.ModelEditor.prototype = {
+    _build : function() {
+      var form = this._form = hui.ui.Form.create();
+      var group = form.createGroup();
+      var model = this.options.model;
+      hui.each(model.properties, function(prop) {
+        var widget, label;
+        if (prop.type == 'text') {
+          widget = hui.ui.TextInput.create({key: prop.name});
+          label = prop.name;
+        }
+        else if (prop.type == 'number') {
+          widget = hui.ui.NumberInput.create({key: prop.name});
+          label = prop.name;
+        }
+        if (widget) {
+          group.add(widget, label);
+        }
+      });
+      document.body.appendChild(form.getElement());
+    },
+    setValues : function(values) {
+      this._form.setValues(values);
+    }
+  };
+
+  hui.extend(hui.ui.ModelEditor, _super);
+
+})(hui.ui.Component);
+
+(function (_super) {
+
+  var ns = 'hui_presentation';
+
+  /**
+   * Vertical rows
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.Presentation = function(options) {
+    _super.call(this, options);
+    this.items = [];
+    this.images = [];
+    hui.cls.add(this.element,'hui-is-light');
+    this.nativeScroll = !!navigator.userAgent.match('iPhone|iPad|iPod|Safari') && !window.chrome && hui.browser.webkitVersion > 603;
+    //this.nativeScroll = false;
+    this._attach();
+  };
+
+  hui.ui.Presentation.create = function(options) {
+    options = options || {};
+    var makeIcon = function(body, size) {
+      return '<svg class="' + ns + '_icon" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '">' + body + '</svg>';
+    };
+    var close = makeIcon(
+      '<line class="' + ns + '_line" x1="1" y1="1" x2="31" y2="31"/>' +
+      '<line class="' + ns + '_line" x1="1" y1="31" x2="31" y2="1"/>'
+    );
+    close = makeIcon('<path class="' + ns + '_line" d="M1,1l30,30 M1,31L31,1"/>', 32);
+    close = makeIcon('<path class="' + ns + '_line" d="M1,1l20,20 M1,21L21,1"/>', 22);
+    var right = makeIcon('<path class="' + ns + '_line" d="M8.5,31l15-15L8.5,1"/>', 32);
+    var left = makeIcon('<path class="' + ns + '_line" d="M23.5,1l-15,15l15,15"/>', 32);
+    options.element = hui.build('div', {
+      'class' : ns,
+      html : '<div class="' + ns + '_viewer id-viewer"><div class="' + ns + '_items id-items"></div></div>' +
+        '<div class="' + ns + '_thumbnails id-thumbs"></div>'+
+        '<div class="' + ns + '_close id-close">' + close + '</div>'+
+        '<div class="' + ns + '_arrow ' + ns + '_next id-next">' + right + '</div>'+
+        '<div class="' + ns + '_arrow ' + ns + '_previous id-previous">' + left + '</div>',
+      parent: document.body
+    });
+    if (!hui.browser.touch) {
+      hui.cls.add(options.element,'hui-is-mouse');
+    }
+    return new hui.ui.Presentation(options);
+  };
+
+  hui.ui.Presentation.prototype = {
+    position: 0,
+    index : 0,
+    width: 0,
+    animating: false,
+    nodes : {
+      viewer : '.id-viewer',
+      items : '.id-items',
+      thumbs : '.id-thumbs',
+      close : '.id-close',
+      next : '.id-next',
+      previous : '.id-previous'
+    },
+    _attach : function() {
+      hui.on(this.nodes.close,'tap',this.close, this);
+      hui.on(this.nodes.next,'tap',this.next, this);
+      hui.on(this.nodes.previous,'tap',this.previous, this);
+      hui.on(this.nodes.thumbs,'tap',this._tapThumbs, this);
+      if (this.nativeScroll) {
+        hui.cls.add(this.element,'hui-is-native-scroll');
+        this._attachNative();
+      } else {
+        this._attachDrag();
+      }
+    },
+    close : function(e) {
+      if (e) hui.event(e).stop();
+      hui.cls.remove(this.element,'hui-is-open');
+      this._lockScroll(false);
+    },
+    _attachNative : function() {
+      var x,y;
+      var moved = false;
+      hui.listen(this.element,'touchstart',function(e) {
+        moved = false;
+      }.bind(this));
+      hui.listen(this.element,'touchmove',function(e) {
+        if (e.touches && e.touches.length == 2) {
+          if (x===undefined) {x = e.pageX;}
+          if (y===undefined) {y = e.pageY;}
+          var img = this.images[this.index];
+          var newX = e.pageX - x + img.x;
+          var newY = e.pageY - y + img.y;
+          var scale = (e.scale) * (img.scale);
+          img.newScale = scale;
+          img.newX = newX;
+          img.newY = newY;
+          img.node.style.transform =  'scale(' + scale + ') translate(' + (newX)/scale + 'px,' + (newY)/scale + 'px)';
+        }
+        if (e.touches && e.touches.length > 1) {
+          e.preventDefault();
+        }
+        moved = true;
+        //console.log('Scale', e.scale);
+      }.bind(this));
+      hui.listen(this.element,'touchend',function(e) {
+        x = y = undefined;
+        this.images.forEach(function(img) {
+          if (img.newScale) {
+            img.scale = img.newScale;
+            img.newScale = undefined;
+          }
+          if (img.newX) {
+            img.x = img.newX;
+            img.newX = undefined;
+          }
+          if (img.newY) {
+            img.y = img.newY;
+            img.newY = undefined;
+          }
+        });
+        if (!moved && hui.dom.isDescendantOrSelf(e.target, this.nodes.viewer)) {
+          var img = this.images[this.index];
+          if (img.scale != 1) {
+            img.node.style.transition = 'transform .3s';
+            img.node.style.transform = 'scale(1) translate(0px,0px)';
+            setTimeout(function() {
+              img.node.style.transition = '';
+            },350);
+            img.scale = 1;
+            img.x = img.y = 0;
+          } else {
+            this._toggleThumbs();
+          }
+        }
+      }.bind(this));
+      var timer;
+      var scrollEnd = function() {
+        var width = this.nodes.viewer.clientWidth;
+        var scrl = this.nodes.viewer.scrollLeft;
+        this.index = Math.round(scrl / width);
+      }.bind(this);
+      hui.listen(this.nodes.viewer,'scroll',function(e) {
+        //console.log('Scroll', e);
+        clearTimeout(timer);
+        timer = setTimeout(scrollEnd,150);
+      });
+    },
+    _originalScroll : 0,
+    _lockScroll : function(lock) {
+      if (lock) {
+        this._originalScroll = document.body.scrollTop;
+      }
+      lock = lock ? 'hidden' : '';
+      document.body.parentNode.style.overflow = lock;
+      document.body.style.overflow = lock;
+      if (!lock) {
+        document.body.scrollTop = this._originalScroll;
+      }
+    },
+    /** Go to the previous image
+     * @param {Boolean} user If it is initiated by the user
+     */
+    previous : function(e) {
+      if (e) hui.stop(e);
+      this.index--;
+      var num = 1;
+      if (this.index < 0) {
+        this.index = this.items.length - 1;
+        num = this.items.length;
+      }
+      this._goToImage(true,num,true);
+    },
+    /** Go to the next image
+     * @param {Boolean} user If it is initiated by the user
+     */
+    next : function(e) {
+      if (e) hui.stop(e);
+      this.index++;
+      var num = 1;
+      if (this.index==this.items.length) {
+        this.index = 0;
+        num = this.items.length;
+      }
+      this._goToImage(true,num,true);
+    },
+    show : function(params) {
+      params = params || {};
+      if (params.source) {
+        var pos = hui.position.get(params.source);
+        hui.cls.add(this.element,'hui-is-minimized');
+      }
+      hui.cls.add(this.element,'hui-is-open');
+      this._calculateSize();
+      if (params.items) {
+        this.items = params.items;
+        this._rebuild();
+      }
+      if (hui.isNumber(params.index)) {
+        this.index = params.index;
+        this._goToImage(false, 0, false);
+      }
+      window.setTimeout(function() {
+        this._lockScroll(true);        
+      }.bind(this),100)
+    },
+    _tapThumbs : function(e) {
+      e = hui.event(e);
+      var thumb = e.findByClass(ns + '_thumbnail');
+      if (thumb) {
+        var index = parseInt(thumb.getAttribute('data'),10);
+        this._goTo(index);
+      }
+    },
+    _rebuild : function() {
+      this.images = [];
+      this.nodes.items.innerHTML = '';
+      this.nodes.thumbs.innerHTML = '';
+      for (var i = 0; i < this.items.length; i++) {
+        var url = hui.ui.callDelegates(this,'getPreview',{item: this.items[i], index: i});
+        var item = hui.build('div',{parent : this.nodes.items, 'class' : ns+'_item'});
+        var image = hui.build('div',{parent : item, 'class' : ns+'_image'});
+        var content = hui.build('div',{parent : image, 'class' : ns+'_image_content'});
+        var thumb = hui.build('div',{parent : this.nodes.thumbs, 'class' : ns+'_thumbnail', data:i});
+        if (url) {
+          content.style.backgroundImage = 'url(' + url + ')';
+          thumb.style.backgroundImage = 'url(' + url + ')';
+        }
+        this.images.push({node:content,scale:1,x:0,y:0});
+      }
+      hui.cls.set(this.element, 'hui-is-multiple', this.items.length > 1);
+      this._updateImages();
+    },
+    _updateImages : function() {
+      if (!this.items.length) { return; }
+      var width = this.nodes.viewer.clientWidth,
+        height = this.nodes.viewer.clientHeight,
+      thumbs = hui.get.children(this.nodes.thumbs);
+      var thumbSize = thumbs[0].clientWidth;
+      var load = function(url,node) {
+        var img = new Image();
+        img.onload = function() {
+          node.style.backgroundImage = "url('" + url + "')";
+        };
+        img.src = url;
+      };
+      var ratio = window.devicePixelRatio > 1 ? 2 : 1;
+      for (var i = 0; i < this.items.length; i++) {
+        var item = this.items[i];
+        var url = hui.ui.callDelegates(this,'getImage',{item: item, width: width * ratio, height: height * ratio});
+        load(url, this.images[i].node);
+        //images[i].style.backgroundImage = "url('" + url + "')";
+        var thmbUrl = hui.ui.callDelegates(this,'getImage',{item: item, width: thumbSize * ratio, height: thumbSize * ratio});
+        load(thmbUrl, thumbs[i]);
+        //thumbs[i].style.backgroundImage = "url('" + url + "')";
+      }
+    },
+    _calculateSize : function() {
+      this.width = this.nodes.viewer.clientWidth;
+    },
+    $$layout : function() {
+      this._calculateSize();
+      this._updateImages();
+    },
+    _draw : function() {
+      this.nodes.items.style.transform = 'translate3d(' + this.position + 'px,0,0)';
+    },
+    _attachDrag : function() {
+      var initial = 0;
+      var left = 0;
+      var scrl = 0;
+      var viewer = this.nodes.viewer;
+      var inner = this.nodes.items;
+      var max = 0;
+      var stmp;
+      var currentSlide;
+      var speed = 0;
+      hui.drag.attach({
+        touch : true,
+        element : viewer,
+        $check : function() {
+          return !this.animating;
+        }.bind(this),
+        $startMove : function(e) {
+          initial = e.getLeft();
+          scrl = this.position;
+          max = (this.items.length-1) * this.width * -1;
+          stmp = e.event.timeStamp;
+          speed = 0;
+        }.bind(this),
+        $move : function(e) {
+          var latestLeft = left;
+          left = e.getLeft();
+          var pos = (scrl - (initial - left));
+          if (pos > 0) {
+            pos = (Math.exp(pos * -0.013) -1) * -80;
+          }
+          if (pos < max) {
+            pos = (Math.exp((pos - max) * 0.013) -1) * 80 + max;
+          }
+          this.position = pos;
+          var dur = (e.event.timeStamp - stmp);
+          var curSpeed = dur > 0 ? (latestLeft - left) / dur : 0;
+          speed = (speed + curSpeed) / 2;
+          //console.log(speed);
+          stmp = e.event.timeStamp;
+          this._draw();
+        }.bind(this),
+        $endMove : function(e) {
+          var func = (initial - left) < 0 ? Math.floor : Math.ceil;
+          this.index = func(this.position * -1 / this.width);
+          var num = this.items.length - 1;
+          if (this.index==this.items.length) {
+            this.index = 0;
+            this.index = this.items.length - 1;
+          } else if (this.index < 0) {
+            this.index = this.items.length - 1;
+            this.index = 0;
+          } else {
+            num = 1;
+          }
+
+          this._goToImage(true,num,false,true, Math.abs(speed));
+        }.bind(this),
+        $notMoved : this._toggleThumbs.bind(this)
+      });
+    },
+    _toggleThumbs : function() {
+      if (this.items.length > 1) {
+        hui.cls.toggle(this.element,'hui-is-thumbnails');
+      }
+    },
+    _goTo : function(index) {
+      if (this.index == index) {
+        return;
+      }
+      var diff = Math.abs(this.index - index);
+      this.index = index;
+      this._goToImage(true, diff, false);
+    },
+    _goToImage : function(animate,num,user,drag,speed) {
+      if (this.nativeScroll) {
+        var viewer = this.nodes.viewer,
+          scrl = viewer.clientWidth * this.index;
+        if (animate) {
+          hui.animate({
+            node: viewer,
+            duration: 500,
+            property: 'scrollLeft',
+            value: scrl,
+            ease: hui.ease.fastSlow
+          });
+        } else {
+          if (hui.browser.webkitVersion < 603) {
+            setTimeout(function() {
+              viewer.scrollTo(scrl,0);
+            });
+          } else {
+            this.nodes.viewer.scrollLeft = scrl;
+          }
+        }
+        return;
+      }
+      speed = speed || 2;
+      var initial = this.position;
+      var target = this.position = this.index * (this.width) * -1;
+      if (animate) {
+        var duration, ease;
+        if (drag) {
+          duration = 300 / speed;
+          ease = hui.ease.quadOut;
+          duration = Math.min(800,Math.max(200, duration));
+        }
+        else if (num > 1) {
+          duration = Math.min(num * 500, 2000);
+          ease = hui.ease.fastSlow;
+        } else {
+          var end = this.index === 0 || this.index === this.items.length - 1;
+          ease = (end ? hui.ease.elastic : hui.ease.fastSlow);
+          if (!user) {
+            ease = hui.ease.fastSlow;
+          }
+          duration = (end ? 1000 : 1000 / speed);
+        }
+        this.animating = true;
+        hui.animate({
+          node : this.nodes.items,
+          //css : {marginLeft : target + 'px'},
+          duration : duration,
+          ease : ease,
+          $render : function(node,v) {
+            this.position = initial + (target - initial) * v;
+            this._draw();
+          }.bind(this),
+          $complete : function() {
+            this.animating = false;
+          }.bind(this)
+        });
+      } else {
+        this._draw();
+      }
+    }
+  };
+
+  hui.extend(hui.ui.Presentation, _super);
+
+  hui.define('hui.ui.Presentation', hui.ui.Presentation);
+
+})(hui.ui.Component);
+
+/** A progress indictator that shows progress from 0% to 100%
+  @constructor
+*/
+hui.ui.ProgressIndicator = function(options) {
+  this.element = hui.get(options.element);
+  this.options = options || {};
+  this.size = options.size;
+  this.name = options.name;
+  this.value = 0;
+  this._renderedValue = 0;
+  hui.ui.extend(this);
+  this._init();
+};
+
+/** Creates a new progress bar:
+  @param o {Object} Options : {small:false}
+*/
+hui.ui.ProgressIndicator.create = function(options) {
+  options = options || {};
+  options.element = hui.build('div',{'class':'hui_progressindicator',style:'display: inline-block; vertical-align: middle; width:'+options.size+'px;height:'+options.size+'px;'});
+  return new hui.ui.ProgressIndicator(options);
+};
+
+hui.ui.ProgressIndicator.prototype = {
+  _init : function() {
+    this.drawing = hui.ui.Drawing.create({parent:this.element,width:this.size,height:this.size});
+    this.arc = this.drawing.addArc({
+      center : {x:this.size/2,y:this.size/2},
+        startDegrees : -90,
+      endDegrees : -90,
+        innerRadius : this.size/4,
+      outerRadius : this.size/2,
+      fill : 'rgba(0,0,0,.1)'
+    });
+  },
+  setValue : function(value) {
+    if (value==this.value) {
+      return;
+    }
+    var start = this._renderedValue;
+    var dur = Math.max(200,Math.abs(value-start)*1000);
+    hui.animate({
+      node : this.element,
+      duration : dur,
+      ease: hui.ease.cubicOut,
+      callback : function(node,pos) {
+        var p = start+(value-start)*pos;
+        this._renderedValue = p;
+        this._draw(p);
+      }.bind(this)
+    });
+    this.value = value;
+  },
+  _draw : function(value) {
+    this.arc.update({
+      center : {x:this.size/2,y:this.size/2},
+      startDegrees : -90,
+      endDegrees : Math.min(-90 + value * 360, 269.9999),
+      innerRadius : this.size/3,
+      outerRadius : this.size/2,
+      fill : '#eee'
+    });
+  },
+  reset : function() {
+    var start = this._renderedValue;
+    this._renderedValue = this.value = 0;
+    hui.animate({
+      node : this.element,
+      duration : 300,
+      ease : hui.ease.fastSlow,
+      callback : function(node,pos) {
+        var x = 1 - pos;
+        this.arc.update({
+          center : {x:this.size/2,y:this.size/2},
+          startDegrees : -90,
+          endDegrees : Math.min(-90 + (start+(1-start)*pos) * 360, 269.9999),
+          innerRadius : this.size/4 * x,
+          outerRadius : this.size/2 * x,
+          fill : '#eee'
+        });
+      }.bind(this)
+    });
+  }
+};
+
+/** @constructor */
+hui.ui.RevealingToolbar = function(options) {
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  hui.ui.extend(this);
+};
+
+hui.ui.RevealingToolbar.create = function(options) {
+  options = options || {};
+  options.element = hui.build( 'div', {
+    className : 'hui_revealing_toolbar',
+    style : 'display:none',
+    parent : document.body
+  });
+  var bar = new hui.ui.RevealingToolbar(options);
+  bar.setToolbar(hui.ui.Toolbar.create());
+  return bar;
+};
+
+hui.ui.RevealingToolbar.prototype = {
+  setToolbar : function(widget) {
+    this.toolbar = widget;
+    this.element.appendChild(widget.getElement());
+  },
+  getToolbar : function() {
+    return this.toolbar;
+  },
+  show : function(instantly) {
+    this.element.style.display='';
+    hui.animate(this.element,'height','58px',instantly ? 0 : 600,{ease:hui.ease.slowFastSlow});
+  },
+  hide : function() {
+    hui.animate(this.element,'height','0px',500,{ease:hui.ease.slowFastSlow,hideOnComplete:true});
+  }
+};
+
+(function (_super) {
+
+  /**
+   * Vertical rows
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.StyleEditor = function(options) {
+    _super.call(this, options);
+    this.value = null;
+    this.components = options.components;
+    this.queryEditors = [];
+    this._attach();
+  };
+
+  hui.ui.StyleEditor.create = function(options) {
+    options = options || {};
+    var element = hui.build('div.hui_styleeditor',{html:'<div class="hui_styleeditor_list"></div>'});
+    options.element = element;
+    return new hui.ui.StyleEditor(options);
+  };
+
+  hui.ui.StyleEditor.prototype = {
+    nodes : {
+      list : '.hui_styleeditor_list'
+    },
+    _attach : function() {
+      var self = this;
+      hui.on(this.element, 'click', function(e) {
+        e = hui.event(e);
+        var query = e.findByClass('hui_styleeditor_query');
+        if (query) {
+          self.editQuery(parseInt(query.getAttribute('data-index'), 10));
+        }
+      });
+      var button = hui.ui.Button.create({text:'Add', small:true});
+      this.element.appendChild(button.element);
+      button.listen({$click:this.add.bind(this)});
+    },
+    editQuery : function(index) {
+      var query = this.value.queries[index];
+      win = this.queryEditors[index];
+      if (win) {
+        win.show();
+        return;
+      }
+      win = hui.ui.Window.create({
+        title : this._getQueryDescription(query),
+        width: 400,
+        padding: 10
+      });
+      this.queryEditors[index] = win;
+      var self = this;
+      var overflow = hui.ui.Overflow.create({height: 400});
+      win.add(overflow);
+      hui.each(this.components,function(component) {
+        var form = hui.ui.Form.create();
+        form.buildGroup({above:false},[{
+          type : 'DropDown', label: 'Display:', options : {key:'display', value:'', items:[
+            {value:'',text:'Unchanged'}, {value:'block',text:'Block'}, {value:'flex',text:'Flex'}
+          ]}
+        },{
+          type : 'DropDown', label: 'Flex direction:', options : {key:'flex-direction', value:'', items:[
+            {value:'',text:'Unchanged'},
+            {value:'row',text:'Row'},{value:'row-reverse',text:'Row reverse'},{value:'Column',text:'column'},{value:'column-reverse',text:'Column reverse'},
+            {value:'inherit',text:'Inherit'}, {value:'initial',text:'Initial'}, {value:'unset',text:'Unset'}, {value:'revert',text:'Revert'}
+          ]}
+        },{
+          type : 'StyleLength', label: 'Width:', options : {key:'width', value:''}
+        },{
+          type : 'ColorInput', label: 'Text color:', options : {key:'color', value:''}
+        },{
+          type : 'StyleLength', label: 'Max width:', options : {key:'max-width', value:''}
+        },{
+          type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
+        }]);
+        overflow.add(hui.build('div',{text:component.description, style: 'text-transform: uppercase; font-size: 12px;'}));
+        form.setValues(self._getComponentValues(query, component));
+        overflow.add(form);
+        var values = {};
+        form.listen({
+          $valuesChanged : function(values) {
+            var rules = self._getRulesFor({query:index, component:component.name});
+            hui.log(component.name, values, rules);
+            hui.each(rules,function(rule) {
+              if (values[rule.name]!==undefined) {
+                rule.value = values[rule.name];
+                values[rule.name] = undefined;
+              }
+            });
+            hui.each(values,function(key,value) {
+              // TODO We filter out unnamed (could be text filed inside color or other stuff)
+              if (key.indexOf('unnamed')!==0 && !hui.isBlank(value)) {
+                rules.push({name:key, value:value});
+              }
+            });
+            self.fireValueChange();
+          }
+        });
+      });
+      win.show();
+    },
+    _getComponentValues : function(query,component) {
+      var values = {};
+      if (query.components) {
+        var found = query.components.find(function(other) {
+          return other.name == component.name;
+        });
+        if (found) {
+          found.rules.forEach(function(rule) {
+            values[rule.name] = rule.value;
+          });
+        }
+      }
+      return values;
+    },
+    add : function() {
+      this.value.queries.push({components:[]});
+      this.draw();
+    },
+    setValue : function(value) {
+      this.value = value;
+      this.draw();
+    },
+    _getRulesFor : function(params) {
+      var query = this.value.queries[params.query];
+      var comps = query.components;
+      for (var i = 0; i < comps.length; i++) {
+        if (comps[i].name == params.component) {
+          if (!comps[i].rules) {
+            comps[i].rules = [];
+          }
+          return comps[i].rules;
+        }
+      }
+      var rules = [];
+      query.components.push({name:params.component, rules:rules});
+      return rules;
+    },
+    draw : function() {
+      this.nodes.list.innerHTML = '';
+      if (this.value && this.value.queries) {
+        for (var i = 0; i < this.value.queries.length; i++) {
+          var query = this.value.queries[i];
+          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.nodes.list, 'data-index':i});
+        }
+      }
+    },
+    _getQueryDescription : function(query) {
+      var text = [];
+      var props = ['max-width','min-width','max-height','min-height'];
+      for (var i = 0; i < props.length; i++) {
+        var prop = props[i];
+        if (query[prop]) {
+          text.push(prop + ': ' + query[prop]);
+        }
+      }
+      if (!text.length) {
+        text.push('Anything');
+      }
+      return text.join(', ');
+    },
+    $$childSizeChanged : function() {
+    },
+    $$layout : function() {
+    }
+  };
+
+  hui.extend(hui.ui.StyleEditor, _super);
+
+})(hui.ui.Component);
+
+/** @namespace */
+hui.test = {
+  status : null,
+  busy : 0,
+  run : function(recipe) {
+    this.errorHandler = hui.listen(window,'error',function(e) {
+      hui.log(e);
+      hui.ui.msg.fail({text:'Error ('+e.message+') ['+e.lineno+']'});
+      throw e;
+    });
+    this.status = {failures:0,successes:0};
+    this.busy = 0;
+    hui.ui.msg({text:'Running test',busy:true});
+    this._next(0,recipe);
+
+  },
+  _next : function(num,recipe) {
+    if (recipe[num]===undefined) {
+      this._stop();
+      return;
+    }
+    hui.ui.msg({text:'Running test ('+num+')',busy:true});
+    if(typeof(recipe[num])=='function') {
+      recipe[num]();
+      this._next(num+1,recipe);
+    } else {
+      window.setTimeout(function(){
+        this._next(num + 1, recipe);
+      }.bind(this), recipe[num]);
+    }
+  },
+  _stop : function() {
+    if (this.busy>0) {
+      window.setTimeout(this._stop.bind(this),100);
+      return;
+    }
+    if (this.status.failures>0) {
+      hui.ui.msg.fail({text:'Failure',duration:2000});
+    } else {
+      hui.ui.msg.success({text:'Success',duration:2000});
+    }
+    hui.unListen(window,'error',this.errorHandler);
+  },
+  click : function(node,func) {
+    this.busy++;
+    Syn.click(node,function() {
+      if (func) {func();}
+      this.busy--;
+    }.bind(this));
+  },
+  type : function(node,text,func) {
+    this.busy++;
+    Syn.type(node,text,function() {
+      if (func) {func();}
+      this.busy--;
+    }.bind(this));
+  },
+  _succeed : function(msg) {
+    if (window.console) {
+      console.info(msg);
+    }
+    this._log(msg);
+    this.status.successes++;
+  },
+  _fail : function(msg,obj1,obj2) {
+    if (window.console) {
+      console.error(msg);
+      console.info('Object 1:');
+      console.info(obj1);
+    }
+      console.info('Object 2:');
+      console.info(obj2);
+    this._log(msg,true);
+    this.status.failures++;
+  },
+  _log : function(msg,fail) {
+    if (!this.log) {
+      var log = this.log = hui.build('div',{parent:document.body,style:'border: 1px solid #eee; padding: 5px; position: fixed; bottom:20px;right:20px; width: 200px; max-height: 200px; overflow: auto; white-space: nowrap; font-family: Monaco, monospace; font-size: 9px; color: #00ff00; background: #000'});
+      hui.listen(this.log,'click',function() {
+        if (log.style.left=='20px') {
+          log.style.left='';
+          log.style.top='';
+          log.style.width='200px';
+          log.style.maxHeight='200px';
+        } else {
+          log.style.left='20px';
+          log.style.top='20px';
+          log.style.width='';
+          log.style.maxHeight='';
+        }
+      });
+    }
+    hui.build('div',{parent:this.log,text:msg,style:fail?'color:red;':''});
+  },
+
+  // Assertion...
+
+  assert : {
+    equals : function(obj1,obj2,msg) {
+      return hui.test.assertEquals(obj1,obj2,msg);
+    },
+    notEquals : function(obj1,obj2,msg) {
+      return hui.test.assertNotEquals(obj1,obj2,msg);
+    },
+    'false' : function(value,msg) {
+      return hui.test.assertFalse(value,msg);
+    },
+    'true' : function(value,msg) {
+      return hui.test.assertTrue(value,msg);
+    },
+    'defined' : function(value,msg) {
+      return hui.test.assertDefined(value,msg);
+    }
+  },
+
+  assertTrue : function(value,msg) {
+    if (value!==true) {
+      this._fail('Failure ('+msg+'), not true...',value);
+    } else {
+      this._succeed('Success, true'+(msg ? ': '+msg : ''));
+    }
+  },
+  assertFalse : function(value,msg) {
+    if (value!==false) {
+      this._fail('Failure ('+msg+'), not false...',value);
+    } else {
+      this._succeed('Success, false'+(msg ? ': '+msg : ''));
+    }
+  },
+  assertDefined : function(value,msg) {
+    if (value===null || value===undefined) {
+      this._fail('Failure ('+msg+'), defined...',value);
+    } else {
+      this._succeed('Success, defined: '+msg);
+    }
+  },
+  assertEquals : function(obj1,obj2,msg) {
+    if (obj1!==obj2) {
+      this._fail('Failure ('+msg+') - '+obj1+'!=='+obj2+', not equal...',obj1,obj2);
+    } else {
+      this._succeed('Success, equal: '+obj1+'==='+obj2+(msg ? ', '+msg : ''));
+    }
+  },
+  assertNotEquals : function(obj1,obj2,msg) {
+    if (obj1===obj2) {
+      this._fail('Failure ('+msg+'), not not equal...',obj1,obj2);
+    } else {
+      this._succeed('Success, not equal: '+obj1+'!=='+obj2+', '+msg);
+    }
+  },
+  assertVisible : function(node,msg) {
+    if (node.style.display==='none') {
+      this._fail('Failure ('+msg+'), not visible...',node);
+    } else {
+      this._succeed('Success, visible: '+msg);
+    }
+  },
+  assertNotVisible : function(node,msg) {
+    if (node.style.display!=='none') {
+      this._fail('Failure ('+msg+'), visible...',node);
+    } else {
+      this._succeed('Success, not visible: '+msg);
+    }
+  }
+};
+
+/**
+ * Tiles
+ * @constructor
+ */
+hui.ui.Tiles = function(options) {
+  this.options = options || {};
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  this.tiles = hui.get.children(this.element);
+  hui.ui.extend(this);
+  this._addBehavior();
+  if (this.options.reveal) {
+    hui.onReady(this._reveal.bind(this));
+  }
+};
+
+hui.ui.Tiles.prototype = {
+  _addBehavior : function() {
+  },
+  _reveal : function() {
+    for (var i=0; i < this.tiles.length; i++) {
+      var tile = this.tiles[i];
+      this._bounce(tile);
+    }
+  },
+  _bounce : function(tile) {
+    hui.effect.fadeIn({element:tile,delay:Math.random()*500});
+  }
+};
+
+hui.ui.Tile = function(options) {
+  this.options = options || {};
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  hui.ui.extend(this);
+  this.fullScreen = false;
+  this.initial = {
+    width : this.element.style.width,
+    height : this.element.style.height,
+    top : this.element.style.top,
+    left : this.element.style.left
+  };
+  this._addBehavior();
+};
+
+hui.ui.Tile._zIndex = 0;
+
+hui.ui.Tile.prototype = {
+  _addBehavior : function() {
+    hui.listen(this.element,'click',function(e) {
+      e = hui.event(e);
+      if (hui.cls.has(e.element,'hui_tile_icon')) {
+        var key = e.element.getAttribute('data-hui-key');
+        this.fire('clickIcon',{key:key,tile:this});
+      }
+    }.bind(this));
+  },
+  isFullScreen : function() {
+    return this.fullScreen;
+  },
+  toggleFullScreen : function() {
+    if (this.fullScreen) {
+      hui.animate({
+        node : this.element,
+        css : this.initial,
+        duration : 1000,
+        ease : hui.ease.elastic,
+        onComplete : function() {
+          hui.ui.reLayout();
+        }
+      });
+    } else {
+      hui.ui.Tile._zIndex++;
+      this.element.style.zIndex = hui.ui.Tile._zIndex;
+      hui.animate({
+        node : this.element,
+        css : {top:'0%',left:'0%',width:'100%',height:'100%'},
+        duration : 1000,
+        ease : hui.ease.elastic,
+        onComplete : function() {
+          hui.ui.reLayout();
+        }
+      });
+    }
+    this.fullScreen = !this.fullScreen;
+  }
+};
+
+/**
+ * A timeline showing events over time
+ * @constructor
+ * @param {Object} options { element «Node | id», name: «String» }
+ */
+hui.ui.TimeLine = function(options) {
+  this.name = options.name;
+  this.options = options || {};
+  this.element = hui.get(options.element);
+  hui.ui.extend(this);
+  hui.onReady(this._start.bind(this));
+};
+
+hui.ui.TimeLine.prototype = {
+  _attach : function() {
+
+  },
+  _start : function() {
+    this.startTime = new Date().getTime();
+    this.background = hui.build('div',{'class':'hui_timeline_bg',parent:this.element});
+    this._next();
+    window.setTimeout(this.pause.bind(this),20000);
+    window.setTimeout(this._addLine.bind(this),2000);
+    window.setTimeout(this._addLine.bind(this),4000);
+    window.setTimeout(this._addBlock.bind(this),Math.random()*4000);
+    window.setTimeout(this._addBlock.bind(this),Math.random()*4000);
+    window.setTimeout(this._addBlock.bind(this),Math.random()*4000);
+    window.setTimeout(this._addBlock.bind(this),Math.random()*4000);
+  },
+  _next : function() {
+    if (this.paused) return;
+    var width = this._getNow();
+    this.background.style.width = width+'px';
+    this.element.scrollLeft = Math.max(0,width-this.element.clientWidth);
+    window.setTimeout(this._next.bind(this),500);
+  },
+  _setData : function() {
+
+  },
+  _addLine : function() {
+    var line = hui.build('div',{'class':'hui_timeline_line',parent:this.element});
+    line.style.left=this._getNow()+'px';
+  },
+  _addBlock : function() {
+    var line = hui.build('div',{'class':'hui_timeline_block',text:'New word',parent:this.element});
+    line.style.left=this._getNow()+'px';
+    line.style.width=Math.round(30+Math.random()*100)+'px';
+  },
+  _getNow : function() {
+    return Math.round((new Date().getTime() - this.startTime)/10);
+  },
+  pause : function() {
+    this.paused = true;
+  }
+};
+
 // MSIE 8-
 if (!Function.prototype.bind) {
   Function.prototype.bind = function () {
@@ -21403,146 +23842,7 @@ if (!Array.prototype.find) {
 * @preserve HTML5 Shiv 3.7.2 | @afarkas @jdalton @jon_neal @rem | MIT/GPL2 Licensed
 */
 !function(a,b){function c(a,b){var c=a.createElement("p"),d=a.getElementsByTagName("head")[0]||a.documentElement;return c.innerHTML="x<style>"+b+"</style>",d.insertBefore(c.lastChild,d.firstChild)}function d(){var a=t.elements;return"string"==typeof a?a.split(" "):a}function e(a,b){var c=t.elements;"string"!=typeof c&&(c=c.join(" ")),"string"!=typeof a&&(a=a.join(" ")),t.elements=c+" "+a,j(b)}function f(a){var b=s[a[q]];return b||(b={},r++,a[q]=r,s[r]=b),b}function g(a,c,d){if(c||(c=b),l)return c.createElement(a);d||(d=f(c));var e;return e=d.cache[a]?d.cache[a].cloneNode():p.test(a)?(d.cache[a]=d.createElem(a)).cloneNode():d.createElem(a),!e.canHaveChildren||o.test(a)||e.tagUrn?e:d.frag.appendChild(e)}function h(a,c){if(a||(a=b),l)return a.createDocumentFragment();c=c||f(a);for(var e=c.frag.cloneNode(),g=0,h=d(),i=h.length;i>g;g++)e.createElement(h[g]);return e}function i(a,b){b.cache||(b.cache={},b.createElem=a.createElement,b.createFrag=a.createDocumentFragment,b.frag=b.createFrag()),a.createElement=function(c){return t.shivMethods?g(c,a,b):b.createElem(c)},a.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+d().join().replace(/[\w\-:]+/g,function(a){return b.createElem(a),b.frag.createElement(a),'c("'+a+'")'})+");return n}")(t,b.frag)}function j(a){a||(a=b);var d=f(a);return!t.shivCSS||k||d.hasCSS||(d.hasCSS=!!c(a,"article,aside,dialog,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}mark{background:#FF0;color:#000}template{display:none}")),l||i(a,d),a}var k,l,m="3.7.2",n=a.html5||{},o=/^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,p=/^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,q="_html5shiv",r=0,s={};!function(){try{var a=b.createElement("a");a.innerHTML="<xyz></xyz>",k="hidden"in a,l=1==a.childNodes.length||function(){b.createElement("a");var a=b.createDocumentFragment();return"undefined"==typeof a.cloneNode||"undefined"==typeof a.createDocumentFragment||"undefined"==typeof a.createElement}()}catch(c){k=!0,l=!0}}();var t={elements:n.elements||"abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output picture progress section summary template time video",version:m,shivCSS:n.shivCSS!==!1,supportsUnknownElements:l,shivMethods:n.shivMethods!==!1,type:"default",shivDocument:j,createElement:g,createDocumentFragment:h,addElements:e};a.html5=t,j(b)}(this,document);
-;
-hui.ui.Matrix = function(options) {
-  this.options = options = options || {};
-  this.element = hui.get(options.element);
-  hui.ui.extend(this);
-  if (this.options.source) {
-    this.options.source.listen(this);
-  }
-};
 
-hui.ui.Matrix.create = function(options) {
-  options.element = hui.build('div',{'class':'hui_matrix',parent:hui.get(options.parent),style:'width: 100%; height: 100%;'});
-  return new hui.ui.Matrix(options);
-};
-
-hui.ui.Matrix.prototype = {
-  $$layout : function() {
-
-  },
-  $objectsLoaded : function(data) {
-    this.setData(data);
-    this.render();
-  }
-};
-;
-(function(_super) {
-
-  /**
-   * A component with a value
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   * @param {any} options.value The value
-   */
-  hui.ui.Editable = function(options) {
-    _super.call(this, options);
-    this.value = options.value;
-  };
-
-  hui.ui.Editable.prototype = {
-    setValue : function(value) {
-      var changed = value !== this.value;
-      this.value = value;
-      if (changed) {
-        this.fireValueChange();
-      }
-    },
-    getValue : function() {
-      return this.value;
-    },
-    fireValueChange : function() {
-      this.fire('valueChanged', this.value);
-      hui.ui.firePropertyChange(this, 'value', this.value);
-      hui.ui.callAncestors(this, 'childValueChanged', this.value);
-    }
-  };
-
-  hui.extend(hui.ui.Editable, _super);
-
-})(hui.ui.Component);
-;
-(function (_super) {
-
-  /**
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   */
-  hui.ui.ModelEditor = function(options) {
-    this.options = options;
-    _super.call(this, options);
-    this._build();
-  };
-
-  hui.ui.ModelEditor.prototype = {
-    _build : function() {
-      var form = this._form = hui.ui.Form.create();
-      var group = form.createGroup();
-      var model = this.options.model;
-      hui.each(model.properties, function(prop) {
-        var widget, label;
-        if (prop.type == 'text') {
-          widget = hui.ui.TextInput.create({key: prop.name});
-          label = prop.name;
-        }
-        else if (prop.type == 'number') {
-          widget = hui.ui.NumberInput.create({key: prop.name});
-          label = prop.name;
-        }
-        if (widget) {
-          group.add(widget, label);
-        }
-      });
-      document.body.appendChild(form.getElement());
-    },
-    setValues : function(values) {
-      this._form.setValues(values);
-    }
-  };
-
-  hui.extend(hui.ui.ModelEditor, _super);
-
-})(hui.ui.Component);
-;
-/** @constructor */
-hui.ui.RevealingToolbar = function(options) {
-  this.element = hui.get(options.element);
-  this.name = options.name;
-  hui.ui.extend(this);
-};
-
-hui.ui.RevealingToolbar.create = function(options) {
-  options = options || {};
-  options.element = hui.build( 'div', {
-    className : 'hui_revealing_toolbar',
-    style : 'display:none',
-    parent : document.body
-  });
-  var bar = new hui.ui.RevealingToolbar(options);
-  bar.setToolbar(hui.ui.Toolbar.create());
-  return bar;
-};
-
-hui.ui.RevealingToolbar.prototype = {
-  setToolbar : function(widget) {
-    this.toolbar = widget;
-    this.element.appendChild(widget.getElement());
-  },
-  getToolbar : function() {
-    return this.toolbar;
-  },
-  show : function(instantly) {
-    this.element.style.display='';
-    hui.animate(this.element,'height','58px',instantly ? 0 : 600,{ease:hui.ease.slowFastSlow});
-  },
-  hide : function() {
-    hui.animate(this.element,'height','0px',500,{ease:hui.ease.slowFastSlow,hideOnComplete:true});
-  }
-};
-;
 hui.on(function() {
   var configs = document.getElementsByTagName('noscript');
   for (var i = 0; i < configs.length; i++) {
@@ -21593,1718 +23893,7 @@ hui.on(function() {
     new hui.ui[configs[i].getAttribute('data-type')](data);
   }
 });
-;
-/** A diagram
- * @constructor
- */
-hui.ui.Diagram = function(options) {
-  this.options = hui.override({layout: 'D3'}, options);
-  this.name = options.name;
-  this.nodes = [];
-  this.lines = [];
-  this.data = {};
-  this.translation = {x:0,y:0};
-  this.element = hui.get(options.element);
-  this.width = this.element.clientWidth;
-  this.height = this.element.clientHeight;
-  this.layout = hui.ui.Diagram[this.options.layout];
-  this.layout.diagram = this;
-  hui.ui.extend(this);
-  if (options.source) {
-    options.source.listen(this);
-  }
-  this._init();
-};
 
-hui.ui.Diagram.create = function(options) {
-  options = hui.override({width: null, height: null}, options);
-
-  options.element = hui.build('div', {
-    'class': 'hui_diagram',
-    parent: options.parent,
-    style: {height: options.height + 'px'}
-  });
-
-  return new hui.ui.Diagram(options);
-};
-
-hui.ui.Diagram.prototype = {
-  _init : function() {
-    this.background = hui.ui.Drawing.create({
-      width: this.width || 0,
-      height: this.height || 0
-    });
-    this.element.appendChild(this.background.element);
-    this.fire('added');
-  },
-  $$layout : function() {
-    var newWidth = this.element.clientWidth;
-    var newHeight = this.element.clientHeight;
-    if (newWidth === this.width && newHeight === this.height) {
-      // Only re-layout if size actually changed
-      return;
-    }
-    this.width = newWidth;
-    this.height = newHeight;
-    this.background.setSize(this.width,this.height);
-    this.layout.resize();
-    this.layout.resume();
-  },
-  _getMagnet : function(from,to,node) {
-    var margin = 1;
-    var size = node.getSize();
-    var center = node.getCenter();
-    var topLeft = {
-        x : center.x - size.width/2 - margin,
-        y : center.y - size.height/2 - margin
-      },
-      bottomRight = {
-        x : topLeft.x + size.width + margin * 2,
-        y : topLeft.y + size.height + margin * 2
-      };
-    var hits = [];
-    hits = hui.geometry.intersectLineRectangle(from,to,topLeft,bottomRight);
-    if (hits.length>0) {
-      return hits[0];
-    }
-    return to;
-  },
-
-  // Data ...
-
-  /** @private */
-  $objectsLoaded : function(data) {
-    this.setData(data);
-  },
-  setData : function(data) {
-    this.data = data;
-    this.clear();
-    var nodes = data.nodes,
-      lines = data.lines || data.edges;
-    if (!nodes || !lines) {
-      return;
-    }
-    var i;
-    for (i = 0; i < nodes.length; i++) {
-      if (nodes[i].type=='icon') {
-        this.addIcon(nodes[i]);
-      } else {
-        this.addBox(nodes[i]);
-      }
-    }
-    for (i = 0; i < lines.length; i++) {
-      this.addLine(lines[i]);
-    }
-    if (this.layout.loaded) {
-      this.layout.populate();
-    } else {
-      this.play();
-    }
-  },
-  /** Deprecated */
-  play : function() {
-    this.layout.start();
-  },
-  resume : function() {
-    if (this.layout.resume) { this.layout.resume(); }
-  },
-  expand : function() {
-    if (this.layout.expand) { this.layout.expand(); }
-  },
-  contract : function() {
-    if (this.layout.contract) { this.layout.contract(); }
-  },
-  /** @private */
-  $sourceShouldRefresh : function() {
-    return hui.dom.isVisible(this.element);
-  },
-  /** @private */
-  $visibilityChanged : function() {
-    if (hui.dom.isVisible(this.element)) {
-      this.width = this.element.clientWidth;
-      this.height = this.element.clientHeight;
-      this.background.setSize(this.width,this.height);
-      if (this.options.source) {
-        this.options.source.refreshFirst();
-      }
-    }
-  },
-  clear : function() {
-    this.layout.clear();
-    this.selection = null;
-    this.background.clear();
-    this.lines = [];
-    for (var i = this.nodes.length - 1; i >= 0; i--) {
-      hui.dom.remove(this.nodes[i].element);
-    }
-    this.nodes = [];
-    var lines = hui.get.byClass(this.element,'hui_diagram_line_label');
-    for (var j = lines.length - 1; j >= 0; j--) {
-      hui.dom.remove(lines[j]);
-    }
-  },
-
-  addBox : function(options) {
-    var box = hui.ui.Diagram.Box.create(options,this);
-    this.add(box);
-  },
-
-  addIcon : function(options) {
-    var box = hui.ui.Diagram.Icon.create(options,this);
-    this.add(box);
-  },
-  add : function(widget) {
-    var e = widget.element;
-    this.element.appendChild(e);
-    widget.setCenter({x: this.width / 2, y : this.height / 2});
-    this.nodes.push(widget);
-  },
-  addLine : function(options) {
-    var from = this.getNode(options.from),
-      to = this.getNode(options.to);
-    if (from === null || to === null) {
-      hui.log('Unable to build line...');
-      hui.log(options);
-      return;
-    }
-    var fromCenter = this._getCenter(from),
-      toCenter = this._getCenter(to);
-    var lineNode = this.background.addLine({
-        from: fromCenter,
-        to: toCenter,
-        color: options.color || '#999' ,end:{}
-      }),
-      line = {
-        from: options.from,
-        fromNode : from,
-        to: options.to,
-        toNode : to,
-        node: lineNode
-      };
-    if (options.label) {
-      line.label = hui.build('span',{
-        parent: this.element,
-        'class': 'hui_diagram_line_label',
-        text: options.label
-      });
-      this._updateLine(line);
-    }
-    this.lines.push(line);
-  },
-
-
-  _getCenter : function(widget) {
-    return widget.getCenter();
-  },
-  getNode : function(id) {
-    return this._getNode(id,this.nodes);
-  },
-  getDataNode : function(id) {
-    return this._getNode(id,this.data.nodes);
-  },
-  _getNode : function(id,nodes) {
-    if (nodes) {
-      for (var i=0; i < nodes.length; i++) {
-        if (nodes[i].id == id) {
-          return nodes[i];
-        }
-      }
-    }
-    return null;
-  },
-
-  // Drawing...
-
-  _updateLine : function(line) {
-    if (!line.label) {
-      return;
-    }
-    var from = line.node.getFrom(),
-      to = line.node.getTo(),
-      label = line.label;
-    var middle = { x : from.x+(to.x-from.x)/2, y : from.y+(to.y-from.y)/2 };
-    //var deg = Math.atan((from.y-to.y) / (from.x-to.x)) * 180/Math.PI;
-    line.label.style.webkitTransform='rotate('+line.node.getDegree()+'deg)';
-    //line.label.innerHTML = Math.round(hui.geometry.distance(from,to));
-    var width = Math.round(hui.geometry.distance(from,to)-30);
-    // TODO: cache width + height
-    var w = label.huiWidth = label.huiWidth || label.clientWidth;
-    var h = label.huiHeight = label.huiHeight || label.clientHeight;
-    w = Math.min(w,width);
-    hui.style.set(line.label,{
-      left : (middle.x - w / 2) + 'px',
-      top : (middle.y - h / 2) + 'px',
-      maxWidth : Math.max(0, width) + 'px',
-      visibility : width > 10 ? '' : 'hidden'
-    });
-  },
-  __nodeMoved : function(widget) {
-    var center = this._getCenter(widget);
-    for (var i=0; i < this.lines.length; i++) {
-      var line = this.lines[i];
-      var magnet, magnet2;
-      if (line.from == widget.id) {
-        magnet = this._getMagnet(line.node.getTo(),center,widget);
-        line.node.setFrom(magnet);
-        magnet2 = this._getMagnet(center,this._getCenter(line.toNode),line.toNode);
-        line.node.setTo(magnet2);
-        this._updateLine(line);
-      }
-      else if (line.to == widget.id) {
-        magnet = this._getMagnet(line.node.getFrom(),center,widget);
-        line.node.setTo(magnet);
-        magnet2 = this._getMagnet(center,this._getCenter(line.fromNode),line.fromNode);
-        line.node.setFrom(magnet2);
-        this._updateLine(line);
-      }
-    }
-  },
-  __select : function(widget) {
-    if (this.selection) {
-      this.selection.setSelected(false);
-    }
-    this.selection = widget;
-    this.selection.setSelected(true);
-  },
-  __nodeOpen : function(widget) {
-    this.fire('open',this.getDataNode(widget.id));
-  }
-};
-
-hui.ui.Diagram.D3 = {
-  loaded : false,
-  diagram : null,
-
-  _load : function() {
-    hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.min.js'),function() {
-      this.loaded = true;
-      this.start();
-    }.bind(this));
-  },
-
-  resize : function() {
-    if (this.layout) {
-      this.layout.size([this.diagram.width,this.diagram.height]);
-    }
-  },
-
-  start : function() {
-    if (!this.loaded) {
-      this._load();
-      return;
-    }
-    var diagram = this.diagram,
-      nodes = diagram.nodes,
-      lines = diagram.lines,
-      width = diagram.element.clientWidth,
-      height = diagram.element.clientHeight;
-
-    for (var i=0; i < lines.length; i++) {
-      lines[i].source = this._findById(nodes,lines[i].from);
-      lines[i].target = this._findById(nodes,lines[i].to);
-    }
-
-    var force = this.layout = d3.layout.force()
-            .linkDistance(100)
-            .friction(0.9)
-            .gravity(0.1)
-            .theta(0.3)
-            .linkStrength(0.2)
-      .charge(-1000)
-      .distance(100)
-      .nodes(this.diagram.nodes)
-      .links(this.diagram.lines)
-      .size([width, height]);
-
-    var ticker = function() {
-      var sel = diagram.selection ? diagram.selection.id : null;
-      var nodes = force.nodes(),
-        links = force.links();
-      for (var i=0; i < nodes.length; i++) {
-        var node = diagram.nodes[nodes[i].index];
-        if (node.id!=sel) {
-          node.setCenter(nodes[i]);
-        }
-      }
-      for (var j=0; j < links.length; j++) {
-        var link = links[j];
-        var source = link.source,
-          sourceCenter = link.source.center;
-        var target = link.target,
-          targetCenter = link.target;
-        if (source==diagram.selection) {
-          sourceCenter = diagram._getCenter(diagram.selection);
-        }
-        if (target==diagram.selection) {
-          targetCenter = diagram._getCenter(diagram.selection);
-        }
-        var from = diagram._getMagnet(sourceCenter,targetCenter,source);
-        var to = diagram._getMagnet(targetCenter,sourceCenter,target);
-        link.node.setFrom(from);
-        link.node.setTo(to);
-        diagram._updateLine(link);
-      }
-    };
-    force.start();
-    force.gravity(0.5);
-    for (var k=0; k < 10000; k++) {
-      force.tick();
-    }
-    force.gravity(0.1);
-
-    force.on("tick", ticker);
-
-    force.start();
-  },
-
-  resume : function() {
-    if (this.layout) { this.layout.start(); }
-  },
-  expand : function() {
-    if (this.layout) {
-      this.layout.linkDistance(this.layout.linkDistance() * 1.3);
-      this.layout.charge(this.layout.charge() * 1.3);
-      this.layout.start();
-    }
-  },
-  contract : function() {
-    if (this.layout) {
-      this.layout.linkDistance(Math.max(0,this.layout.linkDistance() * 0.9));
-      this.layout.charge(Math.min(0,this.layout.charge() * 0.9));
-      this.layout.start();
-    }
-  },
-
-  _findById : function(nodes,id) {
-    for (var i = nodes.length - 1; i >= 0; i--){
-      if (nodes[i].id===id) {
-        return i;
-      }
-    }
-    return null;
-  },
-  _convert : function(data) {
-    var nodes = data.nodes;
-    data.links = data.edges;
-    for (var i = data.links.length - 1; i >= 0; i--){
-      var link = data.links[i];
-      link.source = this._findById(nodes,link.from);
-      link.target = this._findById(nodes,link.to);
-    }
-    return data;
-  },
-  populate : function() {
-    this.start();
-  },
-  clear : function() {
-    if (this.layout) {
-      this.layout.stop();
-    }
-  }
-
-};
-
-
-/** A box in a diagram
- * @constructor
- */
-hui.ui.Diagram.Box = function(options) {
-  this.options = options;
-  this.id = options.id;
-  this.name = options.name;
-  this.element = hui.get(options.element);
-  this.center = {};
-  this.size = null;
-  hui.ui.extend(this);
-  hui.ui.Diagram.util.enableDragging(this);
-};
-
-hui.ui.Diagram.Box.create = function(options,diagram) {
-  options = hui.override({title: 'Untitled', diagram: diagram}, options);
-  var e = options.element = hui.build('div', {'class': 'hui_diagram_box'});
-  hui.build('h1',{text: options.title, parent: e});
-  if (options.properties) {
-    var table = hui.build('table', {parent: e});
-    for (var i=0; i < options.properties.length; i++) {
-      var p = options.properties[i];
-      var tr = hui.build('tr',{parent: table});
-      hui.build('th',{parent: tr,text: p.label});
-      var td = hui.build('td',{parent: tr,text: p.value || ''});
-      if (p.hint) {
-        hui.build('em',{parent: td, text: p.hint});
-      }
-    }
-  }
-  return new hui.ui.Diagram.Box(options);
-};
-
-hui.ui.Diagram.Box.prototype = {
-  _syncSize : function() {
-    if (this.size) {
-      return;
-    }
-    this.size = {
-      width : this.element.offsetWidth,
-      height : this.element.offsetHeight
-    };
-  },
-  getSize : function() {
-    this._syncSize();
-    return this.size;
-  },
-  getCenter : function() {
-    return this.center;
-  },
-  setCenter : function(point) {
-    this._syncSize();
-    this.center = {x : point.x, y : point.y};
-    this._updateCenter();
-  },
-  _updateCenter : function() {
-    this.element.style.top = Math.round(this.center.y - this.size.height / 2) + 'px';
-    this.element.style.left = Math.round(this.center.x - this.size.width / 2) + 'px';
-  },
-  setSelected : function(selected) {
-    hui.cls.set(this.element,'hui_diagram_box_selected', selected);
-  }
-};
-
-if (hui.browser.webkit) {
-  hui.ui.Diagram.Box.prototype._updateCenter = function() {
-    this.element.style.WebkitTransform = 'translate3d(' + Math.round(this.center.x - this.size.width/2) + 'px,' + Math.round(this.center.y - this.size.height/2) + 'px,0)';
-  };
-}
-
-
-
-
-/** A box in a diagram
- * @constructor
- */
-hui.ui.Diagram.Icon = function(options) {
-  this.options = options;
-  this.id = options.id;
-  this.name = options.name;
-  this.element = hui.get(options.element);
-  this.center = {};
-  hui.ui.extend(this);
-  hui.ui.Diagram.util.enableDragging(this);
-};
-
-hui.ui.Diagram.Icon.create = function(options,diagram) {
-  options = hui.override({icon:'common/folder',diagram:diagram},options);
-  var e = options.element = hui.build('div',{'class':'hui_diagram_icon'});
-  e.appendChild(hui.ui.createIcon(options.icon,32));
-  if (options.title) {
-    hui.build('strong',{parent: e, text: options.title});
-  }
-  return new hui.ui.Diagram.Icon(options);
-};
-
-hui.ui.Diagram.Icon.prototype = {
-  _syncSize : function() {
-    if (this.size) {
-      return;
-    }
-    this.size = {
-      width : this.element.offsetWidth,
-      height : this.element.offsetHeight
-    };
-  },
-  getSize : function() {
-    this._syncSize();
-    return this.size;
-  },
-  getCenter : function() {
-    return this.center;
-  },
-  setCenter : function(point) {
-    var e = this.element;
-    e.style.top = Math.round(point.y - e.clientHeight / 2) + 'px';
-    e.style.left = Math.round(point.x - e.clientWidth / 2) + 'px';
-    this.center = {x : point.x, y : point.y};
-  },
-  setSelected : function(selected) {
-    hui.cls.set(this.element, 'hui_diagram_icon_selected', selected);
-  }
-};
-
-/** Utilities **/
-
-hui.ui.Diagram.util = {
-  enableDragging : function(obj) {
-    var diagram = obj.options.diagram;
-    hui.cls.add(obj.element, 'hui_diagram_dragable');
-    var dragState = null;
-    hui.drag.register({
-      touch : true,
-      element : obj.element,
-      onStart : function() {
-        hui.cls.add(obj.element,'hui_diagram_dragging');
-        obj.fixed = true;
-      },
-      onNotMoved : function() {
-        diagram.__select(obj);
-        diagram.fire('select', obj.id);
-      },
-      onBeforeMove : function(e) {
-        diagram.__nodeMoved(obj);
-        e = hui.event(e);
-        obj.element.style.zIndex = hui.ui.nextPanelIndex();
-        var pos = obj.getCenter();
-        var size = obj.getSize();
-        pos = {left: pos.x - size.width / 2, top: pos.y - size.height / 2};
-        var diagramPosition = hui.position.get(diagram.element);
-        dragState = {
-          left : e.getLeft() - pos.left,
-          top : e.getTop()-pos.top
-        };
-        obj.element.style.right = 'auto';
-      },
-      onMove : function(e) {
-        var top = (e.getTop()-dragState.top);
-        var left = (e.getLeft()-dragState.left);
-        var size = obj.getSize();
-        top += size.height/2;
-        left += size.width/2;
-        obj.setCenter({x:left,y:top});
-        obj.px = left;
-        obj.py = top;
-        diagram.__nodeMoved(obj);
-      },
-      onEnd : function() {
-        hui.cls.remove(obj.element,'hui_diagram_dragging');
-        obj.fixed = false;
-        hui.log('end');
-      }
-    });
-    hui.listen(obj.element,'dblclick',function(e) {
-      diagram.__nodeOpen(obj);
-    });
-  }
-};
-;
-hui = window.hui || {};
-
-hui.query = function(q, ctx) {
-  return new hui.Query(hui.findAll(q, ctx));
-};
-
-hui.Query = function(context) {
-  this._context = context;
-};
-
-hui.Query.prototype = {
-  addClass : function(cls) {
-    return this.each(function(node) {
-      hui.cls.add(node, cls);
-    });
-  },
-  each : function(fn) {
-    this._context.forEach(fn);
-    return this;
-  }
-};
-;
-/**
- * A timeline showing events over time
- * @constructor
- * @param {Object} options { element «Node | id», name: «String» }
- */
-hui.ui.TimeLine = function(options) {
-  this.name = options.name;
-  this.options = options || {};
-  this.element = hui.get(options.element);
-  hui.ui.extend(this);
-  hui.onReady(this._start.bind(this));
-};
-
-hui.ui.TimeLine.prototype = {
-  _attach : function() {
-
-  },
-  _start : function() {
-    this.startTime = new Date().getTime();
-    this.background = hui.build('div',{'class':'hui_timeline_bg',parent:this.element});
-    this._next();
-    window.setTimeout(this.pause.bind(this),20000);
-    window.setTimeout(this._addLine.bind(this),2000);
-    window.setTimeout(this._addLine.bind(this),4000);
-    window.setTimeout(this._addBlock.bind(this),Math.random()*4000);
-    window.setTimeout(this._addBlock.bind(this),Math.random()*4000);
-    window.setTimeout(this._addBlock.bind(this),Math.random()*4000);
-    window.setTimeout(this._addBlock.bind(this),Math.random()*4000);
-  },
-  _next : function() {
-    if (this.paused) return;
-    var width = this._getNow();
-    this.background.style.width = width+'px';
-    this.element.scrollLeft = Math.max(0,width-this.element.clientWidth);
-    window.setTimeout(this._next.bind(this),500);
-  },
-  _setData : function() {
-
-  },
-  _addLine : function() {
-    var line = hui.build('div',{'class':'hui_timeline_line',parent:this.element});
-    line.style.left=this._getNow()+'px';
-  },
-  _addBlock : function() {
-    var line = hui.build('div',{'class':'hui_timeline_block',text:'New word',parent:this.element});
-    line.style.left=this._getNow()+'px';
-    line.style.width=Math.round(30+Math.random()*100)+'px';
-  },
-  _getNow : function() {
-    return Math.round((new Date().getTime() - this.startTime)/10);
-  },
-  pause : function() {
-    this.paused = true;
-  }
-};
-;
-(function (_super) {
-
-  /**
-   * Vertical rows
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   */
-  hui.ui.Clipboard = function(options) {
-    options = options || {};
-    _super.call(this, options);
-    this.value = null;
-    this._attach();
-  };
-
-  hui.ui.Clipboard.prototype = {
-    _attach : function() {
-      hui.on(document, 'paste', this._onPaste.bind(this));
-    },
-    _onPaste : function(e) {
-      this.fire('paste',e);
-      console.log('Paste event', e);
-      console.log('Clipboard data', e.clipboardData)
-      var items = e.clipboardData.items;
-      console.log('Clipboard data items', items)
-      if (items) {
-        console.log('items:', items)
-        for (var i = 0; i < items.length; i++) {
-          console.log(items[i]);
-          if (items[i].type == 'file') {
-            this._readFile(items[i].getAsFile());
-          }
-          if (items[i].type == 'text/plain') {
-            items[i].getAsString(function(x) {
-              this.fire('text', {text:x});
-            }.bind(this));
-          }
-        }
-      }
-      var files = e.clipboardData.files;
-      console.log('files:', files)
-      if (files) {
-        for (var i = 0; i < files.length; i++) {
-          var file = files[i];
-          this._readFile(file);
-        }
-      }
-
-      var types = e.clipboardData.types;
-      console.log('Clipboard data types:', types)
-      if (types) {
-        for (var i = 0; i < types.length; i++) {
-          var data = e.clipboardData.getData(types[i], console.log);
-          console.log(data)
-        }
-      }
-      console.log(arguments)
-    },
-    _readFile : function(file) {
-      console.log(file.type)
-      var self = this;
-      if (/image\//.test(file.type)) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-          self.fire('image', {base64:reader.result});
-        }
-        reader.readAsDataURL(file);
-      } else if (/text\//.test(file.type)) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-          self.fire('text', {text:reader.result});
-        }
-        reader.readAsText(file);
-      } else {
-        self.fire('file', {file:file});
-      }
-    }
-
-  };
-
-  hui.extend(hui.ui.Clipboard, _super);
-  hui.define('hui.ui.Clipboard', hui.ui.Clipboard);
-
-})(hui.ui.Component);
-;
-(function (_super) {
-
-  var NS = 'http://www.w3.org/2000/svg';
-
-  /**
-   * Emotion
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   */
-  hui.ui.Emotion = function(options) {
-    options = options || {};
-    _super.call(this, options);
-    this.value = null;
-    this._attach();
-  };
-
-  hui.ui.Emotion.create = function() {
-    var node = document.createElementNS(ns,'svg');
-    node.addAttribute('width','100');
-    node.addAttribute('height','100');
-    return new hui.ui.Emotion({element: node})
-  }
-
-  hui.ui.Emotion.prototype = {
-
-  };
-
-  hui.extend(hui.ui.Emotion, _super);
-  hui.define('hui.ui.Emotion', hui.ui.Emotion);
-
-})(hui.ui.Component);
-;
-/**
- * Editing of documents composed of different parts
- *
- * @constructor
- * @fires hui.ui.Editor#editPart
- * @fires hui.ui.Editor#cancelPart
- * @fires hui.ui.Editor#savePart
- * @fires hui.ui.Editor#addPart
- */
-hui.ui.Editor = function() {
-  this.name = 'huiEditor';
-  this.options = {rowClass:'row',columnClass:'column',partClass:'part'};
-  this.parts = [];
-  this.rows = [];
-  this.partControllers = [];
-  this.activePart = null;
-  this.active = false;
-  this.live = true;
-  this.enableStructure = true;
-  hui.ui.extend(this);
-};
-
-/**
- * Get the one and only editor instance
- * @return {hui.ui.Editor}
- */
-hui.ui.Editor.get = function() {
-  if (!hui.ui.Editor.instance) {
-    hui.ui.Editor.instance = new hui.ui.Editor();
-  }
-  return hui.ui.Editor.instance;
-};
-
-hui.ui.Editor.prototype = {
-  /** Start the editor */
-  ignite : function() {
-    //hui.listen(window,'keydown',this._onKeyDown.bind(this));
-    //hui.listen(window,'keyup',this._onKeyUp.bind(this));
-    this.reload();
-  },
-  /*
-  _onKeyDown : function(e) {
-    e = hui.event(e);
-    //this.live = e.altKey;
-  },
-  _onKeyUp : function(e) {
-    //this.live = false;
-  },*/
-
-  addPartController : function(key,title,controller) {
-    this.partControllers.push({key:key,'title':title,'controller':controller});
-  },
-  setOptions : function(options) {
-    hui.override(this.options,options);
-  },
-  _getPartController : function(key) {
-    var ctrl = null;
-    hui.each(this.partControllers,function(item) {
-      if (item.key==key) {ctrl=item;}
-    });
-    return ctrl;
-  },
-  reload : function() {
-    if (this.partControls) {
-      this.partControls.hide();
-    }
-    var self = this;
-    this.parts = [];
-    var rows = hui.get.byClass(document.body,this.options.rowClass);
-    hui.each(rows,function(row,i) {
-      var columns = hui.get.byClass(row,self.options.columnClass);
-      self._reloadColumns(columns,i);
-      hui.each(columns,function(column,j) {
-        var parts = hui.get.byClass(column,self.options.partClass);
-        self._reloadParts(parts,i,j);
-      });
-    });
-    /*
-    var parts = hui.get.byClass(document.body,this.options.partClass);
-    hui.each(this.parts,function(part) {
-      var i = parts.indexOf(part.element);
-      if (i!=-1) {
-        delete(parts[i]);
-      }
-    });
-    this._reloadParts(parts,-1,-1);
-    */
-  },
-  _reloadColumns : function(columns,rowIndex) {
-    var self = this;
-    hui.each(columns,function(column,columnIndex) {
-      hui.listen(column,'mouseover',function() {
-        self._onHoverColumn(column);
-      });
-      hui.listen(column,'mouseout',function(e) {
-        self._onBlurColumn(e);
-      });
-      if (self.enableStructure)
-      hui.listen(column,'contextmenu',function(e) {
-        self.contextColumn(column,rowIndex,columnIndex,e);
-      });
-    });
-  },
-  _reloadParts : function(parts,row,column) {
-    var self = this;
-    var reg = new RegExp(this.options.partClass+"_([\\w]+)","i");
-    hui.each(parts,function(element,partIndex) {
-      if (!element) return;
-      var match = element.className.match(reg);
-      if (match && match[1]) {
-        var handler = self._getPartController(match[1]);
-        if (handler) {
-          var part = new handler.controller({element:element});
-          part.type = match[1];
-          hui.listen(element,'click',function(e) {
-            e = hui.event(e);
-            if (!e.findByTag('a') && e.altKey) {
-              self._editPart(part);
-            }
-          });
-          hui.listen(element,'mouseover',function(e) {
-            self.hoverPart(part);
-          });
-          hui.listen(element,'mouseout',function(e) {
-            self.blurPart(e);
-          });
-          self.parts.push(part);
-        }
-        hui.listen(element,'mousedown',function(e) {
-          self._startPartDrag({
-            element : element,
-            event : e
-          });
-        });
-      }
-    });
-  },
-  activate : function() {
-    this.active = true;
-  },
-  deactivate : function() {
-    this.active = false;
-    if (this.activePart) {
-      this._deactivatePart(this.activePart);
-    }
-    if (this.partControls) {
-      this.partControls.hide();
-    }
-  },
-
-
-  ///////////////////////// Columns ////////////////////////
-
-  _onHoverColumn : function(column) {
-    if (this.hoveredColumn) {
-      hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
-    }
-    this.hoveredColumn = column;
-    if (!this.active || this.activePart) {
-      return;
-    }
-    hui.cls.add(column,'hui_editor_column_hover');
-  },
-
-  _onBlurColumn : function(e) {
-    if (!this.active || !this.hoveredColumn || hui.ui.isWithin(e,this.hoveredColumn)) return;
-    hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
-  },
-
-  contextColumn : function(column,rowIndex,columnIndex,e) {
-    if (!this.active || this.activePart) return;
-    if (!this.columnMenu) {
-      var menu = hui.ui.Menu.create({name:'huiEditorColumnMenu'});
-      menu.addItem({title:'Edit part',value:'editSection'});
-      menu.addDivider();
-      menu.addItem({title:'Edit column',value:'editColumn'});
-      menu.addItem({title:'Remove column',value:'removeColumn'});
-      menu.addItem({title:'Add column',value:'addColumn'});
-      menu.addDivider();
-      menu.addItem({title:'Edit row',value:'editRow'});
-      menu.addDivider();
-      for (var i=0; i < this.partControllers.length; i++) {
-        var ctrl = this.partControllers[i];
-        menu.addItem({title:ctrl.title,value:ctrl.key});
-      }
-      this.columnMenu = menu;
-      menu.listen(this);
-    }
-    this.hoveredRow=rowIndex;
-    this.hoveredColumnIndex=columnIndex;
-    this.columnMenu.showAtPointer(e);
-  },
-  /** @private */
-  $select$huiEditorColumnMenu : function(value) {
-    if (value=='editSection') {
-      this._editPart(this.hoveredPart);
-    } else if (value=='removeColumn') {
-      this.fire('removeColumn',{'row':this.hoveredRow,'column':this.hoveredColumnIndex});
-    } else if (value=='editColumn') {
-      this.editColumn(this.hoveredRow,this.hoveredColumnIndex);
-    } else if (value=='addColumn') {
-      this.fire('addColumn',{'row':this.hoveredRow,'position':this.hoveredColumnIndex+1});
-    } else if (value=='editRow') {
-      this.editRow(this.hoveredRow);
-    } else {
-      this.fire('addPart',{'row':this.hoveredRow,'column':this.hoveredColumnIndex,'position':0,type:value});
-    }
-  },
-
-  ///////////////////// Rows //////////////////////
-
-  _editedRow : null,
-
-  editRow : function(rowIndex) {
-    this.stopRowEditing();
-    var node = hui.get.byClass(this.element,this.options.rowClass)[rowIndex];
-    hui.cls.add(node,'hui_editor_row_edit');
-    this._editedRow = node;
-    var self = this;
-    this.fire('editRow',{'index' : rowIndex, node: node});
-  },
-  stopRowEditing : function() {
-    if (this._editedRow) {
-      hui.cls.remove(this._editedRow,'hui_editor_row_edit');
-      this._editedRow = null;
-    }
-  },
-
-  ///////////////////// Columns //////////////////////
-
-  _editedColumn : null,
-
-  editColumn : function(rowIndex,columnIndex) {
-    this.stopColumnEditing();
-    var row = hui.get.byClass(this.element,this.options.rowClass)[rowIndex];
-    if (row) {
-      var node = hui.get.byClass(row,this.options.columnClass)[columnIndex];
-      if (node) {
-        this._editedColumn = node;
-        hui.cls.add(node,'hui_editor_column_edit');
-        this.fire('editColumn',{'rowIndex' : rowIndex, 'index' : columnIndex, node: node});
-      }
-    }
-  },
-  stopColumnEditing : function() {
-    if (this._editedColumn) {
-      hui.cls.remove(this._editedColumn,'hui_editor_column_edit');
-      this._editedColumn = null;
-    }
-  },
-
-  ///////////////////////// Parts //////////////////////////
-
-  hoverPart : function(part,event) {
-    if (!this.active || this.activePart || !this.live || this.dragging || this.busy) {
-      return;
-    }
-    this.hoveredPart = part;
-    hui.cls.add(part.element,'hui_editor_part_hover');
-    var self = this;
-    this.partControlTimer = window.setTimeout(function() {self.showPartControls();},200);
-  },
-  blurPart : function(e) {
-    window.clearTimeout(this.partControlTimer);
-    if (hui.ui.isWithin(e,this.hoveredPart.element)) {
-      return;
-    }
-    if (!this.active) return;
-    if (this.partControls && !hui.ui.isWithin(e,this.partControls.element)) {
-      this._hidePartControls();
-      hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
-    }
-    if (!this.partControls && this.hoveredPart) {
-      hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
-    }
-  },
-  showPartEditControls : function() {
-    if (!this.partEditControls) {
-      this.partEditControls = hui.ui.Overlay.create({name:'huiEditorPartEditActions',variant:'light',zIndex:100});
-      this.partEditControls.element.style.zIndex = '99999999';
-      this.partEditControls.addIcon('save','common/ok');
-      this.partEditControls.addIcon('cancel','common/undo');
-      this.partEditControls.addIcon('info','common/info');
-      this.partEditControls.listen(this);
-      var self = this;
-      hui.on(window,'resize',function() {
-        hui.onDraw(function() {
-          self._positionEditControls();
-        });
-      });
-    }
-    this._positionEditControls();
-  },
-  _positionEditControls : function() {
-    if (this.activePart) {
-      this.partEditControls.showAtElement(this.activePart.element,{'horizontal':'right','vertical':'topOutside'});
-    }
-  },
-  showPartControls : function() {
-    if (!this.partControls) {
-      this.partControls = hui.ui.Overlay.create({name:'huiEditorPartActions',variant:'light'});
-      this.partControls.addIcon('edit','common/edit');
-      this.partControls.addIcon('new','common/new');
-      this.partControls.addIcon('delete','common/delete');
-      hui.listen(this.partControls.getElement(),'mouseout',this._blurControls.bind(this));
-      hui.listen(this.partControls.getElement(),'mouseover',this._hoverControls.bind(this));
-      this.partControls.listen(this);
-    }
-    if (this.hoveredPart.column==-1 || true) {
-      this.partControls.hideIcons(['new','delete']);
-    } else {
-      this.partControls.showIcons(['new','delete']);
-    }
-    this.partControls.showAtElement(this.hoveredPart.element,{'horizontal':'right'});
-  },
-  _hoverControls : function(e) {
-    hui.cls.add(this.hoveredPart.element,'hui_editor_part_hover');
-  },
-  _blurControls : function(e) {
-    hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
-    if (!hui.ui.isWithin(e,this.hoveredPart.element)) {
-      this._hidePartControls();
-    }
-  },
-  /** @private */
-  $iconWasClicked$huiEditorPartActions : function(key,event) {
-    if (key=='delete') {
-      this.deletePart(this.hoveredPart);
-    } else if (key=='new') {
-      this.newPart(event);
-    } else if (key=='edit') {
-      this._editPart(this.hoveredPart);
-    }
-  },
-  /** @private */
-  $iconWasClicked$huiEditorPartEditActions : function(key,event) {
-    if (key=='cancel') {
-      this.cancelPart(this.activePart);
-    } else if (key=='save') {
-      this.savePart(this.activePart);
-    } else if (key=='info') {
-      this.fire('toggleInfo');
-    }
-  },
-  _hidePartControls : function() {
-    if (this.partControls) {
-      this.partControls.hide();
-    }
-  },
-  _hidePartEditControls : function() {
-    if (this.partEditControls) {
-      this.partEditControls.hide();
-    }
-  },
-  _editPart : function(part) {
-    if (!this.active || this.activePart) return;
-    if (this.activePart) {
-      this._deactivatePart(this.activePart);
-    }
-    if (this.hoveredPart) {
-      hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
-    }
-    this.activePart = part;
-    this.showPartEditControls();
-    hui.cls.add(part.element,'hui_editor_part_active');
-    hui.ui.msg({text:{en:'Loading...',da:'Indlæser...'},delay:300,busy:true});
-    part.activate(function() {
-      hui.ui.hideMessage();
-    });
-    window.clearTimeout(this.partControlTimer);
-    this._hidePartControls();
-    if (this.hoveredColumn) {
-      hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
-    }
-    this.fire('editPart',part);
-  },
-  cancelPart : function(part) {
-    part.cancel();
-    this._deactivatePart(this.activePart);
-    this.activePart = null;
-    this.fire('cancelPart',part);
-  },
-  savePart : function(part) {
-    this.busy = true;
-    hui.ui.msg({text:{en:'Saving...',da:'Gemmer...'},delay:300,busy:true});
-    part.save({
-      callback : function() {
-        hui.ui.hideMessage();
-        this.activePart = null;
-        this.busy = false;
-        this._deactivatePart(part);
-        this.partChanged(part);
-        this.fire('savePart',part);
-      }.bind(this)
-    });
-  },
-  getEditorForElement : function(element) {
-    for (var i=0; i < this.parts.length; i++) {
-      if (this.parts[i].element==element) {
-        return this.parts[i];
-      }
-    }
-    return null;
-  },
-  _deactivatePart : function(part) {
-    part.deactivate(function() {
-      this.partDidDeactivate(part);
-      this.fire('deactivatePart',part);
-    }.bind(this));
-  },
-  partDidDeactivate : function(part) {
-    hui.cls.remove(part.element,'hui_editor_part_active');
-    this.activePart = null;
-    this._hidePartEditControls();
-  },
-  partChanged : function(part) {
-    hui.ui.callDelegates(part,'partChanged');
-  },
-  deletePart : function(part) {
-    hui.ui.callDelegates(part,'deletePart');
-    this.partControls.hide();
-  },
-  newPart : function(e) {
-    if (!this.newPartMenu) {
-      var menu = hui.ui.Menu.create({name:'huiEditorNewPartMenu'});
-      hui.each(this.partControllers,function(item) {
-        menu.addItem({title:item.title,value:item.key});
-      });
-      menu.listen(this);
-      this.newPartMenu=menu;
-    }
-    this.newPartMenu.showAtPointer(e);
-  },
-  $itemWasClicked$huiEditorNewPartMenu : function(value) {
-    var info = {row:this.hoveredPart.row,column:this.hoveredPart.column,position:this.hoveredPart.position+1,type:value};
-    hui.ui.callDelegates(this,'addPart',info);
-  },
-
-
-
-
-
-
-  /**** Dragging ****/
-
-  _dragInfo : null,
-
-  _dropInfo : null,
-
-  dragProxy : null,
-
-  _startPartDrag : function(info) {
-    if (!this.active || this.activePart || !this.live) {
-      return true;
-    }
-    var e = hui.event(info.event),
-      element = info.element;
-    if (!e.altKey) {
-      return;
-    }
-    e.stop();
-
-    if (!this.dragProxy) {
-      this.dragProxy = hui.build('div',{'class':'hui_editor_dragproxy',parent:document.body,style:'display:none;'});
-    }
-    var proxy = this.dragProxy;
-    proxy.innerHTML = element.innerHTML;
-
-    var pos = this._getPartPosition(element);
-    if (!pos) {
-      return;
-    }
-
-    this._dragInfo = {
-      diffLeft : e.getLeft() - hui.position.getLeft(element),
-      diffTop : e.getTop() - hui.position.getTop(element),
-      draggedElement : element,
-      partIndex : pos.partIndex,
-      rowIndex : pos.rowIndex,
-      columnIndex : pos.columnIndex,
-      initialHeight : element.clientHeight
-    };
-    hui.log('startDrag');
-    hui.drag.start({
-      element : proxy,
-      onBeforeMove : this._onBeforeDrag.bind(this),
-      onMove : this._onDrag.bind(this),
-      onAfterMove : this._onAfterDrag.bind(this),
-      onEnd : function() {
-
-      }
-    },e);
-  },
-  _onBeforeDrag : function() {
-    var dragged = this._dragInfo.draggedElement,
-      proxy = this.dragProxy;
-
-
-    this._insertDropPlaceholders();
-
-    hui.style.set(proxy,{
-      display : 'block',
-      visibility : 'visible',
-      height  : dragged.clientHeight+'px',
-      width  : dragged.clientWidth+'px',
-      transform : 'scale(1)',
-      background : 'rgba(255,255,255,.5)',
-      padding : '1px',
-      opacity: 1
-    });
-
-    //hui.animate({node:this.dragProxy,css:{transform:'scale(1.1)'},duration:1000,ease:hui.ease.slowFastSlow});
-
-    hui.style.setOpacity(dragged,0.5);
-
-    this._dragging = true;
-
-    if (!this._dropMarker) {
-      this._dropMarker = hui.build('div',{'class':'hui_editor_dropmarker',parent:document.body});
-    }
-  },
-  _onDrag : function(e) {
-    var left = e.getLeft();
-    var top = e.getTop();
-    this.dragProxy.style.left = (left - this._dragInfo.diffLeft) + 'px';
-    this.dragProxy.style.top = (top - this._dragInfo.diffTop) + 'px';
-    for (var i=0; i < this.dropTargets.length; i++) {
-      var info = this.dropTargets[i];
-      if (info.left<left && info.right>left && info.top<top && info.bottom>top) {
-        //if (info.placeholder!=this._activeDragPlaceholder) {
-          var h = this._dragColumnHeights[info.rowIndex+'-'+info.columnIndex];
-          //hui.log(info.columnIndex+': '+h)
-          //info.debug.style.borderColor='blue'
-          //hui.animate({node:info.placeholder,css:{height : h+'px'},duration:500,ease:hui.ease.slowFastSlow});
-          if (this._latestProxyColumn!=info.columnIndex || this._latestProxyRow!=info.rowIndex) {
-            hui.animate({node:this.dragProxy,css:{width:(info.right-info.left)+'px'},duration:300,ease:hui.ease.fastSlow});
-            this._latestProxyColumn = info.columnIndex;
-            this._latestProxyrow = info.rowIndex;
-          }
-          //this._activeDragPlaceholder = info.placeholder;
-          this._dropInfo = info;
-          hui.style.set(this._dropMarker,{width:(info.right-info.left)+'px',left:info.left+'px',top:info.position+'px',display:'block'});
-        //}
-        break;
-      }
-    }
-  },
-  _onAfterDrag : function(e) {
-    var proxy = this.dragProxy,
-      dragInfo = this._dragInfo,
-      dragged = this._dragInfo.draggedElement,
-      dropInfo = this._dropInfo;
-
-    if (dropInfo) {
-      var newHeight = this._dragColumnHeights[dropInfo.rowIndex+'-'+dropInfo.columnIndex];
-
-      var top = dropInfo.position,
-        left = dropInfo.left;
-
-      if ((dragInfo.columnIndex == dropInfo.columnIndex && dragInfo.partIndex < dropInfo.partIndex) || dragInfo.rowIndex < dropInfo.rowIndex) {
-        top = top - dragInfo.initialHeight;
-      }
-      //top+=3;
-      left++;
-      // Move the proxy to new position
-      hui.animate({
-        node : proxy,
-        css : {
-          left : left+'px',
-          top : top+'px',
-          opacity : 0.5
-          },
-        duration : 500,
-        ease : hui.ease.slowFastSlow
-      });
-
-      var column = this._getColumn(dropInfo.rowIndex,dropInfo.columnIndex);
-
-      var parts = hui.get.byClass(column,this.options.partClass);
-
-      if (parts[dropInfo.partIndex] != dragged) {
-        var partIndex = dropInfo.partIndex;
-        if (dragInfo.columnIndex == dropInfo.columnIndex && dragInfo.partIndex < dropInfo.partIndex) {
-          partIndex--;
-        }
-        this.fire('partWasMoved',{dragged:dragged,rowIndex : dropInfo.rowIndex,columnIndex : dropInfo.columnIndex,partIndex : partIndex,
-          $success : function() {
-            dragged.style.webkitTransformOrigin='0 0';
-            var dummy = hui.build('div');
-            if (dropInfo.partIndex>=parts.length) {
-              hui.animate({node:dragged,css:{height:'0px'},duration:500,ease:hui.ease.slowFastSlow,onComplete:function() {
-                hui.dom.remove(dragged);
-                column.appendChild(dragged);
-                hui.animate({node:dragged,css:{transform:'scale(1)',height:newHeight+'px'},duration:500,ease:hui.ease.slowFastSlow,onComplete:function() {
-                  dragged.style.height='';
-                }});
-              }});
-            } else {
-              hui.dom.insertBefore(parts[dropInfo.partIndex],dummy);
-              hui.animate({node:dummy,css:{height:newHeight+'px'},duration:600,ease:hui.ease.slowFastSlow,onComplete:function() {
-                hui.dom.remove(dragged);
-                hui.dom.replaceNode(dummy,dragged);
-                hui.style.set(dragged,{transform:'scale(1)',opacity:0,height:''});
-                hui.animate({node:dragged,css:{opacity:1},duration:500,ease:hui.ease.slowFastSlow});
-              }});
-              hui.animate({node:dragged,css:{transform:'scale(0)',height:'0px'},duration:500,ease:hui.ease.slowFastSlow});
-            }
-            this._cleanDrag();
-          }.bind(this),
-          $failure : function() {
-            this._cleanDrag();
-          }.bind(this)
-        });
-      } else {
-        this._cleanDrag();
-      }
-    }
-  },
-  _cleanDrag : function() {
-    var proxy = this.dragProxy;
-    hui.animate({node:proxy,css:{opacity:0},duration:500,delay:500,ease:hui.ease.slowFastSlow,onComplete:function() {
-        proxy.style.display='none';
-      }
-    });
-    hui.style.setOpacity(this._dragInfo.draggedElement,1);
-    var p = hui.get.byClass(document.body,'hui_editor_drop_placeholder');
-    for (var i=0; i < p.length; i++) {
-      hui.dom.remove(p[i]);
-    }
-    this.dropTargets = [];
-    this._dragging = false;
-    if (this._dropMarker) {
-      this._dropMarker.style.display='none';
-    }
-  },
-  _getColumn : function(rowIndex,columnIndex) {
-    var rows = hui.get.byClass(document.body,this.options.rowClass);
-    var row = rows[rowIndex];
-    var columns = hui.get.byClass(row,this.options.columnClass);
-    return columns[columnIndex];
-  },
-  _getPartPosition : function(element) {
-    var rows = hui.get.byClass(document.body,this.options.rowClass);
-    for (var i=0; i < rows.length; i++) {
-
-      var columns = hui.get.byClass(rows[i],this.options.columnClass);
-      for (var j=0; j < columns.length; j++) {
-        var parts = hui.get.byClass(columns[j],this.options.partClass);
-        for (var k=0; k < parts.length; k++) {
-          if (element===parts[k]) {
-            return {rowIndex:i,columnIndex:j,partIndex:k};
-          }
-        }
-      }
-    }
-    return null;
-  },
-
-
-  _activeDragPlaceholder : null,
-
-  _dragColumnHeights : null,
-
-  _insertDropPlaceholders : function() {
-    var infos = this.dropTargets = [];
-    var colHeights = this._dragColumnHeights = {};
-    var proxy = this.dragProxy;
-    var draggedPart = this._dragInfo.draggedElement;
-    var rows = hui.get.byClass(document.body,this.options.rowClass);
-    for (var i=0; i < rows.length; i++) {
-      var row = rows[i];
-      var columns = hui.get.byClass(row,this.options.columnClass);
-      for (var j=0; j < columns.length; j++) {
-        var column = columns[j];
-        hui.style.set(proxy,{
-          width : column.clientWidth+'px',
-          height : '',
-          visibility : 'hidden',
-          display : 'block'
-        });
-        var height = colHeights[i+'-'+j] = proxy.clientHeight;
-        var parts = hui.get.byClass(column,this.options.partClass);
-        var min = hui.position.getTop(column);
-        var max = min+column.clientHeight;
-        var current = min;
-        var k = 0;
-        var previous = null;
-        var left, right, top;
-        var part;
-        for (; k < parts.length; k++) {
-          part = parts[k];
-          var next = parts[k+1];
-          previous = parts[k-1];
-          left = hui.position.getLeft(part);
-          right = left + part.clientWidth;
-          top = previous ? hui.position.getTop(previous)+previous.clientHeight/2 : min;
-          var bottom = hui.position.getTop(part)+part.clientHeight/2;
-
-          var info = {
-            rowIndex : i,
-            columnIndex : j,
-            partIndex : k,
-            part : part,
-            left : left,
-            right : right,
-            top : top,
-            bottom : bottom,
-            position : hui.position.getTop(part)
-          };
-          current += part.clientHeight;
-          infos.push(info);
-          previous = part;
-        }
-        var last = parts.length>0 ? parts[parts.length-1] : null;
-        var position;
-        if (last) {
-          top = hui.position.getTop(last)+last.clientHeight/2;
-          position = hui.position.getTop(last)+last.clientHeight;
-        } else {
-          top = min;
-          position = min;
-          left = hui.position.getLeft(column);
-          right = left + column.clientWidth;
-        }
-        if (part) {
-          current += part.clientHeight;
-        }
-        infos.push({
-          rowIndex : i,
-          columnIndex : j,
-          partIndex : k, // TODO 
-          part : part,
-          left : left,
-          right : right,
-          top : top,
-          position : position,
-          bottom : max-top > 20 ? max : top+20
-        });
-      }
-    }
-  }
-};
-
-hui.ui.Editor.getPartId = function(element) {
-  var data = hui.string.fromJSON(element.getAttribute('data'));
-  return data ? data.id : null;
-};
-
-////////////////////////////////// Header editor ////////////////////////////////
-
-/**
- * @constructor
- */
-hui.ui.Editor.Header = function(options) {
-  this.element = hui.get(options.element);
-  this.id = hui.ui.Editor.getPartId(this.element);
-  this.header = hui.get.firstByTag(this.element,'*');
-  this.field = null;
-};
-
-hui.ui.Editor.Header.prototype = {
-  activate : function(callback) {
-    this.value = this.header.innerHTML;
-    this.field = hui.build('textarea',{className:'hui_editor_header'});
-    this.field.value = this.value;
-    this.header.style.visibility='hidden';
-    this.updateFieldStyle();
-    this.element.insertBefore(this.field,this.header);
-    this.field.focus();
-    this.field.select();
-    hui.listen(this.field,'keydown',function(e) {
-      if (e.keyCode==Event.KEY_RETURN) {
-        this.save();
-      }
-    }.bind(this));
-    callback();
-  },
-  save : function(options) {
-    var value = this.field.value;
-    this.header.innerHTML = value;
-    if (value!=this.value) {
-      this.value = value;
-    }
-    options.callback();
-  },
-  cancel : function() {
-
-  },
-  deactivate : function(callback) {
-    this.header.style.visibility='';
-    this.element.removeChild(this.field);
-    callback();
-  },
-  updateFieldStyle : function() {
-    hui.style.set(this.field,{width:this.header.clientWidth+'px',height:this.header.clientHeight+'px'});
-    hui.style.copy(this.header,this.field,['font-size','line-height','margin-top','font-weight','font-family','text-align','color','font-style']);
-  },
-  getValue : function() {
-    return this.value;
-  }
-};
-
-////////////////////////////////// Html editor ////////////////////////////////
-
-/**
- * @constructor
- */
-hui.ui.Editor.Html = function(options) {
-  this.element = hui.get(options.element);
-  this.id = hui.ui.Editor.getPartId(this.element);
-  this.field = null;
-};
-
-hui.ui.Editor.Html.prototype = {
-  activate : function(callback) {
-    this.value = this.element.innerHTML;
-    this.element.innerHTML='';
-    var style = this.buildStyle();
-    this.editor = hui.ui.MarkupEditor.create({autoHideToolbar:false,style:style});
-    this.element.appendChild(this.editor.getElement());
-    this.editor.listen(this);
-    this.editor.setValue(this.value);
-    this.editor.focus();
-    callback();
-  },
-  buildStyle : function() {
-    return {
-      'textAlign' : hui.style.get(this.element,'text-align'),
-      'fontFamily' : hui.style.get(this.element,'font-family'),
-      'fontSize' : hui.style.get(this.element,'font-size'),
-      'fontWeight' : hui.style.get(this.element,'font-weight'),
-      'color' : hui.style.get(this.element,'color')
-    };
-  },
-  cancel : function() {
-    this.element.innerHTML = this.value;
-  },
-  save : function(options) {
-    var value = this.editor.getValue();
-    if (value!=this.value) {
-      this.value = value;
-    }
-    this.element.innerHTML = this.value;
-    options.callback();
-  },
-  deactivate : function(callback) {
-    if (this.editor) {
-      this.editor.destroy();
-      this.element.innerHTML = this.value;
-    }
-    callback();
-  },
-  getValue : function() {
-    return this.value;
-  }
-};
-;
-/**
- * Media simulator
- * @class
- * @augments hui.ui.Component
- * @param {Object} options
- */
-hui.ui.MediaSimulator = function(options) {
-  hui.ui.Component.call(this, options);
-  this.base = hui.find('.hui_mediasimulator_base',this.element);
-  this.left = hui.find('.hui_mediasimulator_base',this.element);
-  this._attach();
-};
-
-hui.ui.MediaSimulator.prototype = {
-  _attach : function() {
-    var self = this;
-    hui.drag.attach({
-      element : hui.find('.hui_mediasimulator_handle-right', this.element),
-      $startMove : function(e) {
-        this.left = e.getLeft();
-        this.width = self.base.clientWidth;
-        hui.cls.add(self.element,'is-resizing');
-      },
-      $move : function(e) {
-        self.base.style.maxWidth = Math.max(300, (this.width + ((e.getLeft() - this.left)) * 2)) + 'px';
-      },
-      $finally : function() {
-        hui.cls.remove(self.element,'is-resizing');
-      }
-    });
-
-    hui.drag.attach({
-      element : hui.find('.hui_mediasimulator_handle-bottom', this.element),
-      $startMove : function(e) {
-        this.top = e.getTop();
-        this.height = self.base.clientHeight;
-        hui.cls.add(self.element,'is-resizing');
-      },
-      $move : function(e) {
-        self.base.style.maxHeight = Math.max(300, (this.height + ((e.getTop() - this.top)))) + 'px';
-      },
-      $finally : function() {
-        hui.cls.remove(self.element,'is-resizing');
-      }
-    });
-  },
-  setSize : function(size) {
-    this.base.style.maxWidth = size.width ? size.width + 'px' : '';
-    this.base.style.maxHeight = size.height ? size.height + 'px' : '';
-  },
-  /**
-   * @return {Window} The window object of the iframe
-   */
-  getFrameWindow : function() {
-    return hui.frame.getWindow(hui.find('iframe', this.element));
-  },
-  $$childSizeChanged : function() {
-  },
-  $$layout : function() {
-    hui.log('Layout changed');
-  },
-  $$draw : function() {
-    hui.log('Draw!');
-  }
-};
-
-hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
-;
 hui = window.hui || {};
 
 hui._ready = false;
@@ -23331,415 +23920,7 @@ hui.ready = function(delegate) {
     }
   }
 };
-;
-(function (_super) {
 
-  var ns = 'hui_presentation';
-
-  /**
-   * Vertical rows
-   * @class
-   * @augments hui.ui.Component
-   * @param {Object} options
-   */
-  hui.ui.Presentation = function(options) {
-    _super.call(this, options);
-    this.items = [];
-    this.images = [];
-    hui.cls.add(this.element,'hui-is-light');
-    this.nativeScroll = !!navigator.userAgent.match('iPhone|iPad|iPod|Safari') && !window.chrome && hui.browser.webkitVersion > 603;
-    //this.nativeScroll = false;
-    this._attach();
-  };
-
-  hui.ui.Presentation.create = function(options) {
-    options = options || {};
-    var makeIcon = function(body, size) {
-      return '<svg class="' + ns + '_icon" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '">' + body + '</svg>';
-    };
-    var close = makeIcon(
-      '<line class="' + ns + '_line" x1="1" y1="1" x2="31" y2="31"/>' +
-      '<line class="' + ns + '_line" x1="1" y1="31" x2="31" y2="1"/>'
-    );
-    close = makeIcon('<path class="' + ns + '_line" d="M1,1l30,30 M1,31L31,1"/>', 32);
-    close = makeIcon('<path class="' + ns + '_line" d="M1,1l20,20 M1,21L21,1"/>', 22);
-    var right = makeIcon('<path class="' + ns + '_line" d="M8.5,31l15-15L8.5,1"/>', 32);
-    var left = makeIcon('<path class="' + ns + '_line" d="M23.5,1l-15,15l15,15"/>', 32);
-    options.element = hui.build('div', {
-      'class' : ns,
-      html : '<div class="' + ns + '_viewer id-viewer"><div class="' + ns + '_items id-items"></div></div>' +
-        '<div class="' + ns + '_thumbnails id-thumbs"></div>'+
-        '<div class="' + ns + '_close id-close">' + close + '</div>'+
-        '<div class="' + ns + '_arrow ' + ns + '_next id-next">' + right + '</div>'+
-        '<div class="' + ns + '_arrow ' + ns + '_previous id-previous">' + left + '</div>',
-      parent: document.body
-    });
-    if (!hui.browser.touch) {
-      hui.cls.add(options.element,'hui-is-mouse');
-    }
-    return new hui.ui.Presentation(options);
-  };
-
-  hui.ui.Presentation.prototype = {
-    position: 0,
-    index : 0,
-    width: 0,
-    animating: false,
-    nodes : {
-      viewer : '.id-viewer',
-      items : '.id-items',
-      thumbs : '.id-thumbs',
-      close : '.id-close',
-      next : '.id-next',
-      previous : '.id-previous'
-    },
-    _attach : function() {
-      hui.on(this.nodes.close,'tap',this.close, this);
-      hui.on(this.nodes.next,'tap',this.next, this);
-      hui.on(this.nodes.previous,'tap',this.previous, this);
-      hui.on(this.nodes.thumbs,'tap',this._tapThumbs, this);
-      if (this.nativeScroll) {
-        hui.cls.add(this.element,'hui-is-native-scroll');
-        this._attachNative();
-      } else {
-        this._attachDrag();
-      }
-    },
-    close : function(e) {
-      if (e) hui.event(e).stop();
-      hui.cls.remove(this.element,'hui-is-open');
-      this._lockScroll(false);
-    },
-    _attachNative : function() {
-      var x,y;
-      var moved = false;
-      hui.listen(this.element,'touchstart',function(e) {
-        moved = false;
-      }.bind(this));
-      hui.listen(this.element,'touchmove',function(e) {
-        if (e.touches && e.touches.length == 2) {
-          if (x===undefined) {x = e.pageX;}
-          if (y===undefined) {y = e.pageY;}
-          var img = this.images[this.index];
-          var newX = e.pageX - x + img.x;
-          var newY = e.pageY - y + img.y;
-          var scale = (e.scale) * (img.scale);
-          img.newScale = scale;
-          img.newX = newX;
-          img.newY = newY;
-          img.node.style.transform =  'scale(' + scale + ') translate(' + (newX)/scale + 'px,' + (newY)/scale + 'px)';
-        }
-        if (e.touches && e.touches.length > 1) {
-          e.preventDefault();
-        }
-        moved = true;
-        //console.log('Scale', e.scale);
-      }.bind(this));
-      hui.listen(this.element,'touchend',function(e) {
-        x = y = undefined;
-        this.images.forEach(function(img) {
-          if (img.newScale) {
-            img.scale = img.newScale;
-            img.newScale = undefined;
-          }
-          if (img.newX) {
-            img.x = img.newX;
-            img.newX = undefined;
-          }
-          if (img.newY) {
-            img.y = img.newY;
-            img.newY = undefined;
-          }
-        });
-        if (!moved && hui.dom.isDescendantOrSelf(e.target, this.nodes.viewer)) {
-          var img = this.images[this.index];
-          if (img.scale != 1) {
-            img.node.style.transition = 'transform .3s';
-            img.node.style.transform = 'scale(1) translate(0px,0px)';
-            setTimeout(function() {
-              img.node.style.transition = '';
-            },350);
-            img.scale = 1;
-            img.x = img.y = 0;
-          } else {
-            this._toggleThumbs();
-          }
-        }
-      }.bind(this));
-      var timer;
-      var scrollEnd = function() {
-        var width = this.nodes.viewer.clientWidth;
-        var scrl = this.nodes.viewer.scrollLeft;
-        this.index = Math.round(scrl / width);
-      }.bind(this);
-      hui.listen(this.nodes.viewer,'scroll',function(e) {
-        //console.log('Scroll', e);
-        clearTimeout(timer);
-        timer = setTimeout(scrollEnd,150);
-      });
-    },
-    _originalScroll : 0,
-    _lockScroll : function(lock) {
-      if (lock) {
-        this._originalScroll = document.body.scrollTop;
-      }
-      lock = lock ? 'hidden' : '';
-      document.body.parentNode.style.overflow = lock;
-      document.body.style.overflow = lock;
-      if (!lock) {
-        document.body.scrollTop = this._originalScroll;
-      }
-    },
-    /** Go to the previous image
-     * @param {Boolean} user If it is initiated by the user
-     */
-    previous : function(e) {
-      if (e) hui.stop(e);
-      this.index--;
-      var num = 1;
-      if (this.index < 0) {
-        this.index = this.items.length - 1;
-        num = this.items.length;
-      }
-      this._goToImage(true,num,true);
-    },
-    /** Go to the next image
-     * @param {Boolean} user If it is initiated by the user
-     */
-    next : function(e) {
-      if (e) hui.stop(e);
-      this.index++;
-      var num = 1;
-      if (this.index==this.items.length) {
-        this.index = 0;
-        num = this.items.length;
-      }
-      this._goToImage(true,num,true);
-    },
-    show : function(params) {
-      params = params || {};
-      if (params.source) {
-        var pos = hui.position.get(params.source);
-        hui.cls.add(this.element,'hui-is-minimized');
-      }
-      hui.cls.add(this.element,'hui-is-open');
-      this._calculateSize();
-      if (params.items) {
-        this.items = params.items;
-        this._rebuild();
-      }
-      if (hui.isNumber(params.index)) {
-        this.index = params.index;
-        this._goToImage(false, 0, false);
-      }
-      window.setTimeout(function() {
-        this._lockScroll(true);        
-      }.bind(this),100)
-    },
-    _tapThumbs : function(e) {
-      e = hui.event(e);
-      var thumb = e.findByClass(ns + '_thumbnail');
-      if (thumb) {
-        var index = parseInt(thumb.getAttribute('data'),10);
-        this._goTo(index);
-      }
-    },
-    _rebuild : function() {
-      this.images = [];
-      this.nodes.items.innerHTML = '';
-      this.nodes.thumbs.innerHTML = '';
-      for (var i = 0; i < this.items.length; i++) {
-        var url = hui.ui.callDelegates(this,'getPreview',{item: this.items[i], index: i});
-        var item = hui.build('div',{parent : this.nodes.items, 'class' : ns+'_item'});
-        var image = hui.build('div',{parent : item, 'class' : ns+'_image'});
-        var content = hui.build('div',{parent : image, 'class' : ns+'_image_content'});
-        var thumb = hui.build('div',{parent : this.nodes.thumbs, 'class' : ns+'_thumbnail', data:i});
-        if (url) {
-          content.style.backgroundImage = 'url(' + url + ')';
-          thumb.style.backgroundImage = 'url(' + url + ')';
-        }
-        this.images.push({node:content,scale:1,x:0,y:0});
-      }
-      hui.cls.set(this.element, 'hui-is-multiple', this.items.length > 1);
-      this._updateImages();
-    },
-    _updateImages : function() {
-      if (!this.items.length) { return; }
-      var width = this.nodes.viewer.clientWidth,
-        height = this.nodes.viewer.clientHeight,
-      thumbs = hui.get.children(this.nodes.thumbs);
-      var thumbSize = thumbs[0].clientWidth;
-      var load = function(url,node) {
-        var img = new Image();
-        img.onload = function() {
-          node.style.backgroundImage = "url('" + url + "')";
-        };
-        img.src = url;
-      };
-      var ratio = window.devicePixelRatio > 1 ? 2 : 1;
-      for (var i = 0; i < this.items.length; i++) {
-        var item = this.items[i];
-        var url = hui.ui.callDelegates(this,'getImage',{item: item, width: width * ratio, height: height * ratio});
-        load(url, this.images[i].node);
-        //images[i].style.backgroundImage = "url('" + url + "')";
-        var thmbUrl = hui.ui.callDelegates(this,'getImage',{item: item, width: thumbSize * ratio, height: thumbSize * ratio});
-        load(thmbUrl, thumbs[i]);
-        //thumbs[i].style.backgroundImage = "url('" + url + "')";
-      }
-    },
-    _calculateSize : function() {
-      this.width = this.nodes.viewer.clientWidth;
-    },
-    $$layout : function() {
-      this._calculateSize();
-      this._updateImages();
-    },
-    _draw : function() {
-      this.nodes.items.style.transform = 'translate3d(' + this.position + 'px,0,0)';
-    },
-    _attachDrag : function() {
-      var initial = 0;
-      var left = 0;
-      var scrl = 0;
-      var viewer = this.nodes.viewer;
-      var inner = this.nodes.items;
-      var max = 0;
-      var stmp;
-      var currentSlide;
-      var speed = 0;
-      hui.drag.attach({
-        touch : true,
-        element : viewer,
-        $check : function() {
-          return !this.animating;
-        }.bind(this),
-        $startMove : function(e) {
-          initial = e.getLeft();
-          scrl = this.position;
-          max = (this.items.length-1) * this.width * -1;
-          stmp = e.event.timeStamp;
-          speed = 0;
-        }.bind(this),
-        $move : function(e) {
-          var latestLeft = left;
-          left = e.getLeft();
-          var pos = (scrl - (initial - left));
-          if (pos > 0) {
-            pos = (Math.exp(pos * -0.013) -1) * -80;
-          }
-          if (pos < max) {
-            pos = (Math.exp((pos - max) * 0.013) -1) * 80 + max;
-          }
-          this.position = pos;
-          var dur = (e.event.timeStamp - stmp);
-          var curSpeed = dur > 0 ? (latestLeft - left) / dur : 0;
-          speed = (speed + curSpeed) / 2;
-          //console.log(speed);
-          stmp = e.event.timeStamp;
-          this._draw();
-        }.bind(this),
-        $endMove : function(e) {
-          var func = (initial - left) < 0 ? Math.floor : Math.ceil;
-          this.index = func(this.position * -1 / this.width);
-          var num = this.items.length - 1;
-          if (this.index==this.items.length) {
-            this.index = 0;
-            this.index = this.items.length - 1;
-          } else if (this.index < 0) {
-            this.index = this.items.length - 1;
-            this.index = 0;
-          } else {
-            num = 1;
-          }
-
-          this._goToImage(true,num,false,true, Math.abs(speed));
-        }.bind(this),
-        $notMoved : this._toggleThumbs.bind(this)
-      });
-    },
-    _toggleThumbs : function() {
-      if (this.items.length > 1) {
-        hui.cls.toggle(this.element,'hui-is-thumbnails');
-      }
-    },
-    _goTo : function(index) {
-      if (this.index == index) {
-        return;
-      }
-      var diff = Math.abs(this.index - index);
-      this.index = index;
-      this._goToImage(true, diff, false);
-    },
-    _goToImage : function(animate,num,user,drag,speed) {
-      if (this.nativeScroll) {
-        var viewer = this.nodes.viewer,
-          scrl = viewer.clientWidth * this.index;
-        if (animate) {
-          hui.animate({
-            node: viewer,
-            duration: 500,
-            property: 'scrollLeft',
-            value: scrl,
-            ease: hui.ease.fastSlow
-          });
-        } else {
-          if (hui.browser.webkitVersion < 603) {
-            setTimeout(function() {
-              viewer.scrollTo(scrl,0);
-            });
-          } else {
-            this.nodes.viewer.scrollLeft = scrl;
-          }
-        }
-        return;
-      }
-      speed = speed || 2;
-      var initial = this.position;
-      var target = this.position = this.index * (this.width) * -1;
-      if (animate) {
-        var duration, ease;
-        if (drag) {
-          duration = 300 / speed;
-          ease = hui.ease.quadOut;
-          duration = Math.min(800,Math.max(200, duration));
-        }
-        else if (num > 1) {
-          duration = Math.min(num * 500, 2000);
-          ease = hui.ease.fastSlow;
-        } else {
-          var end = this.index === 0 || this.index === this.items.length - 1;
-          ease = (end ? hui.ease.elastic : hui.ease.fastSlow);
-          if (!user) {
-            ease = hui.ease.fastSlow;
-          }
-          duration = (end ? 1000 : 1000 / speed);
-        }
-        this.animating = true;
-        hui.animate({
-          node : this.nodes.items,
-          //css : {marginLeft : target + 'px'},
-          duration : duration,
-          ease : ease,
-          $render : function(node,v) {
-            this.position = initial + (target - initial) * v;
-            this._draw();
-          }.bind(this),
-          $complete : function() {
-            this.animating = false;
-          }.bind(this)
-        });
-      } else {
-        this._draw();
-      }
-    }
-  };
-
-  hui.extend(hui.ui.Presentation, _super);
-
-  hui.define('hui.ui.Presentation', hui.ui.Presentation);
-
-})(hui.ui.Component);
-;
 hui.Color.table = {
   aliceblue: 'f0f8ff',
   antiquewhite: 'faebd7',
@@ -23885,290 +24066,26 @@ hui.Color.table = {
   yellow: 'ffff00',
   yellowgreen: '9acd32'
 };
-;
-hui.ui.KeyboardNavigator = function(options) {
-  options = options || {};
-  this.text = '';
-  this.items = [];
-  this.index = null;
-  this.name = options.name;
-  hui.listen(window,'keydown',this._onKeyDown.bind(this));
-  this.element = hui.build('div',{'class':'hui_keyboardnavigator',parent:document.body});
-  this.input = hui.build('p',{'class':'hui_keyboardnavigator_input',parent:this.element});
-  this.list = hui.build('ul',{parent:this.element});
-  this.listNodes = [];
-  hui.ui.extend(this);
+
+hui = window.hui || {};
+
+hui.query = function(q, ctx) {
+  return new hui.Query(hui.findAll(q, ctx));
 };
 
-hui.ui.KeyboardNavigator.prototype = {
-  _onKeyDown : function(e) {
-    e = hui.event(e.key);
-    if (e.metaKey || e.altKey || e.shiftKey || e.leftKey || e.rightKey) {
-      return;
-    } else if (e.downKey) {
-      this._selectNext();
-      return;
-    } else if (e.upKey) {
-      this._selectPrevious();
-      return;
-    } else if (e.returnKey || e.enterKey) {
-      this._select();
-      this.text = '';
-      this._render();
-      return;
-    }
-    if (e.escapeKey) {
-      this.text = '';
-    } else if (e.backspaceKey) {
-      e.stop();
-      if (this.text.length>0) {
-        this.text = this.text.substring(0,this.text.length-1);
-      } else {
-        return;
-      }
-    } else {
-      this.text+=String.fromCharCode(e.keyCode).toLowerCase();
-    }
-    this._render();
-    if (this.text.length>0) {
-      this._complete();
-    }
-  },
-  _select : function() {
-    if (this.index!==null) {
-      this.fire('select',this.items[this.index]);
-    }
-  },
-  _selectPrevious : function() {
-    if (this.items.length === 0) {
-      return;
-    }
-    if (this.index === null) {
-      this.index = 0;
-    } else {
-      hui.cls.remove(this.listNodes[this.index],'hui_keyboardnavigator_selected');
-    }
-    this.index--;
-    if (this.index < 0) {
-      this.index = this.items.length-1;
-    }
-    hui.cls.add(this.listNodes[this.index],'hui_keyboardnavigator_selected');
-  },
-  _selectNext : function() {
-    if (this.items.length === 0) {
-      return;
-    }
-    if (this.index===null) {
-      this.index = -1;
-    } else {
-      hui.cls.remove(this.listNodes[this.index],'hui_keyboardnavigator_selected');
-    }
-    this.index++;
-    if (this.index>this.items.length-1) {
-      this.index = 0;
-    }
-    hui.cls.add(this.listNodes[this.index],'hui_keyboardnavigator_selected');
-  },
-  _render : function() {
-    if (!this.text) {
-      this.element.style.display='none';
-      return;
-    }
-    hui.dom.setText(this.input,this.text);
-    hui.dom.clear(this.list);
-    this.listNodes = [];
-    this.index = Math.min(this.index,this.items.length-1);
-    for (var i=0; i < this.items.length; i++) {
-      var item = this.items[i];
-      var node = hui.build('li',{text:item.text,parent:this.list});
-      this.listNodes.push(node);
-    }
-    if (this.index>-1) {
-      hui.cls.add(this.listNodes[this.index],'hui_keyboardnavigator_selected');
-    } else {
-      this.index = null;
-    }
-    this.element.style.display = 'block';
-    this.element.style.marginLeft = (this.element.clientWidth/-2)+'px';
-    hui.animate({node:this.element,duration:300,ease:hui.ease.slowFastSlow,css:{marginTop:(this.element.clientHeight/-2)+'px'}});
-  },
-  _complete : function() {
-    this.fire('complete',{
-      text : this.text,
-      callback : function(items) {
-        this.items = items;
-        this._render();
-      }.bind(this)
+hui.Query = function(context) {
+  this._context = context;
+};
+
+hui.Query.prototype = {
+  addClass : function(cls) {
+    return this.each(function(node) {
+      hui.cls.add(node, cls);
     });
+  },
+  each : function(fn) {
+    this._context.forEach(fn);
+    return this;
   }
 };
-;
-/**
- * Image pasting madness
- * @constructor
- */
-hui.ui.ImagePaster = function(options) {
-  hui.log('New paster')
-  this.options = options || {};
-  this.element = hui.get(options.element);
-  this.name = options.name;
-  this.data = null;
-  hui.ui.extend(this);
-}
 
-hui.ui.ImagePaster.create = function(options) {
-  options = options || {};
-  var e = options.element = hui.build('div',{className:'hui_imagepaster'});
-  return new hui.ui.ImagePaster(options);
-}
-
-hui.ui.ImagePaster.isSupported = function() {
-  if (!navigator) {
-    return false;
-  }
-  return navigator.platform=='MacIntel';
-  /*
-  var result = {
-    javaEnabled: false,
-    version: ''
-  };
-  if (typeof navigator != 'undefined' && typeof navigator.javaEnabled != 'undefined') {
-    result.javaEnabled = navigator.javaEnabled();
-  } else {
-    result.javaEnabled = 'unknown';
-    if (navigator.javaEnabled() && typeof java != 'undefined') {
-      result.version = java.lang.System.getProperty("java.version");
-    }
-  }
-  return result;*/
-}
-
-hui.ui.ImagePaster.prototype = {
-  _initialize : function() {
-    hui.log('Initializing...');
-    if (hui.browser.msie) {
-      this.element.innerHTML = '<object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" width="0" height="0" style="border-width:0;"  id="rup" name="rup" codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0"><param name="archive" value="'+hui.ui.getContext()+'/hui/lib/supa/Supa.jar"><param name="code" value="de.christophlinder.supa.SupaApplet"><param name="mayscript" value="yes"><param name="scriptable" value="true"><param name="name" value="jsapplet"><param name="encoding" value="base64"><param name="previewscaler" value="original size"></object>';
-      this.applet = hui.get.firstByTag(this.element,'object');
-    } else {
-      this.applet = hui.build('applet',{
-        archive : hui.ui.getURL("lib/supa/Supa.jar"),
-        code : 'de.christophlinder.supa.SupaApplet',
-        width : 0,
-        height : 0,
-        html : '<param name="imagecodec" value="png"><param name="encoding" value="base64"><param name="previewscaler" value="original size">',
-        parent : this.element
-      });
-    }
-    if (this.options.invisible) {
-      hui.log('Adding to body...');
-      document.body.appendChild(this.element);
-    }
-    this.initialized = true;
-    hui.defer(this._checkReady,this);
-  },
-  _checkReady : function() {
-    if (this._isReady()) {
-      hui.log('Ready...');
-      if (this.pendingPaste) {
-        hui.log('Running pedning paste...');
-        this.paste();
-      }
-      this.fire('readyToPaste',this);
-    } else {
-      hui.log('Not ready yet...');
-      window.setTimeout(this._checkReady.bind(this),500);
-    }
-  },
-  _isReady : function() {
-    try {
-      if (this.applet.ping) {
-        return this.applet.ping()
-      }
-    } catch (e) {
-      hui.log(e)
-    }
-    return false;
-  },
-  paste : function() {
-    if (!this.initialized) {
-      hui.log('Pasting, not intitialized, so pending...');
-      this.pendingPaste = true;
-      hui.defer(this._initialize,this);
-      return;
-    }
-    hui.log('Pasting...');
-    var error = this.applet.pasteFromClipboard();
-    if (error!==0) {
-      this._error(error);
-      return;
-    }
-    this.data = this.applet.getEncodedString();
-    this._updatePreview();
-    hui.log('Sending: imageWasPasted');
-    this.fire('imageWasPasted',this.data);
-  },
-  _error : function(code) {
-    var key = 'unknown';
-    if (code==2) {
-      key = 'empty';
-    } else if (code==3) {
-      key = 'invalid';
-    } else if (code==4) {
-      key = 'busy';
-    }
-    hui.log('Error: '+key);
-    this.fire('imagePasteFailed',key);
-  },
-  _updatePreview : function() {
-    if (this.options.invisible) {return}
-    if (this.preview) {
-      this.preview.src = 'data:image/png;base64,'+this.data;
-    } else {
-      var container = hui.build('div',{className:'hui_imagepaster_preview',parent:this.element});
-      this.preview = hui.build('img',{src:'data:image/png;base64,'+this.data,parent:container});
-    }
-  }
-}
-;
-/**
- * Help stuff
- * @namespace
- */
-hui.ui.help = {
-  bubble : function(options) {
-    var bubble = hui.build('div',{
-      style : 'display: none; border: 1px solid #aaa; box-shadow: 0px 2px 8px rgba(0, 0, 0, .2),inset 0px 0px 50px rgba(255, 255, 255, 1),inset 0px 0px 50px rgba(255, 255, 255, 1),inset 0px 0px 20px rgba(255, 255, 255, 1); position: absolute;',
-      parent : document.body
-    });
-    var target = hui.get(options.target);
-    var size = Math.max(target.clientWidth,target.clientHeight)+20;
-    hui.style.set(bubble,{
-      width : size+'px',
-      height : size+'px',
-      display : 'block',
-      visibility : 'hidden',
-      borderRadius: size+'px'
-    });
-    hui.position.place({
-      source : {element:bubble,vertical:.5,horizontal:.5},
-      target : {element:target,vertical:.5,horizontal:.5}
-    });
-    hui.effect.bounceIn({element:bubble})
-    hui.listen(bubble,'click',function() {
-      hui.dom.remove(bubble);
-    })
-  }
-}
-;
-/**
- * Help stuff
- * @namespace 
- */
-hui.ui.Debugger = {
-  showList : function() {
-    var win = hui.ui.Window.create({title:'Debugger'});
-    var list = hui.ui.List.create();
-    win.show();
-  }
-}
-;

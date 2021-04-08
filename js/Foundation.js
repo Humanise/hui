@@ -123,6 +123,9 @@
     },
     submerge : function() {
       hui.cls.add(this.element,'hui-is-submerged');
+    },
+    setBusyMain : function(busy) {
+      hui.cls.set(this.nodes.main, 'hui-is-busy', busy);
     }
   };
 

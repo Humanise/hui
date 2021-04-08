@@ -366,8 +366,9 @@ span.hui_disclosure_open:hover {
 .hui_button > .hui_symbol {
   width: 12px;
   height: 12px;
-  margin: 0 -2px;
-  vertical-align: top; }
+  margin: 4px -2px 0;
+  vertical-align: top;
+  line-height: 12px; }
 
 .hui_button_light {
   border: 1px solid #ddd;
@@ -1793,7 +1794,8 @@ a.list_check_all {
 
 .hui_selection {
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  font-size: 0; }
+  font-size: 0;
+  line-height: 16px; }
   .hui_selection_title {
     color: rgba(0, 0, 0, 0.5);
     font-size: 11px;
@@ -1808,7 +1810,7 @@ a.list_check_all {
     font-weight: normal;
     color: rgba(0, 0, 0, 0.5); }
 
-.split_sidebar div.hui_selection {
+.split_sidebar .hui_selection {
   padding: 5px 0px; }
 
 .hui_selection_item {
@@ -1821,20 +1823,20 @@ a.list_check_all {
   word-wrap: break-word;
   cursor: pointer; }
 
-div.hui_selection span.hui_disclosure {
+.hui_selection .hui_disclosure {
   margin-right: 2px;
   opacity: .3; }
 
-div.hui_selection:hover span.hui_disclosure {
+.hui_selection:hover .hui_disclosure {
   opacity: 1; }
 
-div.hui_selection_item span.hui_selection_label {
+.hui_selection_label {
   margin: 0 0 0 1px;
   padding: 1px 3px;
   vertical-align: middle; }
 
 .hui_selection .hui_selected .hui_selection_badge {
-  color: #fff; }
+  color: inherit; }
 
 .hui_selection_item:hover {
   background-color: #eee; }
@@ -1845,7 +1847,8 @@ div.hui_selection_item span.hui_selection_label {
 .hui_selection_item:hover .hui_icon {
   filter: brightness(0.8); }
 
-div.hui_selection div.hui_selected, div.hui_selection div.hui_selected:hover {
+.hui_selection_item.hui_selected,
+.hui_selection_item.hui_selected:hover {
   background-color: #3875d7;
   background: url("../gfx/selection_blue.png") left top repeat-x;
   background: -moz-linear-gradient(top, #92BCFA, #5580ee);
@@ -1853,32 +1856,32 @@ div.hui_selection div.hui_selected, div.hui_selection div.hui_selected:hover {
   color: #fff;
   -webkit-box-shadow: inset 0 1px 0 #7FA9F6; }
 
-div.hui_selection div.hui_selected span.hui_selection_label {
+.hui_selection_item.hui_selected .hui_selection_label {
   text-shadow: 0 1px 0 #5070cc; }
 
-div.hui_selection_inline div.hui_selected span.hui_selection_label {
+.hui_selection_inline .hui_selected .hui_selection_label {
   background-color: #3875d7;
   color: #fff;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   text-shadow: none; }
 
-.hui_selection div.hui_drop, .hui_selection div.hui_drop:hover {
+.hui_selection .hui_drop, .hui_selection .hui_drop:hover {
   background: #779cd6 url("../gfx/hover_bg.png");
   /*-webkit-border-radius: 4px;*/
   cursor: default; }
 
-div.hui_selection_busy span.hui_selection_label {
+.hui_selection_busy .hui_selection_label {
   color: #999; }
 
-div.hui_selection_busy div.hui_selected span.hui_selection_label {
+.hui_selection_busy .hui_selected .hui_selection_label {
   color: #fff; }
 
 /** Layout specifics **/
-td.hui_layout_left div.hui_selection {
+.hui_layout_left .hui_selection {
   margin-top: 4px; }
 
-td.hui_layout_left .hui_selection_title {
+.hui_layout_left .hui_selection_title {
   margin-top: 10px; }
 
 /********************** Dark ************************/
@@ -3323,7 +3326,8 @@ ul.hui_wizard a.hui_selected {
   font-size: 0;
   display: flex;
   justify-content: space-between;
-  min-height: 30px; }
+  min-height: 30px;
+  padding: 0 2px; }
   .hui_bar_right {
     float: right;
     display: flex;
@@ -3347,21 +3351,25 @@ ul.hui_wizard a.hui_selected {
     left: -1000px;
     top: -1000px; }
   .hui_bar .hui_button, .hui_bar .hui_checkbox, .hui_bar .hui_dropdown {
-    margin: 2px 3px; }
+    margin: 2px 2px; }
+  .hui_bar .hui_checkbox {
+    padding-left: 2px;
+    padding-right: 2px; }
   .hui_bar .hui_button_small, .hui_bar .hui_searchfield, .hui_bar .hui_segmented {
-    margin: 4px 4px; }
+    margin: 4px 2px; }
 
 /*************** Button **************/
 .hui_bar_button {
   display: inline-block;
   height: 30px;
   line-height: 30px;
-  padding: 0 10px;
+  padding: 0 3px;
   text-decoration: none;
   vertical-align: middle;
   cursor: pointer;
   color: #444;
-  white-space: nowrap; }
+  white-space: nowrap;
+  margin: 0 2px; }
   .hui_bar_button:focus {
     outline: none; }
   .hui_bar_button_text {
@@ -3409,7 +3417,8 @@ ul.hui_wizard a.hui_selected {
   background-image: -o-linear-gradient(top, #fff, #f0f0f0);
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-  min-height: 24px; }
+  min-height: 24px;
+  padding: 0; }
 
 .hui_window_light .hui_bar-window_mini {
   background: #fafafa;
@@ -3430,7 +3439,8 @@ ul.hui_wizard a.hui_selected {
   background: none;
   border: 1px solid transparent;
   border-width: 0 1px;
-  padding: 0 4px; }
+  padding: 0 4px;
+  margin: 0; }
 
 .hui_bar-window_mini .hui_bar_button:hover {
   background: #eee;
@@ -3482,13 +3492,15 @@ ul.hui_wizard a.hui_selected {
   min-height: 22px;
   background: #fafafa;
   border: 1px solid #ddd;
-  border-radius: 3px; }
+  border-radius: 3px;
+  padding: 0; }
   .hui_bar-mini .hui_bar_left, .hui_bar-mini .hui_bar_right {
     height: 22px; }
   .hui_bar-mini .hui_bar_button {
     height: 22px;
     line-height: 22px;
-    padding: 0 3px; }
+    padding: 0 3px;
+    margin: 0; }
     .hui_bar-mini .hui_bar_button:hover {
       background: #ddd; }
     .hui_bar-mini .hui_bar_button_text {
@@ -3512,7 +3524,8 @@ ul.hui_wizard a.hui_selected {
   background-image: linear-gradient(top, #fff, #f0f0f0);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
   min-height: 22px;
-  border-bottom: 1px solid #ddd; }
+  border-bottom: 1px solid #ddd;
+  padding: 0; }
   .hui_bar-layout_mini .hui_bar_right {
     height: 22px;
     background: none; }
@@ -3524,7 +3537,8 @@ ul.hui_wizard a.hui_selected {
     background: none;
     border: 1px solid transparent;
     border-width: 0 1px;
-    padding: 0 5px; }
+    padding: 0 5px;
+    margin: 0; }
     .hui_bar-layout_mini .hui_bar_button:hover {
       background: #eee;
       border-color: #ddd; }

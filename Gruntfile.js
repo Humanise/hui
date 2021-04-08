@@ -84,7 +84,7 @@ module.exports = function(grunt) {
         command : 'tools/all.sh'
       },
       join : {
-        command : 'tools/join.sh'
+        command : 'node tools/join.js'
       }
     },
     uglify : {

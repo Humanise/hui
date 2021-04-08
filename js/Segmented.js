@@ -37,11 +37,11 @@ hui.ui.Segmented.create = function(options) {
 
 hui.ui.Segmented.prototype = {
   _click : function(e) {
-    if (!this.enabled) { return; }
     e = new hui.Event(e);
+    e.stop();
+    if (!this.state.enabled) { return; }
     var a = e.findByTag('a');
     if (a) {
-      e.stop();
       var changed = false;
       var value = a.getAttribute('rel');
       var x = hui.get.byClass(this.element,'hui-is-selected');

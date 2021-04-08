@@ -131,7 +131,23 @@
     left: 0;
     bottom: 0;
     transition: left .3s, right .3s;
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      background: url('../gfx/progress/spinner_white.svg') center center no-repeat;
+      background-size: 48px;
+      z-index: 2;
+      background-color: rgba(255,255,255,.5);
+      opacity: 0;
+      transition: opacity .5s;
+      transition-delay: .3s;
+    };
   }
+  &_main.hui-is-busy:before {
+     bottom: 0;
+     opacity: 1;
+  };
 
   &_actions {
     @include vertical-gradient(#fff, rgb(240,240,240));
@@ -141,10 +157,13 @@
     border-bottom: 1px solid #ddd;
     right: 0;
     left: 0;
-    padding: 0 $bar-height;
+    padding: 0 0 0 $bar-height;
 
     .hui_button, .hui_dropdown {
       box-shadow: none;
+    }
+    &-details {
+      padding-right: $bar-height;
     }
   }
 
@@ -401,7 +420,7 @@
     &.hui-is-details-open & {
 
       &_actions {
-        padding-right: 0;
+        padding-right: 5px;
       }
 
       &_details {
