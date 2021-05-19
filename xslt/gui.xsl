@@ -1165,23 +1165,9 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:copy-of select="child::*|child::text()"/>
 </xsl:template>
 
-<xsl:template match="gui:div|gui:span|gui:strong|gui:p|gui:em|gui:a|gui:br|gui:input|gui:h1|gui:h2|gui:h3|gui:h4|gui:h5|gui:h6">
+<xsl:template match="gui:div|gui:span|gui:strong|gui:p|gui:em|gui:a|gui:br|gui:input|gui:h1|gui:h2|gui:h3|gui:h4|gui:h5|gui:h6|gui:ul|gui:li">
   <xsl:element name="{name()}">
-    <xsl:if test="@style">
-      <xsl:attribute name="style"><xsl:value-of select="@style"/></xsl:attribute>
-    </xsl:if>
-    <xsl:if test="@class">
-      <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
-    </xsl:if>
-    <xsl:if test="@id">
-      <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
-    </xsl:if>
-    <xsl:if test="@href">
-      <xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute>
-    </xsl:if>
-    <xsl:if test="@onclick">
-      <xsl:attribute name="onclick"><xsl:value-of select="@onclick"/></xsl:attribute>
-    </xsl:if>
+    <xsl:copy-of select="@*" />
     <xsl:apply-templates/>
   </xsl:element>
 </xsl:template>
