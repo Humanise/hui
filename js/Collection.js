@@ -29,6 +29,9 @@ hui.component('Collection', {
       this.items.push(rendition);
       this.element.appendChild(rendition);
     }
+    if (this.items.length === 0) {
+      this.fire('empty');
+    }
     if (this.nodes.empty) {
       this.nodes.empty.style.display = this.items.length ? 'none' : '';
     }
