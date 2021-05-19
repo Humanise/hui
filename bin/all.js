@@ -16383,7 +16383,7 @@ hui.ui.Finder.prototype = {
     if (!this._createPanel) {
       var form = this._createForm = hui.ui.Form.create({listen:{$submit:this._create.bind(this)}});
       form.buildGroup({above:true},this.options.creation.formula);
-      var panel = this._createPanel = hui.ui.BoundPanel.create({padding:5,width:300,modal:true});
+      var panel = this._createPanel = hui.ui.BoundPanel.create({padding:10,width:300,modal:true});
       panel.add(form);
       var buttons = hui.ui.Buttons.create();
       buttons.add(hui.ui.Button.create({
@@ -18000,6 +18000,9 @@ hui.component('Collection', {
       }
       this.items.push(rendition);
       this.element.appendChild(rendition);
+    }
+    if (this.items.length === 0) {
+      this.fire('empty');
     }
     if (this.nodes.empty) {
       this.nodes.empty.style.display = this.items.length ? 'none' : '';
