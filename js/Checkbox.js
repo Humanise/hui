@@ -1,5 +1,5 @@
 hui.component('Checkbox', {
-  with: [
+  'with': [
     'value', 'enabled', 'key'
   ],
   state : {

@@ -5309,12 +5309,12 @@ hui.component = function(name, spec) {
     var obj = new component(cp);
     obj.change(state);
     return obj;
-  }
-  component.prototype = spec
+  };
+  component.prototype = spec;
   hui.extend(component.prototype, hui.ui.Component.prototype);
-  if (spec.with) {
-    for (var i = 0; i < spec.with.length; i++) {
-      var mixin = hui.component[spec.with[i]];
+  if (spec['with']) {
+    for (var i = 0; i < spec['with'].length; i++) {
+      var mixin = hui.component[spec['with'][i]];
       for (prop in mixin) {
         if (typeof(mixin[prop]) == 'function') {
           component.prototype[prop] = mixin[prop]
@@ -15142,7 +15142,7 @@ hui.ui.TokenField.prototype = {
 };
 
 hui.component('Checkbox', {
-  with: [
+  'with': [
     'value', 'enabled', 'key'
   ],
   state : {
