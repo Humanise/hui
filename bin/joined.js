@@ -17980,26 +17980,37 @@ hui.component('Collection', {
     this.selectable = options.selectable;
     this.selectionClass = options.selectionClass || 'hui-is-selected';
     this.items = [];
+    this.groups = [];
   },
   nodes : {
     empty : '.hui_collection_empty'
   },
   setData : function(data) {
     data = data || [];
-    this.data = data;
+    this.data = [];
     this._clear();
     this.items = [];
+    this.groups = [];
     for (var i = 0; i < data.length; i++) {
-      var rendition = hui.ui.callDelegates(this, 'render', data[i]);
-      if (!rendition) {
-        rendition = hui.build('div', {text: data[i].toString()});
+      var item = data[i];
+      var grouping = hui.ui.callDelegates(this, 'group', item);
+      if (grouping) {
+        if (hui.dom.isElement(grouping.title)) {
+          this.element.appendChild(grouping.title);
+          this.groups.push(grouping.title);
+        } else {
+          this.groups.push(hui.build('div.hui_collection_group', {text: grouping.title, parent: this.element}));
+        }
+        if (grouping.items) {
+          for (var j = 0; j < grouping.items.length; j++) {
+            this._renderItem(grouping.items[j]);
+            this.data.push(grouping.items[j]);
+          }
+        }
+      } else {
+        this._renderItem(item, i);
+        this.data.push(item);
       }
-      hui.cls.add(rendition,'hui_collection_item')
-      if (this.selectable) {
-        hui.cls.set(rendition, this.selectionClass, this._isSelected(i))
-      }
-      this.items.push(rendition);
-      this.element.appendChild(rendition);
     }
     if (this.items.length === 0) {
       this.fire('empty');
@@ -18008,10 +18019,25 @@ hui.component('Collection', {
       this.nodes.empty.style.display = this.items.length ? 'none' : '';
     }
   },
+  _renderItem: function(item, i) {
+    var rendition = hui.ui.callDelegates(this, 'render', item);
+    if (!rendition) {
+      rendition = hui.build('div', {text: item.toString()});
+    }
+    hui.cls.add(rendition,'hui_collection_item');
+    if (this.selectable) {
+      hui.cls.set(rendition, this.selectionClass, this._isSelected(i))
+    }
+    this.items.push(rendition);
+    this.element.appendChild(rendition);
+  },
   _clear : function() {
     //hui.ui.destroyDescendants(this.body);
     for (var i = 0; i < this.items.length; i++) {
       hui.dom.remove(this.items[i]);
+    }
+    for (var i = 0; i < this.groups.length; i++) {
+      hui.dom.remove(this.groups[i]);
     }
   },
   $objectsLoaded : function(objects) {
