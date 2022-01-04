@@ -201,7 +201,6 @@ hui.ui.Button.prototype = {
 hui.ui.Buttons = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
-  this.body = hui.get.firstByClass(this.element,'hui_buttons_body');
   hui.ui.extend(this);
 };
 
@@ -217,13 +216,12 @@ hui.ui.Buttons.create = function(options) {
   if (options.top > 0) {
     e.style.paddingTop=options.top+'px';
   }
-  hui.build('div',{'class':'hui_buttons_body',parent:e});
   return new hui.ui.Buttons(options);
 };
 
 hui.ui.Buttons.prototype = {
   add : function(widget) {
-    this.body.appendChild(widget.element);
+    this.element.appendChild(widget.element);
     return this;
   }
 };

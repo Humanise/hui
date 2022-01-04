@@ -56,6 +56,10 @@ table.hui_form_fields {
   color: #999;
   margin: 1px 0 0 0; }
 
+.hui_form_field-large .hui_form_field_label {
+  font-size: 14px;
+  line-height: 22px; }
+
 .hui_form_field + .hui_form_field,
 .hui_form_field + script + .hui_form_field {
   margin-top: 5px; }

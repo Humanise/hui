@@ -2947,6 +2947,9 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <div>
       <xsl:attribute name="class">
         <xsl:text>hui_form_field</xsl:text>
+        <xsl:if test="@large='true'">
+          <xsl:text> hui_form_field-large</xsl:text>
+        </xsl:if>
       </xsl:attribute>
       <xsl:if test="@label">
         <label class="hui_form_field_label"><xsl:value-of select="@label"/></label>
@@ -2985,6 +2988,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
           <xsl:attribute name="class">
             <xsl:text>hui_textinput</xsl:text>
             <xsl:if test="@size='small' or ancestor::gui:cell"> hui_is_small</xsl:if>
+            <xsl:if test="@size='large'"> hui_textinput-large</xsl:if>
           </xsl:attribute>
           <xsl:if test="@width">
             <xsl:attribute name="style">width: <xsl:value-of select="@width"/>px;</xsl:attribute>
@@ -3475,6 +3479,9 @@ doc title:'Rich text' class:'hui.ui.RichText'
           </xsl:when>
           <xsl:when test="@tiny='true' or ../@tiny='true'">
             <xsl:text> hui_button_tiny</xsl:text>
+          </xsl:when>
+          <xsl:when test="@large='true' or ../@large='true'">
+            <xsl:text> hui_button_large</xsl:text>
           </xsl:when>
         </xsl:choose>
       </xsl:attribute>

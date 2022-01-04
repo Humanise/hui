@@ -76,6 +76,13 @@
       line-height: 21px; }
     .hui_button_small .hui_button_icon {
       margin-top: 2px; }
+  .hui_button_large {
+    font-size: 14px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 12px; }
+    .hui_button_large:active {
+      line-height: 29px; }
   .hui_button_mini {
     font-size: 9px;
     height: 16px;

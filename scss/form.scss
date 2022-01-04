@@ -65,12 +65,18 @@ table.hui_form_fields {
     font-weight: normal;
     line-height: 18px;
     display: block;
+
   }
 
   &_hint {
     font-size: 10px;
     color: #999;
     margin: 1px 0 0 0;
+  }
+
+  &-large &_label {
+    font-size: 14px;
+    line-height: 22px;
   }
 }
 

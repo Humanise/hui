@@ -334,6 +334,13 @@ span.hui_disclosure_open:hover {
       line-height: 21px; }
     .hui_button_small .hui_button_icon {
       margin-top: 2px; }
+  .hui_button_large {
+    font-size: 14px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 12px; }
+    .hui_button_large:active {
+      line-height: 29px; }
   .hui_button_mini {
     font-size: 9px;
     height: 16px;
@@ -609,6 +616,10 @@ table.hui_form_fields {
   font-size: 10px;
   color: #999;
   margin: 1px 0 0 0; }
+
+.hui_form_field-large .hui_form_field_label {
+  font-size: 14px;
+  line-height: 22px; }
 
 .hui_form_field + .hui_form_field,
 .hui_form_field + script + .hui_form_field {
@@ -4904,12 +4915,17 @@ div.hui_markupeditor {
     border: 1px solid #0069ff;
     box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
     outline: none; }
+  .hui_textinput-large {
+    font-size: 14px;
+    padding: 0 8px; }
 
 input.hui_textinput {
   height: 26px; }
   input.hui_textinput.hui_is_small {
     height: 22px;
     font-size: 11px; }
+  input.hui_textinput-large {
+    height: 30px; }
 
 textarea.hui_textinput {
   height: 40px;

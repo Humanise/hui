@@ -101,6 +101,17 @@
     }
   }
 
+  &_large {
+    font-size: 14px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 12px;
+
+    &:active {
+      line-height: 29px;
+    }
+  }
+
   &_mini {
     font-size: 9px;
     height: 16px;

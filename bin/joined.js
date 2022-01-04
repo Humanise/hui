@@ -8140,7 +8140,6 @@ hui.ui.Button.prototype = {
 hui.ui.Buttons = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
-  this.body = hui.get.firstByClass(this.element,'hui_buttons_body');
   hui.ui.extend(this);
 };
 
@@ -8156,13 +8155,12 @@ hui.ui.Buttons.create = function(options) {
   if (options.top > 0) {
     e.style.paddingTop=options.top+'px';
   }
-  hui.build('div',{'class':'hui_buttons_body',parent:e});
   return new hui.ui.Buttons(options);
 };
 
 hui.ui.Buttons.prototype = {
   add : function(widget) {
-    this.body.appendChild(widget.element);
+    this.element.appendChild(widget.element);
     return this;
   }
 };
@@ -17980,7 +17978,6 @@ hui.component('Collection', {
     this.selectable = options.selectable;
     this.selectionClass = options.selectionClass || 'hui-is-selected';
     this.items = [];
-    this.groups = [];
   },
   nodes : {
     empty : '.hui_collection_empty'
@@ -17990,27 +17987,10 @@ hui.component('Collection', {
     this.data = [];
     this._clear();
     this.items = [];
-    this.groups = [];
     for (var i = 0; i < data.length; i++) {
       var item = data[i];
-      var grouping = hui.ui.callDelegates(this, 'group', item);
-      if (grouping) {
-        if (hui.dom.isElement(grouping.title)) {
-          this.element.appendChild(grouping.title);
-          this.groups.push(grouping.title);
-        } else {
-          this.groups.push(hui.build('div.hui_collection_group', {text: grouping.title, parent: this.element}));
-        }
-        if (grouping.items) {
-          for (var j = 0; j < grouping.items.length; j++) {
-            this._renderItem(grouping.items[j]);
-            this.data.push(grouping.items[j]);
-          }
-        }
-      } else {
-        this._renderItem(item, i);
-        this.data.push(item);
-      }
+      this._renderItem(item, i);
+      this.data.push(item);
     }
     if (this.items.length === 0) {
       this.fire('empty');
@@ -18035,9 +18015,6 @@ hui.component('Collection', {
     //hui.ui.destroyDescendants(this.body);
     for (var i = 0; i < this.items.length; i++) {
       hui.dom.remove(this.items[i]);
-    }
-    for (var i = 0; i < this.groups.length; i++) {
-      hui.dom.remove(this.groups[i]);
     }
   },
   $objectsLoaded : function(objects) {
