@@ -273,7 +273,7 @@ span.hui_disclosure_open:hover {
 
 /**************** Standard button ************/
 .hui_button {
-  color: #004a80;
+  color: #333;
   display: inline-block;
   vertical-align: middle;
   font-size: 12px;
@@ -306,7 +306,6 @@ span.hui_disclosure_open:hover {
     background: linear-gradient(#f9f9f9, #d5dade); }
   .hui_button:active {
     border-color: #adadad #b7b7b7 #bfbfbf;
-    background: linear-gradient(#d1d4d6, #f1f2f3);
     background: linear-gradient(#f1f2f3, #d1d4d6);
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
     text-shadow: none;
@@ -353,6 +352,11 @@ span.hui_disclosure_open:hover {
     .hui_button.hui-highlighted:focus {
       box-shadow: inset 0 0 5px #6ede4a, 0 0 2px #0069ff, inset 0 0 2px #0069ff;
       border-color: #0069ff; }
+    .hui_button.hui-highlighted:active {
+      box-shadow: inset 0px 1px 5px #6bc54e;
+      border-color: #99ada2 #9fc1b1 #adcaba;
+      background: linear-gradient(#daebd5, #c8d7c2);
+      text-shadow: none; }
   .hui_button.hui-disabled, .hui_button.hui-disabled:hover {
     cursor: default;
     background: #f9f9f9;
@@ -396,15 +400,6 @@ span.hui_disclosure_open:hover {
     border: 1px solid #0069ff;
     box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
     outline: none; }
-  .hui_button.hui-light:active {
-    background-color: #eeeeee;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#fafafa));
-    background-image: -webkit-linear-gradient(top, #eeeeee, #fafafa);
-    background-image: -moz-linear-gradient(top, #eeeeee, #fafafa);
-    background-image: -ms-linear-gradient(top, #eeeeee, #fafafa);
-    background-image: -o-linear-gradient(top, #eeeeee, #fafafa);
-    background-image: linear-gradient(top, #eeeeee, #fafafa);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#fafafa'); }
   .hui_button.hui-light:hover {
     border-color: #dadada;
     background-color: #fafafa;
@@ -415,6 +410,15 @@ span.hui_disclosure_open:hover {
     background-image: -o-linear-gradient(top, #fafafa, #eeeeee);
     background-image: linear-gradient(top, #fafafa, #eeeeee);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#eeeeee'); }
+  .hui_button.hui-light:active {
+    background-color: #eeeeee;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#fafafa));
+    background-image: -webkit-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -moz-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -ms-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -o-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: linear-gradient(top, #eeeeee, #fafafa);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#fafafa'); }
   .hui_button.hui-light.hui-highlighted {
     box-shadow: inset 0 0 4px #6ede4a;
     border-color: #adcaba; }
@@ -608,7 +612,7 @@ table.hui_form_fields {
 
 /********************************** Field *********************************/
 .hui_form_field_label {
-  color: #004A80;
+  color: #333;
   font-size: 12px;
   font-weight: normal;
   line-height: 18px;
@@ -619,7 +623,7 @@ table.hui_form_fields {
   color: #999;
   margin: 1px 0 0 0; }
 
-.hui_form_field-large .hui_form_field_label {
+.hui_form_field.hui-large .hui_form_field_label {
   font-size: 14px;
   line-height: 22px; }
 
@@ -659,7 +663,7 @@ div.hui_window_news label.hui_form_field {
   background: none; }
 
 div.hui_window_light label.hui_form_field {
-  color: #004A80;
+  color: #333;
   background: none; }
 
 body .hui_context_dark label.hui_form_field,
@@ -683,7 +687,7 @@ body .hui_context_dark label.hui_form_field,
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  color: #004a80;
+  color: #333;
   display: inline-block;
   vertical-align: middle;
   font-size: 12px;
@@ -2076,6 +2080,9 @@ div.hui_window_dark .hui_selection_item span {
     background: none;
     color: #333;
     border: none; }
+    .hui_panel.hui-is-titled .hui_panel_close:hover:before {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 3px; }
   .hui_panel_arrow {
     position: absolute;
     background: url("../gfx/pointer.svg");
@@ -4286,7 +4293,7 @@ div.hui_colorpicker_swatches a {
   font-size: 12px;
   line-height: 18px;
   cursor: pointer;
-  color: #004a80;
+  color: #333;
   display: inline-block;
   padding: 4px 0;
   outline: none;
@@ -4454,7 +4461,7 @@ div.hui_infoview_click:hover {
   .hui_radiobutton_label {
     vertical-align: top;
     display: inline-block;
-    color: #004a80;
+    color: #333;
     margin-left: 5px; }
 
 
@@ -4917,16 +4924,16 @@ div.hui_markupeditor {
     border: 1px solid #0069ff;
     box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
     outline: none; }
-  .hui_textinput-large {
+  .hui_textinput.hui-large {
     font-size: 14px;
     padding: 0 8px; }
 
 input.hui_textinput {
   height: 26px; }
-  input.hui_textinput.hui_is_small {
+  input.hui_textinput.hui-small {
     height: 22px;
     font-size: 11px; }
-  input.hui_textinput-large {
+  input.hui_textinput.hui-large {
     height: 30px; }
 
 textarea.hui_textinput {
@@ -5103,7 +5110,7 @@ table.hui_objectlist th {
   text-align: left;
   font-size: 11px;
   line-height: 13px;
-  color: #004A80;
+  color: #333;
   font-weight: normal;
   padding-left: 4px; }
 

@@ -8068,7 +8068,7 @@ hui.ui.Button.prototype = {
   _fireClick : function() {
     this.fire('click',this);
     if (this.options.submit) {
-      var form = hui.ui.getAncestor(this,'hui_form');
+      var form = hui.ui.getAncestor(this, 'hui_form');
       if (form) {
         form.submit();
       } else {
@@ -8116,10 +8116,10 @@ hui.ui.Button.prototype = {
    * @param highlighted {Boolean} If the button should be highlighted
    */
   setHighlighted : function(highlighted) {
-    hui.cls.set(this.element,'hui_is_highlighted',highlighted);
+    hui.cls.set(this.element,'hui-highlighted',highlighted);
   },
   _updateUI : function() {
-    hui.cls.set(this.element,'hui_is_disabled',!this.enabled);
+    hui.cls.set(this.element,'hui-disabled',!this.enabled);
   },
   /** Sets the button text
    * @param

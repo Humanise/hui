@@ -52,6 +52,15 @@
     background: none;
     color: #333;
     border: none; }
+    .hui_panel.hui-is-titled .hui_panel_close:before {
+      padding: 2px; }
+    .hui_panel.hui-is-titled .hui_panel_close:hover:before {
+      background: #eee;
+      border-radius: 3px;
+      color: #000; }
+    .hui_panel.hui-is-titled .hui_panel_close:active:before {
+      background: #ddd;
+      border-radius: 3px; }
   .hui_panel_arrow {
     position: absolute;
     background: url("../gfx/pointer.svg");

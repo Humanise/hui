@@ -48,6 +48,20 @@
     background: none;
     color: #333;
     border: none;
+    &:before {
+      padding: 2px;
+    }
+    
+    &:hover:before {
+      background: #eee;
+      border-radius: 3px;
+      color: #000;
+    }
+    
+    &:active:before {
+      background: #ddd;
+      border-radius: 3px;
+    }
   }
 
   &_arrow {
