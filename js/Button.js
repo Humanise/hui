@@ -52,18 +52,27 @@ hui.ui.Button = function(options) {
  */
 hui.ui.Button.create = function(options) {
   options = hui.override({text:'',highlighted:false,enabled:true},options);
-  var className = 'hui_button'+(options.highlighted ? ' hui_is_highlighted' : '');
+  var className = 'hui_button';
   if (options.variant) {
-    className+=' hui_button_'+options.variant;
-  }
-  if (options.small && options.variant) {
-    className+=' hui_button_small_'+options.variant;
+    className+=' hui-'+options.variant;
   }
   if (options.small) {
-    className+=' hui_button_small';
+    className+=' hui-small';
+  }
+  if (options.mini) {
+    className+=' hui-mini';
+  }
+  if (options.tiny) {
+    className+=' hui-tiny';
+  }
+  if (options.large) {
+    className+=' hui-large';
+  }
+  if (options.highlighted) {
+    className+=' hui-highlighted';
   }
   if (!options.enabled) {
-    className+=' hui_is_disabled';
+    className+=' hui-disabled';
   }
   var text = options.text ? hui.ui.getTranslated(options.text) : null;
   if (options.title) { // Deprecated
@@ -120,7 +129,7 @@ hui.ui.Button.prototype = {
   _fireClick : function() {
     this.fire('click',this);
     if (this.options.submit) {
-      var form = hui.ui.getAncestor(this,'hui_form');
+      var form = hui.ui.getAncestor(this, 'hui_form');
       if (form) {
         form.submit();
       } else {
@@ -168,10 +177,10 @@ hui.ui.Button.prototype = {
    * @param highlighted {Boolean} If the button should be highlighted
    */
   setHighlighted : function(highlighted) {
-    hui.cls.set(this.element,'hui_is_highlighted',highlighted);
+    hui.cls.set(this.element,'hui-highlighted',highlighted);
   },
   _updateUI : function() {
-    hui.cls.set(this.element,'hui_is_disabled',!this.enabled);
+    hui.cls.set(this.element,'hui-disabled',!this.enabled);
   },
   /** Sets the button text
    * @param
@@ -208,10 +217,10 @@ hui.ui.Buttons.create = function(options) {
   options = hui.override({top:0},options);
   var e = options.element = hui.build('div',{'class':'hui_buttons'});
   if (options.align==='right') {
-    hui.cls.add(e,'hui_buttons_right');
+    hui.cls.add(e,'hui_buttons-right');
   }
   if (options.align==='center') {
-    hui.cls.add(e,'hui_buttons_center');
+    hui.cls.add(e,'hui_buttons-center');
   }
   if (options.top > 0) {
     e.style.paddingTop=options.top+'px';

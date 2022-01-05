@@ -36,6 +36,30 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
 
   <space height="30"/>
 
+  <box width="600" title="Sizes" variant="textured" padding="10">
+    <form>
+      <fields labels="above">
+        <field label="Large field (via boolean):" large="true">
+          <text-input value="I am large"/>
+        </field>
+        <field label="Large field (via size):" size="large">
+          <text-input value="I am large"/>
+        </field>
+        <field label="Large input only (regular field):">
+          <text-input value="I am large" large="true"/>
+        </field>
+        <field label="Regular:">
+          <text-input value="I am regular"/>
+        </field>
+        <field label="Small:">
+          <text-input value="I am small" small="true"/>
+        </field>
+      </fields>
+    </form>
+  </box>
+
+  <space height="30"/>
+
   <box width="600" title="Special inputs" variant="textured" padding="10">
     <form name="formulatore">
       <fields labels="above">

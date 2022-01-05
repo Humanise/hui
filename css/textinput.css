@@ -19,16 +19,16 @@
     border: 1px solid #0069ff;
     box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
     outline: none; }
-  .hui_textinput-large {
+  .hui_textinput.hui-large {
     font-size: 14px;
     padding: 0 8px; }
 
 input.hui_textinput {
   height: 26px; }
-  input.hui_textinput.hui_is_small {
+  input.hui_textinput.hui-small {
     height: 22px;
     font-size: 11px; }
-  input.hui_textinput-large {
+  input.hui_textinput.hui-large {
     height: 30px; }
 
 textarea.hui_textinput {

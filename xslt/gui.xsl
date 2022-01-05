@@ -2947,8 +2947,8 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <div>
       <xsl:attribute name="class">
         <xsl:text>hui_form_field</xsl:text>
-        <xsl:if test="@large='true'">
-          <xsl:text> hui_form_field-large</xsl:text>
+        <xsl:if test="@large='true' or @size='large'">
+          <xsl:text> hui-large</xsl:text>
         </xsl:if>
       </xsl:attribute>
       <xsl:if test="@label">
@@ -2987,8 +2987,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
           </xsl:if>
           <xsl:attribute name="class">
             <xsl:text>hui_textinput</xsl:text>
-            <xsl:if test="@size='small' or ancestor::gui:cell"> hui_is_small</xsl:if>
-            <xsl:if test="@size='large'"> hui_textinput-large</xsl:if>
+            <xsl:choose>
+              <xsl:when test="@small='true' or ancestor::gui:cell or @size='small'"> hui-small</xsl:when>
+            <xsl:when test="@large='true' or @size='large' or parent::gui:field[@large='true'] or parent::gui:field[@size='large']"> hui-large</xsl:when>
+            </xsl:choose>
           </xsl:attribute>
           <xsl:if test="@width">
             <xsl:attribute name="style">width: <xsl:value-of select="@width"/>px;</xsl:attribute>
@@ -3432,7 +3434,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
           <xsl:text> hui_buttons-center</xsl:text>
         </xsl:if>
         <xsl:if test="@align='left'">
-          <xsl:text> hui_buttons-center</xsl:text>
+          <xsl:text> hui_buttons-left</xsl:text>
         </xsl:if>
       </xsl:attribute>
       <xsl:attribute name="style">
@@ -3454,11 +3456,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:button" name="gui:button">
     <xsl:variable name="size">
       <xsl:choose>
-        <xsl:when test="@large='true' or ../@large='true'">large</xsl:when>
-        <xsl:when test="@regular='true' or ../@regular='true'">regular</xsl:when>
-        <xsl:when test="@small='true' or ../@small='true'">small</xsl:when>
-        <xsl:when test="@mini='true' or ../@mini='true'">mini</xsl:when>
-        <xsl:when test="@tiny='true' or ../@tiny='true'">tiny</xsl:when>
+        <xsl:when test="@large='true' or @size='large' or ../@large='true'">large</xsl:when>
+        <xsl:when test="@regular='true' or @size='regular' or ../@regular='true'">regular</xsl:when>
+        <xsl:when test="@small='true' or @size='small' or ../@small='true'">small</xsl:when>
+        <xsl:when test="@mini='true' or @size='mini' or ../@mini='true'">mini</xsl:when>
+        <xsl:when test="@tiny='true' or @size='tiny' or ../@tiny='true'">tiny</xsl:when>
       </xsl:choose>
     </xsl:variable>
     <a href="javascript://">
@@ -3466,24 +3468,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:attribute name="class">
         <xsl:text>hui_button</xsl:text>
         <xsl:if test="@variant">
-          <xsl:text> hui_button_</xsl:text><xsl:value-of select="@variant"/>
+          <xsl:text> hui-</xsl:text><xsl:value-of select="@variant"/>
         </xsl:if>
-        <xsl:if test="@disabled='true'"> hui_is_disabled</xsl:if>
-        <xsl:if test="@highlighted='true'"> hui_is_highlighted</xsl:if>
-        <xsl:choose>
-          <xsl:when test="@small='true' or ../@small='true'">
-            <xsl:text> hui_button_small</xsl:text>
-          </xsl:when>
-          <xsl:when test="@mini='true' or ../@mini='true'">
-            <xsl:text> hui_button_mini</xsl:text>
-          </xsl:when>
-          <xsl:when test="@tiny='true' or ../@tiny='true'">
-            <xsl:text> hui_button_tiny</xsl:text>
-          </xsl:when>
-          <xsl:when test="@large='true' or ../@large='true'">
-            <xsl:text> hui_button_large</xsl:text>
-          </xsl:when>
-        </xsl:choose>
+        <xsl:if test="@disabled='true'"> hui-disabled</xsl:if>
+        <xsl:if test="@highlighted='true'"> hui-highlighted</xsl:if>
+        <xsl:if test="$size!='regular'">
+          <xsl:text> hui-</xsl:text><xsl:value-of select="$size"/>
+        </xsl:if>
       </xsl:attribute>
       <xsl:call-template name="gui:test-name"/>
       <xsl:if test="@disabled='true'"><xsl:attribute name="tabindex">-1</xsl:attribute></xsl:if>

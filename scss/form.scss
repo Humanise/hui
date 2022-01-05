@@ -60,7 +60,7 @@ table.hui_form_fields {
 .hui_form_field {
 
   &_label {
-    color: #004A80;
+    color: $text-color;
     font-size: 12px;
     font-weight: normal;
     line-height: 18px;
@@ -74,7 +74,7 @@ table.hui_form_fields {
     margin: 1px 0 0 0;
   }
 
-  &-large &_label {
+  &.hui-large &_label {
     font-size: 14px;
     line-height: 22px;
   }
@@ -115,7 +115,7 @@ form.hui_form table.split {
 }
 
 .hui_form .hui_buttons {
-  text-align: right;
+  justify-content: flex-end;
 }
 
 
@@ -133,7 +133,7 @@ div.hui_window_news label.hui_form_field {
 }
 
 div.hui_window_light label.hui_form_field {
-  color: #004A80;
+  color: $text-color;
   background: none;
 }
 

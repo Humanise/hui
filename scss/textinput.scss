@@ -23,7 +23,7 @@
     box-shadow: 0 0 2px $focus-color,inset 0 0 2px $focus-color;
     outline: none;
   }
-  &-large {
+  &.hui-large {
     font-size: 14px;
     padding: 0 8px;
   }
@@ -32,11 +32,11 @@
 input.hui_textinput {
   height: 26px;
 
-  &.hui_is_small {
+  &.hui-small {
     height: 22px;
     font-size: 11px;
   }
-  &-large {
+  &.hui-large {
     height: 30px;
   }
 }

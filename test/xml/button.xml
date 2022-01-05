@@ -81,10 +81,36 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
     </buttons>
 
     <text top="10"><h>Actions</h></text>
-    <button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
-      <confirm text="Are you sure?" ok="Yes" cancel="No"/>
-    </button>
+    <buttons top="10">
+      <button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
+        <confirm text="Are you sure?" ok="Yes" cancel="No"/>
+      </button>
+    </buttons>
 
+    <text top="10" bottom="10"><h>Build via script</h></text>
+    <div id="built" class="hui_buttons"></div>
+    <script>
+      (function() {
+        var variants = [null,'light'];
+        var sizes = [null,'tiny','mini','small','large'];
+        var states = [null,'highlighted','disabled'];
+        variants.forEach(function(variant) {
+          sizes.forEach(function(size) {
+            states.forEach(function(state) {
+              var p = {
+                text: variant + ' ' + size + ' ' + state,
+                variant: variant
+              };
+              if (size) p[size] = true;
+              if (state == 'highlighted') p[state] = true;
+              if (state == 'disabled') p['enabled'] = false;
+              var btn = hui.ui.Button.create(p);
+              hui.find('#built').appendChild(btn.getElement());
+            });
+          });
+        });
+      })();
+    </script>
   </box>
   <style>
     .dark {background: #222; padding: 10px;}
@@ -107,8 +133,8 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
 
     <buttons top="10">
       <button text="Small" small="true"/>
-      <button text="Small" disabled="true" small="true"/>
-      <button text="Small" small="true" highlighted="true"/>
+      <button text="Small + disabled" disabled="true" small="true"/>
+      <button text="Small + highlighted" small="true" highlighted="true"/>
       <button text="Small" disabled="true" small="true" highlighted="true"/>
 
       <button text="Small" small="true" icon="monochrome/delete"/>
@@ -120,12 +146,14 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
 
     <buttons top="10">
       <button text="Mini" mini="true"/>
-      <button text="Mini disabled" disabled="true" mini="true"/>
+      <button text="Mini + highlighted" mini="true" highlighted="true"/>
+      <button text="Mini + disabled" disabled="true" mini="true"/>
     </buttons>
 
     <buttons top="10">
       <button text="Tiny" tiny="true"/>
-      <button text="Tiny disabled" disabled="true" tiny="true"/>
+      <button text="Tiny + highlighted" tiny="true" highlighted="true"/>
+      <button text="Tiny + disabled" disabled="true" tiny="true"/>
     </buttons>
 
     <text top="10"><h>Light variant</h></text>

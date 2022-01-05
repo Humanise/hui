@@ -1,19 +1,21 @@
 .hui_buttons {
-  font-size: 0;
-  line-height: 0;
-  white-space: nowrap; }
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center; }
   .hui_buttons .hui_button {
     margin-left: 5px; }
     .hui_buttons .hui_button:first-child {
       margin-left: 0; }
+  .hui_buttons-left {
+    justify-content: flex-start; }
   .hui_buttons-right {
-    text-align: right; }
+    justify-content: flex-end; }
   .hui_buttons-center {
-    text-align: center; }
+    justify-content: center; }
 
 /**************** Standard button ************/
 .hui_button {
-  color: #004a80;
+  color: #333;
   display: inline-block;
   vertical-align: middle;
   font-size: 12px;
@@ -46,7 +48,6 @@
     background: linear-gradient(#f9f9f9, #d5dade); }
   .hui_button:active {
     border-color: #adadad #b7b7b7 #bfbfbf;
-    background: linear-gradient(#d1d4d6, #f1f2f3);
     background: linear-gradient(#f1f2f3, #d1d4d6);
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
     text-shadow: none;
@@ -55,50 +56,55 @@
     border: 1px solid #0069ff;
     box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
     outline: none; }
-  .hui_button.hui_is_highlighted {
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 5px #6ede4a;
-    border-color: #adcaba #9fc1b1 #99ada2; }
-    .hui_button.hui_is_highlighted:focus {
-      box-shadow: inset 0 0 5px #6ede4a, 0 0 2px #0069ff, inset 0 0 2px #0069ff;
-      border-color: #0069ff; }
-  .hui_button.hui_is_disabled, .hui_button.hui_is_disabled:hover {
-    cursor: default;
-    background: #f9f9f9;
-    color: #999;
-    border: 1px solid #e3e3e3;
-    box-shadow: none; }
-  .hui_button_small {
+  .hui_button.hui-small {
     font-size: 11px;
     height: 20px;
     line-height: 20px;
     padding: 0 7px; }
-    .hui_button_small:active {
+    .hui_button.hui-small:active {
       line-height: 21px; }
-    .hui_button_small .hui_button_icon {
+    .hui_button.hui-small .hui_button_icon {
       margin-top: 2px; }
-  .hui_button_large {
+  .hui_button.hui-large {
     font-size: 14px;
     height: 28px;
     line-height: 28px;
     padding: 0 12px; }
-    .hui_button_large:active {
+    .hui_button.hui-large:active {
       line-height: 29px; }
-  .hui_button_mini {
+  .hui_button.hui-mini {
     font-size: 9px;
     height: 16px;
     line-height: 16px;
     padding: 0 5px;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05); }
-    .hui_button_mini:active {
+    .hui_button.hui-mini:active {
       line-height: 17px; }
-  .hui_button_tiny {
+  .hui_button.hui-tiny {
     font-size: 8px;
     height: 14px;
     line-height: 14px;
     padding: 0 5px;
     box-shadow: none; }
-    .hui_button_tiny::active {
+    .hui_button.hui-tiny::active {
       line-height: 15px; }
+  .hui_button.hui-highlighted {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 5px #6ede4a;
+    border-color: #adcaba #9fc1b1 #99ada2; }
+    .hui_button.hui-highlighted:focus {
+      box-shadow: inset 0 0 5px #6ede4a, 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+      border-color: #0069ff; }
+    .hui_button.hui-highlighted:active {
+      box-shadow: inset 0px 1px 5px #6bc54e;
+      border-color: #99ada2 #9fc1b1 #adcaba;
+      background: linear-gradient(#daebd5, #c8d7c2);
+      text-shadow: none; }
+  .hui_button.hui-disabled, .hui_button.hui-disabled:hover {
+    cursor: default;
+    background: #f9f9f9;
+    color: #999;
+    border: 1px solid #e3e3e3;
+    box-shadow: none; }
 
 .hui_button_icon {
   padding: 0px;
@@ -119,7 +125,7 @@
   vertical-align: top;
   line-height: 12px; }
 
-.hui_button_light {
+.hui_button.hui-light {
   border: 1px solid #ddd;
   border-radius: 3px;
   background-color: #ffffff;
@@ -132,20 +138,11 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6');
   color: #333;
   box-shadow: none; }
-  .hui_button_light:focus {
+  .hui_button.hui-light:focus {
     border: 1px solid #0069ff;
     box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
     outline: none; }
-  .hui_button_light:active {
-    background-color: #eeeeee;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#fafafa));
-    background-image: -webkit-linear-gradient(top, #eeeeee, #fafafa);
-    background-image: -moz-linear-gradient(top, #eeeeee, #fafafa);
-    background-image: -ms-linear-gradient(top, #eeeeee, #fafafa);
-    background-image: -o-linear-gradient(top, #eeeeee, #fafafa);
-    background-image: linear-gradient(top, #eeeeee, #fafafa);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#fafafa'); }
-  .hui_button_light:hover {
+  .hui_button.hui-light:hover {
     border-color: #dadada;
     background-color: #fafafa;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#eeeeee));
@@ -155,20 +152,29 @@
     background-image: -o-linear-gradient(top, #fafafa, #eeeeee);
     background-image: linear-gradient(top, #fafafa, #eeeeee);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#eeeeee'); }
-  .hui_button_light.hui_is_highlighted {
+  .hui_button.hui-light:active {
+    background-color: #eeeeee;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#fafafa));
+    background-image: -webkit-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -moz-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -ms-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -o-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: linear-gradient(top, #eeeeee, #fafafa);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#fafafa'); }
+  .hui_button.hui-light.hui-highlighted {
     box-shadow: inset 0 0 4px #6ede4a;
     border-color: #adcaba; }
-  .hui_button_light.hui_is_disabled, .hui_button_light.hui_is_disabled:hover {
+  .hui_button.hui-light.hui-disabled, .hui_button.hui-light.hui-disabled:hover {
     cursor: default;
     background: #f9f9f9;
     color: #999;
     border: 1px solid #e3e3e3;
     box-shadow: none; }
-  .hui_button_light .hui_button_icon {
+  .hui_button.hui-light .hui_button_icon {
     margin-left: -6px;
     margin-right: 5px;
     margin-top: 4px; }
-  .hui_button_light .hui_button_icon_notext {
+  .hui_button.hui-light .hui_button_icon_notext {
     margin-right: -5px; }
 
 .hui_context_dark .hui_button {
@@ -201,7 +207,7 @@
   .hui_context_dark .hui_button:active {
     box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3);
     border-color: #000; }
-  .hui_context_dark .hui_button.hui_is_highlighted {
+  .hui_context_dark .hui_button.hui-highlighted {
     /*
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
       border-color: #2c3831 #222b26 #232b27;
@@ -216,10 +222,10 @@
     background-image: -o-linear-gradient(top, #0a71ec, #005694);
     background-image: linear-gradient(top, #0a71ec, #005694);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0a71ec', endColorstr='#005694'); }
-    .hui_context_dark .hui_button.hui_is_highlighted:focus {
+    .hui_context_dark .hui_button.hui-highlighted:focus {
       border-color: #65a5ff;
       box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff; }
-    .hui_context_dark .hui_button.hui_is_highlighted:hover {
+    .hui_context_dark .hui_button.hui-highlighted:hover {
       box-shadow: inset 0 1px 0px #1597ff, 0 0px 1px rgba(255, 255, 255, 0.35);
       background-color: #0965d4;
       background-image: -webkit-gradient(linear, left top, left bottom, from(#0965d4), to(#00477b));
@@ -229,9 +235,9 @@
       background-image: -o-linear-gradient(top, #0965d4, #00477b);
       background-image: linear-gradient(top, #0965d4, #00477b);
       filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0965d4', endColorstr='#00477b'); }
-    .hui_context_dark .hui_button.hui_is_highlighted:active {
+    .hui_context_dark .hui_button.hui-highlighted:active {
       box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3); }
-  .hui_context_dark .hui_button.hui_is_disabled, .hui_context_dark .hui_button.hui_is_disabled:hover {
+  .hui_context_dark .hui_button.hui-disabled, .hui_context_dark .hui_button.hui-disabled:hover {
     border-color: #111;
     background: #333;
     color: #999;

@@ -398,6 +398,7 @@
     <xs:attribute name="small" type="xs:boolean"/>
     <xs:attribute name="mini" type="xs:boolean"/>
     <xs:attribute name="tiny" type="xs:boolean"/>
+    <xs:attribute name="large" type="xs:boolean"/>
     <xs:attribute name="highlighted" type="xs:boolean"/>
     <xs:attribute name="disabled" type="xs:boolean"/>
     <xs:attribute name="variant">
@@ -1440,6 +1441,8 @@
     <xs:attribute name="hint" type="xs:string"/>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="large" type="xs:boolean"/>
+    <xs:attribute name="size" type="xs:string"/>
     <xs:attribute name="compact" type="xs:boolean"/> <!-- TODO -->
   </xs:complexType>
 
@@ -1453,6 +1456,9 @@
     <xs:attribute name="correction" type="xs:boolean"/>
     <xs:attribute name="secret" type="xs:boolean"/>
     <xs:attribute name="adaptive" type="xs:boolean"/>
+    <xs:attribute name="small" type="xs:boolean"/>
+    <xs:attribute name="large" type="xs:boolean"/>
+    <xs:attribute name="size" type="xs:string"/>
     <xs:attribute name="breaks" type="xs:boolean"/>
     <xs:attribute name="width" type="xs:positiveInteger"/>
     <xs:attribute name="max-height" type="xs:positiveInteger"/>

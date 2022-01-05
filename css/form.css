@@ -45,7 +45,7 @@ table.hui_form_fields {
 
 /********************************** Field *********************************/
 .hui_form_field_label {
-  color: #004A80;
+  color: #333;
   font-size: 12px;
   font-weight: normal;
   line-height: 18px;
@@ -56,7 +56,7 @@ table.hui_form_fields {
   color: #999;
   margin: 1px 0 0 0; }
 
-.hui_form_field-large .hui_form_field_label {
+.hui_form_field.hui-large .hui_form_field_label {
   font-size: 14px;
   line-height: 22px; }
 
@@ -85,7 +85,7 @@ form.hui_form table.split {
   margin-top: 10px; }
 
 .hui_form .hui_buttons {
-  text-align: right; }
+  justify-content: flex-end; }
 
 /************************* Override for windows *******************/
 div.hui_window label.hui_form_field {
@@ -96,7 +96,7 @@ div.hui_window_news label.hui_form_field {
   background: none; }
 
 div.hui_window_light label.hui_form_field {
-  color: #004A80;
+  color: #333;
   background: none; }
 
 body .hui_context_dark label.hui_form_field,

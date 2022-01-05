@@ -1,3 +1,5 @@
+@import 'tools';
+
 table.hui_objectlist {
   margin-top: 1px;
   width: 100%;
@@ -7,7 +9,7 @@ table.hui_objectlist th {
   text-align: left;
   font-size: 11px;
   line-height: 13px;
-  color: #004A80;
+  color: $text-color;
   font-weight: normal;
   padding-left: 4px;
 }
