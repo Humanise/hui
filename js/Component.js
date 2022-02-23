@@ -180,3 +180,13 @@ hui.component.key = {
     return this.state.key;
   }
 };
+
+hui.component.size = {
+  state: {size: 'regular'},
+  getSize: function() {
+    return this.state.size;
+  },
+  setSize : function(v) {
+    this.change({size: v});
+  }
+};

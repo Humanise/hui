@@ -1,6 +1,6 @@
 hui.component('Checkbox', {
   'with': [
-    'value', 'enabled', 'key'
+    'value', 'enabled', 'key', 'size'
   ],
   state : {
     text: undefined
@@ -8,7 +8,7 @@ hui.component('Checkbox', {
   nodes: {
     label: '.hui_checkbox_label'
   },
-  create : function() {
+  create : function(options) {
     return hui.build('a.hui_checkbox', { href: '#', html: '<span class="hui_checkbox_button"></span>' });
   },
   init : function(options) {
@@ -24,7 +24,8 @@ hui.component('Checkbox', {
   draw : function(changed) {
     ('value' in changed) && hui.cls.set(this.element, 'hui_checkbox_selected', this.getValue());
     ('enabled' in changed) && hui.cls.set(this.element, 'hui_checkbox-disabled', !this.isEnabled());
-    ('text' in changed) && this._drawText();    
+    ('text' in changed) && this._drawText();
+    ('size' in changed) && hui.cls.set(this.element, 'hui-large', this.state.size == 'large');
   },
   _drawText : function() {
     if (this.state.text && !this.nodes.label) {

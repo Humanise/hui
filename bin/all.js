@@ -5365,6 +5365,16 @@ hui.component.key = {
   }
 };
 
+hui.component.size = {
+  state: {size: 'regular'},
+  getSize: function() {
+    return this.state.size;
+  },
+  setSize : function(v) {
+    this.change({size: v});
+  }
+};
+
 /** A data source
  * @constructor
  */
@@ -6025,14 +6035,19 @@ hui.ui.Form.prototype = {
   buildGroup : function(options,recipe) {
     var g = this.createGroup(options);
     hui.each(recipe, function(item) {
-      var w;
+      var w, field;
       if (hui.ui.Form[item.type]) {
         w = hui.ui.Form[item.type].create(item.options);
-        g.add(w, item.label);
+        field = g.add(w, item.label);
       }
       else if (hui.ui[item.type]) {
         w = hui.ui[item.type].create(item.options);
-        g.add(w, item.label);
+        field = g.add(w, item.label);
+      }
+      if (item.extra) {
+        hui.each(item.extra, function(other) {
+          field.add(other);
+        });
       }
       else {
         hui.log('buildGroup: Unable to find type: '+item.type);
@@ -6068,7 +6083,7 @@ hui.ui.Form.Group = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
   this.tableMode = this.element.nodeName.toLowerCase() == 'table'
-  this.options = hui.override({above:true},options);
+  this.options = hui.override({above:true, large:false},options);
   hui.ui.extend(this);
 };
 
@@ -6099,14 +6114,19 @@ hui.ui.Form.Group.prototype = {
       }
       td.appendChild(widget.getElement());
       tr.appendChild(td);
+      return new hui.ui.Form.Field({element: tr});
     } else {
       var field = hui.build('div.hui_form_field');
+      if (this.options.large) {
+        hui.cls.add(field, 'hui-large');
+      }
       if (label) {
         label = hui.ui.getTranslated(label);
         hui.build('label',{className:'hui_form_field_label',text:label,parent:field});
       }
       field.appendChild(widget.getElement());
       this.element.appendChild(field);
+      return new hui.ui.Form.Field({element: field});
     }
   }
 };
@@ -6130,6 +6150,9 @@ hui.ui.Form.Field = function(options) {
 hui.ui.Form.Field.prototype = {
   setVisible : function(visible) {
     this.element.style.display = visible ? '' : 'none';
+  },
+  add : function(w) {
+    this.element.appendChild(w.element);
   }
 };
 
@@ -15150,7 +15173,7 @@ hui.ui.TokenField.prototype = {
 
 hui.component('Checkbox', {
   'with': [
-    'value', 'enabled', 'key'
+    'value', 'enabled', 'key', 'size'
   ],
   state : {
     text: undefined
@@ -15158,7 +15181,7 @@ hui.component('Checkbox', {
   nodes: {
     label: '.hui_checkbox_label'
   },
-  create : function() {
+  create : function(options) {
     return hui.build('a.hui_checkbox', { href: '#', html: '<span class="hui_checkbox_button"></span>' });
   },
   init : function(options) {
@@ -15174,7 +15197,8 @@ hui.component('Checkbox', {
   draw : function(changed) {
     ('value' in changed) && hui.cls.set(this.element, 'hui_checkbox_selected', this.getValue());
     ('enabled' in changed) && hui.cls.set(this.element, 'hui_checkbox-disabled', !this.isEnabled());
-    ('text' in changed) && this._drawText();    
+    ('text' in changed) && this._drawText();
+    ('size' in changed) && hui.cls.set(this.element, 'hui-large', this.state.size == 'large');
   },
   _drawText : function() {
     if (this.state.text && !this.nodes.label) {
@@ -15701,6 +15725,9 @@ hui.ui.TextInput.create = function(options) {
   }
   if (options.testName) {
     input.setAttribute('data-test', options.testName);
+  }
+  if (options.large) {
+    hui.cls.add(input, 'hui-large');
   }
   if (options.value!==undefined) {
     input.value=options.value;

@@ -57,6 +57,9 @@ hui.ui.TextInput.create = function(options) {
   if (options.testName) {
     input.setAttribute('data-test', options.testName);
   }
+  if (options.large) {
+    hui.cls.add(input, 'hui-large');
+  }
   if (options.value!==undefined) {
     input.value=options.value;
   }
