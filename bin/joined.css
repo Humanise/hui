@@ -401,7 +401,7 @@ span.hui_disclosure_open:hover {
     box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
     outline: none; }
   .hui_button.hui-light:hover {
-    border-color: #dadada;
+    border-color: #d7d7d7;
     background-color: #fafafa;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#eeeeee));
     background-image: -webkit-linear-gradient(top, #fafafa, #eeeeee);
@@ -2080,8 +2080,14 @@ div.hui_window_dark .hui_selection_item span {
     background: none;
     color: #333;
     border: none; }
+    .hui_panel.hui-is-titled .hui_panel_close:before {
+      padding: 2px; }
     .hui_panel.hui-is-titled .hui_panel_close:hover:before {
-      background: rgba(0, 0, 0, 0.05);
+      background: #eee;
+      border-radius: 3px;
+      color: #000; }
+    .hui_panel.hui-is-titled .hui_panel_close:active:before {
+      background: #ddd;
       border-radius: 3px; }
   .hui_panel_arrow {
     position: absolute;
