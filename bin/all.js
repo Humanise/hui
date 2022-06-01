@@ -15729,6 +15729,9 @@ hui.ui.TextInput.create = function(options) {
   if (options.large) {
     hui.cls.add(input, 'hui-large');
   }
+  if (options.autocomplete) {
+    input.setAttribute('autocomplete', options.autocomplete);
+  }
   if (options.value!==undefined) {
     input.value=options.value;
   }
@@ -24125,9 +24128,20 @@ hui.Query.prototype = {
       hui.cls.add(node, cls);
     });
   },
+  add : function(something) {
+    if (typeof(something) == 'string') {
+      if (something[0] == '.') {
+        this.addClass(something.substring(1))
+      }
+    }
+    return this;
+  },
   each : function(fn) {
     this._context.forEach(fn);
     return this;
+  },
+  count: function() {
+    return this._context.length;
   }
 };
 

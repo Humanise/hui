@@ -15729,6 +15729,9 @@ hui.ui.TextInput.create = function(options) {
   if (options.large) {
     hui.cls.add(input, 'hui-large');
   }
+  if (options.autocomplete) {
+    input.setAttribute('autocomplete', options.autocomplete);
+  }
   if (options.value!==undefined) {
     input.value=options.value;
   }
