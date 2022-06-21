@@ -7,7 +7,7 @@
       if (!src) continue
       var idx = src.indexOf(find)
       if (idx !== -1) {
-        return src.substring(0, idx);
+        return src.substring(0, idx).replace(/\/+$/,'');
       }
     }
   })();

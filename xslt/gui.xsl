@@ -35,46 +35,46 @@
       </xsl:if>
       <xsl:choose>
         <xsl:when test="$dev='true'">
-          <link rel="stylesheet" href="{$context}/hui/{$pathVersion}bin/development.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+          <link rel="stylesheet" href="{$context}/{$pathVersion}bin/development.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         </xsl:when>
         <xsl:otherwise>
-          <link rel="stylesheet" href="{$context}/hui/{$pathVersion}bin/minimized.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+          <link rel="stylesheet" href="{$context}/{$pathVersion}bin/minimized.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         </xsl:otherwise>
       </xsl:choose>
       <!--
       <xsl:comment><![CDATA[[if IE 8]>
-        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie8.css]]><![CDATA["> </link>
+        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie8.css]]><![CDATA["> </link>
       <![endif]]]></xsl:comment>
       <xsl:comment><![CDATA[[if lt IE 7]>
-        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie6.css]]><![CDATA["> </link>
+        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie6.css]]><![CDATA["> </link>
       <![endif]]]></xsl:comment>
       <xsl:comment><![CDATA[[if IE 7]>
-        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie7.css]]><![CDATA["> </link>
+        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie7.css]]><![CDATA["> </link>
       <![endif]]]></xsl:comment>
       -->
       <xsl:if test="//gui:graph">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/graph.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/graph.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
       <xsl:if test="//gui:diagram">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/diagram.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/diagram.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
       <xsl:if test="//gui:keyboard-navigator">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/keyboardnavigator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/keyboardnavigator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
       <xsl:if test="//gui:chart">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/chart.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/chart.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
       <xsl:if test="//gui:tiles">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/tiles.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/tiles.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
       <xsl:if test="//gui:timeline">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/timeline.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/timeline.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
       <xsl:if test="//gui:foundation">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/foundation.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/foundation.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
       <xsl:if test="//gui:media-simulator">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/mediasimulator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/mediasimulator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
 
       <xsl:for-each select="//gui:css">
@@ -83,60 +83,60 @@
       <xsl:apply-templates select="gui:style"/>
       <!--
       <xsl:comment><![CDATA[[if lt IE 9]>
-        <script type="text/javascript" src="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[bin/compatibility.min.js]]><![CDATA["></script>
+        <script type="text/javascript" src="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[bin/compatibility.min.js]]><![CDATA["></script>
       <![endif]]]></xsl:comment>
       -->
 
       <xsl:choose>
         <xsl:when test="$dev='true'">
-          <script src="{$context}/hui/bin/development.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+          <script src="{$context}/bin/development.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
         </xsl:when>
         <xsl:otherwise>
-          <script src="{$context}/hui/{$pathVersion}bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+          <script src="{$context}/{$pathVersion}bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
         </xsl:otherwise>
       </xsl:choose>
 
       <xsl:for-each select="//gui:require">
-        <script src="{$context}/hui/{$pathVersion}{@path}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}{@path}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:for-each>
 
       <xsl:if test="//gui:graph">
-        <script src="{$context}/hui/{$pathVersion}js/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:chart">
-        <script src="{$context}/hui/{$pathVersion}js/Chart.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/Chart.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:timeline">
-        <script src="{$context}/hui/{$pathVersion}js/TimeLine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/TimeLine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:columns">
-        <script src="{$context}/hui/{$pathVersion}js/Columns.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/Columns.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:keyboard-navigator">
-        <script src="{$context}/hui/{$pathVersion}js/KeyboardNavigator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/KeyboardNavigator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:diagram">
-        <script src="{$context}/hui/{$pathVersion}js/Drawing.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-        <script src="{$context}/hui/{$pathVersion}js/Diagram.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/Drawing.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/Diagram.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:tiles">
-        <script src="{$context}/hui/{$pathVersion}js/Tiles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/Tiles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:foundation">
-        <script src="{$context}/hui/{$pathVersion}js/Foundation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/Foundation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:object-input">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/objectinput.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-        <script src="{$context}/hui/{$pathVersion}js/ObjectInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <link rel="stylesheet" href="{$context}/{$pathVersion}css/objectinput.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+        <script src="{$context}/{$pathVersion}js/ObjectInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:managed">
-        <script src="{$context}/hui/{$pathVersion}js/EditManager.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/EditManager.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:media-simulator">
-        <script src="{$context}/hui/{$pathVersion}js/MediaSimulator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/MediaSimulator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:clipboard">
-        <script src="{$context}/hui/{$pathVersion}js/Clipboard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+        <script src="{$context}/{$pathVersion}js/Clipboard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
 
       <xsl:for-each select="gui:localize[@source]">
@@ -203,7 +203,7 @@
   <xsl:param name="icon"/>
   <xsl:param name="size"/>
   <xsl:attribute name="style">
-    <xsl:text>background-image: url('</xsl:text><xsl:value-of select="$context"/><xsl:text>/hui/icons/</xsl:text><xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>.png');  background-image: -webkit-image-set(url('</xsl:text><xsl:value-of select="$context"/><xsl:text>/hui/icons/</xsl:text><xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>.png') 1x, url('</xsl:text><xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>x2.png') 2x);</xsl:text>
+    <xsl:text>background-image: url('</xsl:text><xsl:value-of select="$context"/><xsl:text>/icons/</xsl:text><xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>.png');  background-image: -webkit-image-set(url('</xsl:text><xsl:value-of select="$context"/><xsl:text>/icons/</xsl:text><xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>.png') 1x, url('</xsl:text><xsl:value-of select="$context"/>/icons/<xsl:value-of select="$icon"/><xsl:value-of select="$size"/><xsl:text>x2.png') 2x);</xsl:text>
   </xsl:attribute>
 </xsl:template>
 
@@ -443,7 +443,7 @@
 <xsl:template match="gui:frames">
   <html>
     <head>
-      <script src="{$context}/hui/{$pathVersion}bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+      <script src="{$context}/{$pathVersion}bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       <xsl:apply-templates select="gui:script"/>
     </head>
     <frameset rows="84,*" framespacing="0" frameborder="0" border="0">
@@ -1527,7 +1527,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <xsl:param name="name"/>
     <span class="hui_symbol">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-      <use xlink:href="{$context}/hui/symbols/all.svg#icon-{$name}"><xsl:comment/></use>
+      <use xlink:href="{$context}/symbols/all.svg#icon-{$name}"><xsl:comment/></use>
     </svg>
     </span>
   </xsl:template>
@@ -2452,7 +2452,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <span class="hui_icon">
         <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="32"/></xsl:call-template>
         <xsl:if test="@overlay">
-          <span class="hui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
+          <span class="hui_icon_overlay" style="background-image: url('{$context}/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
         </xsl:if>
         <xsl:if test="@badge!=''">
           <span class="hui_icon_badge"><xsl:value-of select="@badge"/></span>

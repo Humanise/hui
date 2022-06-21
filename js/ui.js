@@ -52,7 +52,7 @@ hui.ui.getURL = function(path) {
   if (ctx.substring(ctx.length - 1) === '/') {
     ctx = ctx.substring(0, ctx.length - 1);
   }
-  return ctx + '/hui/' + path;
+  return ctx + '/' + path;
 };
 
 /**
