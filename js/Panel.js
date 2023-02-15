@@ -95,10 +95,10 @@
     _positionInView : function() {
       var scrollTop = hui.window.getScrollTop();
       var winTop = hui.position.getTop(this.element);
-      if (winTop < scrollTop || winTop+this.element.clientHeight > hui.window.getViewHeight()+scrollTop) {
+      if (winTop < scrollTop || winTop + this.element.clientHeight > hui.window.getViewHeight()+scrollTop) {
         hui.animate({
           node: this.element,
-          css: {top: (scrollTop+40)+'px'},
+          css: {top: (scrollTop + 40) + 'px'},
           duration: 500,
           ease: hui.ease.slowFastSlow
         });
@@ -203,14 +203,15 @@
         height: this.element.clientHeight
       };
       var target = this._target;
-      var scrollOffset;
+      var panelScrollOffset = hui.position.getScrollOffset(this.element);
+      var targetScrollOffset;
       if (target.nodeType===1) {
-        scrollOffset = hui.position.getScrollOffset(this._target);
+        targetScrollOffset = hui.position.getScrollOffset(this._target);
         target = hui.position.get(this._target);
         target.height = this._target.offsetHeight || this._target.clientHeight;
         target.width = this._target.offsetWidth || this._target.clientWidth;
       } else {
-        scrollOffset = {top: 0, left: 0};
+        targetScrollOffset = {top: 0, left: 0};
       }
       var view = {
         height: hui.window.getViewHeight(),
@@ -241,12 +242,14 @@
         pos.top = target.top + target.height/2 - panel.height/2;
         pos.left = target.left + target.width + 5;
       }
-      pos.top -= scrollOffset.top;
-      pos.left -= scrollOffset.left;
+      var scrollDiff = {
+        top: (targetScrollOffset.top - panelScrollOffset.top),
+        left: (targetScrollOffset.left - panelScrollOffset.left)
+      }
       var gutter = 5;
-      pos.top = hui.between(gutter, pos.top, view.scrollTop + view.height - panel.height - gutter);
-      pos.left = hui.between(gutter, pos.left, view.scrollLeft + view.width - panel.width - gutter);
-      this.nodes.arrow.className = 'hui_panel_arrow hui_panel_arrow-'+orientation;
+      pos.top = hui.between(gutter + targetScrollOffset.top, pos.top - scrollDiff.top, view.scrollTop + view.height - panel.height - gutter);
+      pos.left = hui.between(gutter + targetScrollOffset.left, pos.left, view.scrollLeft + view.width - panel.width - gutter);
+      this.nodes.arrow.className = 'hui_panel_arrow hui_panel_arrow-' + orientation;
       if (orientation == 'above' || orientation == 'below') {
         hui.style.set(this.nodes.arrow,{
           left: hui.between(3, (target.left - pos.left + target.width/2 - 10), panel.width - 3 - 20) + 'px',
@@ -254,7 +257,7 @@
         });
       } else {
         hui.style.set(this.nodes.arrow,{
-          top: hui.between(3, (target.top - pos.top + target.height/2 - 10), panel.height - 3 - 20) + 'px',
+          top: hui.between(3, (target.top - pos.top + target.height/2 - 10) - scrollDiff.top, panel.height - 3 - 20) + 'px',
           left: ''
         });
       }
