@@ -119,13 +119,13 @@ hui.ui.Form.prototype = {
         w = hui.ui[item.type].create(item.options);
         field = g.add(w, item.label);
       }
+      else {
+        hui.log('buildGroup: Unable to find type: '+item.type);
+      }
       if (item.extra) {
         hui.each(item.extra, function(other) {
           field.add(other);
         });
-      }
-      else {
-        hui.log('buildGroup: Unable to find type: '+item.type);
       }
     });
     return g;

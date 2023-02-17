@@ -294,6 +294,9 @@
       hui.cls.add(this.element, 'hui-is-animating');
       this.element.style.opacity='0';
       setTimeout(function() {
+        if (this.visible == true) {
+          return;
+        }
         hui.cls.remove(this.element, 'hui-is-animating');
         this.element.style.display='none';
         hui.ui.callVisible(this);

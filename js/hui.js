@@ -1285,7 +1285,7 @@ hui.cls = {
    */
   add : function(element, className) {
       element = hui.get(element);
-    if (!element) {
+    if (!element || !className) {
       return;
     }
     if (element.classList && className.indexOf(' ') === -1) {
@@ -1745,7 +1745,11 @@ hui.request = function(options) {
     }
   };
   var method = options.method.toUpperCase();
-  transport.open(method, options.url, options.async);
+  var url = options.url;
+  if (method == 'DELETE' && options.parameters) {
+    url += '?' + hui.request._buildPostBody(options.parameters)
+  }
+  transport.open(method, url, options.async);
   var body = null;
   if (method=='POST' && options.file) {
     if (false) {
@@ -1784,7 +1788,7 @@ hui.request = function(options) {
     for (var j = 0; j < options.files.length; j++) {
       body.append('file'+j, options.files[j]);
     }
-  } else if (options.parameters) {
+  } else if (options.parameters && method !== 'DELETE') {
     body = hui.request._buildPostBody(options.parameters);
     transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
   } else {

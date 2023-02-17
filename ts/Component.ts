@@ -26,9 +26,9 @@ class SelectOption {
 interface Valuable {
   value: any;
 
-  setValue(value:any);
+  setValue(value:any) : void;
 
-  getValue(value:any);
+  getValue(value:any) : any;
 }
 
 class SelectOne extends Component implements Valuable {

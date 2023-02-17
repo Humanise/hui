@@ -96,6 +96,7 @@
 
       field.setValue();
       assert.equal(field.getValue(),0,'field value = 0');
+      var done = assert.async();
 
       syn.type( input, "ab", function() {
         assert.equal(field.getValue(),0,'field value = 0');
@@ -107,6 +108,7 @@
           syn.type( input, "0", function() {
             assert.equal(input.value,'20','input value = "20"');
             assert.equal(field.getValue(),10,'field value = 10');
+            done();
           } );
         } );
       });

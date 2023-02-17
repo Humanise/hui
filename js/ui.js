@@ -38,7 +38,12 @@ hui.ui.getContext = function() {
     if (node) {
       this.context = node.getAttribute('data-hui-context');
     } else {
-      this.context = '/';
+      var scrp = hui.find("script[src$=\"js/hui.js\"]")
+      if (scrp) {
+        this.context = scrp.getAttribute('src').replaceAll(/js\/hui.js$/g,'');
+      } else {
+        this.context = '/';
+      }
     }
   }
   return this.context;
@@ -113,8 +118,9 @@ hui.ui._afterResize = function() {
 /**
  * Show a confirming overlay
  * <pre><strong>options:</strong> {
- *  element : Element, // the element to show at
- *  widget : Widget, // the widget to show at
+ *  element : Element, // the element to show at (use target)
+ *  widget : Widget, // the widget to show at (use target)
+ *  target : Component or element, // the widget to show at
  *  text : String, // the text message
  *  okText : String, // text of OK button
  *  cancelText String, // text of cancel button
@@ -132,6 +138,9 @@ hui.ui.confirmOverlay = function(options) {
   }
   if (options.widget) {
     node = options.widget.getElement();
+  }
+  if (options.target) {
+    node = hui.ui.getElement(options.target);
   }
   if (hui.ui.confirmOverlays[node]) {
     overlay = hui.ui.confirmOverlays[node];

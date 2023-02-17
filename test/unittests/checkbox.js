@@ -14,11 +14,13 @@ QUnit.test( "Basic properties",
     check.setValue(false);
     assert.equal(check.getValue(), false, 'It is not checked');
 
+    var done = assert.async();
     syn.click({}, check.element, function() {
       assert.equal(check.getValue(), true, 'It is now checked');
 
       syn.click({}, check.element, function() {
         assert.equal(check.getValue(), false, 'It is now checked');
+        done();
       })
     })
   }

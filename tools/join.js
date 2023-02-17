@@ -57,7 +57,7 @@ class Joiner {
       if (!src) continue
       var idx = src.indexOf(find)
       if (idx !== -1) {
-        return src.substring(0, idx).replace(/\/+$/,'');
+        return src.substring(0, idx).replace(/\\/+$/,'');
       }
     }
   })();
