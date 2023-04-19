@@ -35,6 +35,13 @@ module.exports = function(grunt) {
           spawn: false,
         }
       },
+      ts: {
+        files: ['ts/**/*.ts'],
+        tasks: ['shell:tsc'],
+        options: {
+          spawn: false,
+        }
+      },
       joined_css: {
         files: ['bin/joined.css','bin/joined.site.css'],
         tasks: ['cssmin'],
@@ -85,6 +92,9 @@ module.exports = function(grunt) {
       },
       join : {
         command : 'node tools/join.js'
+      },
+      tsc : {
+        command : 'npx tsc'
       }
     },
     uglify : {
@@ -116,13 +126,6 @@ module.exports = function(grunt) {
         files: {
           'bin/minimized.css': ['bin/joined.css']
         }
-      }
-    },
-    ts: {
-      default : {
-        src: ["ts/*.ts", "!node_modules/**"],
-        dest: 'ts',
-        rootDir: 'ts'
       }
     },
     jsbeautifier : {
@@ -164,14 +167,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks("grunt-jsbeautifier");
   grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-ts');
 
   // Default task(s).
   grunt.registerTask('default', 'Watch', ['sass','watch']);
 
-  grunt.registerTask('build', 'Build', ['sass', 'shell:join', 'uglify:joined', 'cssmin']);
+  grunt.registerTask('build', 'Build', ['sass', 'shell:join', 'uglify:joined', 'cssmin', 'shell:tsc']);
 
-  grunt.registerTask('doc', 'Build', ['jsdoc']);
+  grunt.registerTask('doc', 'Docs', ['jsdoc']);
 
   grunt.registerTask('test', 'Run tests', function(testname) {
     grunt.task.run('connect');

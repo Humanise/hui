@@ -24,10 +24,7 @@
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       -webkit-user-select: none;
-      scroll-snap-type: mandatory;
-      -webkit-scroll-snap-type: mandatory;
-      scroll-snap-points-x: repeat(100%);
-      -webkit-scroll-snap-points-x: repeat(100%); }
+      scroll-snap-type: x mandatory; }
   .hui_presentation_items {
     position: absolute;
     top: 0;
@@ -96,17 +93,15 @@
     transition: height .3s;
     -webkit-tap-highlight-color: transparent;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: mandatory;
-    -webkit-scroll-snap-type: mandatory;
-    scroll-snap-points-x: repeat(100px);
-    -webkit-scroll-snap-points-x: repeat(100px); }
+    scroll-snap-type: x mandatory; }
   .hui_presentation_thumbnail {
     width: 100px;
     height: 100px;
     white-space: nowrap;
     display: inline-block;
     background: 50% no-repeat;
-    background-size: contain; }
+    background-size: contain;
+    scroll-snap-align: left; }
   .hui_presentation_line {
     stroke: #fff;
     stroke-width: 1px;

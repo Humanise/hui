@@ -19,20 +19,27 @@ hui.ui.Overflow.create = function(options) {
     html : '<div class="hui_overflow_body"></div>'
   };
   if (options.height) {
-    attributes.style = {height:options.height+'px'};
+    attributes.style = {height: options.height + 'px'};
   }
-  options.element = hui.build('div.hui_overflow',attributes);
+  options.element = hui.build('div.hui_overflow', attributes);
   return new hui.ui.Overflow(options);
 };
 
 hui.ui.Overflow.prototype = {
   _attach : function() {
-    hui.listen(this.body,'scroll',this._checkShadows.bind(this));
+    hui.listen(this.body, 'scroll', function() {
+      hui.onDraw(this._checkShadows.bind(this));
+    }.bind(this));
   },
   _checkShadows : function() {
     if (hui.browser.msie) {return;}
     hui.cls.set(this.element, 'hui-is-top', this.body.scrollTop > 0);
-    hui.cls.set(this.element, 'hui-is-bottom', this.body.scrollHeight-this.body.scrollTop-this.body.clientHeight > 0);
+    hui.cls.set(this.element, 'hui-is-bottom', this.body.scrollHeight - this.body.scrollTop - this.body.clientHeight > 0);
+    clearTimeout(this._timer);
+    this._timer = setTimeout(this._fireScrolled.bind(this), 200);
+  },
+  _fireScrolled : function() {
+    this.fire('scrolled');
   },
   show : function() {
     this.element.style.display='';
@@ -54,7 +61,7 @@ hui.ui.Overflow.prototype = {
       this._checkShadows();
       return;
     }
-    this.element.style.height = hui.position.getRemainingHeight(this.element)+'px';
+    this.element.style.height = hui.position.getRemainingHeight(this.element) + 'px';
     this._checkShadows();
   },
   /** @private */
