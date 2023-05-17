@@ -152,6 +152,22 @@ module.exports = function(grunt) {
             return middlewares;
           }
         }
+      },
+      run: {
+        options: {
+          port: 8888,
+          base: '../',
+          keepalive: true,
+          middleware: function(connect, options, middlewares) {
+            // inject a custom middleware into the array of default middlewares
+            middlewares.unshift(function(req, res, next) {
+              req.method = 'GET';
+              return next();
+            });
+
+            return middlewares;
+          }
+        }
       }
     }
   });
@@ -176,7 +192,7 @@ module.exports = function(grunt) {
   grunt.registerTask('doc', 'Docs', ['jsdoc']);
 
   grunt.registerTask('test', 'Run tests', function(testname) {
-    grunt.task.run('connect');
+    grunt.task.run('connect:server');
     var tests = grunt.file.expand('test/unittests/*.html');
     if (!!testname) {
       tests = ['test/unittests/' + testname + '.html'];
@@ -186,5 +202,9 @@ module.exports = function(grunt) {
     }
     grunt.config('qunit.live.options.urls', tests);
     grunt.task.run('qunit:live');
+  });
+
+  grunt.registerTask('run', 'Run', function(testname) {
+    grunt.task.run('connect:run');
   });
 };
