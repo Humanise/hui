@@ -3,12 +3,13 @@
 <gui xmlns="uri:hui" padding="10" title="Button" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <script>
-    var overlay = hui.ui.Overlay.create();
-    overlay.addText('This is some text');
-    overlay.add(hui.ui.Button.create({text:'Highlighted',highlighted:true}));
-    overlay.add(hui.ui.Button.create({text:'Normal'}));
-    overlay.show();
-
+    hui.on(function() {
+      var overlay = hui.ui.Overlay.create();
+      overlay.addText('This is some text');
+      overlay.add(hui.ui.Button.create({text:'Highlighted',highlighted:true}));
+      overlay.add(hui.ui.Button.create({text:'Normal'}));
+      overlay.show();
+    })
   </script>
   <box width="800" title="Buttons" variant="textured" padding="10">
     <buttons>

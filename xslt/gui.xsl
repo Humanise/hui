@@ -33,53 +33,7 @@
       <xsl:if test="@adaptive='true'">
         <meta name="viewport" content="user-scalable=yes, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
       </xsl:if>
-      <xsl:choose>
-        <xsl:when test="$dev='true'">
-          <link rel="stylesheet" href="{$context}/{$pathVersion}bin/development.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <link rel="stylesheet" href="{$context}/{$pathVersion}bin/minimized.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-        </xsl:otherwise>
-      </xsl:choose>
-      <!--
-      <xsl:comment><![CDATA[[if IE 8]>
-        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie8.css]]><![CDATA["> </link>
-      <![endif]]]></xsl:comment>
-      <xsl:comment><![CDATA[[if lt IE 7]>
-        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie6.css]]><![CDATA["> </link>
-      <![endif]]]></xsl:comment>
-      <xsl:comment><![CDATA[[if IE 7]>
-        <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie7.css]]><![CDATA["> </link>
-      <![endif]]]></xsl:comment>
-      -->
-      <xsl:if test="//gui:graph">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/graph.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:if>
-      <xsl:if test="//gui:diagram">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/diagram.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:if>
-      <xsl:if test="//gui:keyboard-navigator">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/keyboardnavigator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:if>
-      <xsl:if test="//gui:chart">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/chart.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:if>
-      <xsl:if test="//gui:tiles">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/tiles.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:if>
-      <xsl:if test="//gui:timeline">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/timeline.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:if>
-      <xsl:if test="//gui:foundation">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/foundation.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:if>
-      <xsl:if test="//gui:media-simulator">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/mediasimulator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:if>
-
-      <xsl:for-each select="//gui:css">
-        <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:for-each>
+      <xsl:call-template name="gui:css"/>
       <xsl:apply-templates select="gui:style"/>
       <!--
       <xsl:comment><![CDATA[[if lt IE 9]>
@@ -87,84 +41,7 @@
       <![endif]]]></xsl:comment>
       -->
 
-      <xsl:choose>
-        <xsl:when test="$dev='true'">
-          <script src="{$context}/bin/development.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-        </xsl:when>
-        <xsl:otherwise>
-          <script src="{$context}/{$pathVersion}bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-        </xsl:otherwise>
-      </xsl:choose>
-
-      <xsl:for-each select="//gui:require">
-        <script src="{$context}/{$pathVersion}{@path}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:for-each>
-
-      <xsl:if test="//gui:graph">
-        <script src="{$context}/{$pathVersion}js/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:chart">
-        <script src="{$context}/{$pathVersion}js/Chart.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:timeline">
-        <script src="{$context}/{$pathVersion}js/TimeLine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:columns">
-        <script src="{$context}/{$pathVersion}js/Columns.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:keyboard-navigator">
-        <script src="{$context}/{$pathVersion}js/KeyboardNavigator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:diagram">
-        <script src="{$context}/{$pathVersion}js/Drawing.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-        <script src="{$context}/{$pathVersion}js/Diagram.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:tiles">
-        <script src="{$context}/{$pathVersion}js/Tiles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:foundation">
-        <script src="{$context}/{$pathVersion}js/Foundation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:object-input">
-        <link rel="stylesheet" href="{$context}/{$pathVersion}css/objectinput.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-        <script src="{$context}/{$pathVersion}js/ObjectInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:managed">
-        <script src="{$context}/{$pathVersion}js/EditManager.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:media-simulator">
-        <script src="{$context}/{$pathVersion}js/MediaSimulator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-      <xsl:if test="//gui:clipboard">
-        <script src="{$context}/{$pathVersion}js/Clipboard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:if>
-
-      <xsl:for-each select="gui:localize[@source]">
-        <script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:for-each>
-      <xsl:for-each select="gui:controller[@source]">
-        <script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:for-each>
-      <xsl:for-each select="gui:controller[@url]">
-        <script src="{@url}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-      </xsl:for-each>
-
-      <script type="text/javascript">
-        hui.ui.context = '<xsl:value-of select="$context"/>';
-        <xsl:if test="@state">
-          hui.ui.state = '<xsl:value-of select="@state"/>';
-        </xsl:if>
-        <xsl:if test="$language">
-          hui.ui.language = '<xsl:value-of select="$language"/>';
-        </xsl:if>
-        <xsl:for-each select="gui:controller[@source]|gui:controller[@url]">
-          <xsl:if test="@name">
-          if (window['<xsl:value-of select="@name"/>']!==undefined) {
-            hui.ui.listen(<xsl:value-of select="@name"/>);
-          }
-          </xsl:if>
-        </xsl:for-each>
-      </script>
+      <xsl:call-template name="gui:js"/>
       <xsl:apply-templates select="gui:script"/>
     </head>
     <body>
@@ -183,6 +60,142 @@
       <xsl:apply-templates select="child::*[not(name()='style') and not(name()='script')]"/>
     </body>
   </html>
+</xsl:template>
+
+<xsl:template name="gui:css">
+  <xsl:choose>
+    <xsl:when test="$dev='true'">
+      <link rel="stylesheet" href="{$context}/{$pathVersion}bin/development.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <link rel="stylesheet" href="{$context}/{$pathVersion}bin/minimized.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+    </xsl:otherwise>
+  </xsl:choose>
+  <!--
+  <xsl:comment><![CDATA[[if IE 8]>
+    <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie8.css]]><![CDATA["> </link>
+  <![endif]]]></xsl:comment>
+  <xsl:comment><![CDATA[[if lt IE 7]>
+    <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie6.css]]><![CDATA["> </link>
+  <![endif]]]></xsl:comment>
+  <xsl:comment><![CDATA[[if IE 7]>
+    <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie7.css]]><![CDATA["> </link>
+  <![endif]]]></xsl:comment>
+  -->
+  <xsl:if test="//gui:graph">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/graph.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
+  <xsl:if test="//gui:diagram">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/diagram.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
+  <xsl:if test="//gui:keyboard-navigator">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/keyboardnavigator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
+  <xsl:if test="//gui:chart">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/chart.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
+  <xsl:if test="//gui:tiles">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/tiles.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
+  <xsl:if test="//gui:timeline">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/timeline.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
+  <xsl:if test="//gui:foundation">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/foundation.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
+  <xsl:if test="//gui:media-simulator">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/mediasimulator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
+
+  <xsl:for-each select="//gui:css">
+    <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="gui:js">
+  <xsl:choose>
+    <xsl:when test="$dev='true'">
+      <script src="{$context}/bin/development.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+    </xsl:when>
+    <xsl:otherwise>
+      <script src="{$context}/{$pathVersion}bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+    </xsl:otherwise>
+  </xsl:choose>
+
+  <xsl:for-each select="//gui:require">
+    <script src="{$context}/{$pathVersion}{@path}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:for-each>
+
+  <xsl:if test="//gui:graph">
+    <script src="{$context}/{$pathVersion}js/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:chart">
+    <script src="{$context}/{$pathVersion}js/Chart.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:timeline">
+    <script src="{$context}/{$pathVersion}js/TimeLine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:columns">
+    <script src="{$context}/{$pathVersion}js/Columns.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:keyboard-navigator">
+    <script src="{$context}/{$pathVersion}js/KeyboardNavigator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:diagram">
+    <script src="{$context}/{$pathVersion}js/Drawing.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+    <script src="{$context}/{$pathVersion}js/Diagram.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:tiles">
+    <script src="{$context}/{$pathVersion}js/Tiles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:foundation">
+    <script src="{$context}/{$pathVersion}js/Foundation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:object-input">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/objectinput.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+    <script src="{$context}/{$pathVersion}js/ObjectInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:managed">
+    <script src="{$context}/{$pathVersion}js/EditManager.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:media-simulator">
+    <script src="{$context}/{$pathVersion}js/MediaSimulator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:clipboard">
+    <script src="{$context}/{$pathVersion}js/Clipboard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+
+  <xsl:for-each select="gui:localize[@source]">
+    <script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:for-each>
+  <xsl:for-each select="gui:controller[@source]">
+    <script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:for-each>
+  <xsl:for-each select="gui:controller[@url]">
+    <script src="{@url}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:for-each>
+
+  <script type="text/javascript">
+    hui.ui.context = '<xsl:value-of select="$context"/>';
+    <xsl:if test="@state">
+      hui.ui.state = '<xsl:value-of select="@state"/>';
+    </xsl:if>
+    <xsl:if test="$language">
+      hui.ui.language = '<xsl:value-of select="$language"/>';
+    </xsl:if>
+    <xsl:for-each select="gui:controller[@source]|gui:controller[@url]">
+      <xsl:if test="@name">
+      if (window['<xsl:value-of select="@name"/>']!==undefined) {
+        hui.ui.listen(<xsl:value-of select="@name"/>);
+      }
+      </xsl:if>
+    </xsl:for-each>
+  </script>
+</xsl:template>
+
+<xsl:template match="html:head/gui:head">
+  <xsl:call-template name="gui:css"/>
+  <xsl:call-template name="gui:js"/>
 </xsl:template>
 
 <xsl:template name="gui:test-name">
@@ -1157,8 +1170,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
     ···
 </html>
 -->
-<xsl:template match="html:html">
-  <xsl:copy-of select="child::*|child::text()"/>
+<xsl:template match="html:*">
+  <xsl:element name="{name()}">
+    <xsl:copy-of select="@*" />
+    <xsl:apply-templates/>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="gui:html">

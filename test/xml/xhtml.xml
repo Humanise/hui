@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="uri:hui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
+  <head>
+    <title>fasfda</title>
+    <ui:head/>
+  </head>
+<body>
+  <button>This is a regular HTML button</button>
+  <button text="Show the panel" click="panel.show()" xmlns="uri:hui">
+    <confirm text="Are you sure?" ok="Yes" cancel="No"/>
+  </button>
+  fasffafas
+  <p>sdfjahfdjshj</p>
+  <ui:panel title="This is the title" name="panel">
+    <div style="padding: 20px">This is some plain html</div>
+  </ui:panel>
+  <window xmlns="uri:hui" title="This is a window" name="myWindow" padding="10" width="400">
+    <form>
+    <fields>
+      <field label="Name">
+        <text-input/>
+      </field>
+      <field label="Name">
+        <datetime-input/>
+      </field>
+    </fields>
+    <buttons>
+      <button text="Create" highlighted="true"/>
+    </buttons>
+    </form>
+  </window>
+  <script>
+    hui.on(() => {myWindow.show()})
+  </script>
+</body>
+</html>
