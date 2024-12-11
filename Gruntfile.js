@@ -73,7 +73,8 @@ module.exports = function(grunt) {
     sass: {
       options: {
         implementation: sass,
-        sourceMap: false
+        sourceMap: false,
+        api: 'modern'
       },
       dist: {
         files: [{
@@ -177,7 +178,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-sass');
+  grunt.loadNpmTasks('grunt-sass-modern');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks("grunt-jsbeautifier");
@@ -186,7 +187,7 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask('default', 'Watch', ['sass','watch']);
 
-  grunt.registerTask('build', 'Build', ['sass', 'shell:join', 'uglify:joined', 'cssmin', 'shell:tsc']);
+  grunt.registerTask('build', 'Build', ['sass', 'shell:join', 'uglify:joined', 'cssmin'/*, 'shell:tsc'*/]);
 
   grunt.registerTask('doc', 'Docs', ['jsdoc']);
 
