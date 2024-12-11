@@ -1,4 +1,5 @@
-@import 'tools';
+@use "sass:color";
+@use 'tools' as *;
 
 .hui_list {
   font-family: $font;
@@ -34,7 +35,7 @@
 
 .hui_list th.sortable:hover {
   cursor: pointer;
-  @include vertical-gradient(darken(#fff,5%), darken(rgb(240,240,240),5%));
+  @include vertical-gradient(color.adjust(#fff, $lightness: -5%), color.adjust(rgb(240,240,240), $lightness: -5%));
 }
 
 .hui_list th.sort_ascending,

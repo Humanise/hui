@@ -1,12 +1,14 @@
 div.hui_split {
   height: 100%;
-  position: relative; }
+  position: relative;
+}
 
 div.hui_split_row {
   height: 33%;
   position: absolute;
   width: 100%;
-  overflow: hidden; }
+  overflow: hidden;
+}
 
 div.hui_split_handle {
   position: absolute;
@@ -17,4 +19,5 @@ div.hui_split_handle {
   background: #CCC -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#F0F0F0));
   background: -moz-linear-gradient(top, white, #F0F0F0);
   cursor: row-resize;
-  margin-top: -6px; }
+  margin-top: -6px;
+}

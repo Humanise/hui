@@ -1,37 +1,44 @@
 div.hui_colorpicker {
   margin-bottom: -3px;
-  border: 1px solid #ddd; }
+  border: 1px solid #ddd;
+}
 
 div.hui_colorpicker_preview {
   height: 24px;
   background: #fff;
   border: 1px solid #ddd;
-  border-width: 1px 0 0; }
+  border-width: 1px 0 0;
+}
 
 div.hui_colorpicker_pages {
   width: 256px;
   height: 256px;
   padding: 10px;
   background: #fff;
-  border-top: 1px solid #ddd; }
+  border-top: 1px solid #ddd;
+}
 
 div.hui_colorpicker_page {
   width: 256px;
   height: 256px;
-  display: none; }
+  display: none;
+}
 
 div.hui_colorpicker_wheel1 {
   background-image: url("../gfx/colorwheel1.png");
   cursor: crosshair;
-  display: block; }
+  display: block;
+}
 
 div.hui_colorpicker_wheel2 {
   background-image: url("../gfx/colorwheel2.png");
-  cursor: crosshair; }
+  cursor: crosshair;
+}
 
 div.hui_colorpicker_wheel3 {
   background-image: url("../gfx/colorwheel3.png");
-  cursor: crosshair; }
+  cursor: crosshair;
+}
 
 input.hui_colorpicker {
   margin: 3px 3px 0 0;
@@ -42,17 +49,20 @@ input.hui_colorpicker {
   font-size: 11px;
   font-family: Menlo, "Lucida Console", Monaco, monospace;
   height: 16px;
-  float: right; }
+  float: right;
+}
 
 div.hui_colorpicker_swatches {
   font-size: 0;
   width: 260px;
   margin-left: -2px;
   margin-top: -2px;
-  cursor: crosshair; }
+  cursor: crosshair;
+}
 
 div.hui_colorpicker_swatches a {
   display: inline-block;
   width: 18px;
   height: 18px;
-  border: 1px solid #fff; }
+  border: 1px solid #fff;
+}

@@ -1,7 +1,8 @@
 div.hui_chart {
   overflow: hidden;
   position: relative;
-  width: 100%; }
+  width: 100%;
+}
 
 div.hui_chart_legends {
   float: right;
@@ -13,7 +14,8 @@ div.hui_chart_legends {
   margin-top: 5px;
   position: relative;
   padding: 3px;
-  border-radius: 3px; }
+  border-radius: 3px;
+}
 
 div.hui_chart_legend em {
   display: inline-block;
@@ -21,14 +23,17 @@ div.hui_chart_legend em {
   width: 12px;
   height: 12px;
   margin-right: 5px;
-  vertical-align: middle; }
+  vertical-align: middle;
+}
 
 div.hui_chart_legend span {
   display: inline-block;
-  vertical-align: middle; }
+  vertical-align: middle;
+}
 
 span.hui_chart_label {
   position: absolute;
   text-align: center;
   width: 50px;
-  font: 9px Tahoma; }
+  font: 9px Tahoma;
+}

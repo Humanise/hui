@@ -1,4 +1,4 @@
-@import 'tools';
+@use 'tools' as *;
 
 .hui_tokenfield input {
   margin: 0 5px 5px 0;

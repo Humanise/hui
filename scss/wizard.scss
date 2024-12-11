@@ -1,4 +1,4 @@
-@import 'tools';
+@use 'tools' as *;
 
 table.hui_wizard, td.hui_wizard {
   width: 100%;

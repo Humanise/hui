@@ -14,22 +14,28 @@
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
   -webkit-appearance: none;
   box-sizing: border-box;
-  width: 100%; }
-  .hui_textinput:focus {
-    border: 1px solid #0069ff;
-    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
-    outline: none; }
-  .hui_textinput.hui-large {
-    font-size: 14px;
-    padding: 0 8px; }
+  width: 100%;
+}
+.hui_textinput:focus {
+  border: 1px solid #0069ff;
+  box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+  outline: none;
+}
+.hui_textinput.hui-large {
+  font-size: 14px;
+  padding: 0 8px;
+}
 
 input.hui_textinput {
-  height: 26px; }
-  input.hui_textinput.hui-small {
-    height: 22px;
-    font-size: 11px; }
-  input.hui_textinput.hui-large {
-    height: 30px; }
+  height: 26px;
+}
+input.hui_textinput.hui-small {
+  height: 22px;
+  font-size: 11px;
+}
+input.hui_textinput.hui-large {
+  height: 30px;
+}
 
 textarea.hui_textinput {
   height: 40px;
@@ -37,7 +43,8 @@ textarea.hui_textinput {
   padding: 3px 5px;
   resize: vertical;
   white-space: pre-wrap;
-  word-break: break-word; }
+  word-break: break-word;
+}
 
 .hui_textinput_dummy {
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
@@ -52,11 +59,15 @@ textarea.hui_textinput {
   padding: 3px 5px;
   border: 1px solid #000;
   min-height: 40px;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+}
 
 @media (max-width: 450px) {
   .hui_textinput, .hui_textinput_dummy {
-    font-size: 16px; }
+    font-size: 16px;
+  }
   textarea.hui_textinput, .hui_textinput_dummy {
     line-height: 18px;
-    min-height: 44px; } }
+    min-height: 44px;
+  }
+}

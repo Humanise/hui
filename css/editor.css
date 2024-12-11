@@ -4,51 +4,61 @@ textarea.hui_editor_header {
   position: absolute;
   padding: 0px;
   display: block;
-  outline: none; }
+  outline: none;
+}
 
 textarea.hui_editor_html {
   background: none;
   border: none;
   padding: 0px;
   display: block;
-  width: 100%; }
+  width: 100%;
+}
 
 .hui_editor_part_active {
   outline: 1px dashed #3875d7;
-  outline-offset: -1px; }
+  outline-offset: -1px;
+}
 
 div.hui_overlay_icon:hover {
   cursor: pointer;
-  filter: brightness(0.8); }
+  filter: brightness(0.8);
+}
 
 .hui_editor_part_hover {
   outline: 1px dashed rgba(0, 0, 0, 0.2);
-  outline-offset: -1px; }
+  outline-offset: -1px;
+}
 
 .hui_editor_column_hover {
   /*outline: 1px dashed #3875d7;*/
   outline: 1px dashed rgba(0, 0, 0, 0.2);
-  outline-offset: -1px; }
+  outline-offset: -1px;
+}
 
 .hui_editor_column_edit {
   outline: 2px dashed #3875d7 !important;
-  outline-offset: -2px; }
+  outline-offset: -2px;
+}
 
 .hui_editor_row_edit {
   outline: 2px dashed #3875d7 !important;
-  outline-offset: -2px; }
+  outline-offset: -2px;
+}
 
 div.hui_editor_drop_placeholder {
   position: relative;
   overflow: hidden;
-  height: 0px; }
+  height: 0px;
+}
 
 div.hui_editor_drop_placeholder div {
   height: 100%;
   border: 2px dashed #DDD;
   background: #F6F6F6;
   border-radius: 10px;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+}
 
 div.hui_editor_dragproxy {
   text-align: left;
@@ -56,11 +66,13 @@ div.hui_editor_dragproxy {
   top: 0px;
   left: 0px;
   z-index: 1001;
-  -webkit-transform-origin: 0 0; }
+  -webkit-transform-origin: 0 0;
+}
 
 div.hui_editor_dropmarker {
   position: absolute;
   height: 1px;
   background: #ABF;
   box-shadow: 0 0 4px 1px #abf;
-  z-index: 1000; }
+  z-index: 1000;
+}

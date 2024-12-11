@@ -3,34 +3,41 @@
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   position: relative;
   font-size: 0;
-  text-align: left; }
-  .hui_toolbar-centered {
-    text-align: center; }
-  .hui_toolbar-border-top {
-    border-top: 1px solid #ddd;
-    padding: 0;
-    border-top: 1px solid #fff;
-    background: #f2f2f3; }
-  .hui_toolbar-border-bottom {
-    border-bottom: 1px solid #ddd;
-    padding: 0;
-    border-top: 1px solid #fff;
-    background: #f2f2f3; }
-  .hui_toolbar-window {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #fff;
-    box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 #ccc; }
-  .hui_toolbar_right {
-    position: absolute;
-    right: 0;
-    top: 0; }
-  .hui_toolbar_divider {
-    vertical-align: middle;
-    display: inline-block;
-    border-right: 1px solid #fff;
-    border-left: 1px solid #ccc;
-    height: 45px;
-    margin: 1px 5px 0px; }
+  text-align: left;
+}
+.hui_toolbar-centered {
+  text-align: center;
+}
+.hui_toolbar-border-top {
+  border-top: 1px solid #ddd;
+  padding: 0;
+  border-top: 1px solid #fff;
+  background: #f2f2f3;
+}
+.hui_toolbar-border-bottom {
+  border-bottom: 1px solid #ddd;
+  padding: 0;
+  border-top: 1px solid #fff;
+  background: #f2f2f3;
+}
+.hui_toolbar-window {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #fff;
+  box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 #ccc;
+}
+.hui_toolbar_right {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.hui_toolbar_divider {
+  vertical-align: middle;
+  display: inline-block;
+  border-right: 1px solid #fff;
+  border-left: 1px solid #ccc;
+  height: 45px;
+  margin: 1px 5px 0px;
+}
 
 /********************************** Icon ************************/
 .hui_toolbar_icon {
@@ -41,89 +48,107 @@
   font-size: 0px;
   text-align: center;
   cursor: pointer;
-  text-decoration: none; }
-  .hui_toolbar_icon:focus {
-    height: 54px;
-    padding: 0 6px;
-    border: 1px solid #0069ff;
-    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
-    outline: none;
-    border-radius: 3px; }
-  .hui_toolbar_icon_selected {
-    background: rgba(0, 0, 40, 0.1);
-    background: radial-gradient(rgba(0, 0, 40, 0.05) 50%, rgba(0, 0, 40, 0.1) 100%);
-    box-shadow: inset 0 0px 6px rgba(0, 0, 40, 0.2);
-    padding: 1px 9px;
-    margin: 0 -2px; }
-    .hui_toolbar_icon_selected:focus {
-      padding: 0px 8px; }
-  .hui_toolbar_icon_text {
-    font-size: 11px;
-    color: #345;
-    font-weight: normal;
-    display: block; }
-  .hui_toolbar_icon .hui_icon {
-    height: 32px;
-    width: 32px;
-    margin: 4px auto 3px auto;
-    display: inline-block;
-    position: relative; }
-  .hui_toolbar_icon:active .hui_icon {
-    -webkit-transform: scale(0.9);
-    -moz-transform: scale(0.9);
-    -ms-transform: scale(0.9);
-    transform: scale(0.9); }
-  .hui_toolbar_icon:hover .hui_icon {
-    filter: brightness(0.8); }
-  .hui_toolbar_icon_disabled {
-    opacity: 0.3;
-    cursor: default;
-    -webkit-filter: saturate(0);
-    -moz-filter: saturate(0);
-    filter: saturate(0); }
-    .hui_toolbar_icon_disabled:hover .hui_icon {
-      filter: none; }
+  text-decoration: none;
+}
+.hui_toolbar_icon:focus {
+  height: 54px;
+  padding: 0 6px;
+  border: 1px solid #0069ff;
+  box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+  outline: none;
+  border-radius: 3px;
+}
+.hui_toolbar_icon_selected {
+  background: rgba(0, 0, 40, 0.1);
+  background: radial-gradient(rgba(0, 0, 40, 0.05) 50%, rgba(0, 0, 40, 0.1) 100%);
+  box-shadow: inset 0 0px 6px rgba(0, 0, 40, 0.2);
+  padding: 1px 9px;
+  margin: 0 -2px;
+}
+.hui_toolbar_icon_selected:focus {
+  padding: 0px 8px;
+}
+.hui_toolbar_icon_text {
+  font-size: 11px;
+  color: #345;
+  font-weight: normal;
+  display: block;
+}
+.hui_toolbar_icon .hui_icon {
+  height: 32px;
+  width: 32px;
+  margin: 4px auto 3px auto;
+  display: inline-block;
+  position: relative;
+}
+.hui_toolbar_icon:active .hui_icon {
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  transform: scale(0.9);
+}
+.hui_toolbar_icon:hover .hui_icon {
+  filter: brightness(0.8);
+}
+.hui_toolbar_icon_disabled {
+  opacity: 0.3;
+  cursor: default;
+  -webkit-filter: saturate(0);
+  -moz-filter: saturate(0);
+  filter: saturate(0);
+}
+.hui_toolbar_icon_disabled:hover .hui_icon {
+  filter: none;
+}
 
 /************************************ Items *****************************/
 .hui_toolbar_item {
   display: inline-block;
   vertical-align: middle;
   padding: 0 5px;
-  height: 56px; }
-  .hui_toolbar_item_body {
-    display: block;
-    height: 39px;
-    text-align: center; }
-    .hui_toolbar_item_body:before {
-      content: '';
-      display: inline-block;
-      height: 39px;
-      vertical-align: middle; }
+  height: 56px;
+}
+.hui_toolbar_item_body {
+  display: block;
+  height: 39px;
+  text-align: center;
+}
+.hui_toolbar_item_body:before {
+  content: "";
+  display: inline-block;
+  height: 39px;
+  vertical-align: middle;
+}
 
 .hui_toolbar_label {
   color: #334455;
   display: block;
   font-size: 11px;
-  text-align: center; }
+  text-align: center;
+}
 
 /********************************* Grid ******************************/
 .hui_toolbar_grid {
   display: inline-table;
   border-collapse: collapse;
-  vertical-align: middle; }
-  .hui_toolbar_grid_cell {
-    padding: 0px;
-    height: 27px; }
-  .hui_toolbar_grid_label {
-    font-size: 11px;
-    color: #334455;
-    vertical-align: middle;
-    padding: 0px 4px 0 6px; }
+  vertical-align: middle;
+}
+.hui_toolbar_grid_cell {
+  padding: 0px;
+  height: 27px;
+}
+.hui_toolbar_grid_label {
+  font-size: 11px;
+  color: #334455;
+  vertical-align: middle;
+  padding: 0px 4px 0 6px;
+}
 
 th.hui_toolbar_grid_label {
   font-weight: normal;
   text-align: right;
-  height: 27px; }
+  height: 27px;
+}
 
 /************************** More ************************/
 .hui_toolbar_more_toggle {
@@ -137,13 +162,15 @@ th.hui_toolbar_grid_label {
   color: #666;
   text-decoration: none;
   margin: 0 5px;
-  cursor: pointer; }
-  .hui_toolbar_more_toggle:hover {
-    background: #ddd;
-    color: #333; }
-
+  cursor: pointer;
+}
+.hui_toolbar_more_toggle:hover {
+  background: #ddd;
+  color: #333;
+}
 .hui_toolbar_more_content {
-  display: none; }
-
+  display: none;
+}
 .hui_toolbar_more.hui_is_expanded .hui_toolbar_more_content {
-  display: inline-block; }
+  display: inline-block;
+}

@@ -1,4 +1,4 @@
-@import 'tools';
+@use 'tools' as *;
 
 .hui_bg_white, body.hui_bg_white {
   background: #fff;

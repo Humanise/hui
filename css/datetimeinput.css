@@ -1,5 +1,6 @@
 .hui_datetimeinput {
-  display: block; }
+  display: block;
+}
 
 .hui_datetimeinput_selector {
   position: absolute;
@@ -10,6 +11,8 @@
   background: url("../gfx/datetime14.png") no-repeat;
   display: inline-block;
   width: 14px;
-  height: 14px; }
-  .hui_datetimeinput_selector:hover {
-    background-position: 0 -14px; }
+  height: 14px;
+}
+.hui_datetimeinput_selector:hover {
+  background-position: 0 -14px;
+}

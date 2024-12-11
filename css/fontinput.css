@@ -1,6 +1,7 @@
 span.hui_fontinput {
   display: inline-block;
-  vertical-align: middle; }
+  vertical-align: middle;
+}
 
 a.hui_fontinput {
   background: #fff;
@@ -19,12 +20,15 @@ a.hui_fontinput {
   margin-left: 2px;
   border-radius: 3px;
   overflow: hidden;
-  box-sizing: boder-box; }
+  box-sizing: boder-box;
+}
 
 a.hui_fontinput:hover {
   background: #eee;
-  border: 1px solid #ccc; }
+  border: 1px solid #ccc;
+}
 
 a.hui_fontinput:focus {
   /*border-color: #2678ff;*/
-  outline: 4px auto #2678ff; }
+  outline: 4px auto #2678ff;
+}

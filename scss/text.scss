@@ -1,4 +1,4 @@
-@import 'tools';
+@use 'tools' as *;
 
 div.hui_text {
   font-family: $font;

@@ -1,12 +1,16 @@
 div.hui_rendering {
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  font-size: 12px; }
+  font-size: 12px;
+}
 
 div.hui_rendering p {
-  margin: 0; }
+  margin: 0;
+}
 
 .hui_rendering_dimmed {
-  color: #999; }
+  color: #999;
+}
 
 .hui_rendering_minor {
-  font-size: 10px; }
+  font-size: 10px;
+}

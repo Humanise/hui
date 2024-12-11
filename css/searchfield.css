@@ -16,61 +16,71 @@
   border-radius: 11px;
   position: relative;
   padding: 0 4px 0 20px;
-  font-size: 0; }
-  .hui_searchfield:before {
-    content: '';
-    position: absolute;
-    width: 13px;
-    height: 13px;
-    background: url("../symbols/search.svg") no-repeat;
-    background-size: contain;
-    top: 4px;
-    left: 4px;
-    opacity: .5; }
-  .hui_searchfield_input {
-    border: none;
-    background: none;
-    font-size: 12px;
-    height: 16px;
-    margin: 2px 0 0;
-    padding: 0;
-    width: 100%;
-    outline: none;
-    font-family: inherit; }
-  .hui_searchfield_reset {
-    position: absolute;
-    right: 6px;
-    top: 4px;
-    width: 12px;
-    height: 12px;
-    display: none;
-    font-size: 0;
-    background: url("../symbols/close.svg") no-repeat;
-    background-size: contain;
-    cursor: pointer;
-    opacity: .5; }
-    .hui_searchfield_reset:hover {
-      opacity: 1; }
-    .hui_searchfield-dirty .hui_searchfield_reset {
-      display: block; }
-  .hui_searchfield_placeholder {
-    position: absolute;
-    font-style: normal;
-    color: #999;
-    font-size: 11px;
-    line-height: 16px;
-    left: 20px;
-    height: 16px;
-    top: 2px; }
-    .hui_searchfield-dirty .hui_searchfield_placeholder,
-    .hui_searchfield-focus .hui_searchfield_placeholder {
-      display: none; }
-  .hui_searchfield-adaptive {
-    width: 100%;
-    min-width: 30px; }
-  .hui_searchfield-focus {
-    border: 1px solid #0069ff;
-    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
-    outline: none; }
-  .hui_searchfield-dirty {
-    background: #fff7a9; }
+  font-size: 0;
+}
+.hui_searchfield:before {
+  content: "";
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  background: url("../symbols/search.svg") no-repeat;
+  background-size: contain;
+  top: 4px;
+  left: 4px;
+  opacity: 0.5;
+}
+.hui_searchfield_input {
+  border: none;
+  background: none;
+  font-size: 12px;
+  height: 16px;
+  margin: 2px 0 0;
+  padding: 0;
+  width: 100%;
+  outline: none;
+  font-family: inherit;
+}
+.hui_searchfield_reset {
+  position: absolute;
+  right: 6px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  display: none;
+  font-size: 0;
+  background: url("../symbols/close.svg") no-repeat;
+  background-size: contain;
+  cursor: pointer;
+  opacity: 0.5;
+}
+.hui_searchfield_reset:hover {
+  opacity: 1;
+}
+.hui_searchfield-dirty .hui_searchfield_reset {
+  display: block;
+}
+.hui_searchfield_placeholder {
+  position: absolute;
+  font-style: normal;
+  color: #999;
+  font-size: 11px;
+  line-height: 16px;
+  left: 20px;
+  height: 16px;
+  top: 2px;
+}
+.hui_searchfield-dirty .hui_searchfield_placeholder, .hui_searchfield-focus .hui_searchfield_placeholder {
+  display: none;
+}
+.hui_searchfield-adaptive {
+  width: 100%;
+  min-width: 30px;
+}
+.hui_searchfield-focus {
+  border: 1px solid #0069ff;
+  box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+  outline: none;
+}
+.hui_searchfield-dirty {
+  background: #fff7a9;
+}

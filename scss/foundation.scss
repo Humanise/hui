@@ -1,4 +1,4 @@
-@import 'tools';
+@use 'tools' as *;
 
 .hui_foundation {
   position: relative;
@@ -313,11 +313,11 @@
       left: 0;
       width: 250px;
       box-shadow: none !important;
+      border-right: 1px solid $border-color;
       &_toggle,
       &_close {
         display: none;
       }
-      border-right: 1px solid $border-color;
     }
 
     &_main {

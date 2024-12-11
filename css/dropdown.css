@@ -6,7 +6,7 @@
   background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
   background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
   background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfd', endColorstr='#e3e7ea');
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfd", endColorstr="#e3e7ea");
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px;
@@ -27,76 +27,89 @@
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
   max-width: 100%;
   position: relative;
-  text-align: left; }
-  .hui_dropdown-adaptive {
-    width: 100%; }
-  .hui_dropdown:after {
-    content: '';
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: url("../gfx/drop.svg");
-    background-size: contain;
-    top: 50%;
-    margin-top: -4px;
-    right: 7px;
-    opacity: .6; }
-  .hui_dropdown:hover {
-    border-color: #d2d2d2 #b7b7b7 #9c9c9c;
-    background: linear-gradient(#f9f9f9, #d5dade); }
-  .hui_dropdown:focus {
-    border: 1px solid #0069ff;
-    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
-    outline: none; }
-  .hui_dropdown:active {
-    border-color: #9c9c9c #b7b7b7 #aeaeae;
-    background: linear-gradient(#f1f2f3, #d1d4d6);
-    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
-    text-shadow: none; }
-  .hui_dropdown_text {
-    display: block;
-    overflow: hidden;
-    font-weight: normal;
-    height: 100%;
-    width: 100%;
-    word-break: break-all; }
-  .hui_dropdown_placeholder {
-    color: #999;
-    font-size: 11px;
-    display: block;
-    font-style: italic;
-    padding-right: 2px; }
-  .hui_dropdown.hui_is_small {
-    height: 22px;
-    line-height: 20px; }
-  .hui_dropdown_options {
-    position: absolute;
-    display: none;
-    top: 0;
-    left: 0;
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 4px 0;
-    border-radius: 3px;
-    font-size: 12px;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-    overflow: auto;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-    text-align: left; }
-  .hui_dropdown_option {
-    padding: 2px 5px;
-    display: block;
-    text-decoration: none;
-    color: #333;
-    min-height: 15px;
-    cursor: pointer; }
-    .hui_dropdown_option.hui_selected {
-      background: #eee;
-      color: #000;
-      font-weight: bold; }
-    .hui_dropdown_option:hover {
-      background-color: #3875d7;
-      color: #fff; }
+  text-align: left;
+}
+.hui_dropdown-adaptive {
+  width: 100%;
+}
+.hui_dropdown:after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: url("../gfx/drop.svg");
+  background-size: contain;
+  top: 50%;
+  margin-top: -4px;
+  right: 7px;
+  opacity: 0.6;
+}
+.hui_dropdown:hover {
+  border-color: #d2d2d2 #b7b7b7 #9c9c9c;
+  background: linear-gradient(#f9f9f9, #d5dade);
+}
+.hui_dropdown:focus {
+  border: 1px solid #0069ff;
+  box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+  outline: none;
+}
+.hui_dropdown:active {
+  border-color: #9c9c9c #b7b7b7 #aeaeae;
+  background: linear-gradient(#f1f2f3, #d1d4d6);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
+}
+.hui_dropdown_text {
+  display: block;
+  overflow: hidden;
+  font-weight: normal;
+  height: 100%;
+  width: 100%;
+  word-break: break-all;
+}
+.hui_dropdown_placeholder {
+  color: #999;
+  font-size: 11px;
+  display: block;
+  font-style: italic;
+  padding-right: 2px;
+}
+.hui_dropdown.hui_is_small {
+  height: 22px;
+  line-height: 20px;
+}
+.hui_dropdown_options {
+  position: absolute;
+  display: none;
+  top: 0;
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 4px 0;
+  border-radius: 3px;
+  font-size: 12px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  text-align: left;
+}
+.hui_dropdown_option {
+  padding: 2px 5px;
+  display: block;
+  text-decoration: none;
+  color: #333;
+  min-height: 15px;
+  cursor: pointer;
+}
+.hui_dropdown_option.hui_selected {
+  background: #eee;
+  color: #000;
+  font-weight: bold;
+}
+.hui_dropdown_option:hover {
+  background-color: #3875d7;
+  color: #fff;
+}
 
 /* Adaptive */
 /** Mini bar variant **/
@@ -108,6 +121,8 @@
   font-size: 11px;
   line-height: 22px;
   border: none;
-  box-shadow: none; }
-  .hui_dropdown-bar_mini:hover {
-    background: #eee; }
+  box-shadow: none;
+}
+.hui_dropdown-bar_mini:hover {
+  background: #eee;
+}

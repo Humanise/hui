@@ -1,4 +1,4 @@
-@import 'tools';
+@use 'tools' as *;
 
 div,h1,h2,h3,h4,h5,h6,ol,ul {
   zoom: 1;

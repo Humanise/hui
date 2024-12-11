@@ -2,11 +2,13 @@
   display: inline-block;
   position: relative;
   vertical-align: middle;
-  padding-right: 28px; }
-  .hui_colorinput input {
-    font-size: 9pt;
-    font-family: Menlo, "Lucida Console", Monaco, monospace;
-    width: 62px; }
+  padding-right: 28px;
+}
+.hui_colorinput input {
+  font-size: 9pt;
+  font-family: Menlo, "Lucida Console", Monaco, monospace;
+  width: 62px;
+}
 
 .hui_colorinput_color {
   top: -1px;
@@ -25,4 +27,5 @@
   color: #ccc;
   line-height: 24px;
   outline: none;
-  background: #eee; }
+  background: #eee;
+}

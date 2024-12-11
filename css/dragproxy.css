@@ -5,8 +5,10 @@ div.hui_dragproxy {
   background: left top no-repeat;
   padding-left: 18px;
   height: 16px;
-  font-size: 9pt; }
+  font-size: 9pt;
+}
 
 div.hui_dragproxy span {
   padding: 1px 3px;
-  background: rgba(255, 255, 255, 0.8); }
+  background: rgba(255, 255, 255, 0.8);
+}

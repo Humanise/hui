@@ -3,16 +3,19 @@ div.hui_markupeditor {
   height: 200px;
   background: #fff;
   outline: none;
-  cursor: text; }
+  cursor: text;
+}
 
 .hui_markupeditor_highlighted {
   box-shadow: 0 0 5px #abf, 0 0 5px #abf;
-  border-radius: 3px; }
+  border-radius: 3px;
+}
 
 .hui_markupeditor_path {
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   font-size: 0;
-  text-align: left; }
+  text-align: left;
+}
 
 .hui_markupeditor_path a {
   display: inline-block;
@@ -21,7 +24,8 @@ div.hui_markupeditor {
   padding: 0 3px;
   font-size: 12px;
   color: #333;
-  text-decoration: none; }
+  text-decoration: none;
+}
 
 .hui_markupeditor_inlinepanel a {
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
@@ -29,4 +33,5 @@ div.hui_markupeditor {
   padding: 3px 5px;
   display: inline-block;
   font-size: 12px;
-  text-decoration: none; }
+  text-decoration: none;
+}

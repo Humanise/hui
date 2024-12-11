@@ -1,4 +1,4 @@
-@import 'tools';
+@use 'tools' as *;
 
 div.hui_progressbar {
   height: 22px;

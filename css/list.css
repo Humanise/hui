@@ -1,12 +1,14 @@
 .hui_list {
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  min-height: 100%; }
+  min-height: 100%;
+}
 
 .hui_list_table {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
-  background: #fff; }
+  background: #fff;
+}
 
 .hui_list th {
   text-align: left;
@@ -18,144 +20,173 @@
   line-height: 21px;
   height: 21px;
   background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
-  background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -moz-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -ms-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -o-linear-gradient(top, #fff, #f0f0f0);
-  background-image: linear-gradient(top, #fff, #f0f0f0);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
+  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
   cursor: default;
   padding: 0px 5px;
   font-weight: normal;
-  white-space: nowrap; }
+  white-space: nowrap;
+}
 
 .hui_list th span {
-  display: block; }
+  display: block;
+}
 
 .hui_list th.sortable:hover {
   cursor: pointer;
-  background-color: #f2f2f2;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#e3e3e3));
-  background-image: -webkit-linear-gradient(top, #f2f2f2, #e3e3e3);
-  background-image: -moz-linear-gradient(top, #f2f2f2, #e3e3e3);
-  background-image: -ms-linear-gradient(top, #f2f2f2, #e3e3e3);
-  background-image: -o-linear-gradient(top, #f2f2f2, #e3e3e3);
-  background-image: linear-gradient(top, #f2f2f2, #e3e3e3);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#e3e3e3'); }
+  background-color: rgb(242.25, 242.25, 242.25);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(242.25, 242.25, 242.25)), to(rgb(227.25, 227.25, 227.25)));
+  background-image: -webkit-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
+  background-image: -moz-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
+  background-image: -ms-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
+  background-image: -o-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
+  background-image: linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(242.25, 242.25, 242.25)", endColorstr="rgb(227.25, 227.25, 227.25)");
+}
 
 .hui_list th.sort_ascending,
 .hui_list th.sort_descending {
-  font-weight: bold; }
+  font-weight: bold;
+}
 
 .hui_list th.sort_ascending span {
-  background: url("../gfx/list_ascending.png") right center no-repeat; }
+  background: url("../gfx/list_ascending.png") right center no-repeat;
+}
 
 .hui_list th.sort_descending span {
-  background: url("../gfx/list_descending.png") right center no-repeat; }
+  background: url("../gfx/list_descending.png") right center no-repeat;
+}
 
 .hui_list td {
   font-size: 9pt;
   border-bottom: 1px solid #eee;
   padding: 3px 5px;
   vertical-align: top;
-  cursor: default; }
+  cursor: default;
+}
 
 .hui_list_wrap {
-  word-break: break-word; }
+  word-break: break-word;
+}
 
 .hui_list_object {
   overflow: hidden;
   padding-bottom: 2px;
   line-height: 16px;
   display: inline-block;
-  margin-right: 7px; }
+  margin-right: 7px;
+}
 
 .hui_list .hui_list_object .hui_icon {
-  margin: 0 4px 0 0; }
+  margin: 0 4px 0 0;
+}
 
 .hui_list .hui_icon {
   margin: 1px 4px 1px 1px;
-  float: left; }
+  float: left;
+}
 
 .hui_list del {
-  color: #999; }
+  color: #999;
+}
 
 .hui_list_icons {
   white-space: nowrap;
   font-size: 0;
   vertical-align: top;
   display: inline-block;
-  padding-left: 3px; }
+  padding-left: 3px;
+}
 
 .hui_list_icons .hui_icon {
   float: none;
-  margin: 0 3px 0 0; }
+  margin: 0 3px 0 0;
+}
 
 .hui_list_icon.hui_is_action {
-  opacity: .5; }
+  opacity: 0.5;
+}
 
 .hui_list_icon.hui_is_action:hover {
-  opacity: .8;
-  cursor: pointer; }
+  opacity: 0.8;
+  cursor: pointer;
+}
 
 .hui_list_symbol {
   vertical-align: top;
   margin: 0 2px;
-  color: rgba(0, 0, 0, 0.6); }
-  .hui_list_symbol.hui_is_action:hover {
-    color: #000;
-    cursor: pointer; }
-  .hui_list_selected .hui_list_symbol {
-    color: #fff;
-    text-shadow: none; }
-    .hui_list_selected .hui_list_symbol:hover {
-      color: #fff; }
+  color: rgba(0, 0, 0, 0.6);
+}
+.hui_list_symbol.hui_is_action:hover {
+  color: #000;
+  cursor: pointer;
+}
+.hui_list_selected .hui_list_symbol {
+  color: #fff;
+  text-shadow: none;
+}
+.hui_list_selected .hui_list_symbol:hover {
+  color: #fff;
+}
 
 .hui_list .hui_icon_12 {
-  margin-top: 1px; }
+  margin-top: 1px;
+}
 
 .hui_list_revealing {
-  visibility: hidden; }
+  visibility: hidden;
+}
 
 .hui_list tr:hover .hui_list_revealing {
-  visibility: visible; }
+  visibility: visible;
+}
 
 tbody.hui_list_selectable tr:hover {
   background-color: #EBF0F7;
   background-color: #fafafa;
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 .hui_list tr.hui_list_selected,
 .hui_list tr.hui_list_selected:hover {
   background-color: #3875d7;
   background: -moz-linear-gradient(top, #92BCFA, #5580ee);
   background: -webkit-gradient(linear, left top, left bottom, from(#92BCFA), to(#5580ee));
-  text-shadow: 0 -1px 0px #5070cc; }
+  text-shadow: 0 -1px 0px #5070cc;
+}
 
 .hui_list tr.hui_list_selected td {
-  color: #fff; }
+  color: #fff;
+}
 
 .hui_list tr.hui_list_selected p.hui_list_dimmed {
-  color: #def; }
+  color: #def;
+}
 
 .hui_list .window_page {
-  display: none; }
+  display: none;
+}
 
 .hui_list_navigation {
   display: none;
   /*background: url('../gfx/list_navigation.png');*/
   background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
-  background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -moz-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -ms-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -o-linear-gradient(top, #fff, #f0f0f0);
-  background-image: linear-gradient(top, #fff, #f0f0f0);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
+  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
   border-bottom: 1px solid #ccc;
   height: 26px;
-  padding: 0px 3px; }
+  padding: 0px 3px;
+}
 
 span.hui_list_count {
   float: right;
@@ -163,22 +194,26 @@ span.hui_list_count {
   height: 26px;
   line-height: 26px;
   font-size: 12px;
-  padding-right: 7px; }
+  padding-right: 7px;
+}
 
 .hui_list_selection {
   margin-top: 1px;
   float: left;
   height: 24px;
-  /*background: url('../gfx/list_box.png') repeat-x;*/ }
+  /*background: url('../gfx/list_box.png') repeat-x;*/
+}
 
 .hui_list_selection div {
   height: 24px;
-  /*background: url('../gfx/list_box.png') left -24px no-repeat;*/ }
+  /*background: url('../gfx/list_box.png') left -24px no-repeat;*/
+}
 
 .hui_list_selection div div {
   height: 24px;
   /*background: url('../gfx/list_box.png') right -48px no-repeat;*/
-  padding: 0px 2px; }
+  padding: 0px 2px;
+}
 
 .hui_list_selection a {
   font-size: 11px;
@@ -189,37 +224,45 @@ span.hui_list_count {
   margin-top: 4px;
   line-height: 16px;
   padding: 0px 4px;
-  border-radius: 4px; }
+  border-radius: 4px;
+}
 
 .hui_list_selection span {
   float: left;
   height: 16px;
   margin-top: 4px;
-  line-height: 16px; }
+  line-height: 16px;
+}
 
 .hui_list_selection a:hover {
   background: #ddd;
-  color: #000; }
+  color: #000;
+}
 
 .hui_list_selection a.hui_list_selected {
   background: #3875D7;
   background: #bbb;
   box-shadow: 0 1px 2px #666666 inset;
-  color: #fff; }
+  color: #fff;
+}
 
 p.hui_list_line {
   margin: 0;
-  overflow: hidden; }
+  overflow: hidden;
+}
 
 p.hui_list_dimmed,
 td.hui_list_dimmed {
-  color: #999; }
+  color: #999;
+}
 
 p.hui_list_minor {
-  font-size: 10px; }
+  font-size: 10px;
+}
 
 p.hui_list_mini {
-  font-size: 9px; }
+  font-size: 9px;
+}
 
 span.hui_list_badge {
   font-size: 9px;
@@ -227,18 +270,22 @@ span.hui_list_badge {
   border: 1px solid #eee;
   border-radius: 3px;
   margin-left: 4px;
-  color: #999; }
+  color: #999;
+}
 
 .hui_list tr:hover span.hui_list_badge {
   border-color: #ccc;
-  color: #666; }
+  color: #666;
+}
 
 tr.hui_list_selected span.hui_list_badge, .hui_list tr.hui_list_selected:hover span.hui_list_badge {
   color: #def;
-  border-color: #def; }
+  border-color: #def;
+}
 
 .hui_list_busy td {
-  color: #999; }
+  color: #999;
+}
 
 .hui_list_progress {
   display: inline-block;
@@ -248,23 +295,28 @@ tr.hui_list_selected span.hui_list_badge, .hui_list tr.hui_list_selected:hover s
   border: 1px solid #ddd;
   background: #fff;
   border-radius: 7px;
-  margin-top: 2px; }
+  margin-top: 2px;
+}
 
 .hui_list_progress > span {
   height: 100%;
   display: block;
   background: #ddd;
-  border-radius: 5px; }
+  border-radius: 5px;
+}
 
 /** errors **/
 .hui_list_error_content {
-  display: none; }
+  display: none;
+}
 
 .hui_list_error td {
-  color: red; }
+  color: red;
+}
 
 .hui_list_error .hui_list_error_content {
-  display: block; }
+  display: block;
+}
 
 p.hui_list_error_text {
   background: url("../gfx/warning_large.png") center 13px no-repeat;
@@ -272,13 +324,16 @@ p.hui_list_error_text {
   font-size: 12px;
   text-align: center;
   color: #999;
-  margin: 0; }
+  margin: 0;
+}
 
 .hui_list td a.hui_button {
-  margin: -2px 0; }
+  margin: -2px 0;
+}
 
 .hui_list_busy {
-  min-height: 26px; }
+  min-height: 26px;
+}
 
 .hui_list_spinner {
   position: absolute;
@@ -288,7 +343,8 @@ p.hui_list_error_text {
   width: 20px;
   margin: 2px;
   border: 1px solid #eee;
-  border-radius: 3px; }
+  border-radius: 3px;
+}
 
 .hui_list_busy_large .hui_list_spinner {
   height: 100%;
@@ -296,13 +352,16 @@ p.hui_list_error_text {
   background: url("../gfx/progress/spinner_white_32.gif") center center no-repeat;
   margin: 0;
   border: none;
-  border-radius: none; }
+  border-radius: none;
+}
 
 .hui_list_busy .hui_list_spinner {
-  display: block; }
+  display: block;
+}
 
 .hui_list tr.hui_drop td {
-  background: #779cd6 url("../gfx/hover_bg.png"); }
+  background: #779cd6 url("../gfx/hover_bg.png");
+}
 
 /************** Checkbox *************/
 a.hui_list_checkbox {
@@ -315,61 +374,71 @@ a.hui_list_checkbox {
   margin-top: 2px;
   background: #eee;
   background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
-  background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -moz-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -ms-linear-gradient(top, #fff, #f0f0f0);
-  background-image: -o-linear-gradient(top, #fff, #f0f0f0);
-  background-image: linear-gradient(top, #fff, #f0f0f0);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
+  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
   font-weight: bold;
   overflow: hidden;
   text-indent: -20px;
   text-shadow: none;
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 a.hui_list_checkbox:hover {
-  border: 1px solid #bbb; }
+  border: 1px solid #bbb;
+}
 
 tr.hui_list_checked {
   background: #ffe;
-  background: #eaf3ff; }
+  background: #eaf3ff;
+}
 
 .hui_list tbody.hui_list_selectable tr.hui_list_checked:hover {
   background: #f6f6e5;
-  background: #ddeafd; }
+  background: #ddeafd;
+}
 
 .hui_list tr.hui_list_checked td {
-  border-color: #d6e6fa; }
+  border-color: #d6e6fa;
+}
 
 tr.hui_list_checked a.hui_list_checkbox {
   filter: none;
   background: #fafafa url("../gfx/sprite.png");
-  background-image: url("../gfx/sprite.png"), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#f0f0f0));
-  background-image: url("../gfx/sprite.png"), -moz-linear-gradient(top, #fff, #f0f0f0);
-  background-image: url("../gfx/sprite.png"), -ms-linear-gradient(top, #fff, #f0f0f0);
+  background-image: url("../gfx/sprite.png"), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(rgb(240, 240, 240)));
+  background-image: url("../gfx/sprite.png"), -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: url("../gfx/sprite.png"), -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
   background-position: -2px 0;
-  border: 1px solid #bbb; }
+  border: 1px solid #bbb;
+}
 
 td.hui_list_checkbox {
-  text-align: center; }
+  text-align: center;
+}
 
 .hui_list table thead th.list_check {
   text-align: center;
   cursor: pointer;
-  width: 1%; }
+  width: 1%;
+}
 
 a.list_check_all {
   display: inline-block;
   width: 16px;
   height: 12px;
   background: url("../gfx/sprite.png") 0px -14px;
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 /* Ordering */
 .hui_list_order {
   width: 16px;
-  vertical-align: middle; }
+  vertical-align: middle;
+}
 
 .hui_list_order_handler {
   display: inline-block;
@@ -379,68 +448,84 @@ a.list_check_all {
   width: 16px;
   cursor: move;
   cursor: -webkit-grab;
-  cursor: -moz-grab; }
+  cursor: -moz-grab;
+}
 
 /* Native drop */
 .hui_list_drop {
-  background: #fff url("../gfx/hover_bg.png"); }
+  background: #fff url("../gfx/hover_bg.png");
+}
 
 .hui_list_drop table {
-  background: none; }
+  background: none;
+}
 
 /*** Light variant ***/
 .hui_list_light th {
   background: none;
   border-bottom: 1px solid #ddd;
-  color: #aaa; }
+  color: #aaa;
+}
 
 .hui_list_light th.sortable:hover {
   background: #f6f6f6;
-  color: #666; }
+  color: #666;
+}
 
 .hui_list_light th.sort_ascending,
 .hui_list_light th.sort_descending {
   background: none;
   color: #000;
-  font-weight: bold; }
+  font-weight: bold;
+}
 
 .hui_list_light th.sort_ascending:hover,
 .hui_list_light th.sort_descending:hover {
   background: #f6f6f6;
-  color: #000; }
+  color: #000;
+}
 
 .hui_list_light .hui_list_navigation {
   background: none;
-  border-bottom: 1px solid #eee; }
+  border-bottom: 1px solid #eee;
+}
 
 .hui_list_light .hui_list_selection a.hui_list_selected {
-  box-shadow: none; }
+  box-shadow: none;
+}
 
 /*** White variant ***/
 .hui_list_white table {
   background: none;
-  color: #fff; }
+  color: #fff;
+}
 
 .hui_list_white tr:hover {
-  background-color: rgba(255, 255, 255, 0.1); }
+  background-color: rgba(255, 255, 255, 0.1);
+}
 
 .hui_list_white p.hui_list_dimmed,
 .hui_list_white td.hui_list_dimmed {
-  color: rgba(255, 255, 255, 0.7); }
+  color: rgba(255, 255, 255, 0.7);
+}
 
 .hui_list_white td {
-  border-color: rgba(255, 255, 255, 0.1); }
+  border-color: rgba(255, 255, 255, 0.1);
+}
 
 .hui_list_empty {
-  display: none; }
+  display: none;
+}
 
 /*** Transparent variant ***/
 .hui_list_transparent td {
   border: none;
-  padding: 0; }
+  padding: 0;
+}
 
 .hui_list_transparent table {
-  background: none; }
+  background: none;
+}
 
 .hui_list_cell_card {
   margin: 5px 5px 2px 5px;
@@ -449,4 +534,5 @@ a.list_check_all {
   border-color: #f3f3f3 #e3e3e3 #ccc;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 2px 4px;
-  word-break: break-word; }
+  word-break: break-word;
+}

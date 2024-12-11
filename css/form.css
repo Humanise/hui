@@ -2,19 +2,22 @@
   padding: 0px;
   margin: 0px;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  text-align: left; }
+  text-align: left;
+}
 
 .hui_form_header {
   color: #0077cd;
   font-size: 13pt;
-  padding-bottom: 5px; }
+  padding-bottom: 5px;
+}
 
 /********************************** Field set *********************************/
 .hui_form_fieldset {
   border: 1px solid #ddd;
   padding: 10px 10px 5px;
   margin-top: 7px;
-  background: #fff; }
+  background: #fff;
+}
 
 .hui_form_fieldset_legend {
   position: absolute;
@@ -24,24 +27,29 @@
   padding: 0 4px;
   margin-left: -2px;
   color: #666;
-  border-radius: 4px; }
+  border-radius: 4px;
+}
 
 .hui_window .hui_form_fieldset_legend {
-  background: #f0f0f0; }
+  background: #f0f0f0;
+}
 
 .hui_window .hui_form_fieldset {
   background: #eee;
   border: 1px solid #ccc;
   border-radius: 3px 3px 3px 3px;
-  box-shadow: 0 1px 3px #DDDDDD inset; }
+  box-shadow: 0 1px 3px #DDDDDD inset;
+}
 
 /********************************** Fields *********************************/
 table.hui_form_fields {
   width: 100%;
-  border-collapse: collapse; }
+  border-collapse: collapse;
+}
 
 .hui_form_fields + .hui_form_fields {
-  margin-top: 5px; }
+  margin-top: 5px;
+}
 
 /********************************** Field *********************************/
 .hui_form_field_label {
@@ -49,26 +57,30 @@ table.hui_form_fields {
   font-size: 12px;
   font-weight: normal;
   line-height: 18px;
-  display: block; }
-
+  display: block;
+}
 .hui_form_field_hint {
   font-size: 10px;
   color: #999;
-  margin: 1px 0 0 0; }
-
+  margin: 1px 0 0 0;
+}
 .hui_form_field.hui-large .hui_form_field_label {
   font-size: 14px;
-  line-height: 22px; }
+  line-height: 22px;
+}
 
 .hui_form_field + .hui_form_field,
 .hui_form_field + script + .hui_form_field {
-  margin-top: 5px; }
+  margin-top: 5px;
+}
 
 tr.hui_form_field + tr.hui_form_field > td, tr.hui_form_field + tr.hui_form_field > th {
-  padding-top: 5px; }
+  padding-top: 5px;
+}
 
 form.hui_form table.split {
-  border-spacing: 5px 0px; }
+  border-spacing: 5px 0px;
+}
 
 .hui_form_fields th {
   width: 1%;
@@ -76,32 +88,40 @@ form.hui_form table.split {
   padding-right: 5px;
   text-align: right;
   white-space: nowrap;
-  line-height: 18px; }
-  .hui_form_fields th > label {
-    margin-top: 4px; }
+  line-height: 18px;
+}
+.hui_form_fields th > label {
+  margin-top: 4px;
+}
 
 /************************************** Buttons *********************************/
 .hui_form > .hui_buttons {
-  margin-top: 10px; }
+  margin-top: 10px;
+}
 
 .hui_form .hui_buttons {
-  justify-content: flex-end; }
+  justify-content: flex-end;
+}
 
 /************************* Override for windows *******************/
 div.hui_window label.hui_form_field {
-  background: #f0f0f0; }
+  background: rgb(240, 240, 240);
+}
 
 div.hui_form_fieldset label.hui_form_field,
 div.hui_window_news label.hui_form_field {
-  background: none; }
+  background: none;
+}
 
 div.hui_window_light label.hui_form_field {
   color: #333;
-  background: none; }
+  background: none;
+}
 
 body .hui_context_dark label.hui_form_field,
 .hui_context_dark .hui_checkbox,
 .hui_context_dark span.hui_radiobutton_label,
 .hui_context_dark th.hui_objectlist {
   color: #fff;
-  background: none; }
+  background: none;
+}

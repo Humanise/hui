@@ -1,4 +1,5 @@
-@import 'tools';
+@use "sass:color";
+@use 'tools' as *;
 
 .hui_buttons {
   display: flex;
@@ -245,7 +246,7 @@
 
     &:hover {
       box-shadow: 0 0 1px #666, inset 0 1px 0 #666;
-      @include vertical-gradient(darken(#5c5f63,5%), darken(#4f5152,5%));
+      @include vertical-gradient(color.adjust(#5c5f63, $lightness: -5%), color.adjust(#4f5152, $lightness: -5%));
     }
 
     &:active {
@@ -269,8 +270,8 @@
       }
 
       &:hover {
-        box-shadow: inset 0 1px 0px darken(rgb(46, 162, 255),5%), 0 0px 1px rgba(255, 255, 255, 0.35);
-        @include vertical-gradient(darken(#0a71ec,5%), darken(#005694,5%));
+        box-shadow: inset 0 1px 0px color.adjust(rgb(46, 162, 255), $lightness: -5%), 0 0px 1px rgba(255, 255, 255, 0.35);
+        @include vertical-gradient(color.adjust(#0a71ec, $lightness: -5%), color.adjust(#005694, $lightness: -5%));
       }
       &:active {
         box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0,0,0,.3);

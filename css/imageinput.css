@@ -7,12 +7,14 @@
   background: #fff center center no-repeat;
   margin-top: 2px;
   padding: 1px;
-  position: relative; }
+  position: relative;
+}
 
 .hui_imageinput:focus {
   outline: none;
   border-color: #2678ff;
-  outline: 4px auto #2678ff; }
+  outline: 4px auto #2678ff;
+}
 
 .hui_imageinput_clear {
   position: absolute;
@@ -22,19 +24,23 @@
   top: -8px;
   right: -8px;
   display: none;
-  outline: none; }
+  outline: none;
+}
 
 .hui_imageinput_clear:hover {
-  filter: brightness(0.8); }
+  filter: brightness(0.8);
+}
 
 .hui_imageinput_full:hover > .hui_imageinput_clear {
-  display: block; }
+  display: block;
+}
 
 .hui_imageinput_thumbs {
   width: 200px;
   height: 200px;
   overflow: auto;
-  margin-bottom: 5px; }
+  margin-bottom: 5px;
+}
 
 .hui_imageinput_thumbnail {
   float: left;
@@ -43,7 +49,9 @@
   border: 1px solid #ddd;
   margin: 1px 5px 5px 1px;
   cursor: pointer;
-  background: #fff center center no-repeat; }
+  background: #fff center center no-repeat;
+}
 
 .hui_imageinput_thumbnail:hover {
-  border-color: #3875d7; }
+  border-color: #3875d7;
+}

@@ -1,341 +1,406 @@
-@charset "UTF-8";
 .hui_foundation {
   position: relative;
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  -moz-box-sizing: border-box; }
-  .hui_foundation_overlay {
-    position: absolute;
-    top: 0;
-    left: -80%;
-    transition-property: left, width;
-    transition-duration: .3s;
-    bottom: 0;
-    width: 80%;
-    z-index: 2;
-    overflow: hidden;
-    box-sizing: border-box;
-    background: #fff; }
-    .hui_foundation_overlay_toggle {
-      position: absolute;
-      left: 0;
-      width: 30px;
-      height: 30px;
-      top: 0;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #888; }
-      .hui_foundation_overlay_toggle:before {
-        font-family: 'HUI' !important;
-        speak: none;
-        font-style: normal;
-        font-weight: normal;
-        font-variant: normal;
-        text-transform: none;
-        line-height: 1;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        content: "";
-        font-size: 16px; }
-      .hui_foundation_overlay_toggle:hover {
-        color: #000; }
-    .hui_foundation_overlay_title {
-      background-color: #fff;
-      background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
-      background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
-      background-image: -moz-linear-gradient(top, #fff, #f0f0f0);
-      background-image: -ms-linear-gradient(top, #fff, #f0f0f0);
-      background-image: -o-linear-gradient(top, #fff, #f0f0f0);
-      background-image: linear-gradient(top, #fff, #f0f0f0);
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-      border-bottom: 1px solid #ddd;
-      height: 30px;
-      top: 0;
-      position: absolute;
-      left: 0;
-      right: 0;
-      font-size: 14px;
-      z-index: 4;
-      display: block; }
-    .hui_foundation_overlay_close {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer; }
-      .hui_foundation_overlay_close:before {
-        font-family: 'HUI' !important;
-        speak: none;
-        font-style: normal;
-        font-weight: normal;
-        font-variant: normal;
-        text-transform: none;
-        line-height: 1;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        content: "";
-        font-size: 16px;
-        color: #888; }
-      .hui_foundation_overlay_close:hover:before {
-        color: #000; }
-  .hui_foundation_back {
-    line-height: 30px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 0 10px 0 25px;
-    font-size: 14px;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-    opacity: 0;
-    transition: opacity .3s;
-    cursor: pointer;
-    color: #888; }
-    .hui_foundation_back:before {
-      font-family: 'HUI' !important;
-      speak: none;
-      font-style: normal;
-      font-weight: normal;
-      font-variant: normal;
-      text-transform: none;
-      line-height: 1;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      content: "";
-      font-size: 16px;
-      position: absolute;
-      left: 5px;
-      top: 0;
-      line-height: inherit; }
-    .hui_foundation_back:hover {
-      color: #000; }
-  .hui_foundation_navigation {
-    position: absolute;
-    width: 100%;
-    top: 31px;
-    left: 0;
-    bottom: 0;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    overflow: hidden;
-    transition-property: left, width;
-    transition-duration: .3s; }
-  .hui_foundation_results {
-    position: absolute;
-    width: 100%;
-    top: 31px;
-    left: 100%;
-    bottom: 0;
-    background: #fff;
-    overflow: hidden;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    transition-property: left, width;
-    transition-duration: .3s; }
-  .hui_foundation_main {
-    position: absolute;
-    top: 0;
-    background: #fff;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    transition: left .3s, right .3s; }
-    .hui_foundation_main:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: url("../gfx/progress/spinner_white.svg") center center no-repeat;
-      background-size: 48px;
-      z-index: 2;
-      background-color: rgba(255, 255, 255, 0.5);
-      opacity: 0;
-      transition: opacity .5s;
-      transition-delay: .3s; }
-  .hui_foundation_main.hui-is-busy:before {
-    bottom: 0;
-    opacity: 1; }
-  .hui_foundation_actions {
-    background-color: #fff;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f0f0f0));
-    background-image: -webkit-linear-gradient(top, #fff, #f0f0f0);
-    background-image: -moz-linear-gradient(top, #fff, #f0f0f0);
-    background-image: -ms-linear-gradient(top, #fff, #f0f0f0);
-    background-image: -o-linear-gradient(top, #fff, #f0f0f0);
-    background-image: linear-gradient(top, #fff, #f0f0f0);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f0f0f0');
-    position: absolute;
-    top: 0;
-    height: 30px;
-    border-bottom: 1px solid #ddd;
-    right: 0;
-    left: 0;
-    padding: 0 0 0 30px; }
-    .hui_foundation_actions .hui_button, .hui_foundation_actions .hui_dropdown {
-      box-shadow: none; }
-    .hui_foundation_actions-details {
-      padding-right: 30px; }
-  .hui_foundation_content {
-    top: 31px;
-    left: 0;
-    position: absolute;
-    background: #fff;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 1; }
-  .hui_foundation_resize {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 5px;
-    z-index: 1;
-    cursor: col-resize; }
-    .hui_foundation_resize:hover {
-      background: rgba(0, 0, 0, 0.1); }
-    .hui_foundation_resize_navigation {
-      display: none; }
-  .hui_foundation_details {
-    position: absolute;
-    top: 0;
-    right: -300px;
-    transition: right .3s;
-    bottom: 0;
-    width: 300px;
-    z-index: 1;
-    background: #fff;
-    border-left: 1px solid #ddd;
-    margin-right: -1px;
-    padding-top: 30px; }
-    .hui_foundation_details_toggle {
-      position: absolute;
-      left: -30px;
-      width: 30px;
-      height: 30px;
-      top: 0;
-      transition: left .3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #888; }
-      .hui_foundation_details_toggle:before {
-        font-family: 'HUI' !important;
-        speak: none;
-        font-style: normal;
-        font-weight: normal;
-        font-variant: normal;
-        text-transform: none;
-        line-height: 1;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        content: "";
-        font-size: 16px; }
-      .hui_foundation_details_toggle:hover {
-        color: #000; }
-  .hui_foundation.hui-is-details-open .hui_foundation_details {
-    right: 0;
-    box-shadow: -10px 0 20px rgba(0, 0, 0, 0.1); }
-    .hui_foundation.hui-is-details-open .hui_foundation_details_toggle {
-      left: 0; }
-      .hui_foundation.hui-is-details-open .hui_foundation_details_toggle:before {
-        content: ""; }
-  .hui_foundation.hui-is-open .hui_foundation_overlay {
-    left: 0;
-    box-shadow: 10px 0 20px rgba(0, 0, 0, 0.1); }
-  .hui_foundation.hui-is-submerged .hui_foundation_navigation {
-    left: -100%; }
-  .hui_foundation.hui-is-submerged .hui_foundation_results {
-    left: 0%; }
-  .hui_foundation.hui-is-submerged .hui_foundation_back {
-    opacity: 1; }
+  -moz-box-sizing: border-box;
+}
+.hui_foundation_overlay {
+  position: absolute;
+  top: 0;
+  left: -80%;
+  transition-property: left, width;
+  transition-duration: 0.3s;
+  bottom: 0;
+  width: 80%;
+  z-index: 2;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #fff;
+}
+.hui_foundation_overlay_toggle {
+  position: absolute;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #888;
+}
+.hui_foundation_overlay_toggle:before {
+  font-family: "HUI" !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e916";
+  font-size: 16px;
+}
+.hui_foundation_overlay_toggle:hover {
+  color: #000;
+}
+.hui_foundation_overlay_title {
+  background-color: #fff;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
+  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  border-bottom: 1px solid #ddd;
+  height: 30px;
+  top: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-size: 14px;
+  z-index: 4;
+  display: block;
+}
+.hui_foundation_overlay_close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.hui_foundation_overlay_close:before {
+  font-family: "HUI" !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e917";
+  font-size: 16px;
+  color: #888;
+}
+.hui_foundation_overlay_close:hover:before {
+  color: #000;
+}
+.hui_foundation_back {
+  line-height: 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0 10px 0 25px;
+  font-size: 14px;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  opacity: 0;
+  transition: opacity 0.3s;
+  cursor: pointer;
+  color: #888;
+}
+.hui_foundation_back:before {
+  font-family: "HUI" !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e912";
+  font-size: 16px;
+  position: absolute;
+  left: 5px;
+  top: 0;
+  line-height: inherit;
+}
+.hui_foundation_back:hover {
+  color: #000;
+}
+.hui_foundation_navigation {
+  position: absolute;
+  width: 100%;
+  top: 31px;
+  left: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  overflow: hidden;
+  transition-property: left, width;
+  transition-duration: 0.3s;
+}
+.hui_foundation_results {
+  position: absolute;
+  width: 100%;
+  top: 31px;
+  left: 100%;
+  bottom: 0;
+  background: #fff;
+  overflow: hidden;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  transition-property: left, width;
+  transition-duration: 0.3s;
+}
+.hui_foundation_main {
+  position: absolute;
+  top: 0;
+  background: #fff;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  transition: left 0.3s, right 0.3s;
+}
+.hui_foundation_main:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: url("../gfx/progress/spinner_white.svg") center center no-repeat;
+  background-size: 48px;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  transition: opacity 0.5s;
+  transition-delay: 0.3s;
+}
+.hui_foundation_main.hui-is-busy:before {
+  bottom: 0;
+  opacity: 1;
+}
+.hui_foundation_actions {
+  background-color: #fff;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
+  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
+  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  position: absolute;
+  top: 0;
+  height: 30px;
+  border-bottom: 1px solid #ddd;
+  right: 0;
+  left: 0;
+  padding: 0 0 0 30px;
+}
+.hui_foundation_actions .hui_button, .hui_foundation_actions .hui_dropdown {
+  box-shadow: none;
+}
+.hui_foundation_actions-details {
+  padding-right: 30px;
+}
+.hui_foundation_content {
+  top: 31px;
+  left: 0;
+  position: absolute;
+  background: #fff;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+}
+.hui_foundation_resize {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 5px;
+  z-index: 1;
+  cursor: col-resize;
+}
+.hui_foundation_resize:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+.hui_foundation_resize_navigation {
+  display: none;
+}
+.hui_foundation_details {
+  position: absolute;
+  top: 0;
+  right: -300px;
+  transition: right 0.3s;
+  bottom: 0;
+  width: 300px;
+  z-index: 1;
+  background: #fff;
+  border-left: 1px solid #ddd;
+  margin-right: -1px;
+  padding-top: 30px;
+}
+.hui_foundation_details_toggle {
+  position: absolute;
+  left: -30px;
+  width: 30px;
+  height: 30px;
+  top: 0;
+  transition: left 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #888;
+}
+.hui_foundation_details_toggle:before {
+  font-family: "HUI" !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e916";
+  font-size: 16px;
+}
+.hui_foundation_details_toggle:hover {
+  color: #000;
+}
+.hui_foundation.hui-is-details-open .hui_foundation_details {
+  right: 0;
+  box-shadow: -10px 0 20px rgba(0, 0, 0, 0.1);
+}
+.hui_foundation.hui-is-details-open .hui_foundation_details_toggle {
+  left: 0;
+}
+.hui_foundation.hui-is-details-open .hui_foundation_details_toggle:before {
+  content: "\e917";
+}
+.hui_foundation.hui-is-open .hui_foundation_overlay {
+  left: 0;
+  box-shadow: 10px 0 20px rgba(0, 0, 0, 0.1);
+}
+.hui_foundation.hui-is-submerged .hui_foundation_navigation {
+  left: -100%;
+}
+.hui_foundation.hui-is-submerged .hui_foundation_results {
+  left: 0%;
+}
+.hui_foundation.hui-is-submerged .hui_foundation_back {
+  opacity: 1;
+}
 
 @media screen and (min-width: 600px) {
   .hui_foundation_navigation {
     left: 0%;
     width: 40%;
-    border-right: 1px solid #ddd; }
+    border-right: 1px solid #ddd;
+  }
   .hui_foundation_results {
     left: 40%;
-    width: 60%; }
+    width: 60%;
+  }
   .hui_foundation_back {
-    display: none; }
+    display: none;
+  }
   .hui_foundation.hui-is-submerged .hui_foundation_navigation {
-    left: 0%; }
+    left: 0%;
+  }
   .hui_foundation.hui-is-submerged .hui_foundation_results {
-    left: 40%; }
+    left: 40%;
+  }
   .hui_foundation_resize_navigation {
-    display: block; }
+    display: block;
+  }
   .hui_foundation_resize_overlay {
-    display: none; } }
-
+    display: none;
+  }
+}
 @media screen and (min-width: 800px) {
   .hui_foundation_overlay {
     left: 0;
     width: 250px;
     box-shadow: none !important;
-    border-right: 1px solid #ddd; }
-    .hui_foundation_overlay_toggle, .hui_foundation_overlay_close {
-      display: none; }
+    border-right: 1px solid #ddd;
+  }
+  .hui_foundation_overlay_toggle, .hui_foundation_overlay_close {
+    display: none;
+  }
   .hui_foundation_main {
-    left: 250px; }
+    left: 250px;
+  }
   .hui_foundation_navigation {
     left: 0%;
     width: 100%;
-    border: none; }
+    border: none;
+  }
   .hui_foundation_results {
     left: 100%;
-    width: 100%; }
+    width: 100%;
+  }
   .hui_foundation.hui-is-submerged .hui_foundation_navigation {
-    left: -100%; }
+    left: -100%;
+  }
   .hui_foundation.hui-is-submerged .hui_foundation_results {
-    left: 0%; }
+    left: 0%;
+  }
   .hui_foundation_back {
-    display: block; }
+    display: block;
+  }
   .hui_foundation_actions {
-    padding-left: 0; }
+    padding-left: 0;
+  }
   .hui_foundation_resize_navigation {
-    display: none; }
+    display: none;
+  }
   .hui_foundation_resize_overlay {
-    display: block; } }
-
+    display: block;
+  }
+}
 @media screen and (min-width: 1100px) {
   .hui_foundation_main {
-    left: 500px; }
+    left: 500px;
+  }
   .hui_foundation_overlay {
-    width: 500px; }
+    width: 500px;
+  }
   .hui_foundation_navigation {
     left: 0%;
     width: 40%;
-    border-right: 1px solid #ddd; }
+    border-right: 1px solid #ddd;
+  }
   .hui_foundation_results {
     left: 40%;
-    width: 60%; }
+    width: 60%;
+  }
   .hui_foundation.hui-is-submerged .hui_foundation_navigation {
-    left: 0%; }
+    left: 0%;
+  }
   .hui_foundation.hui-is-submerged .hui_foundation_results {
-    left: 40%; }
+    left: 40%;
+  }
   .hui_foundation_results, .hui_foundation_navigation {
-    top: 0; }
+    top: 0;
+  }
   .hui_foundation_overlay_title {
-    display: none; }
+    display: none;
+  }
   .hui_foundation_resize_navigation {
-    display: block; } }
-
+    display: block;
+  }
+}
 @media screen and (min-width: 1400px) {
   .hui_foundation.hui-is-details-open .hui_foundation_actions {
-    padding-right: 5px; }
+    padding-right: 5px;
+  }
   .hui_foundation.hui-is-details-open .hui_foundation_details {
     width: 20%;
-    box-shadow: none; }
+    box-shadow: none;
+  }
   .hui_foundation.hui-is-details-open .hui_foundation_main {
-    right: 20%; } }
+    right: 20%;
+  }
+}

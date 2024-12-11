@@ -7,46 +7,58 @@
   border-radius: 4px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
-  .hui_boundpanel_content {
-    overflow: hidden;
-    padding: 5px; }
-  .hui_boundpanel_arrow {
-    position: absolute;
-    width: 18px;
-    height: 37px;
-    z-index: 10;
-    margin-top: 17px;
-    background: url("../gfx/boundpanel_arrow.png"); }
-    .hui_boundpanel_arrow_left {
-      background-position: 0 0; }
-    .hui_boundpanel_arrow_right {
-      background-position: -18px 0; }
-    .hui_boundpanel_arrow_top {
-      width: 36px;
-      height: 18px;
-      background-position: 0 -37px; }
-    .hui_boundpanel_arrow_bottom {
-      width: 36px;
-      height: 18px;
-      background-position: 0 -55px; }
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.hui_boundpanel_content {
+  overflow: hidden;
+  padding: 5px;
+}
+.hui_boundpanel_arrow {
+  position: absolute;
+  width: 18px;
+  height: 37px;
+  z-index: 10;
+  margin-top: 17px;
+  background: url("../gfx/boundpanel_arrow.png");
+}
+.hui_boundpanel_arrow_left {
+  background-position: 0 0;
+}
+.hui_boundpanel_arrow_right {
+  background-position: -18px 0;
+}
+.hui_boundpanel_arrow_top {
+  width: 36px;
+  height: 18px;
+  background-position: 0 -37px;
+}
+.hui_boundpanel_arrow_bottom {
+  width: 36px;
+  height: 18px;
+  background-position: 0 -55px;
+}
 
 .hui_boundpanel-light {
   background: #fff;
-  border-color: #ddd; }
-  .hui_boundpanel-light .hui_boundpanel_arrow_left {
-    height: 23px;
-    width: 12px;
-    background-position: 0 -78px; }
-  .hui_boundpanel-light .hui_boundpanel_arrow_right {
-    height: 23px;
-    width: 12px;
-    background-position: -24px -78px; }
-  .hui_boundpanel-light .hui_boundpanel_arrow_top {
-    width: 23px;
-    height: 12px;
-    background-position: -8px -100px; }
-  .hui_boundpanel-light .hui_boundpanel_arrow_bottom {
-    width: 23px;
-    height: 12px;
-    background-position: -8px -115px; }
+  border-color: #ddd;
+}
+.hui_boundpanel-light .hui_boundpanel_arrow_left {
+  height: 23px;
+  width: 12px;
+  background-position: 0 -78px;
+}
+.hui_boundpanel-light .hui_boundpanel_arrow_right {
+  height: 23px;
+  width: 12px;
+  background-position: -24px -78px;
+}
+.hui_boundpanel-light .hui_boundpanel_arrow_top {
+  width: 23px;
+  height: 12px;
+  background-position: -8px -100px;
+}
+.hui_boundpanel-light .hui_boundpanel_arrow_bottom {
+  width: 23px;
+  height: 12px;
+  background-position: -8px -115px;
+}

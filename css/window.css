@@ -1,139 +1,156 @@
-@charset "UTF-8";
 .hui_window {
   position: absolute;
   top: 50px;
   left: 300px;
   display: none;
-  opacity: 0; }
-  .hui_window_front {
-    background: rgba(239, 239, 239, 0.95);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    border-color: #e6e6e6 #ddd #ccc; }
-  .hui_window_titlebar {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-    height: 26px;
-    cursor: default;
-    text-align: center;
-    cursor: move;
-    cursor: -webkit-grab;
-    cursor: -moz-grab;
-    background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 50%);
-    line-height: 26px;
-    font-size: 10pt;
-    color: #333;
-    text-shadow: 0 1px white;
-    border-radius: 2px; }
-    .hui_window_dragging .hui_window_titlebar {
-      cursor: -webkit-grabbing;
-      cursor: -moz-grabbing; }
-  .hui_window_icon {
-    font-size: 0;
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    margin-right: 5px;
-    vertical-align: top;
-    margin-top: 5px; }
-  .hui_window_body {
-    overflow: hidden; }
-  .hui_window_close {
-    font-size: 0;
-    position: absolute;
-    cursor: pointer;
-    left: 0;
-    top: 0;
-    padding: 4px;
-    border-radius: 2px;
-    color: #666; }
-    .hui_window_close:before {
-      font-family: 'HUI' !important;
-      speak: none;
-      font-style: normal;
-      font-weight: normal;
-      font-variant: normal;
-      text-transform: none;
-      line-height: 1;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      content: "";
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-      display: inline-block;
-      padding: 1px;
-      border-radius: 3px; }
-    .hui_window_close:hover:before {
-      background: rgba(0, 0, 0, 0.1);
-      color: #000; }
-  .hui_window_back {
-    position: absolute;
-    width: 100%;
-    background: #333 url("../gfx/backgrounds/brushed.png");
-    border-radius: 8px;
-    -webkit-box-sizing: border-box;
-    border: 1px solid #555; }
-  .hui_window_busy {
-    position: absolute;
-    top: 26px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(241, 241, 241, 0.7);
-    z-index: 1;
-    border-radius: 3px;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif; }
-    .hui_window_busy_text {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      top: 30%;
-      background: url("../gfx/progress/spinner_white.svg") center top no-repeat;
-      background-size: 32px;
-      padding-top: 35px;
-      font-size: 12px;
-      text-shadow: 0 1px white; }
-    .hui_window_busy-legacy .hui_window_busy_text {
-      background-image: url("../gfx/progress/spinner_white_32.gif"); }
+  opacity: 0;
+}
+.hui_window_front {
+  background: rgba(239, 239, 239, 0.95);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  border-color: #e6e6e6 #ddd #ccc;
+}
+.hui_window_titlebar {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  height: 26px;
+  cursor: default;
+  text-align: center;
+  cursor: move;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 50%);
+  line-height: 26px;
+  font-size: 10pt;
+  color: #333;
+  text-shadow: 0 1px white;
+  border-radius: 2px;
+}
+.hui_window_dragging .hui_window_titlebar {
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+}
+.hui_window_icon {
+  font-size: 0;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  vertical-align: top;
+  margin-top: 5px;
+}
+.hui_window_body {
+  overflow: hidden;
+}
+.hui_window_close {
+  font-size: 0;
+  position: absolute;
+  cursor: pointer;
+  left: 0;
+  top: 0;
+  padding: 4px;
+  border-radius: 2px;
+  color: #666;
+}
+.hui_window_close:before {
+  font-family: "HUI" !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e917";
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  padding: 1px;
+  border-radius: 3px;
+}
+.hui_window_close:hover:before {
+  background: rgba(0, 0, 0, 0.1);
+  color: #000;
+}
+.hui_window_back {
+  position: absolute;
+  width: 100%;
+  background: #333 url("../gfx/backgrounds/brushed.png");
+  border-radius: 8px;
+  -webkit-box-sizing: border-box;
+  border: 1px solid #555;
+}
+.hui_window_busy {
+  position: absolute;
+  top: 26px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(241, 241, 241, 0.7);
+  z-index: 1;
+  border-radius: 3px;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+}
+.hui_window_busy_text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 30%;
+  background: url("../gfx/progress/spinner_white.svg") center top no-repeat;
+  background-size: 32px;
+  padding-top: 35px;
+  font-size: 12px;
+  text-shadow: 0 1px white;
+}
+.hui_window_busy-legacy .hui_window_busy_text {
+  background-image: url("../gfx/progress/spinner_white_32.gif");
+}
 
 .hui_window_light .hui_window_front {
   border: 1px solid #ddd;
   background: #fff;
   border-radius: 5px;
-  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.1); }
-
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.1);
+}
 .hui_window_light .hui_window_titlebar {
-  background: none; }
-
+  background: none;
+}
 .hui_window_light .hui_window_close:hover:before {
   background: #eee;
-  color: #000; }
-
+  color: #000;
+}
 .hui_window_light .hui_window_busy {
   top: 26px;
-  background: rgba(255, 255, 255, 0.7); }
+  background: rgba(255, 255, 255, 0.7);
+}
 
 .hui_window_dark .hui_window_front {
   background: rgba(19, 19, 19, 0.9);
-  border: none; }
-
+  border: none;
+}
 .hui_window_dark .hui_window_titlebar {
   background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 50%);
   color: #fff;
-  text-shadow: 0 -1px #000; }
-
+  text-shadow: 0 -1px #000;
+}
 .hui_window_dark .hui_window_close {
-  color: #fff; }
-  .hui_window_dark .hui_window_close:hover:before {
-    background: #666;
-    color: #fff; }
-
+  color: #fff;
+}
+.hui_window_dark .hui_window_close:hover:before {
+  background: #666;
+  color: #fff;
+}
 .hui_window_dark .hui_window_busy {
-  background: rgba(42, 42, 42, 0.7); }
-  .hui_window_dark .hui_window_busy_text {
-    color: #fff;
-    text-shadow: 0 -1px #000;
-    background-image: url("../gfx/progress/spinner_black.svg"); }
-  .hui_window_dark .hui_window_busy-legacy .hui_window_busy_text {
-    background-image: url("../gfx/progress/spinner_black_32.gif"); }
+  background: rgba(42, 42, 42, 0.7);
+}
+.hui_window_dark .hui_window_busy_text {
+  color: #fff;
+  text-shadow: 0 -1px #000;
+  background-image: url("../gfx/progress/spinner_black.svg");
+}
+.hui_window_dark .hui_window_busy-legacy .hui_window_busy_text {
+  background-image: url("../gfx/progress/spinner_black_32.gif");
+}

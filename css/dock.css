@@ -3,99 +3,123 @@
   top: 0;
   bottom: 0;
   left: 0;
-  right: 0; }
-  .hui_dock_frame {
-    height: 100%;
-    width: 100%;
-    border: none;
-    font-size: 0px;
-    background: #fff;
-    display: block; }
-  .hui_dock_bar {
-    position: absolute;
-    width: 100%; }
-    .hui_dock-bottom .hui_dock_bar {
-      bottom: 0; }
-    .hui_dock-top .hui_dock_bar {
-      top: 0; }
-  .hui_dock_body {
-    position: absolute;
-    width: 100%;
-    top: 0;
-    bottom: 0; }
-    .hui_dock-bottom .hui_dock_body {
-      bottom: 57px; }
-    .hui_dock-bottom-tabs .hui_dock_body {
-      bottom: 82px; }
-    .hui_dock-top .hui_dock_body {
-      top: 57px; }
-    .hui_dock-top-tabs .hui_dock_body {
-      top: 82px; }
-  .hui_dock_main {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0; }
-  .hui_dock-sidebar .hui_dock_main {
-    left: 200px; }
-  .hui_dock_progress {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background: url("../gfx/progress/spinner_white.svg") center center no-repeat;
-    background-size: 48px;
-    display: none;
-    pointer-events: none; }
-    .hui_dock.hui-is-busy .hui_dock_progress {
-      display: block; }
-    .hui_dock.hui-is-legacy .hui_dock_progress {
-      background-image: url("../gfx/progress/spinner_white_48.gif"); }
-  .hui_dock_sidebar {
-    background: #EBF0F7;
-    width: 199px;
-    border-right: 1px solid #bcd;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    overflow: hidden; }
-    .hui_dock_sidebar_line {
-      position: absolute;
-      top: 0;
-      left: 195px;
-      bottom: 0;
-      width: 5px; }
-      .hui_dock_sidebar_line:hover {
-        background: #ddd;
-        background: rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        cursor: col-resize; }
+  right: 0;
+}
+.hui_dock_frame {
+  height: 100%;
+  width: 100%;
+  border: none;
+  font-size: 0px;
+  background: #fff;
+  display: block;
+}
+.hui_dock_bar {
+  position: absolute;
+  width: 100%;
+}
+.hui_dock-bottom .hui_dock_bar {
+  bottom: 0;
+}
+.hui_dock-top .hui_dock_bar {
+  top: 0;
+}
+.hui_dock_body {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+}
+.hui_dock-bottom .hui_dock_body {
+  bottom: 57px;
+}
+.hui_dock-bottom-tabs .hui_dock_body {
+  bottom: 82px;
+}
+.hui_dock-top .hui_dock_body {
+  top: 57px;
+}
+.hui_dock-top-tabs .hui_dock_body {
+  top: 82px;
+}
+.hui_dock_main {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.hui_dock-sidebar .hui_dock_main {
+  left: 200px;
+}
+.hui_dock_progress {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: url("../gfx/progress/spinner_white.svg") center center no-repeat;
+  background-size: 48px;
+  display: none;
+  pointer-events: none;
+}
+.hui_dock.hui-is-busy .hui_dock_progress {
+  display: block;
+}
+.hui_dock.hui-is-legacy .hui_dock_progress {
+  background-image: url("../gfx/progress/spinner_white_48.gif");
+}
+.hui_dock_sidebar {
+  background: #EBF0F7;
+  width: 199px;
+  border-right: 1px solid #bcd;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+.hui_dock_sidebar_line {
+  position: absolute;
+  top: 0;
+  left: 195px;
+  bottom: 0;
+  width: 5px;
+}
+.hui_dock_sidebar_line:hover {
+  background: #ddd;
+  background: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  cursor: col-resize;
+}
 
 .hui_dock.hui-is-collapsed .hui_dock_main {
-  left: 10px; }
-
+  left: 10px;
+}
 .hui_dock.hui-is-collapsed .hui_dock_sidebar {
-  display: none; }
-  .hui_dock.hui-is-collapsed .hui_dock_sidebar_line {
-    background-color: #eee;
-    width: 9px;
-    border-right: 1px solid #ddd;
-    margin-left: -5px;
-    left: 5px; }
-    .hui_dock.hui-is-collapsed .hui_dock_sidebar_line:hover {
-      background: #ddd;
-      border-color: #ccc; }
+  display: none;
+}
+.hui_dock.hui-is-collapsed .hui_dock_sidebar_line {
+  background-color: #eee;
+  width: 9px;
+  border-right: 1px solid #ddd;
+  margin-left: -5px;
+  left: 5px;
+}
+.hui_dock.hui-is-collapsed .hui_dock_sidebar_line:hover {
+  background: #ddd;
+  border-color: #ccc;
+}
 
 .hui_dock.hui-is-resizing {
-  cursor: col-resize; }
-  .hui_dock.hui-is-resizing .hui_dock_main:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1; }
-  .hui_dock.hui-is-resizing .hui_dock_sidebar_line {
-    display: none; }
+  cursor: col-resize;
+}
+.hui_dock.hui-is-resizing .hui_dock_main:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+.hui_dock.hui-is-resizing .hui_dock_sidebar_line {
+  display: none;
+}

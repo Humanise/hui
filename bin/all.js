@@ -15207,8 +15207,16 @@ hui.component('Checkbox', {
   init : function(options) {
     hui.ui.addFocusClass({element: this.element, 'class': 'hui_checkbox_focused'});
   },
+  isVoid : function() {
+    var href = this.element.getAttribute('href');
+    return (href === '#' || href === 'javascript://');
+  },
   '!click' : function(e) {
-    e.prevent();
+    if (this.isVoid()) {
+      e.prevent();
+    } else {
+      return;
+    }
     if (!this.isEnabled()) { return }
     this.element.focus();
     this.setValue(!this.getValue());

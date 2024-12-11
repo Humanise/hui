@@ -14,43 +14,50 @@
   line-height: 20px;
   font-size: 14px;
   color: #383317;
-  box-sizing: border-box; }
-  .hui_message.hui-is-busy {
-    padding-left: 34px; }
-    .hui_message.hui-is-busy:before {
-      content: '';
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      background: url("../gfx/progress/spinner_white.svg");
-      left: 5px;
-      top: 50%;
-      margin-top: -12px; }
-  .hui_message.hui-is-success {
-    padding-left: 34px; }
-    .hui_message.hui-is-success:before {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: url("../symbols/smile.svg");
-      left: 7px;
-      top: 50%;
-      margin-top: -10px;
-      opacity: .7; }
-  .hui_message.hui-is-failure {
-    padding-left: 34px;
-    color: #e40058;
-    background: #ffe5e9;
-    border-color: #f4cdda;
-    border-top-color: #ffe3ed; }
-    .hui_message.hui-is-failure:before {
-      content: '';
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      background: url("../symbols/warning.svg");
-      left: 9px;
-      top: 50%;
-      margin-top: -9px;
-      opacity: .5; }
+  box-sizing: border-box;
+}
+.hui_message.hui-is-busy {
+  padding-left: 34px;
+}
+.hui_message.hui-is-busy:before {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: url("../gfx/progress/spinner_white.svg");
+  left: 5px;
+  top: 50%;
+  margin-top: -12px;
+}
+.hui_message.hui-is-success {
+  padding-left: 34px;
+}
+.hui_message.hui-is-success:before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: url("../symbols/smile.svg");
+  left: 7px;
+  top: 50%;
+  margin-top: -10px;
+  opacity: 0.7;
+}
+.hui_message.hui-is-failure {
+  padding-left: 34px;
+  color: #e40058;
+  background: #ffe5e9;
+  border-color: #f4cdda;
+  border-top-color: #ffe3ed;
+}
+.hui_message.hui-is-failure:before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: url("../symbols/warning.svg");
+  left: 9px;
+  top: 50%;
+  margin-top: -9px;
+  opacity: 0.5;
+}

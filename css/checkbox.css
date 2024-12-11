@@ -7,69 +7,83 @@
   padding: 4px 0;
   outline: none;
   text-decoration: none;
-  vertical-align: middle; }
-  .hui_bar .hui_checkbox {
-    white-space: nowrap; }
-  .hui_checkbox_button {
-    width: 16px;
-    height: 16px;
-    background-color: #fcfcfd;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
-    background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
-    background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
-    background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
-    background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
-    background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfd', endColorstr='#e3e7ea');
-    border: 1px solid #ccc;
-    border-color: #e3e3e3 #ccc #bbb;
-    border-radius: 3px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-    display: inline-block;
-    position: relative;
-    vertical-align: top; }
-  .hui_checkbox_label {
-    margin-left: 5px;
-    vertical-align: top; }
-  .hui_checkbox:hover .hui_checkbox_button {
-    border-color: #d2d2d2 #b7b7b7 #9c9c9c;
-    background: linear-gradient(#f9f9f9, #d5dade); }
-  .hui_checkbox:focus .hui_checkbox_button {
-    border: 1px solid #0069ff;
-    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
-    outline: none; }
-  .hui_checkbox:active .hui_checkbox_button {
-    border-color: #9c9c9c #b7b7b7 #aeaeae;
-    background: linear-gradient(#f1f2f3, #d1d4d6);
-    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
-    text-shadow: none; }
-  .hui_checkbox_selected .hui_checkbox_button:before {
-    content: '';
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background: url("../gfx/check.svg");
-    background-size: contain;
-    background-repeat: no-repeat;
-    top: 2px;
-    left: 2px; }
-  .hui_checkbox-disabled {
-    opacity: .5;
-    cursor: default; }
-  .hui_checkbox.hui-large {
-    font-size: 14px;
-    line-height: 22px; }
-  .hui_checkbox.hui-large .hui_checkbox_button {
-    height: 20px;
-    width: 20px; }
-  .hui_checkbox.hui-large .hui_checkbox_label {
-    margin-left: 8px; }
-  .hui_checkbox_selected.hui-large .hui_checkbox_button:before {
-    width: 14px;
-    height: 14px;
-    top: 3px;
-    left: 3px; }
+  vertical-align: middle;
+}
+.hui_bar .hui_checkbox {
+  white-space: nowrap;
+}
+.hui_checkbox_button {
+  width: 16px;
+  height: 16px;
+  background-color: #fcfcfd;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
+  background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
+  background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
+  background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
+  background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
+  background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfd", endColorstr="#e3e7ea");
+  border: 1px solid #ccc;
+  border-color: #e3e3e3 #ccc #bbb;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+}
+.hui_checkbox_label {
+  margin-left: 5px;
+  vertical-align: top;
+}
+.hui_checkbox:hover .hui_checkbox_button {
+  border-color: #d2d2d2 #b7b7b7 #9c9c9c;
+  background: linear-gradient(#f9f9f9, #d5dade);
+}
+.hui_checkbox:focus .hui_checkbox_button {
+  border: 1px solid #0069ff;
+  box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+  outline: none;
+}
+.hui_checkbox:active .hui_checkbox_button {
+  border-color: #9c9c9c #b7b7b7 #aeaeae;
+  background: linear-gradient(#f1f2f3, #d1d4d6);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
+}
+.hui_checkbox_selected .hui_checkbox_button:before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: url("../gfx/check.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  top: 2px;
+  left: 2px;
+}
+.hui_checkbox-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.hui_checkbox.hui-large {
+  font-size: 14px;
+  line-height: 22px;
+}
+.hui_checkbox.hui-large .hui_checkbox_button {
+  height: 20px;
+  width: 20px;
+}
+.hui_checkbox.hui-large .hui_checkbox_label {
+  margin-left: 8px;
+}
+.hui_checkbox_selected.hui-large .hui_checkbox_button:before {
+  width: 14px;
+  height: 14px;
+  top: 3px;
+  left: 3px;
+}
 
 .hui_checkbox + .hui_checkbox,
 .hui_checkbox + script + .hui_checkbox {
-  margin-left: 10px; }
+  margin-left: 10px;
+}

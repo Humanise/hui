@@ -11,21 +11,24 @@
   border-color: #bbb #ccc #e3e3e3;
   border-radius: 2px;
   height: 26px;
-  font-size: 0; }
-  .hui_locationinput-focused {
-    border: 1px solid #0069ff;
-    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
-    outline: none; }
-  .hui_locationinput input {
-    border: 0;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    background: none;
-    height: 16px;
-    outline: none;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-    font-size: 12px; }
+  font-size: 0;
+}
+.hui_locationinput-focused {
+  border: 1px solid #0069ff;
+  box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+  outline: none;
+}
+.hui_locationinput input {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: none;
+  height: 16px;
+  outline: none;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-size: 12px;
+}
 
 .hui_locationinput_picker {
   background-image: url("../icons/common/map16.png");
@@ -34,7 +37,8 @@
   position: absolute;
   right: 4px;
   top: 4px;
-  font-size: 0; }
+  font-size: 0;
+}
 
 .hui_locationinput_latitude,
 .hui_locationinput_longitude {
@@ -44,10 +48,13 @@
   position: relative;
   box-sizing: border-box;
   padding-left: 20px;
-  margin-top: 3px; }
+  margin-top: 3px;
+}
 
 .hui_locationinput_latitude {
-  background: url("../icons/monochrome/latitude16.png") 2px top no-repeat; }
+  background: url("../icons/monochrome/latitude16.png") 2px top no-repeat;
+}
 
 .hui_locationinput_longitude {
-  background: url("../icons/monochrome/longitude16.png") 2px top no-repeat; }
+  background: url("../icons/monochrome/longitude16.png") 2px top no-repeat;
+}

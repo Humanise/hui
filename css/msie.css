@@ -1,30 +1,39 @@
 div, h1, h2, h3, h4, h5, h6, ol, ul {
-  zoom: 1; }
+  zoom: 1;
+}
 
 div.hui_toolbar_icon div.hui_icon {
-  margin: 0px; }
+  margin: 0px;
+}
 
 form.hui_form input.text, form.hui_form textarea {
-  text-indent: 0px; }
+  text-indent: 0px;
+}
 
 form.hui_form table.group label {
-  line-height: 16px; }
+  line-height: 16px;
+}
 
 table.hui_objectlist thead th.hui_objectlist {
-  line-height: 11pt; }
+  line-height: 11pt;
+}
 
 form.hui_form .checkbox {
-  padding: 2px 0px; }
+  padding: 2px 0px;
+}
 
 a.hui_button {
-  line-height: 27px; }
+  line-height: 27px;
+}
 
 a.hui_button_small {
-  line-height: 23px; }
+  line-height: 23px;
+}
 
 /*********** Search field ***************/
 span.hui_searchfield input {
   margin-top: 4px;
   margin-left: -21px;
   margin-right: -13px;
-  padding: 0; }
+  padding: 0;
+}

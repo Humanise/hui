@@ -1,4 +1,4 @@
-@import 'tools';
+@use 'tools' as *;
 
 div.hui_graph {
   background: url('../gfx/backgrounds/blueprint.png');

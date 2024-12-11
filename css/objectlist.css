@@ -1,6 +1,7 @@
 table.hui_objectlist {
   margin-top: 1px;
-  width: 100%; }
+  width: 100%;
+}
 
 table.hui_objectlist th {
   text-align: left;
@@ -8,23 +9,29 @@ table.hui_objectlist th {
   line-height: 13px;
   color: #333;
   font-weight: normal;
-  padding-left: 4px; }
+  padding-left: 4px;
+}
 
 table.hui_objectlist th.hui_objectlist1 {
-  padding-left: 2px; }
+  padding-left: 2px;
+}
 
 .hui_objectlist select {
   font-size: 9pt;
   margin: 0;
-  width: 100%; }
+  width: 100%;
+}
 
 .hui_objectlist tbody input.text {
   border-color: #ccc #ddd #eee #ddd;
-  width: 100%; }
+  width: 100%;
+}
 
 .hui_objectlist tbody td {
   padding: 0px 0px 0px 2px;
-  vertical-align: top; }
+  vertical-align: top;
+}
 
 .hui_objectlist tbody td.first {
-  padding-left: 0px; }
+  padding-left: 0px;
+}

@@ -1,15 +1,18 @@
 div.hui_diagram {
   position: relative;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  overflow: hidden; }
+  overflow: hidden;
+}
 
 .hui_diagram_dragable {
   cursor: move;
-  cursor: -webkit-grab; }
+  cursor: -webkit-grab;
+}
 
 .hui_diagram_dragging {
   cursor: move;
-  cursor: -webkit-grabbing; }
+  cursor: -webkit-grabbing;
+}
 
 .hui_diagram_line_label {
   position: absolute;
@@ -22,13 +25,15 @@ div.hui_diagram {
   overflow: hidden;
   text-align: center;
   white-space: nowrap;
-  text-overflow: ellipsis; }
+  text-overflow: ellipsis;
+}
 
 /*** Icon ***/
 div.hui_diagram_icon {
   position: absolute;
   padding: 2px;
-  z-index: 1; }
+  z-index: 1;
+}
 
 div.hui_diagram_icon strong {
   position: absolute;
@@ -38,12 +43,14 @@ div.hui_diagram_icon strong {
   width: 100px;
   left: 0;
   margin-left: -32px;
-  text-align: center; }
+  text-align: center;
+}
 
 div.hui_diagram_icon_selected {
   border: 2px solid #2678ff;
   margin: -2px 0 0 -2px;
-  border-radius: 5px; }
+  border-radius: 5px;
+}
 
 /*** Box ***/
 div.hui_diagram_box {
@@ -55,12 +62,14 @@ div.hui_diagram_box {
   left: 0;
   z-index: 1;
   max-width: 400px;
-  overflow: hidden; }
+  overflow: hidden;
+}
 
 div.hui_diagram_box_selected {
   border: 3px solid #2678ff;
   margin: -2px 0 0 -2px;
-  border-radius: 5px; }
+  border-radius: 5px;
+}
 
 div.hui_diagram_box h1 {
   margin: 0;
@@ -70,17 +79,21 @@ div.hui_diagram_box h1 {
   border-bottom: 1px solid #eee;
   border-radius: 2px 2px 0 0;
   padding: 3px 5px;
-  color: #333; }
+  color: #333;
+}
 
 div.hui_diagram_box table {
   font-size: 10px;
-  margin: 0 5px; }
+  margin: 0 5px;
+}
 
 div.hui_diagram_box th {
   font-weight: normal;
   color: #999;
-  text-align: right; }
+  text-align: right;
+}
 
 div.hui_diagram_box td em {
   color: #999;
-  margin-left: 3px; }
+  margin-left: 3px;
+}
