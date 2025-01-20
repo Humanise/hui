@@ -1782,7 +1782,7 @@ hui.request = function(options) {
         options.$load();
       }, false);
     }
-  } else if (method=='POST' && options.files) {
+  } else if (method == 'POST' && options.files) {
     body = new FormData();
     //form.append('path', '/');
     for (var j = 0; j < options.files.length; j++) {
@@ -1792,6 +1792,7 @@ hui.request = function(options) {
     body = hui.request._buildPostBody(options.parameters);
     transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
   } else if (options.data) {
+    transport.setRequestHeader("Content-type", "application/json; charset=utf-8");
     body = JSON.stringify(options.data);
   } else {
     body = '';
@@ -8113,7 +8114,12 @@ hui.ui.Button.prototype = {
       if (form) {
         form.submit();
       } else {
-        hui.log('No form found to submit');
+        form = hui.closest('form', this.element)
+        if (form) {
+          form.submit();
+        } else {
+          hui.log('No form found to submit');
+        }
       }
     }
   },
@@ -8329,6 +8335,9 @@ hui.ui.Selection.prototype = {
     var items = new hui.ui.Selection.Items(options);
     items.parent = this;
     this.subItems.push(items);
+    if (options.items) {
+      items.setOptions(options.items);
+    }
   },
 
   _updateUI : function() {
@@ -8465,7 +8474,7 @@ hui.ui.Selection.Items = function(options) {
   this.title = hui.get(this.element.id+'_title');
   this.name = options.name;
   this.disclosed = {};
-  this.parent = null;
+  this.parent = this.options;
   this.items = [];
   hui.ui.extend(this);
   if (this.options.source) {
@@ -16312,8 +16321,16 @@ hui.ui.Finder.prototype = {
         list.resetState();
       }
     });
-    var selectionSource = new hui.ui.Source({url : opts.selection.url});
-    this.selection.addItems({source:selectionSource});
+
+    if (opts.selection.items) {
+      //this.selection.setObjects(opts.selection.items);
+      this.selection.addItems({items: opts.selection.items});
+    }
+    var selectionSource;
+    if (opts.selection.url) {
+      selectionSource = new hui.ui.Source({url : opts.selection.url});
+      this.selection.addItems({source:selectionSource});
+    }
     left.add(this.selection);
 
     var parameters = [];
@@ -16407,7 +16424,9 @@ hui.ui.Finder.prototype = {
         }
       }));
     }
-    selectionSource.refresh();
+    if (selectionSource) {
+      selectionSource.refresh();
+    }
     hui.ui.reLayout();
   },
   changeView : function(value) {
@@ -21700,7 +21719,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
     _super.call(this, options);
     this.items = [];
     this.images = [];
-    hui.cls.add(this.element,'hui-is-light');
+    hui.cls.add(this.element, 'hui-is-light');
     this.nativeScroll = !!navigator.userAgent.match('iPhone|iPad|iPod|Safari') && !window.chrome && hui.browser.webkitVersion > 603;
     //this.nativeScroll = false;
     this._attach();
@@ -21711,25 +21730,27 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
     var makeIcon = function(body, size) {
       return '<svg class="' + ns + '_icon" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '">' + body + '</svg>';
     };
+    /*
     var close = makeIcon(
       '<line class="' + ns + '_line" x1="1" y1="1" x2="31" y2="31"/>' +
       '<line class="' + ns + '_line" x1="1" y1="31" x2="31" y2="1"/>'
     );
     close = makeIcon('<path class="' + ns + '_line" d="M1,1l30,30 M1,31L31,1"/>', 32);
-    close = makeIcon('<path class="' + ns + '_line" d="M1,1l20,20 M1,21L21,1"/>', 22);
+    */
+    var close = makeIcon('<path class="' + ns + '_line" d="M1,1l20,20 M1,21L21,1"/>', 22);
     var right = makeIcon('<path class="' + ns + '_line" d="M8.5,31l15-15L8.5,1"/>', 32);
     var left = makeIcon('<path class="' + ns + '_line" d="M23.5,1l-15,15l15,15"/>', 32);
     options.element = hui.build('div', {
       'class' : ns,
       html : '<div class="' + ns + '_viewer id-viewer"><div class="' + ns + '_items id-items"></div></div>' +
-        '<div class="' + ns + '_thumbnails id-thumbs"></div>'+
-        '<div class="' + ns + '_close id-close">' + close + '</div>'+
-        '<div class="' + ns + '_arrow ' + ns + '_next id-next">' + right + '</div>'+
-        '<div class="' + ns + '_arrow ' + ns + '_previous id-previous">' + left + '</div>',
+        '<div class="' + ns + '_control ' + ns + '_thumbnails id-thumbs"></div>'+
+        '<div class="' + ns + '_control ' + ns + '_close id-close">' + close + '</div>'+
+        '<div class="' + ns + '_control ' + ns + '_arrow ' + ns + '_next id-next">' + right + '</div>'+
+        '<div class="' + ns + '_control ' + ns + '_arrow ' + ns + '_previous id-previous">' + left + '</div>',
       parent: document.body
     });
     if (!hui.browser.touch) {
-      hui.cls.add(options.element,'hui-is-mouse');
+      hui.cls.add(options.element, 'hui-is-mouse');
     }
     return new hui.ui.Presentation(options);
   };
@@ -21744,6 +21765,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       items : '.id-items',
       thumbs : '.id-thumbs',
       close : '.id-close',
+      full : '.id-full',
       next : '.id-next',
       previous : '.id-previous'
     },
@@ -21753,16 +21775,30 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       hui.on(this.nodes.previous,'tap',this.previous, this);
       hui.on(this.nodes.thumbs,'tap',this._tapThumbs, this);
       if (this.nativeScroll) {
-        hui.cls.add(this.element,'hui-is-native-scroll');
+        hui.cls.add(this.element, 'hui-is-native-scroll');
         this._attachNative();
       } else {
         this._attachDrag();
       }
+
+      this._keyListener = function(e) {
+        e = hui.event(e);
+        if (e.escapeKey) {
+          this.close();
+        } else if (!self.zoomed) {
+          if (e.rightKey) {
+            this.next();
+          } else if (e.leftKey) {
+            this.previous();
+          }
+        }
+      }.bind(this);
     },
     close : function(e) {
       if (e) hui.event(e).stop();
       hui.cls.remove(this.element,'hui-is-open');
       this._lockScroll(false);
+      hui.unListen(document, 'keydown', this._keyListener);
     },
     _attachNative : function() {
       var x,y;
@@ -21889,6 +21925,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       window.setTimeout(function() {
         this._lockScroll(true);        
       }.bind(this),100)
+      hui.listen(document, 'keydown', this._keyListener);
     },
     _tapThumbs : function(e) {
       e = hui.event(e);
@@ -21921,23 +21958,30 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
       if (!this.items.length) { return; }
       var width = this.nodes.viewer.clientWidth,
         height = this.nodes.viewer.clientHeight,
-      thumbs = hui.get.children(this.nodes.thumbs);
+        thumbs = hui.get.children(this.nodes.thumbs);
       var thumbSize = thumbs[0].clientWidth;
-      var load = function(url,node) {
+      var load = function(url, node) {
         var img = new Image();
+        hui.cls.add(node, 'hui-is-busy');
         img.onload = function() {
           node.style.backgroundImage = "url('" + url + "')";
+          hui.cls.remove(node, 'hui-is-busy');
         };
         img.src = url;
       };
       var ratio = window.devicePixelRatio > 1 ? 2 : 1;
       for (var i = 0; i < this.items.length; i++) {
         var item = this.items[i];
-        var url = hui.ui.callDelegates(this,'getImage',{item: item, width: width * ratio, height: height * ratio});
-        load(url, this.images[i].node);
+        var url = hui.ui.callDelegates(this,'getImage', {item: item, width: width * ratio, height: height * ratio});
+        if (this.images[i].currentUrl != url) {
+          this.images[i].currentUrl = url;
+          load(url, this.images[i].node);
+        }
         //images[i].style.backgroundImage = "url('" + url + "')";
-        var thmbUrl = hui.ui.callDelegates(this,'getImage',{item: item, width: thumbSize * ratio, height: thumbSize * ratio});
-        load(thmbUrl, thumbs[i]);
+        if (this.items.length > 1) {
+          var thmbUrl = hui.ui.callDelegates(this,'getImage',{item: item, width: thumbSize * ratio, height: thumbSize * ratio});
+          load(thmbUrl, thumbs[i]);
+        }
         //thumbs[i].style.backgroundImage = "url('" + url + "')";
       }
     },
@@ -21946,7 +21990,10 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
     },
     $$layout : function() {
       this._calculateSize();
-      this._updateImages();
+      clearTimeout(this._x);
+      this._x = setTimeout(function() {
+        this._updateImages();
+      }.bind(this), 200)
     },
     _draw : function() {
       this.nodes.items.style.transform = 'translate3d(' + this.position + 'px,0,0)';
@@ -22062,11 +22109,12 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
           ease = hui.ease.fastSlow;
         } else {
           var end = this.index === 0 || this.index === this.items.length - 1;
-          ease = (end ? hui.ease.elastic : hui.ease.fastSlow);
+          ease = hui.ease.fastSlow; //(end ? hui.ease.elastic : hui.ease.fastSlow);
           if (!user) {
             ease = hui.ease.fastSlow;
           }
-          duration = (end ? 1000 : 1000 / speed);
+          duration = 1000 / speed;
+          //duration = (end ? 1000 : 1000 / speed);
         }
         this.animating = true;
         hui.animate({
@@ -22099,7 +22147,7 @@ hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
 */
 hui.ui.ProgressIndicator = function(options) {
   this.element = hui.get(options.element);
-  this.options = options || {};
+  this.options = hui.override({opacity : .1}, options);
   this.size = options.size;
   this.name = options.name;
   this.value = 0;
@@ -22126,7 +22174,7 @@ hui.ui.ProgressIndicator.prototype = {
       endDegrees : -90,
         innerRadius : this.size/4,
       outerRadius : this.size/2,
-      fill : 'rgba(0,0,0,.1)'
+      fill : 'rgba(0,0,0,' + this.options.opacity + ')'
     });
   },
   setValue : function(value) {

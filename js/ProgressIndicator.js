@@ -3,7 +3,7 @@
 */
 hui.ui.ProgressIndicator = function(options) {
   this.element = hui.get(options.element);
-  this.options = options || {};
+  this.options = hui.override({opacity : .1}, options);
   this.size = options.size;
   this.name = options.name;
   this.value = 0;
@@ -30,7 +30,7 @@ hui.ui.ProgressIndicator.prototype = {
       endDegrees : -90,
         innerRadius : this.size/4,
       outerRadius : this.size/2,
-      fill : 'rgba(0,0,0,.1)'
+      fill : 'rgba(0,0,0,' + this.options.opacity + ')'
     });
   },
   setValue : function(value) {

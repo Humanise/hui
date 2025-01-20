@@ -28,9 +28,35 @@
     hui.onReady(function() {
       var finder = hui.ui.Finder.create({
 
-        title : 'Select page',
+        title : 'Selection via url',
         list : {url:'data/list_pages.xml'},
-        search : {parameter:'text'}
+        search : {parameter:'text'},
+        selection: {
+          url: 'data/finder_selection.xml',
+          parameter: 'type'
+        }
+      });
+      finder.listen({
+        $select : function(obj) {
+          alert(obj)
+        }
+      })
+      finder.show();
+    })
+
+    hui.onReady(function() {
+      var finder = hui.ui.Finder.create({
+
+        title : 'Selection via options',
+        list : {url:'data/list_pages.xml'},
+        search : {parameter:'text'},
+        selection: {
+          parameter: 'type',
+          items : [
+            {text: "Question", value: "question", icon: "common/page"},
+            {text: "Hypothesis", value: "hypothesis", icon: "common/page"}
+          ]
+        }
       });
       finder.listen({
         $select : function(obj) {

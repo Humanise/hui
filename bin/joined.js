@@ -1782,7 +1782,7 @@ hui.request = function(options) {
         options.$load();
       }, false);
     }
-  } else if (method=='POST' && options.files) {
+  } else if (method == 'POST' && options.files) {
     body = new FormData();
     //form.append('path', '/');
     for (var j = 0; j < options.files.length; j++) {
@@ -1792,6 +1792,7 @@ hui.request = function(options) {
     body = hui.request._buildPostBody(options.parameters);
     transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
   } else if (options.data) {
+    transport.setRequestHeader("Content-type", "application/json; charset=utf-8");
     body = JSON.stringify(options.data);
   } else {
     body = '';
@@ -8113,7 +8114,12 @@ hui.ui.Button.prototype = {
       if (form) {
         form.submit();
       } else {
-        hui.log('No form found to submit');
+        form = hui.closest('form', this.element)
+        if (form) {
+          form.submit();
+        } else {
+          hui.log('No form found to submit');
+        }
       }
     }
   },
@@ -8329,6 +8335,9 @@ hui.ui.Selection.prototype = {
     var items = new hui.ui.Selection.Items(options);
     items.parent = this;
     this.subItems.push(items);
+    if (options.items) {
+      items.setOptions(options.items);
+    }
   },
 
   _updateUI : function() {
@@ -8465,7 +8474,7 @@ hui.ui.Selection.Items = function(options) {
   this.title = hui.get(this.element.id+'_title');
   this.name = options.name;
   this.disclosed = {};
-  this.parent = null;
+  this.parent = this.options;
   this.items = [];
   hui.ui.extend(this);
   if (this.options.source) {
@@ -16312,8 +16321,16 @@ hui.ui.Finder.prototype = {
         list.resetState();
       }
     });
-    var selectionSource = new hui.ui.Source({url : opts.selection.url});
-    this.selection.addItems({source:selectionSource});
+
+    if (opts.selection.items) {
+      //this.selection.setObjects(opts.selection.items);
+      this.selection.addItems({items: opts.selection.items});
+    }
+    var selectionSource;
+    if (opts.selection.url) {
+      selectionSource = new hui.ui.Source({url : opts.selection.url});
+      this.selection.addItems({source:selectionSource});
+    }
     left.add(this.selection);
 
     var parameters = [];
@@ -16407,7 +16424,9 @@ hui.ui.Finder.prototype = {
         }
       }));
     }
-    selectionSource.refresh();
+    if (selectionSource) {
+      selectionSource.refresh();
+    }
     hui.ui.reLayout();
   },
   changeView : function(value) {

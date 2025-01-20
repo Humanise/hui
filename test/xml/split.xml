@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Layout" padding="10 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="uri:hui ../../xslt/schema.xsd"">
+<gui xmlns="uri:hui" title="Layout" padding="10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
 
   <source name="listSource" url="data/list_news.xml"/>
   <source name="chartSource" url="data/chart_statistics.json"/>

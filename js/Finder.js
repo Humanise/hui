@@ -133,8 +133,16 @@ hui.ui.Finder.prototype = {
         list.resetState();
       }
     });
-    var selectionSource = new hui.ui.Source({url : opts.selection.url});
-    this.selection.addItems({source:selectionSource});
+
+    if (opts.selection.items) {
+      //this.selection.setObjects(opts.selection.items);
+      this.selection.addItems({items: opts.selection.items});
+    }
+    var selectionSource;
+    if (opts.selection.url) {
+      selectionSource = new hui.ui.Source({url : opts.selection.url});
+      this.selection.addItems({source:selectionSource});
+    }
     left.add(this.selection);
 
     var parameters = [];
@@ -228,7 +236,9 @@ hui.ui.Finder.prototype = {
         }
       }));
     }
-    selectionSource.refresh();
+    if (selectionSource) {
+      selectionSource.refresh();
+    }
     hui.ui.reLayout();
   },
   changeView : function(value) {

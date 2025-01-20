@@ -108,6 +108,9 @@ hui.ui.Selection.prototype = {
     var items = new hui.ui.Selection.Items(options);
     items.parent = this;
     this.subItems.push(items);
+    if (options.items) {
+      items.setOptions(options.items);
+    }
   },
 
   _updateUI : function() {
@@ -244,7 +247,7 @@ hui.ui.Selection.Items = function(options) {
   this.title = hui.get(this.element.id+'_title');
   this.name = options.name;
   this.disclosed = {};
-  this.parent = null;
+  this.parent = this.options;
   this.items = [];
   hui.ui.extend(this);
   if (this.options.source) {

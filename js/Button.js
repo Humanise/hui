@@ -133,7 +133,12 @@ hui.ui.Button.prototype = {
       if (form) {
         form.submit();
       } else {
-        hui.log('No form found to submit');
+        form = hui.closest('form', this.element)
+        if (form) {
+          form.submit();
+        } else {
+          hui.log('No form found to submit');
+        }
       }
     }
   },

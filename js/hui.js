@@ -1782,7 +1782,7 @@ hui.request = function(options) {
         options.$load();
       }, false);
     }
-  } else if (method=='POST' && options.files) {
+  } else if (method == 'POST' && options.files) {
     body = new FormData();
     //form.append('path', '/');
     for (var j = 0; j < options.files.length; j++) {
@@ -1792,6 +1792,7 @@ hui.request = function(options) {
     body = hui.request._buildPostBody(options.parameters);
     transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
   } else if (options.data) {
+    transport.setRequestHeader("Content-type", "application/json; charset=utf-8");
     body = JSON.stringify(options.data);
   } else {
     body = '';

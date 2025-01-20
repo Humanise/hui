@@ -78,8 +78,6 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
         </dropdown>
         <button icon="common/new"/>
         <button icon="common/search"/>
-        <button symbol="add"/>
-        <symbol name="add"/>
         <flexible/>
         <segmented>
           <option text="Text"/>
