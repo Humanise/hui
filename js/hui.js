@@ -1791,6 +1791,8 @@ hui.request = function(options) {
   } else if (options.parameters && method !== 'DELETE') {
     body = hui.request._buildPostBody(options.parameters);
     transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
+  } else if (options.data) {
+    body = JSON.stringify(options.data);
   } else {
     body = '';
   }

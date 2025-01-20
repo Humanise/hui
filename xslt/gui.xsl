@@ -1438,7 +1438,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
           (function() {
           var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Finder({
           name : '<xsl:value-of select="@name"/>',
-                  url : '<xsl:value-of select="@url"/>',
+                  url : '<xsl:value-of select="@url" disable-output-escaping="yes"/>',
           title : '<xsl:value-of select="@title"/>',
           list : {url:'<xsl:value-of select="@list-url"/>'},
           selection : {

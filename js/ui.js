@@ -960,8 +960,11 @@ hui.ui.handleForbidden = function(widget) {
  * @param {String} options.message.success
  */
 hui.ui.request = function(options) {
-  options = hui.override({method:'post',parameters:{}},options);
+  options = hui.override({method:'post'}, options);
   if (options.json) {
+    if (!options.parameters) {
+      options.parameters = {}
+    }
     for (var key in options.json) {
       options.parameters[key]=hui.string.toJSON(options.json[key]);
     }
