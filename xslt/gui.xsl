@@ -3477,15 +3477,21 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:when test="@small='true' or @size='small' or ../@small='true'">small</xsl:when>
         <xsl:when test="@mini='true' or @size='mini' or ../@mini='true'">mini</xsl:when>
         <xsl:when test="@tiny='true' or @size='tiny' or ../@tiny='true'">tiny</xsl:when>
+        <xsl:otherwise>regular</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <a href="javascript://">
       <xsl:call-template name="gui:id-attribute"/>
       <xsl:attribute name="class">
-        <xsl:text>hui_button</xsl:text>
-        <xsl:if test="@variant">
-          <xsl:text> hui-</xsl:text><xsl:value-of select="@variant"/>
-        </xsl:if>
+        <xsl:choose>
+          <xsl:when test="@class"><xsl:value-of select="@class"/></xsl:when>
+          <xsl:otherwise>
+            <xsl:text>hui_button</xsl:text>
+            <xsl:if test="@variant">
+              <xsl:text> hui-</xsl:text><xsl:value-of select="@variant"/>
+            </xsl:if>
+          </xsl:otherwise>
+        </xsl:choose>
         <xsl:if test="@disabled='true'"> hui-disabled</xsl:if>
         <xsl:if test="@highlighted='true'"> hui-highlighted</xsl:if>
         <xsl:if test="$size!='regular'">

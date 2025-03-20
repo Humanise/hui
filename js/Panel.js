@@ -196,6 +196,11 @@
       hui.ui.callVisible(this);
       this._attachHider();
     },
+    updatePosition : function() {
+      if (this.visible) {
+        this._positionAtTarget();
+      }
+    },
     _positionAtTarget : function() {
       if (!this._target) { return; }
       var panel = {

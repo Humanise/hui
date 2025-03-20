@@ -1749,6 +1749,9 @@ hui.request = function(options) {
   if (method == 'DELETE' && options.parameters) {
     url += '?' + hui.request._buildPostBody(options.parameters)
   }
+  else if (method == 'GET' && options.parameters) {
+    url += '?' + hui.request._buildPostBody(options.parameters)
+  }
   transport.open(method, url, options.async);
   var body = null;
   if (method=='POST' && options.file) {
@@ -3534,6 +3537,44 @@ hui.store = {
 
 hui = window.hui || {};
 
+hui.query = function(q, ctx) {
+  return new hui.Query(hui.findAll(q, ctx));
+};
+
+hui.Query = function(context) {
+  this._context = context;
+};
+
+hui.Query.prototype = {
+  addClass : function(cls) {
+    return this.each(function(node) {
+      hui.cls.add(node, cls);
+    });
+  },
+  add : function(something) {
+    if (typeof(something) == 'string') {
+      if (something[0] == '.') {
+        this.addClass(something.substring(1))
+      }
+    }
+    return this;
+  },
+  style : function(css) {
+    return this.each(function(node) {
+      hui.style.set(node,css);
+    });    
+  },
+  each : function(fn) {
+    this._context.forEach(fn);
+    return this;
+  },
+  count: function() {
+    return this._context.length;
+  }
+};
+
+hui = window.hui || {};
+
 /** @namespace */
 hui.cookie = {
   /**
@@ -3704,6 +3745,43 @@ hui.Preloader.prototype = {
     }
   }
 };
+
+hui._controllers = [];
+
+hui.control = function(recipe) {
+  for (variable in recipe) {
+    if (recipe.hasOwnProperty(variable)) {
+      var found = variable.match(/^([a-z]+)!\s*([a-zA-Z]+)$/);
+      if (found) {
+        recipe['$' + found[1] + '$' + found[2]] = recipe[variable];
+      }
+      found = variable.match(/^([a-zA-Z]+)\.([a-zA-Z]+)!$/);
+      if (found) {
+        recipe['$' + found[2] + '$' + found[1]] = recipe[variable];
+      }
+    }
+  }
+  if (recipe['#name']) {
+    hui._controllers[recipe['#name']] = recipe;
+  }
+  if (recipe.nodes) {
+    recipe.nodes = hui.collect(recipe.nodes, document.body);
+  }
+  hui.on(function() {
+    if (recipe.components) {
+      for (name in recipe.components) {
+        if (recipe.components.hasOwnProperty(name)) {
+          recipe.components[name] = hui.ui.get(recipe.components[name]);
+        }
+      }
+    }
+  });
+  hui.ui.listen(recipe);
+}
+
+hui.controller = function(name) {
+  return this._controllers[name];
+}
 
 /*
  * Copyright (C) 2004 Baron Schwartz <baron at sequent dot org>
@@ -17880,6 +17958,11 @@ hui.ui.Pages.prototype = {
       hui.ui.callVisible(this);
       this._attachHider();
     },
+    updatePosition : function() {
+      if (this.visible) {
+        this._positionAtTarget();
+      }
+    },
     _positionAtTarget : function() {
       if (!this._target) { return; }
       var panel = {
@@ -24197,38 +24280,5 @@ hui.Color.table = {
   whitesmoke: 'f5f5f5',
   yellow: 'ffff00',
   yellowgreen: '9acd32'
-};
-
-hui = window.hui || {};
-
-hui.query = function(q, ctx) {
-  return new hui.Query(hui.findAll(q, ctx));
-};
-
-hui.Query = function(context) {
-  this._context = context;
-};
-
-hui.Query.prototype = {
-  addClass : function(cls) {
-    return this.each(function(node) {
-      hui.cls.add(node, cls);
-    });
-  },
-  add : function(something) {
-    if (typeof(something) == 'string') {
-      if (something[0] == '.') {
-        this.addClass(something.substring(1))
-      }
-    }
-    return this;
-  },
-  each : function(fn) {
-    this._context.forEach(fn);
-    return this;
-  },
-  count: function() {
-    return this._context.length;
-  }
 };
 

@@ -22,6 +22,11 @@ hui.Query.prototype = {
     }
     return this;
   },
+  style : function(css) {
+    return this.each(function(node) {
+      hui.style.set(node,css);
+    });    
+  },
   each : function(fn) {
     this._context.forEach(fn);
     return this;

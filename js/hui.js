@@ -1749,6 +1749,9 @@ hui.request = function(options) {
   if (method == 'DELETE' && options.parameters) {
     url += '?' + hui.request._buildPostBody(options.parameters)
   }
+  else if (method == 'GET' && options.parameters) {
+    url += '?' + hui.request._buildPostBody(options.parameters)
+  }
   transport.open(method, url, options.async);
   var body = null;
   if (method=='POST' && options.file) {
