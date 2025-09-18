@@ -79,6 +79,7 @@
   document.write('<script type="text/javascript" src="'+_context+'/js/TextInput.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Rendering.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Icon.js"></script>');
+  document.write('<script type="text/javascript" src="'+_context+'/js/Symbol.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/ColorInput.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Columns.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Finder.js"></script>');

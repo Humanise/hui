@@ -3764,10 +3764,13 @@ hui.control = function(recipe) {
   if (recipe['#name']) {
     hui._controllers[recipe['#name']] = recipe;
   }
-  if (recipe.nodes) {
-    recipe.nodes = hui.collect(recipe.nodes, document.body);
-  }
+  var ready = recipe.$ready;
+  recipe.$ready = undefined;
   hui.on(function() {
+    if (recipe.nodes) {
+      recipe.nodes = hui.collect(recipe.nodes, document.body);
+    }    
+
     if (recipe.components) {
       for (name in recipe.components) {
         if (recipe.components.hasOwnProperty(name)) {
@@ -3775,6 +3778,7 @@ hui.control = function(recipe) {
         }
       }
     }
+    ready && ready.bind(recipe)();
   });
   hui.ui.listen(recipe);
 }
@@ -16091,6 +16095,29 @@ hui.on(['hui.ui'], function() { hui.ui.make(
   }
 
 );});
+
+hui.component('Symbol', {
+  state: {
+    name: null,
+    size: 16
+  },
+  nodes : {
+    'svg' : 'svg'
+  },
+  create : function(options) {
+    return hui.build('a.hui_symbol', { html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"></svg>'});
+  },
+  draw : function(changed) {
+    if ('name' in changed) {
+      this.nodes.svg.innerHTML = '<use xlink:href="../../symbols/all.svg#icon-' + changed.name + '"></use>';
+    }
+    if ('size' in changed) {
+      this.element.style.width = changed.size + 'px';
+      this.element.style.height = changed.size + 'px';
+      this.element.style.fontSize = changed.size + 'px';
+    }
+  }
+});
 
 /////////////////////////// Color input /////////////////////////
 

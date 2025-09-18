@@ -24,7 +24,7 @@ A library for web user interfaces developed by [Humanise](https://www.humanise.d
 
 	xsltproc index.xml > index.html
 
-**Robuild documentation**
+**Rebuild documentation**
 
 	grunt doc
   

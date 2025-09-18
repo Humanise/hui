@@ -16,10 +16,13 @@ hui.control = function(recipe) {
   if (recipe['#name']) {
     hui._controllers[recipe['#name']] = recipe;
   }
-  if (recipe.nodes) {
-    recipe.nodes = hui.collect(recipe.nodes, document.body);
-  }
+  var ready = recipe.$ready;
+  recipe.$ready = undefined;
   hui.on(function() {
+    if (recipe.nodes) {
+      recipe.nodes = hui.collect(recipe.nodes, document.body);
+    }    
+
     if (recipe.components) {
       for (name in recipe.components) {
         if (recipe.components.hasOwnProperty(name)) {
@@ -27,6 +30,7 @@ hui.control = function(recipe) {
         }
       }
     }
+    ready && ready.bind(recipe)();
   });
   hui.ui.listen(recipe);
 }
