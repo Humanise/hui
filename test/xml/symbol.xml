@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:hui" padding="10" title="Style" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
+
+  <controller name="controller" url="symbol.js"/>
+
+  <box width="600" title="Symbols" padding="20">
+    <bar>
+      <button symbol="left" small="true"/>
+      <button symbol="right" small="true"/>
+    </bar>
+    <button symbol="info" text="Info"/>
+    <button symbol="left"/>
+    <div id="container">
+    <symbol name="info"/>
+    </div>
+  </box>
+</gui>

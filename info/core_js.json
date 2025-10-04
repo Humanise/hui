@@ -66,6 +66,7 @@
   "js/TextInput.js",
   "js/Rendering.js",
   "js/Icon.js",
+  "js/Symbol.js",
   "js/ColorInput.js",
   "js/Columns.js",
   "js/Finder.js",
