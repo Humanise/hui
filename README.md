@@ -6,48 +6,52 @@ A library for web user interfaces developed by [Humanise](https://www.humanise.d
 
 **Watch for changes**
 
-	grunt
+    grunt
 
 **Build everything**
 
-	grunt build
+    grunt build
 
 **Run all unit tests**
 
-	grunt test
+    grunt test
 
 **Run a single unit tests**
 
-	grunt test:color
+    grunt test:color
 
 **Compile front page**
 
-	xsltproc index.xml > index.html
+    xsltproc index.xml > index.html
 
 **Rebuild documentation**
 
-	grunt doc
+    grunt doc
+
+**Servve**
+
+    grunt run
   
 ## Maintenance
 
 **Latest known working versions**
 
-	> node --version
-	v16.13.1
+    > node --version
+    v22.14.0
 
-	> npm --version
-	8.3.0
+    > npm --version
+    10.9.0
 
-	> grunt --version
-	grunt-cli v1.4.3
-	grunt v1.4.1
+    > grunt --version
+    grunt-cli v1.5.0
+    grunt v1.6.1
 
 ### Check-up
 
-	npm audit
-	npm audit fix
+    npm audit
+    npm audit fix
 
 #### Check for new versions
 
-	sudo npm install -g npm-check
-	npm-check
+    sudo npm install -g npm-check
+    npm-check
