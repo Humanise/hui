@@ -9,6 +9,9 @@ hui.component('Symbol', {
   create : function(options) {
     return hui.build('a.hui_symbol', { html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"></svg>'});
   },
+  '!click'() {
+    this.fire('click')
+  },
   draw : function(changed) {
     if ('name' in changed) {
       this.nodes.svg.innerHTML = '<use xlink:href="../../symbols/all.svg#icon-' + changed.name + '"></use>';

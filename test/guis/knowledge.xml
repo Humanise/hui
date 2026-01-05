@@ -7,8 +7,6 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <source name="tagsSource" url="data/languages.xml"/>
   <source name="list-source" url="data/knowledge_list.json"/>
 
-  <method name="update" method="post" url=""/>
-
   <style>
     .article {
       padding: 15px;

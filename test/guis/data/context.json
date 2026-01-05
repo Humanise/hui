@@ -1,0 +1,11 @@
+{
+  "info" : {
+    "title": "This is the title",
+    "text":  "Lorem ipsum dolor"
+  },
+  "actions" : [
+    {"text": "Copy", "icon": "common/", "name": "copy", "data": "This is the text to copy"},
+    {"text": "Download...", "icon": "common/", "name": "download"},
+    {"text": "Delete", "symbol": "delete", "name": "delete"}
+  ]
+}

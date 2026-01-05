@@ -1,6 +1,7 @@
 hui._controllers = [];
 
 hui.control = function(recipe) {
+  /*
   for (variable in recipe) {
     if (recipe.hasOwnProperty(variable)) {
       var found = variable.match(/^([a-z]+)!\s*([a-zA-Z]+)$/);
@@ -12,16 +13,17 @@ hui.control = function(recipe) {
         recipe['$' + found[2] + '$' + found[1]] = recipe[variable];
       }
     }
-  }
+  }*/
   if (recipe['#name']) {
     hui._controllers[recipe['#name']] = recipe;
   }
-  var ready = recipe.$ready;
+  var ready = recipe.$ready || recipe['ready!'];
   recipe.$ready = undefined;
+  recipe['ready!'] = undefined;
   hui.on(function() {
     if (recipe.nodes) {
       recipe.nodes = hui.collect(recipe.nodes, document.body);
-    }    
+    }
 
     if (recipe.components) {
       for (name in recipe.components) {

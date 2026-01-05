@@ -28,7 +28,7 @@ A library for web user interfaces developed by [Humanise](https://www.humanise.d
 
     grunt doc
 
-**Servve**
+**Serve**
 
     grunt run
   

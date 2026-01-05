@@ -20,6 +20,7 @@
         <option icon="common/info" text="XML-format" value="../api/xml/index.html"/>
         <option icon="common/info" text="JavaScript API" value="../api/index.html"/>
         <option icon="common/color" text="Icons" value="../api/icons.html"/>
+        <option symbol="info" text="Symbols" value="xml/symbol.xml"/>
         <options source="navSource"/>
         <options name="componentOptions"/>
       </selection>

@@ -52,4 +52,12 @@
       <progress value="0.5"/>
     </cell>
   </row>
+  <row id="1" kind="user">
+    <cell></cell>
+    <cell></cell>
+    <cell>
+      Context
+      <symbol name="gear" action="true"/>
+    </cell>
+  </row>
 </list>

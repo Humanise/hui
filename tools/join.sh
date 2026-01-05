@@ -138,8 +138,7 @@ jsFiles = [
     'js/Rows.js',
     'js/Pages.js',
     'js/Panel.js',
-    'js/Collection.js',
-    'js/Method.js'
+    'js/Collection.js'
 ]
 
 cssFiles = [

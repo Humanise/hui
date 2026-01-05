@@ -1,19 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" padding="10" title="Style" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<gui xmlns="uri:hui" padding="10" title="Symbol" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
 
   <controller name="controller" url="symbol.js"/>
 
-  <box width="600" title="Symbols" padding="20">
-    <bar>
-      <button symbol="left" small="true"/>
-      <button symbol="right" small="true"/>
-    </bar>
-    <button symbol="info" text="Info"/>
-    <button symbol="left"/>
-    <div id="container">
-    <symbol name="info"/>
-    </div>
-  </box>
+  <structure>
+    <top>
+      <bar>
+        <button symbol="left" small="true"/>
+        <button symbol="right" small="true"/>
+        <tool icon="common/folder" text="Folder" overlay="new" selected="true"/>
+        <tool icon="common/info" text="Info"/>
+        <tool symbol="info" text="Info"/>
+        <item label="Back">
+          <button symbol="left"/>
+        </item>
+        <item label="Info">
+          <symbol name="info"/>
+        </item>
+        <flexible/>
+        <item label="Search">
+          <searchfield expanded-width="200"/>
+        </item>
+      </bar>
+    </top>
+    <middle>
+      <left>
+        <bar variant="layout_mini">
+          <button symbol="info" name="mini1"/>
+          <button symbol="search" selected="true" name="mini2"/>
+          <button symbol="left" name="mini3"/>
+          <button symbol="right" name="mini4"/>
+        </bar>
+        <selection name="selector">
+          <title>API</title>
+          <option symbol="info" text="XML-format" value="../api/xml/index.html"/>
+          <option symbol="info" text="JavaScript API" value="../api/index.html"/>
+          <options source="navSource"/>
+          <options name="componentOptions"/>
+        </selection>
+      </left>
+      <center>
+        <div style="padding: 30px;">
+        <div>
+        <button symbol="left" text="Large" large="true"/>
+        <span> </span>
+        <button symbol="left" large="true"/>
+        <span> </span>
+
+        <button symbol="left" text="Regular"/>
+        <span> </span>
+        <button symbol="left"/>
+        <span> </span>
+        <button icon="common/info" small="true" text="Small"/>
+        <span> </span>
+        <button icon="common/info" small="true"/>
+        <span> </span>
+
+        <button symbol="info" text="Small" small="true"/>
+        <span> </span>
+        <button symbol="info" small="true"/>
+        <span> </span>
+
+        <button symbol="info" text="Mini" mini="true"/>
+        <span> </span>
+        <button symbol="info" mini="true"/>
+        <span> </span>
+        <button symbol="info" text="Tiny" tiny="true"/>
+        <span> </span>
+        <button symbol="info" tiny="true"/>
+      </div>
+
+        <div>
+        <symbol name="info"/>
+        <symbol name="info"/>
+        </div>
+        <html>
+          <style>
+            #table {
+              border-collapse: collapse;
+              font-size: 12px;
+            }
+            #table td, #table th {
+              padding: 2px 6px;
+              border: 1px solid #eee;
+            }
+            #table td {
+              text-align: center;
+            }
+          </style>
+          <hr/>
+          <table id="table"></table>
+        </html>
+        
+      </div>
+      </center>
+    </middle>
+    <bottom>
+    </bottom>
+  </structure>
+
 </gui>

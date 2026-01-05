@@ -137,6 +137,9 @@
       var element = this.element;
       options = options || {};
       this._target = options.target;
+      if (this._target && this._target.getElement) {
+        this._target = this._target.getElement();
+      }
       this._adjustSize();
       this._placeOnTop();
       if (this._target) {
@@ -306,6 +309,7 @@
         this.element.style.display='none';
         hui.ui.callVisible(this);
       }.bind(this),500);
+      this.fire('hide')
       this.visible = false;
     },
     _unFocus : function() {

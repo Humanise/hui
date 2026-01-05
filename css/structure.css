@@ -2,20 +2,13 @@
   height: 100%;
   position: relative;
 }
-
 .hui_structure_top {
   min-height: 26px;
   border: 1px solid #ccc;
-  border-radius: 6px 6px 0 0;
+  border-radius: 5px 5px 0 0;
   padding: 0 5px;
-  background: #fff;
-  background: #CCC -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#F0F0F0));
-  background: -moz-linear-gradient(top, white, #F0F0F0);
-  background: -webkit-linear-gradient(top, white, #F0F0F0);
-  background: -ms-linear-gradient(top, white, #F0F0F0);
-  background: linear-gradient(top, white, #F0F0F0);
+  background: #f6f6f6;
 }
-
 .hui_structure_bottom {
   min-height: 26px;
   border: 1px solid #ccc;
@@ -24,14 +17,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: #fff;
-  background: #CCC -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#F0F0F0));
-  background: -moz-linear-gradient(top, white, #F0F0F0);
-  background: -webkit-linear-gradient(top, white, #F0F0F0);
-  background: -ms-linear-gradient(top, white, #F0F0F0);
-  background: linear-gradient(top, white, #F0F0F0);
+  background: #f6f6f6;
 }
-
 .hui_structure_middle {
   position: absolute;
   bottom: 28px;
@@ -40,23 +27,21 @@
   right: 0;
   background: #fff;
 }
-
-.hui_structure_full .hui_structure_middle {
-  border-right: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-}
-
 .hui_structure_center {
   height: 100%;
   margin-left: 201px;
 }
-
 .hui_structure_left {
-  background: #EBF0F7 none repeat scroll 0 0;
-  border-right: 1px solid #BBBBBB;
+  background: #EBF0F7;
+  border-right: 1px solid #ccc;
   left: 0;
   top: 0;
   bottom: 0;
   position: absolute;
   width: 200px;
+}
+
+.hui_structure_full .hui_structure_middle {
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
 }

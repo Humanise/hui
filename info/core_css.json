@@ -70,5 +70,6 @@
   "css/presentation.css",
   "css/objectlist.css",
   "css/datetimeinput.css",
-  "css/collection.css"
+  "css/collection.css",
+  "css/context.css"
 ]

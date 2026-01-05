@@ -392,6 +392,7 @@
     <xs:attribute name="test-name" type="xs:string"/>
     <xs:attribute name="text" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="symbol" type="xs:string"/>
     <xs:attribute name="role" type="xs:string"/>
     <xs:attribute name="click" type="xs:string"/> <!-- TODO -->
     <xs:attribute name="url" type="xs:string"/>
@@ -516,6 +517,7 @@
     <xs:attribute name="kind" type="xs:string"/>
     <xs:attribute name="badge" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="symbol" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="selection_options">
@@ -612,6 +614,7 @@
     <xs:attribute name="selected" type="xs:boolean"/>
     <xs:attribute name="text" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="symbol" type="xs:string"/>
     <xs:attribute name="small" type="xs:boolean"/>
     <xs:attribute name="click" type="xs:string"/> <!-- TODO -->
   </xs:complexType>
@@ -682,6 +685,7 @@
       <xs:element name="dropdown" type="dropdown"/>
       <xs:element name="number-input" type="number-input"/>
       <xs:element name="button" type="button"/>
+      <xs:element name="symbol" type="symbol"/>
       <xs:element name="checkboxes" type="checkboxes"/>
       <xs:element name="text-input" type="text-input"/>
       <xs:element name="font-input" type="font-input"/>
@@ -699,6 +703,7 @@
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="symbol" type="xs:string"/>
     <xs:attribute name="badge" type="xs:string"/>
     <xs:attribute name="overlay" type="xs:string"/>
     <xs:attribute name="text" type="xs:string"/>
@@ -1079,6 +1084,7 @@
       <xs:element name="h" type="text_h"/>
     </xs:choice>
     <xs:attribute name="top" type="xs:positiveInteger"/>
+    <xs:attribute name="bottom" type="xs:positiveInteger"/>
     <xs:attribute name="align" type="xs:string"/>
   </xs:complexType>
 
@@ -1120,6 +1126,7 @@
   <xs:element name="symbol" type="symbol"/>
   <xs:complexType name="symbol">
     <xs:attribute name="symbol" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
   <!-- HTML stuff -->
@@ -1209,6 +1216,34 @@
     <xs:attribute name="style" type="xs:string"/>
   </xs:complexType>
 
+  <xs:element name="hr" type="hr"/>
+  <xs:complexType name="hr">
+    <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute name="style" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="table">
+    <xs:complexType>
+      <xs:attribute name="class" type="xs:string"/>
+      <xs:attribute name="id" type="xs:string"/>
+      <xs:attribute name="style" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="tr">
+    <xs:complexType>
+      <xs:attribute name="class" type="xs:string"/>
+      <xs:attribute name="style" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="td">
+    <xs:complexType>
+      <xs:attribute name="class" type="xs:string"/>
+      <xs:attribute name="style" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
   <!-- Chart -->
 
   <xs:element name="chart" type="chart"/>
@@ -1223,6 +1258,17 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:complexType>
+
+  <!-- List -->
+
+  <xs:element name="collection">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string"/>
+      <xs:attribute name="source" type="xs:string"/>
+      <xs:attribute name="class" type="xs:string"/>
+      <xs:attribute name="selection-class" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
 
   <!-- List -->
 
@@ -1296,7 +1342,7 @@
     <xs:attribute name="variant">
       <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:pattern value="dark|light|news"/>
+          <xs:pattern value="light|clear"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>

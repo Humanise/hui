@@ -21,6 +21,7 @@ hui.ui.Component = function(options) {
   } else {
     this.nodes = [];
   }
+  this.owned = {};
   this.nodes.root = this.element
   if (options.listen) {
     this.listen(options.listen);
@@ -93,6 +94,13 @@ hui.ui.Component.prototype = {
     if (changed!={} && this.draw) {
       this.draw(changed);
     }
+  },
+  getOwned(recipe) {
+    if (this.owned[recipe.name]) {
+      return this.owned[recipe.name]
+    }
+    this.owned[recipe.name] = recipe.supplier();
+    return this.owned[recipe.name];
   }
 };
 
@@ -117,6 +125,7 @@ hui.component = function(name, spec) {
   }
   var component = hui.ui[name]
   component.create = function(state) {
+    state = state || {};
     var cp = {element: spec.create()};
     hui.extend(cp, state);
     if (state.testName) {

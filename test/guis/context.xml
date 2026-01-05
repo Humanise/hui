@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
+<gui xmlns="uri:hui" xmlns:on="uri:hui-event" title="System" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
+  <controller name="controller" url="context.js"/>
+  <remote url="data/context.json"/>
+
+  <foundation>
+    <navigation>
+      <selection>
+        <option text="Hey" icon="common/info"/>
+      </selection>
+    </navigation>
+    <actions>
+
+    </actions>
+    <content>
+      <button symbol="info" name="contexted"/>
+      <button symbol="more" name="more" variant="clear" size="large"/>
+      <button symbol="gear" name="other" variant="clear" size="large"/>
+    </content>
+  </foundation>
+
+  <panel name="context-panel" width="200">
+    <button text="Export"/>
+    <selection>
+      <option text="Export" icon="common/info"/>
+    </selection>
+  </panel>
+</gui>

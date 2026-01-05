@@ -328,7 +328,7 @@ hui.ui.Selection.Items.prototype = {
       if (hierarchical && hasChildren) {
         var self = this;
         subOpen = this.disclosed[item.value];
-        var cls = this.disclosed[item.value] ? 'hui_disclosure hui_disclosure_open' : 'hui_disclosure';
+        var cls = this.disclosed[item.value] ? 'hui_selection_disclosure hui_selection_disclosure_open' : 'hui_selection_disclosure';
         var disc = hui.build('span', {'class': cls, parent: node});
         hui.listen(disc,'click',function(e) {
           hui.stop(e);
@@ -362,14 +362,14 @@ hui.ui.Selection.Items.prototype = {
   },
   /** @private */
   toggle : function(node,item) {
-    if (hui.cls.has(node,'hui_disclosure_open')) {
+    if (hui.cls.has(node,'hui_selection_disclosure_open')) {
       this.disclosed[item.value] = false;
       hui.get.next(node.parentNode).style.display='none';
-      hui.cls.remove(node,'hui_disclosure_open');
+      hui.cls.remove(node,'hui_selection_disclosure_open');
     } else {
       this.disclosed[item.value] = true;
       hui.get.next(node.parentNode).style.display='block';
-      hui.cls.add(node,'hui_disclosure_open');
+      hui.cls.add(node,'hui_selection_disclosure_open');
     }
     this.parent.fireSizeChange();
   },

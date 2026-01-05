@@ -14,6 +14,11 @@ hui.Query.prototype = {
       hui.cls.add(node, cls);
     });
   },
+  removeClass : function(cls) {
+    return this.each(function(node) {
+      hui.cls.remove(node, cls);
+    });
+  },
   add : function(something) {
     if (typeof(something) == 'string') {
       if (something[0] == '.') {

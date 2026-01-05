@@ -221,6 +221,9 @@
 .hui_bar-mini .hui_button, .hui_bar-mini .hui_checkbox, .hui_bar-mini .hui_dropdown, .hui_bar-mini .hui_button_small, .hui_bar-mini .hui_searchfield, .hui_bar-mini .hui_segmented {
   margin: 0;
 }
+.hui_bar-mini .hui_checkbox {
+  padding: 0;
+}
 .hui_bar-mini .hui_bar_divider {
   display: inline-block;
   height: 22px;

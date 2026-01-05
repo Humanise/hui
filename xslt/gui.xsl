@@ -3,6 +3,7 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:gui="uri:hui"
+  xmlns:on="uri:hui-event"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   version="1.0"
@@ -586,6 +587,13 @@
             </xsl:call-template>
             <xsl:comment/>
           </span>
+        </xsl:if>
+        <xsl:if test="@symbol">
+          <xsl:call-template name="gui:symbol">
+            <xsl:with-param name="name"><xsl:value-of select="@symbol"/></xsl:with-param>
+            <xsl:with-param name="class">
+            </xsl:with-param>
+          </xsl:call-template>
         </xsl:if>
         <span class="hui_selection_label">
           <xsl:value-of select="@title"/><xsl:value-of select="@text"/> <!-- TODO title is deprecated -->
@@ -1541,10 +1549,19 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
   <xsl:template name="gui:symbol">
     <xsl:param name="name"/>
-    <span class="hui_symbol">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-      <use xlink:href="{$context}/symbols/all.svg#icon-{$name}"><xsl:comment/></use>
-    </svg>
+    <xsl:param name="class"/>
+    <span>
+      <xsl:call-template name="gui:id-attribute"/>
+      <xsl:attribute name="class">
+        <xsl:text>hui_symbol</xsl:text>
+        <xsl:if test="$class">
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="$class"/>
+        </xsl:if>
+      </xsl:attribute>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+        <use xlink:href="{$context}/symbols/all.svg#icon-{$name}"><xsl:comment/></use>
+      </svg>
     </span>
   </xsl:template>
 
@@ -1552,6 +1569,17 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <xsl:call-template name="gui:symbol">
       <xsl:with-param name="name"><xsl:value-of select="@name"/></xsl:with-param>
     </xsl:call-template>
+    <xsl:if test="@name">
+    <script type="text/javascript">
+      (function() {
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Symbol({
+        element : '<xsl:call-template name="gui:id"/>'
+        <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+      });
+      <xsl:call-template name="gui:createobject"/>
+      })();
+    </script>
+    </xsl:if>
   </xsl:template>
 
 
@@ -3485,6 +3513,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:attribute name="class">
         <xsl:choose>
           <xsl:when test="@class"><xsl:value-of select="@class"/></xsl:when>
+          <xsl:when test="@variant='clear'"><xsl:value-of select="'hui_button hui-clear'"/></xsl:when>
           <xsl:otherwise>
             <xsl:text>hui_button</xsl:text>
             <xsl:if test="@variant">
@@ -3511,6 +3540,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:if test="@symbol">
           <xsl:call-template name="gui:symbol">
             <xsl:with-param name="name"><xsl:value-of select="@symbol"/></xsl:with-param>
+            <xsl:with-param name="class">
+            <xsl:if test="(not(@title) or @title='') and (not(@text) or @text='')">
+              <xsl:text>hui_button_symbol_notext</xsl:text>
+            </xsl:if>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
       <xsl:value-of select="@title"/><xsl:value-of select="@text"/>

@@ -4,7 +4,7 @@ html.hui {
 
 body.hui {
   margin: 0px;
-  background: #f3f5f7;
+  background: #f9f9f9;
   overflow: auto;
   min-height: 100%;
   height: 100%;
@@ -244,6 +244,7 @@ span.hui_disclosure_open:hover {
   height: 16px;
   display: inline-block;
   font-size: 16px;
+  vertical-align: middle;
 }
 .hui_symbol:before {
   font-family: "HUI" !important;
@@ -324,7 +325,7 @@ span.hui_disclosure_open:hover {
 }
 
 /**************** Standard button ************/
-.hui_button {
+.hui_button:not(.hui-clear) {
   color: #333;
   display: inline-block;
   vertical-align: middle;
@@ -354,78 +355,78 @@ span.hui_disclosure_open:hover {
   box-sizing: content-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
 }
-.hui_button:hover {
+.hui_button:not(.hui-clear):hover {
   border-color: #d2d2d2 #b7b7b7 #9c9c9c;
   background: linear-gradient(#f9f9f9, #d5dade);
 }
-.hui_button:active {
+.hui_button:not(.hui-clear):active {
   border-color: #adadad #b7b7b7 #bfbfbf;
   background: linear-gradient(#f1f2f3, #d1d4d6);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
   text-shadow: none;
   line-height: 26px;
 }
-.hui_button:focus {
+.hui_button:not(.hui-clear):focus {
   border: 1px solid #0069ff;
   box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
   outline: none;
 }
-.hui_button.hui-small {
+.hui_button:not(.hui-clear).hui-small {
   font-size: 11px;
   height: 20px;
   line-height: 20px;
   padding: 0 7px;
 }
-.hui_button.hui-small:active {
+.hui_button:not(.hui-clear).hui-small:active {
   line-height: 21px;
 }
-.hui_button.hui-small .hui_button_icon {
+.hui_button:not(.hui-clear).hui-small .hui_button_icon {
   margin-top: 2px;
 }
-.hui_button.hui-large {
+.hui_button:not(.hui-clear).hui-large {
   font-size: 14px;
   height: 28px;
   line-height: 28px;
   padding: 0 12px;
 }
-.hui_button.hui-large:active {
+.hui_button:not(.hui-clear).hui-large:active {
   line-height: 29px;
 }
-.hui_button.hui-mini {
+.hui_button:not(.hui-clear).hui-mini {
   font-size: 9px;
   height: 16px;
   line-height: 16px;
   padding: 0 5px;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
 }
-.hui_button.hui-mini:active {
+.hui_button:not(.hui-clear).hui-mini:active {
   line-height: 17px;
 }
-.hui_button.hui-tiny {
+.hui_button:not(.hui-clear).hui-tiny {
   font-size: 8px;
   height: 14px;
   line-height: 14px;
   padding: 0 5px;
   box-shadow: none;
 }
-.hui_button.hui-tiny::active {
+.hui_button:not(.hui-clear).hui-tiny::active {
   line-height: 15px;
 }
-.hui_button.hui-highlighted {
+.hui_button:not(.hui-clear).hui-highlighted {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 5px #6ede4a;
   border-color: #adcaba #9fc1b1 #99ada2;
 }
-.hui_button.hui-highlighted:focus {
+.hui_button:not(.hui-clear).hui-highlighted:focus {
   box-shadow: inset 0 0 5px #6ede4a, 0 0 2px #0069ff, inset 0 0 2px #0069ff;
   border-color: #0069ff;
 }
-.hui_button.hui-highlighted:active {
+.hui_button:not(.hui-clear).hui-highlighted:active {
   box-shadow: inset 0px 1px 5px #6bc54e;
   border-color: #99ada2 #9fc1b1 #adcaba;
   background: linear-gradient(#daebd5, #c8d7c2);
   text-shadow: none;
 }
-.hui_button.hui-disabled, .hui_button.hui-disabled:hover {
+.hui_button:not(.hui-clear).hui-disabled, .hui_button:not(.hui-clear).hui-disabled:hover {
   cursor: default;
   background: #f9f9f9;
   color: #999;
@@ -451,9 +452,44 @@ span.hui_disclosure_open:hover {
 .hui_button > .hui_symbol {
   width: 12px;
   height: 12px;
-  margin: 4px -2px 0;
-  vertical-align: top;
   line-height: 12px;
+  margin: -3px 5px 0 -3px;
+  vertical-align: middle;
+}
+.hui_button > .hui_button_symbol_notext {
+  margin: -2px -4px 0;
+}
+.hui_button.hui-small > .hui_symbol {
+  margin: -2px 4px 0 -3px;
+}
+.hui_button.hui-small > .hui_button_symbol_notext {
+  margin: -2px -2px 0;
+}
+.hui_button.hui-mini > .hui_symbol {
+  width: 10px;
+  height: 10px;
+  margin: -3px 3px 0 -2px;
+  line-height: 10px;
+}
+.hui_button.hui-mini > .hui_button_symbol_notext {
+  margin: -3px -2px 0;
+}
+.hui_button.hui-tiny > .hui_symbol {
+  width: 10px;
+  height: 10px;
+  margin: -4px 3px 0 -2px;
+  line-height: 10px;
+}
+.hui_button.hui-tiny > .hui_button_symbol_notext {
+  margin: -4px -2px 0;
+}
+
+.hui_button.hui-clear {
+  display: inline-flex;
+  vertical-align: middle;
+}
+.hui_button.hui-clear > .hui_symbol {
+  margin: 0;
 }
 
 .hui_button.hui-light {
@@ -516,7 +552,7 @@ span.hui_disclosure_open:hover {
   margin-right: -5px;
 }
 
-.hui_context_dark .hui_button {
+.hui_context_dark .hui_button:not(.hui-clear) {
   border-color: #232323 #040404 #000000;
   background-color: #5c5f63;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#5c5f63), to(#4f5152));
@@ -531,11 +567,11 @@ span.hui_disclosure_open:hover {
   box-shadow: 0 0 1px #666, inset 0 1px 0 #888;
   border-radius: 3px;
 }
-.hui_context_dark .hui_button:focus {
+.hui_context_dark .hui_button:not(.hui-clear):focus {
   border-color: #65a5ff;
   box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff;
 }
-.hui_context_dark .hui_button:hover {
+.hui_context_dark .hui_button:not(.hui-clear):hover {
   box-shadow: 0 0 1px #666, inset 0 1px 0 #666;
   background-color: rgb(79.7172774869, 82.3167539267, 85.7827225131);
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(79.7172774869, 82.3167539267, 85.7827225131)), to(rgb(66.4875776398, 68.1708074534, 69.0124223602)));
@@ -546,11 +582,11 @@ span.hui_disclosure_open:hover {
   background-image: linear-gradient(top, rgb(79.7172774869, 82.3167539267, 85.7827225131), rgb(66.4875776398, 68.1708074534, 69.0124223602));
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(79.7172774869, 82.3167539267, 85.7827225131)", endColorstr="rgb(66.4875776398, 68.1708074534, 69.0124223602)");
 }
-.hui_context_dark .hui_button:active {
+.hui_context_dark .hui_button:not(.hui-clear):active {
   box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3);
   border-color: #000;
 }
-.hui_context_dark .hui_button.hui-highlighted {
+.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted {
   /*
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
   border-color: #2c3831 #222b26 #232b27;
@@ -566,11 +602,11 @@ span.hui_disclosure_open:hover {
   background-image: linear-gradient(top, #0a71ec, #005694);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0a71ec", endColorstr="#005694");
 }
-.hui_context_dark .hui_button.hui-highlighted:focus {
+.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:focus {
   border-color: #65a5ff;
   box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff;
 }
-.hui_context_dark .hui_button.hui-highlighted:hover {
+.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:hover {
   box-shadow: inset 0 1px 0px rgb(20.5, 150.6531100478, 255), 0 0px 1px rgba(255, 255, 255, 0.35);
   background-color: rgb(8.9634146341, 101.2865853659, 211.5365853659);
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(8.9634146341, 101.2865853659, 211.5365853659)), to(rgb(0, 71.1824324324, 122.5)));
@@ -581,10 +617,10 @@ span.hui_disclosure_open:hover {
   background-image: linear-gradient(top, rgb(8.9634146341, 101.2865853659, 211.5365853659), rgb(0, 71.1824324324, 122.5));
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(8.9634146341, 101.2865853659, 211.5365853659)", endColorstr="rgb(0, 71.1824324324, 122.5)");
 }
-.hui_context_dark .hui_button.hui-highlighted:active {
+.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:active {
   box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3);
 }
-.hui_context_dark .hui_button.hui-disabled, .hui_context_dark .hui_button.hui-disabled:hover {
+.hui_context_dark .hui_button:not(.hui-clear).hui-disabled, .hui_context_dark .hui_button:not(.hui-clear).hui-disabled:hover {
   border-color: #111;
   background: #333;
   color: #999;
@@ -1583,6 +1619,13 @@ th.hui_toolbar_grid_label {
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
   min-height: 100%;
 }
+.hui_list_selectable .hui_list_row:hover {
+  background-color: #fafafa;
+  cursor: pointer;
+}
+.hui_list_selected, .hui_list_selectable .hui_list_selected:hover {
+  background-color: #368cf4;
+}
 
 .hui_list_table {
   width: 100%;
@@ -1727,20 +1770,6 @@ th.hui_toolbar_grid_label {
   visibility: visible;
 }
 
-tbody.hui_list_selectable tr:hover {
-  background-color: #EBF0F7;
-  background-color: #fafafa;
-  cursor: pointer;
-}
-
-.hui_list tr.hui_list_selected,
-.hui_list tr.hui_list_selected:hover {
-  background-color: #3875d7;
-  background: -moz-linear-gradient(top, #92BCFA, #5580ee);
-  background: -webkit-gradient(linear, left top, left bottom, from(#92BCFA), to(#5580ee));
-  text-shadow: 0 -1px 0px #5070cc;
-}
-
 .hui_list tr.hui_list_selected td {
   color: #fff;
 }
@@ -1821,9 +1850,7 @@ span.hui_list_count {
 }
 
 .hui_list_selection a.hui_list_selected {
-  background: #3875D7;
-  background: #bbb;
-  box-shadow: 0 1px 2px #666666 inset;
+  background: #777;
   color: #fff;
 }
 
@@ -2130,43 +2157,66 @@ a.list_check_all {
   margin: 10px 7px 5px;
   letter-spacing: 0.5px;
 }
+.hui_selection_label {
+  margin: 1px 0 0 2px;
+  padding: 0px 3px;
+  position: relative;
+  top: 1px;
+  vertical-align: top;
+  word-break: break-all;
+}
+.hui_selection_item > .hui_icon {
+  vertical-align: top;
+  margin-top: 1px;
+}
 .hui_selection_badge {
   float: right;
   font-size: 11px;
-  margin-top: 2px;
+  margin-top: 1px;
   margin-right: 3px;
   font-weight: normal;
   color: rgba(0, 0, 0, 0.5);
 }
-
-.split_sidebar .hui_selection {
-  padding: 5px 0px;
-}
-
 .hui_selection_item {
   background: 7px center no-repeat;
   font-size: 9pt;
   min-height: 18px;
-  padding: 1px 5px 1px 6px;
+  padding: 2px 5px 2px 6px;
+  border-radius: 5px;
   overflow: hidden;
   word-break: break-word;
   word-wrap: break-word;
   cursor: pointer;
 }
-
-.hui_selection .hui_disclosure {
-  margin-right: 2px;
+.hui_selection_disclosure {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  vertical-align: middle;
+  background: url("../gfx/disclosure.png");
+  font-size: 0;
+  line-height: 0;
+  cursor: default;
+  margin-right: 3px;
   opacity: 0.3;
 }
-
-.hui_selection:hover .hui_disclosure {
-  opacity: 1;
+.hui_selection_disclosure:hover {
+  background-position: 0 -11px;
+}
+.hui_selection_disclosure_open {
+  background-position: 0 -22px;
+}
+.hui_selection_disclosure_open:hover {
+  background-position: 0 -33px;
 }
 
-.hui_selection_label {
-  margin: 0 0 0 1px;
-  padding: 1px 3px;
-  vertical-align: middle;
+.hui_context_sidebar .hui_selection,
+.split_sidebar .hui_selection {
+  margin: 3px 3px;
+}
+
+.hui_selection:hover .hui_selection_disclosure {
+  opacity: 1;
 }
 
 .hui_selection .hui_selected .hui_selection_badge {
@@ -2187,12 +2237,12 @@ a.list_check_all {
 
 .hui_selection_item.hui_selected,
 .hui_selection_item.hui_selected:hover {
-  background-color: #3875d7;
-  background: url("../gfx/selection_blue.png") left top repeat-x;
-  background: -moz-linear-gradient(top, #92BCFA, #5580ee);
-  background: -webkit-gradient(linear, left top, left bottom, from(#92BCFA), to(#5580ee));
+  background-color: #368cf4;
   color: #fff;
-  -webkit-box-shadow: inset 0 1px 0 #7FA9F6;
+}
+.hui_selection_item.hui_selected .hui_symbol,
+.hui_selection_item.hui_selected:hover .hui_symbol {
+  fill: #fff;
 }
 
 .hui_selection_item.hui_selected .hui_selection_label {
@@ -2453,7 +2503,6 @@ div.hui_window_dark .hui_selection_item span {
   background: url("../gfx/pointer.svg");
   background-size: 20px 20px;
   display: none;
-  transition: top 0.3s, left 0.3s;
 }
 .hui_panel_arrow-left {
   width: 10px;
@@ -2528,6 +2577,7 @@ div.hui_window_dark .hui_selection_item span {
   padding-top: 35px;
   font-size: 12px;
   text-shadow: 0 1px white;
+  cursor: default;
 }
 .hui_panel_busy.hui-is-visible {
   transition-delay: 0.5s, 0s, 0s;
@@ -4141,6 +4191,9 @@ ul.hui_wizard a.hui_selected {
 .hui_bar-mini .hui_button, .hui_bar-mini .hui_checkbox, .hui_bar-mini .hui_dropdown, .hui_bar-mini .hui_button_small, .hui_bar-mini .hui_searchfield, .hui_bar-mini .hui_segmented {
   margin: 0;
 }
+.hui_bar-mini .hui_checkbox {
+  padding: 0;
+}
 .hui_bar-mini .hui_bar_divider {
   display: inline-block;
   height: 22px;
@@ -5380,20 +5433,13 @@ div.hui_rendering p {
   height: 100%;
   position: relative;
 }
-
 .hui_structure_top {
   min-height: 26px;
   border: 1px solid #ccc;
-  border-radius: 6px 6px 0 0;
+  border-radius: 5px 5px 0 0;
   padding: 0 5px;
-  background: #fff;
-  background: #CCC -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#F0F0F0));
-  background: -moz-linear-gradient(top, white, #F0F0F0);
-  background: -webkit-linear-gradient(top, white, #F0F0F0);
-  background: -ms-linear-gradient(top, white, #F0F0F0);
-  background: linear-gradient(top, white, #F0F0F0);
+  background: #f6f6f6;
 }
-
 .hui_structure_bottom {
   min-height: 26px;
   border: 1px solid #ccc;
@@ -5402,14 +5448,8 @@ div.hui_rendering p {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #fff;
-  background: #CCC -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#F0F0F0));
-  background: -moz-linear-gradient(top, white, #F0F0F0);
-  background: -webkit-linear-gradient(top, white, #F0F0F0);
-  background: -ms-linear-gradient(top, white, #F0F0F0);
-  background: linear-gradient(top, white, #F0F0F0);
+  background: #f6f6f6;
 }
-
 .hui_structure_middle {
   position: absolute;
   bottom: 28px;
@@ -5418,25 +5458,23 @@ div.hui_rendering p {
   right: 0;
   background: #fff;
 }
-
-.hui_structure_full .hui_structure_middle {
-  border-right: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-}
-
 .hui_structure_center {
   height: 100%;
   margin-left: 201px;
 }
-
 .hui_structure_left {
-  background: #EBF0F7 none repeat scroll 0 0;
-  border-right: 1px solid #BBBBBB;
+  background: #EBF0F7;
+  border-right: 1px solid #ccc;
   left: 0;
   top: 0;
   bottom: 0;
   position: absolute;
   width: 200px;
+}
+
+.hui_structure_full .hui_structure_middle {
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
 }
 
 .hui_slider {
@@ -6087,4 +6125,33 @@ table.hui_objectlist th.hui_objectlist1 {
 }
 
 
+
+.hui_context {
+  min-width: 100px;
+}
+.hui_context_info {
+  margin: 5px;
+  padding: 2px 5px;
+  font-size: 12px;
+  line-height: 14px;
+}
+.hui_context_info_text {
+  color: #777;
+  font-size: 11px;
+  max-width: 300px;
+}
+.hui_context_action {
+  background: #f6f6f6;
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 3px;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.hui_context_action:hover {
+  background: #eee;
+}
 

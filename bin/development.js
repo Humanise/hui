@@ -96,5 +96,5 @@
   document.write('<script type="text/javascript" src="'+_context+'/js/Pages.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Panel.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Collection.js"></script>');
-  document.write('<script type="text/javascript" src="'+_context+'/js/Method.js"></script>');
+  document.write('<script type="text/javascript" src="'+_context+'/js/Context.js"></script>');
 })()

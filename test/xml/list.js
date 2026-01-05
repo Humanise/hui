@@ -19,7 +19,6 @@ var controller = {
     alert(hui.string.toJSON(info))
   },
   $clickIcon$list : function(info) {
-    console.log('clickIcon', info);
     hui.ui.msg.success({text:'Icon clicked : '+info.row,duration:3000})
   },
   $clickButton$list : function(info) {

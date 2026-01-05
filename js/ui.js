@@ -802,6 +802,12 @@ hui.ui.callDelegates = function(obj,method,value,event) {
         specific = '$'+method+'$'+obj.name;
       if (obj.name && delegate[specific]) {
         thisResult = delegate[specific](value,event);
+      } else if (obj.name && delegate[obj.name + '.' + method + '!']) {
+        thisResult = delegate[obj.name + '.' + method + '!']({source: obj, action: method, value: value, event: event});
+      } else if (obj.name && delegate[obj.name + '.' + method + '!']) {
+        thisResult = delegate[obj.name + '.' + method + '!']({source: obj, action: method, value: value, event: event});
+      } else if (delegate[method + '!']) {
+        thisResult = delegate[method + '!']({source: obj, action: method, value: value, event: event});
       } else if (delegate['$'+method]) {
         thisResult = delegate['$'+method](value,event);
       }
@@ -852,6 +858,10 @@ hui.ui.tellGlobalListeners = function(obj,method,value,event) {
             thisResult;
     if (obj.name && delegate['$'+method+'$'+obj.name]) {
       thisResult = delegate['$'+method+'$'+obj.name](value,event);
+    } else if (obj.name && delegate[obj.name + '.' + method + '!']) {
+      thisResult = delegate[obj.name + '.' + method + '!']({source: obj, action: method, value: value, event: event});
+    } else if (delegate[method + '!']) {
+      thisResult = delegate[method + '!']({source: obj, action: method, value: value, event: event});
     } else if (delegate['$'+method]) {
       thisResult = delegate['$'+method](value,event);
     }
@@ -1078,7 +1088,8 @@ hui.on(function() {
     hui.ui.delayedUntilReady[i]();
   }
   // Call super delegates after delayedUntilReady...
-  hui.ui.tellGlobalListeners(this,'ready');
+  hui.ui.tellGlobalListeners(this, 'ready');
+  hui.ui.tellGlobalListeners(document.body, 'attach');
   hui.define('hui.ui', hui.ui);
 });
 

@@ -1,0 +1,32 @@
+@use "sass:color";
+@use 'tools' as *;
+
+.hui_context {
+  min-width: 100px;
+
+  &_info {
+    margin: 5px;
+    padding: 2px 5px;
+    font-size: $standard-font-size;
+    line-height: 14px;
+    &_text {
+      color: $subtle-text-color;
+      font-size: $small-font-size;
+      max-width: 300px;
+    }
+  }
+  &_action {
+    background: $background-color;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: $standard-font-size;
+    border-radius: 3px;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+      background: #eee;
+    };
+  }
+}

@@ -75,39 +75,40 @@
         <option icon="common/page" text="progressbar" value="html/progressbar.html"/>
     </option>
     <option icon="common/folder" text="XML tests" value="XML tests">
-        <option icon="common/page" text="tabs" value="xml/tabs.xml"/>
-        <option icon="common/page" text="form_special" value="xml/form_special.xml"/>
-        <option icon="common/page" text="rendering" value="xml/rendering.xml"/>
-        <option icon="common/page" text="icon" value="xml/icon.xml"/>
-        <option icon="common/page" text="gallery" value="xml/gallery.xml"/>
         <option icon="common/page" text="all" value="xml/all.xml"/>
-        <option icon="common/page" text="toolbar" value="xml/toolbar.xml"/>
-        <option icon="common/page" text="list" value="xml/list.xml"/>
-        <option icon="common/page" text="columns" value="xml/columns.xml"/>
-        <option icon="common/page" text="layout" value="xml/layout.xml"/>
-        <option icon="common/page" text="graph" value="xml/graph.xml"/>
-        <option icon="common/page" text="structure" value="xml/structure.xml"/>
-        <option icon="common/page" text="picker" value="xml/picker.xml"/>
-        <option icon="common/page" text="calendar" value="xml/calendar.xml"/>
-        <option icon="common/page" text="timeline" value="xml/timeline.xml"/>
-        <option icon="common/page" text="form_objectinput" value="xml/form_objectinput.xml"/>
-        <option icon="common/page" text="dropdown" value="xml/dropdown.xml"/>
-        <option icon="common/page" text="rows" value="xml/rows.xml"/>
-        <option icon="common/page" text="foundation" value="xml/foundation.xml"/>
-        <option icon="common/page" text="media-simulator" value="xml/media-simulator.xml"/>
-        <option icon="common/page" text="links" value="xml/links.xml"/>
-        <option icon="common/page" text="windows" value="xml/windows.xml"/>
-        <option icon="common/page" text="tiles" value="xml/tiles.xml"/>
-        <option icon="common/page" text="form" value="xml/form.xml"/>
-        <option icon="common/page" text="diagram" value="xml/diagram.xml"/>
-        <option icon="common/page" text="split" value="xml/split.xml"/>
         <option icon="common/page" text="bar" value="xml/bar.xml"/>
-        <option icon="common/page" text="form_fieldset" value="xml/form_fieldset.xml"/>
-        <option icon="common/page" text="style" value="xml/style.xml"/>
         <option icon="common/page" text="box" value="xml/box.xml"/>
-        <option icon="common/page" text="structure-plain" value="xml/structure-plain.xml"/>
         <option icon="common/page" text="button" value="xml/button.xml"/>
+        <option icon="common/page" text="calendar" value="xml/calendar.xml"/>
+        <option icon="common/page" text="columns" value="xml/columns.xml"/>
+        <option icon="common/page" text="diagram" value="xml/diagram.xml"/>
+        <option icon="common/page" text="dropdown" value="xml/dropdown.xml"/>
+        <option icon="common/page" text="form_fieldset" value="xml/form_fieldset.xml"/>
+        <option icon="common/page" text="form_objectinput" value="xml/form_objectinput.xml"/>
+        <option icon="common/page" text="form_special" value="xml/form_special.xml"/>
+        <option icon="common/page" text="form" value="xml/form.xml"/>
+        <option icon="common/page" text="foundation" value="xml/foundation.xml"/>
+        <option icon="common/page" text="gallery" value="xml/gallery.xml"/>
+        <option icon="common/page" text="graph" value="xml/graph.xml"/>
+        <option icon="common/page" text="icon" value="xml/icon.xml"/>
+        <option icon="common/page" text="layout" value="xml/layout.xml"/>
+        <option icon="common/page" text="links" value="xml/links.xml"/>
+        <option icon="common/page" text="list" value="xml/list.xml"/>
+        <option icon="common/page" text="media-simulator" value="xml/media-simulator.xml"/>
         <option icon="common/page" text="pages" value="xml/pages.xml"/>
+        <option icon="common/page" text="picker" value="xml/picker.xml"/>
+        <option icon="common/page" text="rendering" value="xml/rendering.xml"/>
+        <option icon="common/page" text="rows" value="xml/rows.xml"/>
+        <option icon="common/page" text="split" value="xml/split.xml"/>
+        <option icon="common/page" text="structure-plain" value="xml/structure-plain.xml"/>
+        <option icon="common/page" text="structure" value="xml/structure.xml"/>
+        <option icon="common/page" text="style" value="xml/style.xml"/>
+        <option icon="common/page" text="symbol" value="xml/symbol.xml"/>
+        <option icon="common/page" text="tabs" value="xml/tabs.xml"/>
+        <option icon="common/page" text="tiles" value="xml/tiles.xml"/>
+        <option icon="common/page" text="timeline" value="xml/timeline.xml"/>
+        <option icon="common/page" text="toolbar" value="xml/toolbar.xml"/>
+        <option icon="common/page" text="windows" value="xml/windows.xml"/>
     </option>
     <option icon="common/folder" text="Complete GUIs" value="Complete GUIs">
         <option icon="common/page" text="sites" value="guis/sites.xml"/>

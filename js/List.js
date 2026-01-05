@@ -563,7 +563,7 @@ hui.ui.List.prototype = {
         this._parseCell(child,icons);
         cell.appendChild(icons);
       } else if (hui.dom.isElement(child,'button')) {
-        var button = hui.ui.Button.create({text:child.getAttribute('text'),small:true,rounded:true,data:this._getData(child)});
+        var button = hui.ui.Button.create({text:child.getAttribute('text'),mini:true,rounded:true,data:this._getData(child)});
         button.click(this._buttonClick.bind(this));
         cell.appendChild(button.getElement());
       } else if (hui.dom.isElement(child,'wrap')) {

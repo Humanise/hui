@@ -1,8 +1,11 @@
-$sidebar-color : #EBF0F7;
+$sidebar-color: #EBF0F7;
+$background-color: #f6f6f6;
 $border-color : #ddd;
 $focus-color: #0069ff; //#39f;
 $dark-focus-color: #65a5ff;
+$selection-color: #368cf4;
 $text-color: #333; //#004a80;
+$subtle-text-color: #777;
 $font: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
 $mono-font: Menlo,"Lucida Console", Monaco, monospace;
 $compact-font: Helvetica, Arial, sans-serif;
@@ -11,6 +14,7 @@ $compact-font: Helvetica, Arial, sans-serif;
 $bar-height: 30px;
 
 $standard-font-size: 12px;
+$small-font-size: 11px;
 
 $title-font-size: 10pt; // 13.333px but looks nice
 

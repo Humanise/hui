@@ -1,0 +1,28 @@
+.hui_context {
+  min-width: 100px;
+}
+.hui_context_info {
+  margin: 5px;
+  padding: 2px 5px;
+  font-size: 12px;
+  line-height: 14px;
+}
+.hui_context_info_text {
+  color: #777;
+  font-size: 11px;
+  max-width: 300px;
+}
+.hui_context_action {
+  background: #f6f6f6;
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 3px;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.hui_context_action:hover {
+  background: #eee;
+}

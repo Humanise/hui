@@ -20,7 +20,7 @@
 }
 
 /**************** Standard button ************/
-.hui_button {
+.hui_button:not(.hui-clear) {
   color: #333;
   display: inline-block;
   vertical-align: middle;
@@ -50,78 +50,78 @@
   box-sizing: content-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
 }
-.hui_button:hover {
+.hui_button:not(.hui-clear):hover {
   border-color: #d2d2d2 #b7b7b7 #9c9c9c;
   background: linear-gradient(#f9f9f9, #d5dade);
 }
-.hui_button:active {
+.hui_button:not(.hui-clear):active {
   border-color: #adadad #b7b7b7 #bfbfbf;
   background: linear-gradient(#f1f2f3, #d1d4d6);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
   text-shadow: none;
   line-height: 26px;
 }
-.hui_button:focus {
+.hui_button:not(.hui-clear):focus {
   border: 1px solid #0069ff;
   box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
   outline: none;
 }
-.hui_button.hui-small {
+.hui_button:not(.hui-clear).hui-small {
   font-size: 11px;
   height: 20px;
   line-height: 20px;
   padding: 0 7px;
 }
-.hui_button.hui-small:active {
+.hui_button:not(.hui-clear).hui-small:active {
   line-height: 21px;
 }
-.hui_button.hui-small .hui_button_icon {
+.hui_button:not(.hui-clear).hui-small .hui_button_icon {
   margin-top: 2px;
 }
-.hui_button.hui-large {
+.hui_button:not(.hui-clear).hui-large {
   font-size: 14px;
   height: 28px;
   line-height: 28px;
   padding: 0 12px;
 }
-.hui_button.hui-large:active {
+.hui_button:not(.hui-clear).hui-large:active {
   line-height: 29px;
 }
-.hui_button.hui-mini {
+.hui_button:not(.hui-clear).hui-mini {
   font-size: 9px;
   height: 16px;
   line-height: 16px;
   padding: 0 5px;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
 }
-.hui_button.hui-mini:active {
+.hui_button:not(.hui-clear).hui-mini:active {
   line-height: 17px;
 }
-.hui_button.hui-tiny {
+.hui_button:not(.hui-clear).hui-tiny {
   font-size: 8px;
   height: 14px;
   line-height: 14px;
   padding: 0 5px;
   box-shadow: none;
 }
-.hui_button.hui-tiny::active {
+.hui_button:not(.hui-clear).hui-tiny::active {
   line-height: 15px;
 }
-.hui_button.hui-highlighted {
+.hui_button:not(.hui-clear).hui-highlighted {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 5px #6ede4a;
   border-color: #adcaba #9fc1b1 #99ada2;
 }
-.hui_button.hui-highlighted:focus {
+.hui_button:not(.hui-clear).hui-highlighted:focus {
   box-shadow: inset 0 0 5px #6ede4a, 0 0 2px #0069ff, inset 0 0 2px #0069ff;
   border-color: #0069ff;
 }
-.hui_button.hui-highlighted:active {
+.hui_button:not(.hui-clear).hui-highlighted:active {
   box-shadow: inset 0px 1px 5px #6bc54e;
   border-color: #99ada2 #9fc1b1 #adcaba;
   background: linear-gradient(#daebd5, #c8d7c2);
   text-shadow: none;
 }
-.hui_button.hui-disabled, .hui_button.hui-disabled:hover {
+.hui_button:not(.hui-clear).hui-disabled, .hui_button:not(.hui-clear).hui-disabled:hover {
   cursor: default;
   background: #f9f9f9;
   color: #999;
@@ -147,9 +147,44 @@
 .hui_button > .hui_symbol {
   width: 12px;
   height: 12px;
-  margin: 4px -2px 0;
-  vertical-align: top;
   line-height: 12px;
+  margin: -3px 5px 0 -3px;
+  vertical-align: middle;
+}
+.hui_button > .hui_button_symbol_notext {
+  margin: -2px -4px 0;
+}
+.hui_button.hui-small > .hui_symbol {
+  margin: -2px 4px 0 -3px;
+}
+.hui_button.hui-small > .hui_button_symbol_notext {
+  margin: -2px -2px 0;
+}
+.hui_button.hui-mini > .hui_symbol {
+  width: 10px;
+  height: 10px;
+  margin: -3px 3px 0 -2px;
+  line-height: 10px;
+}
+.hui_button.hui-mini > .hui_button_symbol_notext {
+  margin: -3px -2px 0;
+}
+.hui_button.hui-tiny > .hui_symbol {
+  width: 10px;
+  height: 10px;
+  margin: -4px 3px 0 -2px;
+  line-height: 10px;
+}
+.hui_button.hui-tiny > .hui_button_symbol_notext {
+  margin: -4px -2px 0;
+}
+
+.hui_button.hui-clear {
+  display: inline-flex;
+  vertical-align: middle;
+}
+.hui_button.hui-clear > .hui_symbol {
+  margin: 0;
 }
 
 .hui_button.hui-light {
@@ -212,7 +247,7 @@
   margin-right: -5px;
 }
 
-.hui_context_dark .hui_button {
+.hui_context_dark .hui_button:not(.hui-clear) {
   border-color: #232323 #040404 #000000;
   background-color: #5c5f63;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#5c5f63), to(#4f5152));
@@ -227,11 +262,11 @@
   box-shadow: 0 0 1px #666, inset 0 1px 0 #888;
   border-radius: 3px;
 }
-.hui_context_dark .hui_button:focus {
+.hui_context_dark .hui_button:not(.hui-clear):focus {
   border-color: #65a5ff;
   box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff;
 }
-.hui_context_dark .hui_button:hover {
+.hui_context_dark .hui_button:not(.hui-clear):hover {
   box-shadow: 0 0 1px #666, inset 0 1px 0 #666;
   background-color: rgb(79.7172774869, 82.3167539267, 85.7827225131);
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(79.7172774869, 82.3167539267, 85.7827225131)), to(rgb(66.4875776398, 68.1708074534, 69.0124223602)));
@@ -242,11 +277,11 @@
   background-image: linear-gradient(top, rgb(79.7172774869, 82.3167539267, 85.7827225131), rgb(66.4875776398, 68.1708074534, 69.0124223602));
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(79.7172774869, 82.3167539267, 85.7827225131)", endColorstr="rgb(66.4875776398, 68.1708074534, 69.0124223602)");
 }
-.hui_context_dark .hui_button:active {
+.hui_context_dark .hui_button:not(.hui-clear):active {
   box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3);
   border-color: #000;
 }
-.hui_context_dark .hui_button.hui-highlighted {
+.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted {
   /*
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
   border-color: #2c3831 #222b26 #232b27;
@@ -262,11 +297,11 @@
   background-image: linear-gradient(top, #0a71ec, #005694);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0a71ec", endColorstr="#005694");
 }
-.hui_context_dark .hui_button.hui-highlighted:focus {
+.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:focus {
   border-color: #65a5ff;
   box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff;
 }
-.hui_context_dark .hui_button.hui-highlighted:hover {
+.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:hover {
   box-shadow: inset 0 1px 0px rgb(20.5, 150.6531100478, 255), 0 0px 1px rgba(255, 255, 255, 0.35);
   background-color: rgb(8.9634146341, 101.2865853659, 211.5365853659);
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(8.9634146341, 101.2865853659, 211.5365853659)), to(rgb(0, 71.1824324324, 122.5)));
@@ -277,10 +312,10 @@
   background-image: linear-gradient(top, rgb(8.9634146341, 101.2865853659, 211.5365853659), rgb(0, 71.1824324324, 122.5));
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(8.9634146341, 101.2865853659, 211.5365853659)", endColorstr="rgb(0, 71.1824324324, 122.5)");
 }
-.hui_context_dark .hui_button.hui-highlighted:active {
+.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:active {
   box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3);
 }
-.hui_context_dark .hui_button.hui-disabled, .hui_context_dark .hui_button.hui-disabled:hover {
+.hui_context_dark .hui_button:not(.hui-clear).hui-disabled, .hui_context_dark .hui_button:not(.hui-clear).hui-disabled:hover {
   border-color: #111;
   background: #333;
   color: #999;
