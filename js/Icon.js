@@ -1,41 +1,34 @@
-hui.on(['hui.ui'], function() { hui.ui.make(
-
-  /** @lends hui.ui.Icon.prototype */
-  {
-    name : 'Icon',
-    /**
-     * @constructs hui.ui.Icon
-     * @extends hui.ui.Component
-     * @param params
-     * @param params.icon {String} The icon
-     */
-    $init : function(params) {
-      this.visible = false;
-      this.icon = params.icon;
-      this.labeled = false;
-    },
-    $build : function(params) {
-      return hui.ui.createIcon(params.icon, params.size, 'span');
-    },
-    $events : {
-      //root : {click: 'click!'}
-      root : {click: function() {
-        this.fire('click')
-      }}
-    },
-    /**
-     * Change the icon size
-     * @param size {Number} The size in pixels: 16, 32 etc.
-     */
-    setSize : function(size) {
-      var iconNode = hui.find('span', this.element) || this.element;
-      this.size = size;
-      hui.ui.setIconImage(iconNode, this.icon, size);
-      iconNode.className = 'hui_icon hui_icon_' + size;
+hui.component('Icon', {
+  state: {
+    icon: undefined,
+    size: 16
+  },
+  nodes : {
+    'icon' : '.hui_icon'
+  },
+  init(params) {
+    this.state.icon = params.icon;
+    if (params.size) {
+      this.state.size = params.size;
+    }
+  },
+  create : function(options) {
+    return hui.ui.createIcon(options.icon, options.size, 'span');
+  },
+  '!click'() {
+    this.fire('click')
+  },
+  setSize : function(size) {
+    this.change({size:size})
+  },
+  draw : function(changed) {
+    if ('size' in changed) {
+      var iconNode = this.nodes.icon;
+      hui.ui.setIconImage(iconNode, this.state.icon, changed.size);
+      iconNode.className = 'hui_icon hui_icon_' + changed.size;
       if (hui.cls.has(this.element, 'hui_icon_labeled')) {
-        this.element.className = 'hui_icon_labeled hui_icon_labeled_' + size;
+        this.element.className = 'hui_icon_labeled hui_icon_labeled_' + changed.size;
       }
     }
   }
-
-);});
+});

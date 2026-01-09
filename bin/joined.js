@@ -3788,11 +3788,11 @@ hui.control = function(recipe) {
     ready && ready.bind(recipe)();
   });
   hui.ui.listen(recipe);
-}
+};
 
 hui.controller = function(name) {
   return this._controllers[name];
-}
+};
 
 /*
  * Copyright (C) 2004 Baron Schwartz <baron at sequent dot org>
@@ -4900,42 +4900,6 @@ hui.ui.extend = function(obj,options) {
   }
 };
 
-hui.ui.make = function(def) {
-  var component = function(options) {
-    if (!options.element) {
-      options.element = def.$build(options);
-    }
-    hui.ui.Component.call(this, options);
-    var self = this;
-    hui.each(def.$events, function(comp, listener) {
-      var node = self.nodes[comp];
-      hui.each(listener, function(eventName, action) {
-        if (hui.isString(action)) {
-          hui.on(node, eventName, function(e) {
-            hui.stop(e);
-            self.fire(action.substring(0,action.length - 1))
-          })
-        } else {
-          hui.on(node, eventName, action.bind(self))
-        }
-      });
-    });
-    if (this.$init) { this.$init(options) };
-    if (this.$attach) { this.$attach() };
-  }
-  var exc = ['create'];
-  var proto = {}
-  for (p in def) {
-    if (def.hasOwnProperty(p) && exc.indexOf(p) == -1) {
-      proto[p] = def[p]
-    }
-  }
-  component.prototype = proto
-  hui.extend(component, hui.ui.Component);
-  hui.ui[def.name] = component;
-  hui.define('hui.ui.' + def.name, component);
-}
-
 hui.ui.registerComponent = function(component) {
   if (hui.ui.objects[component.name]) {
     hui.log('Widget replaced: '+component.name,hui.ui.objects[component.name]);
@@ -5300,6 +5264,123 @@ hui.on(function() {
 });
 
 
+
+/** Send a global drag and drop message */
+hui.ui.callDelegatesDrop = function(dragged,dropped) {
+  for (var i=0; i < hui.ui.delegates.length; i++) {
+    if (hui.ui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind]) {
+      hui.ui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
+    }
+  }
+};
+
+/** @private */
+hui.ui.getDragProxy = function() {
+  if (!hui.ui.dragProxy) {
+    hui.ui.dragProxy = hui.build('div',{'class':'hui_dragproxy',style:'display:none'});
+    document.body.appendChild(hui.ui.dragProxy);
+  }
+  return hui.ui.dragProxy;
+};
+
+/** @private */
+hui.ui.startDrag = function(e,element,options) {
+  e = new hui.Event(e);
+  var info = element.dragDropInfo;
+  hui.ui.dropTypes = hui.ui.findDropTypes(info);
+  if (!hui.ui.dropTypes) return;
+  var proxy = hui.ui.getDragProxy();
+  hui.listen(document.body,'mousemove',hui.ui.dragListener);
+  hui.listen(document.body,'mouseup',hui.ui.dragEndListener);
+  hui.ui.dragInfo = info;
+  if (info.icon) {
+    proxy.style.backgroundImage = 'url('+hui.ui.getIconUrl(info.icon,16)+')';
+  }
+  hui.ui.startDragPos = {top:e.getTop(),left:e.getLeft()};
+  proxy.innerHTML = info.title ? '<span>'+hui.string.escape(info.title)+'</span>' : '###';
+  hui.ui.dragging = true;
+  hui.selection.enable(false);
+};
+
+/** @private */
+hui.ui.findDropTypes = function(drag) {
+  var gui = hui.ui;
+  var drops = null;
+  for (var i = 0; i < gui.delegates.length; i++) {
+    if (gui.delegates[i].dragDrop) {
+      for (var j = 0; j < gui.delegates[i].dragDrop.length; j++) {
+        var rule = gui.delegates[i].dragDrop[j];
+        if (rule.drag == drag.kind) {
+          if (drops === null) drops={};
+          drops[rule.drop] = {};
+        }
+      }
+    }
+  }
+  return drops;
+};
+
+/** @private */
+hui.ui.dragListener = function(e) {
+  e = new hui.Event(e);
+  hui.ui.dragProxy.style.left = (e.getLeft() + 10) + 'px';
+  hui.ui.dragProxy.style.top = e.getTop() + 'px';
+  hui.ui.dragProxy.style.display = 'block';
+  var target = hui.ui.findDropTarget(e.getElement());
+  if (target && hui.ui.dropTypes[target.dragDropInfo.kind]) {
+    if (hui.ui.latestDropTarget) {
+      hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
+    }
+    hui.cls.add(target, 'hui_drop');
+    hui.ui.latestDropTarget = target;
+  } else if (hui.ui.latestDropTarget) {
+    hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
+    hui.ui.latestDropTarget = null;
+  }
+  return false;
+};
+
+/** @private */
+hui.ui.findDropTarget = function(node) {
+  while (node) {
+    if (node.dragDropInfo) {
+      return node;
+    }
+    node = node.parentNode;
+  }
+  return null;
+};
+
+/** @private */
+hui.ui.dragEndListener = function(event) {
+  hui.unListen(document.body, 'mousemove', hui.ui.dragListener);
+  hui.unListen(document.body, 'mouseup', hui.ui.dragEndListener);
+  hui.ui.dragging = false;
+  if (hui.ui.latestDropTarget) {
+    hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
+    hui.ui.callDelegatesDrop(hui.ui.dragInfo, hui.ui.latestDropTarget.dragDropInfo);
+    hui.ui.dragProxy.style.display = 'none';
+  } else {
+    hui.animate(hui.ui.dragProxy,'left', (hui.ui.startDragPos.left + 10) + 'px', 200, {ease: hui.ease.fastSlow});
+    hui.animate(hui.ui.dragProxy,'top', (hui.ui.startDragPos.top - 5) + 'px', 200, {ease: hui.ease.fastSlow, hideOnComplete: true});
+  }
+  hui.ui.latestDropTarget = null;
+  hui.selection.enable(false);
+};
+
+/** @private */
+hui.ui.dropOverListener = function(event) {
+  if (hui.ui.dragging) {
+    //this.style.backgroundColor='#3875D7';
+  }
+};
+
+/** @private */
+hui.ui.dropOutListener = function(event) {
+  if (hui.ui.dragging) {
+    //this.style.backgroundColor='';
+  }
+};
 
 /**
  * A component
@@ -5716,123 +5797,6 @@ hui.ui.Source.prototype = {
       }
     }
     this.refreshLater();
-  }
-};
-
-/** Send a global drag and drop message */
-hui.ui.callDelegatesDrop = function(dragged,dropped) {
-  for (var i=0; i < hui.ui.delegates.length; i++) {
-    if (hui.ui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind]) {
-      hui.ui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
-    }
-  }
-};
-
-/** @private */
-hui.ui.getDragProxy = function() {
-  if (!hui.ui.dragProxy) {
-    hui.ui.dragProxy = hui.build('div',{'class':'hui_dragproxy',style:'display:none'});
-    document.body.appendChild(hui.ui.dragProxy);
-  }
-  return hui.ui.dragProxy;
-};
-
-/** @private */
-hui.ui.startDrag = function(e,element,options) {
-  e = new hui.Event(e);
-  var info = element.dragDropInfo;
-  hui.ui.dropTypes = hui.ui.findDropTypes(info);
-  if (!hui.ui.dropTypes) return;
-  var proxy = hui.ui.getDragProxy();
-  hui.listen(document.body,'mousemove',hui.ui.dragListener);
-  hui.listen(document.body,'mouseup',hui.ui.dragEndListener);
-  hui.ui.dragInfo = info;
-  if (info.icon) {
-    proxy.style.backgroundImage = 'url('+hui.ui.getIconUrl(info.icon,16)+')';
-  }
-  hui.ui.startDragPos = {top:e.getTop(),left:e.getLeft()};
-  proxy.innerHTML = info.title ? '<span>'+hui.string.escape(info.title)+'</span>' : '###';
-  hui.ui.dragging = true;
-  hui.selection.enable(false);
-};
-
-/** @private */
-hui.ui.findDropTypes = function(drag) {
-  var gui = hui.ui;
-  var drops = null;
-  for (var i = 0; i < gui.delegates.length; i++) {
-    if (gui.delegates[i].dragDrop) {
-      for (var j = 0; j < gui.delegates[i].dragDrop.length; j++) {
-        var rule = gui.delegates[i].dragDrop[j];
-        if (rule.drag == drag.kind) {
-          if (drops === null) drops={};
-          drops[rule.drop] = {};
-        }
-      }
-    }
-  }
-  return drops;
-};
-
-/** @private */
-hui.ui.dragListener = function(e) {
-  e = new hui.Event(e);
-  hui.ui.dragProxy.style.left = (e.getLeft() + 10) + 'px';
-  hui.ui.dragProxy.style.top = e.getTop() + 'px';
-  hui.ui.dragProxy.style.display = 'block';
-  var target = hui.ui.findDropTarget(e.getElement());
-  if (target && hui.ui.dropTypes[target.dragDropInfo.kind]) {
-    if (hui.ui.latestDropTarget) {
-      hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
-    }
-    hui.cls.add(target, 'hui_drop');
-    hui.ui.latestDropTarget = target;
-  } else if (hui.ui.latestDropTarget) {
-    hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
-    hui.ui.latestDropTarget = null;
-  }
-  return false;
-};
-
-/** @private */
-hui.ui.findDropTarget = function(node) {
-  while (node) {
-    if (node.dragDropInfo) {
-      return node;
-    }
-    node = node.parentNode;
-  }
-  return null;
-};
-
-/** @private */
-hui.ui.dragEndListener = function(event) {
-  hui.unListen(document.body, 'mousemove', hui.ui.dragListener);
-  hui.unListen(document.body, 'mouseup', hui.ui.dragEndListener);
-  hui.ui.dragging = false;
-  if (hui.ui.latestDropTarget) {
-    hui.cls.remove(hui.ui.latestDropTarget, 'hui_drop');
-    hui.ui.callDelegatesDrop(hui.ui.dragInfo, hui.ui.latestDropTarget.dragDropInfo);
-    hui.ui.dragProxy.style.display = 'none';
-  } else {
-    hui.animate(hui.ui.dragProxy,'left', (hui.ui.startDragPos.left + 10) + 'px', 200, {ease: hui.ease.fastSlow});
-    hui.animate(hui.ui.dragProxy,'top', (hui.ui.startDragPos.top - 5) + 'px', 200, {ease: hui.ease.fastSlow, hideOnComplete: true});
-  }
-  hui.ui.latestDropTarget = null;
-  hui.selection.enable(false);
-};
-
-/** @private */
-hui.ui.dropOverListener = function(event) {
-  if (hui.ui.dragging) {
-    //this.style.backgroundColor='#3875D7';
-  }
-};
-
-/** @private */
-hui.ui.dropOutListener = function(event) {
-  if (hui.ui.dragging) {
-    //this.style.backgroundColor='';
   }
 };
 
@@ -10525,7 +10489,7 @@ hui.ui.Upload = function(options) {
   this._addBehavior();
 };
 
-hui.ui.Upload.implementations = ['HTML5','Frame','Flash'];
+hui.ui.Upload.implementations = ['HTML5','Frame'];
 
 hui.ui.Upload.nameIndex = 0;
 
@@ -13401,135 +13365,6 @@ hui.ui.Segmented.prototype = {
   }
 };
 
-/** @namespace */
-hui.ui.Flash = {
-
-  fullVersion:undefined,
-
-  /** Gets the major version of flash */
-  getMajorVersion : function() {
-    var full = this.getFullVersion();
-    if (full===null || full===undefined) {
-      return null;
-    }
-    var matched = (full+'').match(/[0-9]+/gi);
-    return matched.length>0 ? parseInt(matched[0]) : null;
-  },
-
-  getFullVersion : function() {
-    if (this.fullVersion!==undefined) {
-      return this.fullVersion;
-    }
-    // NS/Opera version >= 3 check for Flash plugin in plugin array
-    var flashVer = null;
-
-    if (navigator.plugins && navigator.plugins.length > 0) {
-      if (navigator.plugins["Shockwave Flash 2.0"] || navigator.plugins["Shockwave Flash"]) {
-        var swVer2 = navigator.plugins["Shockwave Flash 2.0"] ? " 2.0" : "";
-        var flashDescription = navigator.plugins["Shockwave Flash" + swVer2].description;
-        var descArray = flashDescription.split(" ");
-        var tempArrayMajor = descArray[2].split(".");
-        var versionMajor = tempArrayMajor[0];
-        var versionMinor = tempArrayMajor[1];
-        var versionRevision = descArray[3];
-        if (versionRevision === "") {
-          versionRevision = descArray[4];
-        }
-        if (versionRevision[0] == "d") {
-          versionRevision = versionRevision.substring(1);
-        } else if (versionRevision[0] == "r") {
-          versionRevision = versionRevision.substring(1);
-          if (versionRevision.indexOf("d") > 0) {
-            versionRevision = versionRevision.substring(0, versionRevision.indexOf("d"));
-          }
-        }
-        flashVer = versionMajor + "." + versionMinor + "." + versionRevision;
-      }
-    }
-    // MSN/WebTV 2.6 supports Flash 4
-    else if (navigator.userAgent.toLowerCase().indexOf("webtv/2.6") != -1) flashVer = 4;
-    // WebTV 2.5 supports Flash 3
-    else if (navigator.userAgent.toLowerCase().indexOf("webtv/2.5") != -1) flashVer = 3;
-    // older WebTV supports Flash 2
-    else if (navigator.userAgent.toLowerCase().indexOf("webtv") != -1) flashVer = 2;
-    else if ( hui.browser.msie ) {
-      flashVer = this.getActiveXVersion();
-    }
-    this.fullVersion = flashVer;
-    return flashVer;
-  },
-  /** @private */
-  getActiveXVersion : function() {
-    var version;
-    var axo;
-    var e;
-
-    // NOTE : new ActiveXObject(strFoo) throws an exception if strFoo isn't in the registry
-
-    try {
-      // version will be set for 7.X or greater players
-      axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.7");
-      version = axo.GetVariable("$version");
-    } catch (ignore) {}
-
-    if (!version)
-    {
-      try {
-        // version will be set for 6.X players only
-        axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.6");
-
-        // installed player is some revision of 6.0
-        // GetVariable("$version") crashes for versions 6.0.22 through 6.0.29,
-        // so we have to be careful.
-
-        // default to the first public version
-        version = "WIN 6,0,21,0";
-
-        // throws if AllowScripAccess does not exist (introduced in 6.0r47)
-        axo.AllowScriptAccess = "always";
-
-        // safe to call for 6.0r47 or greater
-        version = axo.GetVariable("$version");
-
-      } catch (ignore) {
-      }
-    }
-
-    if (!version)
-    {
-      try {
-        // version will be set for 4.X or 5.X player
-        axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.3");
-        version = axo.GetVariable("$version");
-      } catch (ignore) {
-      }
-    }
-
-    if (!version)
-    {
-      try {
-        // version will be set for 3.X player
-        axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.3");
-        version = "WIN 3,0,18,0";
-      } catch (ignore) {
-      }
-    }
-
-    if (!version)
-    {
-      try {
-        // version will be set for 2.X player
-        axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
-        version = "WIN 2,0,0,11";
-      } catch (ignore) {
-        version = -1;
-      }
-    }
-
-    return version;
-  }
-};
-
 /**
  * A link
  * @constructor
@@ -16081,47 +15916,40 @@ hui.ui.Rendering.prototype = {
   }
 };
 
-hui.on(['hui.ui'], function() { hui.ui.make(
-
-  /** @lends hui.ui.Icon.prototype */
-  {
-    name : 'Icon',
-    /**
-     * @constructs hui.ui.Icon
-     * @extends hui.ui.Component
-     * @param params
-     * @param params.icon {String} The icon
-     */
-    $init : function(params) {
-      this.visible = false;
-      this.icon = params.icon;
-      this.labeled = false;
-    },
-    $build : function(params) {
-      return hui.ui.createIcon(params.icon, params.size, 'span');
-    },
-    $events : {
-      //root : {click: 'click!'}
-      root : {click: function() {
-        this.fire('click')
-      }}
-    },
-    /**
-     * Change the icon size
-     * @param size {Number} The size in pixels: 16, 32 etc.
-     */
-    setSize : function(size) {
-      var iconNode = hui.find('span', this.element) || this.element;
-      this.size = size;
-      hui.ui.setIconImage(iconNode, this.icon, size);
-      iconNode.className = 'hui_icon hui_icon_' + size;
+hui.component('Icon', {
+  state: {
+    icon: undefined,
+    size: 16
+  },
+  nodes : {
+    'icon' : '.hui_icon'
+  },
+  init(params) {
+    this.state.icon = params.icon;
+    if (params.size) {
+      this.state.size = params.size;
+    }
+  },
+  create : function(options) {
+    return hui.ui.createIcon(options.icon, options.size, 'span');
+  },
+  '!click'() {
+    this.fire('click')
+  },
+  setSize : function(size) {
+    this.change({size:size})
+  },
+  draw : function(changed) {
+    if ('size' in changed) {
+      var iconNode = this.nodes.icon;
+      hui.ui.setIconImage(iconNode, this.state.icon, changed.size);
+      iconNode.className = 'hui_icon hui_icon_' + changed.size;
       if (hui.cls.has(this.element, 'hui_icon_labeled')) {
-        this.element.className = 'hui_icon_labeled hui_icon_labeled_' + size;
+        this.element.className = 'hui_icon_labeled hui_icon_labeled_' + changed.size;
       }
     }
   }
-
-);});
+});
 
 hui.component('Symbol', {
   state: {

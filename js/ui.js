@@ -694,42 +694,6 @@ hui.ui.extend = function(obj,options) {
   }
 };
 
-hui.ui.make = function(def) {
-  var component = function(options) {
-    if (!options.element) {
-      options.element = def.$build(options);
-    }
-    hui.ui.Component.call(this, options);
-    var self = this;
-    hui.each(def.$events, function(comp, listener) {
-      var node = self.nodes[comp];
-      hui.each(listener, function(eventName, action) {
-        if (hui.isString(action)) {
-          hui.on(node, eventName, function(e) {
-            hui.stop(e);
-            self.fire(action.substring(0,action.length - 1))
-          })
-        } else {
-          hui.on(node, eventName, action.bind(self))
-        }
-      });
-    });
-    if (this.$init) { this.$init(options) };
-    if (this.$attach) { this.$attach() };
-  }
-  var exc = ['create'];
-  var proto = {}
-  for (p in def) {
-    if (def.hasOwnProperty(p) && exc.indexOf(p) == -1) {
-      proto[p] = def[p]
-    }
-  }
-  component.prototype = proto
-  hui.extend(component, hui.ui.Component);
-  hui.ui[def.name] = component;
-  hui.define('hui.ui.' + def.name, component);
-}
-
 hui.ui.registerComponent = function(component) {
   if (hui.ui.objects[component.name]) {
     hui.log('Widget replaced: '+component.name,hui.ui.objects[component.name]);

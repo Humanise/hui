@@ -34,7 +34,7 @@ hui.ui.Upload = function(options) {
   this._addBehavior();
 };
 
-hui.ui.Upload.implementations = ['HTML5','Frame','Flash'];
+hui.ui.Upload.implementations = ['HTML5','Frame'];
 
 hui.ui.Upload.nameIndex = 0;
 

@@ -1531,7 +1531,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:if>
       <span>
         <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="@size"/></xsl:call-template>
-        <xsl:attribute name="class">hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
+        <xsl:attribute name="class">hui_icon hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
         <xsl:comment/>
       </span>
       <strong><xsl:value-of select="@text"/></strong>

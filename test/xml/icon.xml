@@ -2,13 +2,13 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Layout" padding="10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
-  <controller name="controller" url="list.js"/>
-  <source name="itemsSource" url="data/source_items.xml"/>
+  <controller url="icon.js"/>
   <structure>
     <top>
       <toolbar>
         <icon icon="common/refresh" text="128" click="userManual.setSize(128)"/>
         <icon icon="common/refresh" text="64" click="userManual.setSize(64)"/>
+        <icon icon="common/refresh" text="32" click="userManual.setSize(32)"/>
       </toolbar>
     </top>
     <middle>

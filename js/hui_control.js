@@ -35,8 +35,8 @@ hui.control = function(recipe) {
     ready && ready.bind(recipe)();
   });
   hui.ui.listen(recipe);
-}
+};
 
 hui.controller = function(name) {
   return this._controllers[name];
-}
+};

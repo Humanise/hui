@@ -26,7 +26,9 @@ class Component {
       attributes: []
     }
     this.js = {
-      name: null
+      name: undefined,
+      file: undefined,
+      modern: undefined
     }
     this.xsl = []
   }
@@ -89,45 +91,28 @@ class SchemaParser {
   }
 
   parse() {
-    var self = this;
-    return new Promise(function(resolve, reject) {
-      self.parseSchema().then((schema) => {
-        self.findJavaScriptControllers().then((ctrls) => {
-          ctrls.forEach((ctrl) => {
+    return new Promise((resolve, reject) => {
+      this.parseSchema().then(schema => {
+        this.findXslPaths().then(paths => {
+          paths.forEach(path => {
+            var names = this.extractNamesFromXpath(path.match)
             var found = false;
             schema.components.forEach((component) => {
-              if (component.xml.name && component.xml.name.replace(/\-/g,'') == ctrl.toLowerCase()) {
-                component.js.name = ctrl;
-                found = true;
-              }
-            });
-            if (!found) {
-              var x = new Component();
-              x.js.name = ctrl;
-              schema.addComponent(x);
-            }
-          })
-          self.findXslPaths().then((paths) => {
-            paths.forEach((path) => {
-              var names = self.extractNamesFromXpath(path.match)
-              var found = false;
-              schema.components.forEach((component) => {
-                if (component.xml.name) {
-                  if (names.indexOf(component.xml.name) !== -1) {
-                    component.xsl.push(path)
-                    found = true;
-                  }
+              if (component.xml.name) {
+                if (names.indexOf(component.xml.name) !== -1) {
+                  component.xsl.push(path)
+                  found = true;
                 }
-              })
-              if (!found) {
-                var stray = new Component();
-                stray.xsl.push(path);
-                schema.components.push(stray);
-                schema.stray.push(path);
               }
-            });
-            resolve(schema);
-          })
+            })
+            if (!found) {
+              var stray = new Component();
+              stray.xsl.push(path);
+              schema.components.push(stray);
+              schema.stray.push(path);
+            }
+          });
+          resolve(schema);
         })
       })
     })
@@ -148,18 +133,6 @@ class SchemaParser {
           resolve(self._extractComponentsFromSchema(doc));
         }
       });
-    })
-  }
-
-  findJavaScriptControllers() {
-    return new Promise(function(resolve, reject) {
-      fs.readdir('js/', function (error, files) {
-        var files = files.map(function(name) {
-          var found = name.match(/[A-Z][A-Za-z]+/);
-          return found ? found[0] : null
-        }).filter(function(name) { return name!==null});
-        resolve(files);
-      })
     })
   }
 
@@ -194,10 +167,114 @@ class SchemaParser {
   }
 }
 
-new SchemaParser().parse().then((schema) => {
-  console.log(schema);
-  fs.writeFile('info/info.json', JSON.stringify(schema, null, 2), function (err) {
-    if (err) throw err;
-    console.log('Saved!');
-  });
-})
+class ScriptAnalyzer {
+
+  analyze() {
+    return new Promise((resolve, reject) => {
+      var components = [];
+
+      var files = fs.readdirSync("js/");
+      files.forEach(file => {
+        const data = fs.readFileSync( 'js/' + file);
+        const js = data.toString();
+        let oldSchool = js.match(/hui\.ui\.([A-Z][a-zA-Z]+) = function/)
+        let newSchool = js.match(/hui\.component\(\w*['"]([A-Za-z]+)/);
+        //if (oldSchool) console.log('  -- old', oldSchool[1])
+        //if (newSchool) console.log('  -- new', newSchool[1])
+        //if (!newSchool && !oldSchool) console.log('  -- none')
+        var name = newSchool || oldSchool;
+        if (name) {
+          components.push({
+            name: name[1],
+            file: file
+          })
+        }
+      })
+      resolve(components);
+    });
+  }
+}
+
+class StyleAnalyzer {
+
+  analyze() {
+    return new Promise((resolve, reject) => {
+      var components = [];
+
+      var files = fs.readdirSync("css/");
+      files.forEach(file => {
+        const data = fs.readFileSync( 'css/' + file);
+
+        var name = newSchool || oldSchool;
+        if (name) {
+          components.push({
+            name: name[1],
+            modern: !!newSchool,
+            file: file
+          })
+        }
+      })
+      resolve(components);
+    });
+  }
+}
+
+class Registry {
+  components = [];
+
+  addComponent(params) {
+    var c = new Component();
+    if (params.js) {
+      c.js = params.js;
+    }
+    if (params.xml) {
+      c.xml = params.xml;
+    }
+    if (params.xsl) {
+      c.xsl = params.xsl;
+    }
+    this.components.push(c)
+  }
+
+  mergeXML(xml) {
+    xml.components.forEach(toMerge => {
+      const found = this.components.find(c => c.js.name && toMerge.xml.name && c.js.name.toLowerCase() == toMerge.xml.name.replace(/\-/g,''))
+      if (found) {
+        found.xml = toMerge.xml
+        found.xsl = toMerge.xsl
+      } else {
+        this.addComponent({xml:toMerge.xml, xsl:toMerge.xsl})
+      }
+    })
+  }
+
+  mergeScripts(scripts) {
+    scripts.forEach(script => {
+      const found = this.components.find(c => c.js.name == script.name || (c.xml.name && c.xml.name.replace(/\-/g,'') == script.name.toLowerCase() ))
+      if (found) {
+        found.js.name = script.name;
+        found.js.file = script.file;
+        found.js.modern = script.modern;
+      } else {
+        this.addComponent({js:script})
+      }
+    })
+  }
+}
+
+var registry = new Registry();
+
+new SchemaParser().parse().then(schema => {
+  registry.mergeXML(schema)
+}).then(() => {
+  return new ScriptAnalyzer().analyze()
+}).then(components => {
+  registry.mergeScripts(components);
+}).then(() => {
+  fs.writeFileSync('info/info.json', JSON.stringify(registry, null, 2));
+  console.log('Registry written!');
+});
+
+
+
+

@@ -11,7 +11,6 @@
   "/gfx/progress/spinner_grey_32.gif",
 
   "/icons/common/ok32.png",
-  "/icons/common/ok24.png",
 
   "/icons/common/delete32.png",
   "/icons/common/image32.png",
@@ -26,7 +25,6 @@
   "/icons/common/play32.png",
   "/icons/common/stop32.png",
   "/icons/common/warning16.png",
-  "/icons/part/news16.png",
   "/icons/common/edit16.png",
   "/icons/common/hierarchy16.png",
   "/icons/common/settings16.png",
@@ -42,8 +40,6 @@
 
   "/gfx/layout.png",
   "/gfx/layout_middle.png",
-  "/gfx/tabs.png",
-  "/gfx/tabs_small.png",
   "/gfx/selection_blue.png",
 
   "/gfx/list_navigation.png",

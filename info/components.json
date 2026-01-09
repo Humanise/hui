@@ -63,6 +63,11 @@
     "css": "codeinput.css"
   },
   {
+    "name": "Collection",
+    "sass": "collection.scss",
+    "css": "collection.css"
+  },
+  {
     "name": "ColorInput",
     "sass": "colorinput.scss",
     "css": "colorinput.css"
@@ -81,6 +86,11 @@
   },
   {
     "name": "Component"
+  },
+  {
+    "name": "Context",
+    "sass": "context.scss",
+    "css": "context.css"
   },
   {
     "name": "DatePicker",
@@ -103,9 +113,6 @@
     "name": "Dock",
     "sass": "dock.scss",
     "css": "dock.css"
-  },
-  {
-    "name": "DragDrop"
   },
   {
     "name": "Drawing",
@@ -135,9 +142,6 @@
   {
     "name": "Finder",
     "htmlSample": "finder.html"
-  },
-  {
-    "name": "Flash"
   },
   {
     "name": "FontInput",
@@ -401,6 +405,12 @@
   },
   {
     "name": "StyleLength"
+  },
+  {
+    "name": "Symbol",
+    "sass": "symbol.scss",
+    "css": "symbol.css",
+    "xmlSample": "symbol.xml"
   },
   {
     "name": "Tabs",

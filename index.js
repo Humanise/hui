@@ -1,5 +1,5 @@
-hui.ui.listen({
-  $ready : function() {
+hui.control({
+  $ready() {
     //hui.build('link',{
     //  //href : 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800',
     //  href: 'https://rsms.me/inter/inter.css',
@@ -13,7 +13,7 @@ hui.ui.listen({
       css : { 'letter-spacing' : '0px', color: '#ddd' },
       ease : hui.ease.elastic,
       duration : 2000,
-      $complete : function() {
+      $complete() {
         hui.animate({
           node : hui.find('h1'),
           css : { color: '#000' },
@@ -23,16 +23,16 @@ hui.ui.listen({
     this._loadInfo();
   },
 
-  _loadInfo : function() {
+  _loadInfo() {
     hui.ui.request({
       url: 'info/info.json',
       method: 'GET',
-      $object : function(obj) {
+      $object: obj => {
         this._buildData(obj)
-      }.bind(this)
+      }
     })
   },
-  _buildData : function(info) {
+  _buildData(info) {
     this.data = {
       headers: [{title:'XML'},{title:'Attributes'},{title:'JavaScript'},{title:'XSL'}],
       rows: info.components.map(function(obj) {
@@ -48,13 +48,13 @@ hui.ui.listen({
     }
     window.components.setData(this.data)
   },
-  $valueChanged$search : function() {
+  $valueChanged$search() {
     if (!this.data) return;
     this._updateResults();
   },
-  _updateResults : function() {
+  _updateResults() {
     var str = hui.ui.get('search').getValue();
-    var words = str.split(/\W+/).filter(function(str) {return str.length>0});
+    var words = str.toLowerCase().split(/\W+/).filter(function(str) {return str.length>0});
     var rows = this.data.rows;
     if (words.length > 0) {
       var indexed = rows.map(function(row) {
@@ -62,6 +62,7 @@ hui.ui.listen({
         for (var i = 0; i < row.cells.length; i++) {
           var txt = row.cells[i].text;
           if (txt) {
+            txt = txt.toLowerCase();
             for (var j = 0; j < words.length; j++) {
               var word = words[j];
               var idx = txt.indexOf(word);

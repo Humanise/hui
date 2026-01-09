@@ -25,9 +25,9 @@
   document.write('<script type="text/javascript" src="'+_context+'/js/hui_control.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/lib/date.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/ui.js"></script>');
+  document.write('<script type="text/javascript" src="'+_context+'/js/hui_ui_drag.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Component.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Source.js"></script>');
-  document.write('<script type="text/javascript" src="'+_context+'/js/DragDrop.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Window.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Form.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/List.js"></script>');
@@ -63,7 +63,6 @@
   document.write('<script type="text/javascript" src="'+_context+'/js/IFrame.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/VideoPlayer.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Segmented.js"></script>');
-  document.write('<script type="text/javascript" src="'+_context+'/js/Flash.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Link.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Links.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/MarkupEditor.js"></script>');
