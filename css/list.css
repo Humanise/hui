@@ -20,20 +20,12 @@
 .hui_list th {
   text-align: left;
   font-size: 9pt;
-  background: #fafafa;
   border-bottom: 1px solid #ccc;
   color: #334455;
   vertical-align: top;
-  line-height: 21px;
-  height: 21px;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  line-height: 24px;
+  height: 24px;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
   cursor: default;
   padding: 0px 5px;
   font-weight: normal;
@@ -46,32 +38,33 @@
 
 .hui_list th.sortable:hover {
   cursor: pointer;
-  background-color: rgb(242.25, 242.25, 242.25);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(242.25, 242.25, 242.25)), to(rgb(227.25, 227.25, 227.25)));
-  background-image: -webkit-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  background-image: -moz-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  background-image: -ms-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  background-image: -o-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  background-image: linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(242.25, 242.25, 242.25)", endColorstr="rgb(227.25, 227.25, 227.25)");
+  background-image: linear-gradient(180deg, rgb(242.35, 242.35, 242.35), rgb(238.35, 238.35, 238.35));
 }
 
 .hui_list th.sort_ascending,
 .hui_list th.sort_descending {
   font-weight: bold;
+  position: relative;
+}
+.hui_list th.sort_ascending:after,
+.hui_list th.sort_descending:after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: url("../gfx/drop.svg") center center no-repeat;
+  right: 7px;
+  top: 7px;
+  opacity: 0.5;
 }
 
-.hui_list th.sort_ascending span {
-  background: url("../gfx/list_ascending.png") right center no-repeat;
-}
-
-.hui_list th.sort_descending span {
-  background: url("../gfx/list_descending.png") right center no-repeat;
+.hui_list th.sort_descending:after {
+  transform: rotate(180deg);
 }
 
 .hui_list td {
   font-size: 9pt;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ddd;
   padding: 3px 5px;
   vertical-align: top;
   cursor: default;
@@ -167,31 +160,22 @@
 
 .hui_list_navigation {
   display: none;
-  /*background: url('../gfx/list_navigation.png');*/
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
   border-bottom: 1px solid #ccc;
-  height: 26px;
+  height: 24px;
   padding: 0px 3px;
 }
 
-span.hui_list_count {
+.hui_list_count {
   float: right;
   color: #666;
-  height: 26px;
-  line-height: 26px;
+  height: 24px;
+  line-height: 24px;
   font-size: 12px;
-  padding-right: 7px;
+  padding-right: 5px;
 }
 
 .hui_list_selection {
-  margin-top: 1px;
   float: left;
   height: 24px;
   /*background: url('../gfx/list_box.png') repeat-x;*/
@@ -217,7 +201,7 @@ span.hui_list_count {
   margin-top: 4px;
   line-height: 16px;
   padding: 0px 4px;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .hui_list_selection span {
@@ -228,7 +212,7 @@ span.hui_list_count {
 }
 
 .hui_list_selection a:hover {
-  background: #ddd;
+  background: rgba(0, 0, 0, 0.1);
   color: #000;
 }
 
@@ -364,14 +348,7 @@ a.hui_list_checkbox {
   height: 12px;
   margin-top: 2px;
   background: #eee;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fff, rgb(240, 240, 240));
   font-weight: bold;
   overflow: hidden;
   text-indent: -20px;

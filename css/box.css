@@ -56,14 +56,7 @@
 
 .hui_box_header {
   height: 56px;
-  background-color: #d1dae5;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#d1dae5), to(#b6c0cc));
-  background-image: -webkit-linear-gradient(top, #d1dae5, #b6c0cc);
-  background-image: -moz-linear-gradient(top, #d1dae5, #b6c0cc);
-  background-image: -ms-linear-gradient(top, #d1dae5, #b6c0cc);
-  background-image: -o-linear-gradient(top, #d1dae5, #b6c0cc);
-  background-image: linear-gradient(top, #d1dae5, #b6c0cc);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d1dae5", endColorstr="#b6c0cc");
+  background-image: linear-gradient(180deg, #d1dae5, #b6c0cc);
   border: 1px solid #b6c1d0;
   border-color: #c4cbd4 #acb2bb #a3aab3;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;

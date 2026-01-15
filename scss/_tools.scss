@@ -1,5 +1,8 @@
+@use "sass:color";
+
 $sidebar-color: #EBF0F7;
 $background-color: #f6f6f6;
+$frame-color : #ccc;
 $border-color : #ddd;
 $focus-color: #0069ff; //#39f;
 $dark-focus-color: #65a5ff;
@@ -63,15 +66,17 @@ $symbols: (
 }
 
 @mixin vertical-gradient($start-colour, $end-colour) {
-  background-color: $start-colour;
-  background-image: -webkit-gradient(linear, left top, left bottom, from($start-colour), to($end-colour));
-  background-image: -webkit-linear-gradient(top, $start-colour, $end-colour);
-  background-image:    -moz-linear-gradient(top, $start-colour, $end-colour);
-  background-image:     -ms-linear-gradient(top, $start-colour, $end-colour);
-  background-image:      -o-linear-gradient(top, $start-colour, $end-colour);
-  background-image:         linear-gradient(top, $start-colour, $end-colour);
-  filter:            progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$start-colour}', endColorstr='#{$end-colour}');
+  background-image: linear-gradient(180deg, $start-colour, $end-colour);
 }
+
+@mixin gradient {
+  @include vertical-gradient(#fafafa, #f6f6f6);
+}
+
+@mixin gradient-hover {
+  @include vertical-gradient(color.adjust(#fafafa, $lightness: -3%), color.adjust(#f6f6f6, $lightness: -3%));
+}
+
 
 @mixin control-hover {
   border-color: #d2d2d2 #b7b7b7 #9c9c9c;

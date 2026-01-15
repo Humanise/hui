@@ -1,12 +1,5 @@
 .hui_dropdown {
-  background-color: #fcfcfd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
-  background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfd", endColorstr="#e3e7ea");
+  background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px;
@@ -74,7 +67,7 @@
   font-style: italic;
   padding-right: 2px;
 }
-.hui_dropdown.hui_is_small {
+.hui_dropdown.hui-small {
   height: 22px;
   line-height: 20px;
 }

@@ -8,8 +8,14 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <structure>
     <top>
       <bar>
+        <item label="Navigate">
+          <button symbol="left"/>
+          <button symbol="right"/>
+        </item>
         <button symbol="left" small="true"/>
         <button symbol="right" small="true"/>
+        <button symbol="add" text="New"/>
+        <tool symbol="add" text="New"/>
         <tool icon="common/folder" text="Folder" overlay="new" selected="true"/>
         <tool icon="common/info" text="Info"/>
         <tool symbol="info" text="Info"/>

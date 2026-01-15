@@ -11,19 +11,19 @@
 .hui_toolbar-border-top {
   border-top: 1px solid #ddd;
   padding: 0;
-  border-top: 1px solid #fff;
-  background: #f2f2f3;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
 }
 .hui_toolbar-border-bottom {
   border-bottom: 1px solid #ddd;
   padding: 0;
   border-top: 1px solid #fff;
-  background: #f2f2f3;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
 }
 .hui_toolbar-window {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #fff;
   box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 #ccc;
+  padding-bottom: 1px;
 }
 .hui_toolbar_right {
   position: absolute;
@@ -41,32 +41,28 @@
 
 /********************************** Icon ************************/
 .hui_toolbar_icon {
-  height: 54px;
-  padding: 1px 7px;
+  height: 52px;
+  margin: 1px 0;
+  padding: 0px 7px;
   vertical-align: middle;
   display: inline-block;
   font-size: 0px;
   text-align: center;
   cursor: pointer;
   text-decoration: none;
+  border-radius: 4px;
+  border: 1px solid transparent;
 }
 .hui_toolbar_icon:focus {
-  height: 54px;
-  padding: 0 6px;
   border: 1px solid #0069ff;
   box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
   outline: none;
-  border-radius: 3px;
 }
 .hui_toolbar_icon_selected {
   background: rgba(0, 0, 40, 0.1);
   background: radial-gradient(rgba(0, 0, 40, 0.05) 50%, rgba(0, 0, 40, 0.1) 100%);
   box-shadow: inset 0 0px 6px rgba(0, 0, 40, 0.2);
-  padding: 1px 9px;
-  margin: 0 -2px;
-}
-.hui_toolbar_icon_selected:focus {
-  padding: 0px 8px;
+  background-clip: padding-box;
 }
 .hui_toolbar_icon_text {
   font-size: 11px;
@@ -77,7 +73,7 @@
 .hui_toolbar_icon .hui_icon {
   height: 32px;
   width: 32px;
-  margin: 4px auto 3px auto;
+  margin: 3px auto 2px auto;
   display: inline-block;
   position: relative;
 }
@@ -99,6 +95,11 @@
 }
 .hui_toolbar_icon_disabled:hover .hui_icon {
   filter: none;
+}
+.hui_toolbar_icon .hui_symbol {
+  width: 24px;
+  height: 24px;
+  margin: 6px 0 7px;
 }
 
 /************************************ Items *****************************/

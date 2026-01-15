@@ -78,14 +78,7 @@
 }
 
 .hui_bar .hui_bar_button-selected, .hui_bar .hui_bar_button-selected:hover {
-  background-color: #bdbdbd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#bdbdbd), to(#ebebeb));
-  background-image: -webkit-linear-gradient(top, #bdbdbd, #ebebeb);
-  background-image: -moz-linear-gradient(top, #bdbdbd, #ebebeb);
-  background-image: -ms-linear-gradient(top, #bdbdbd, #ebebeb);
-  background-image: -o-linear-gradient(top, #bdbdbd, #ebebeb);
-  background-image: linear-gradient(top, #bdbdbd, #ebebeb);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#bdbdbd", endColorstr="#ebebeb");
+  background-image: linear-gradient(180deg, #bdbdbd, #ebebeb);
 }
 
 .hui_bar_button-selected .hui_icon_16 {
@@ -105,14 +98,7 @@
 
 /******************* window mini variant ***************/
 .hui_bar-window_mini {
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fff, rgb(240, 240, 240));
   min-height: 24px;
   padding: 0;
 }
@@ -149,14 +135,7 @@
 }
 
 .hui_bar-window_mini .hui_bar_button-selected, .hui_bar-window_mini .hui_bar_button-selected:hover {
-  background-color: #bbb;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#bbb), to(#ddd));
-  background-image: -webkit-linear-gradient(top, #bbb, #ddd);
-  background-image: -moz-linear-gradient(top, #bbb, #ddd);
-  background-image: -ms-linear-gradient(top, #bbb, #ddd);
-  background-image: -o-linear-gradient(top, #bbb, #ddd);
-  background-image: linear-gradient(top, #bbb, #ddd);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#bbb", endColorstr="#ddd");
+  background-image: linear-gradient(180deg, #bbb, #ddd);
   border-color: #bbb;
 }
 
@@ -170,14 +149,7 @@
 
 /******************* layout variant ***************/
 .hui_bar-layout {
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
   border-bottom: 1px solid #ddd;
 }
 .hui_bar-layout .hui_bar_text {
@@ -233,14 +205,7 @@
 
 /******************* Layout mini variant ***************/
 .hui_bar-layout_mini {
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fff, rgb(240, 240, 240));
   min-height: 22px;
   border-bottom: 1px solid #ddd;
   padding: 0;
@@ -265,16 +230,14 @@
   background: #eee;
   border-color: #ddd;
 }
+.hui_bar-layout_mini .hui_bar_button .hui_symbol {
+  width: 14px;
+  height: 14px;
+  margin: 0 -2px;
+}
 
 .hui_bar-layout_mini .hui_bar_button-selected, .hui_bar-layout_mini .hui_bar_button-selected:hover {
-  background-color: #bbb;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#bbb), to(#ddd));
-  background-image: -webkit-linear-gradient(top, #bbb, #ddd);
-  background-image: -moz-linear-gradient(top, #bbb, #ddd);
-  background-image: -ms-linear-gradient(top, #bbb, #ddd);
-  background-image: -o-linear-gradient(top, #bbb, #ddd);
-  background-image: linear-gradient(top, #bbb, #ddd);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#bbb", endColorstr="#ddd");
+  background-image: linear-gradient(180deg, #bbb, #ddd);
   border-color: #bbb;
 }
 

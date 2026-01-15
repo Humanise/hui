@@ -28,6 +28,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  
+  > svg {
+    vertical-align: top;
+  }
 
   @each $name, $glyph in $symbols {
     &-#{$name}:before {

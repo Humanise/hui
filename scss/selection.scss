@@ -46,27 +46,23 @@
 
   &_disclosure {
     display: inline-block;
-    width: 11px;
-    height: 11px;
+    width: 15px;
+    height: 16px;
     vertical-align: middle;
-    background: url('../gfx/disclosure.png');
+    background: url('../gfx/drop.svg') no-repeat;
+    background-position: 50% 50%;
+    background-size: 8px 8px;
+    transform: rotate(-90deg);
     font-size: 0;
     line-height: 0;
     cursor: default;
-    margin-right: 3px;
-    opacity: .3;
-  }
-
-  &_disclosure:hover {
-    background-position: 0 -11px;
+    margin-left: -2px;
+    opacity: .2;
+    transition: transform .2s;
   }
 
   &_disclosure_open {
-    background-position: 0 -22px;
-  }
-
-  &_disclosure_open:hover {
-    background-position: 0 -33px;
+    transform: rotate(0deg);
   }
 
 }
@@ -77,7 +73,10 @@
 }
 
 .hui_selection:hover .hui_selection_disclosure {
-  opacity: 1;
+  opacity: .5;
+    &:hover {
+      opacity: 1;
+    }
 }
 
 

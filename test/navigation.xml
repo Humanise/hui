@@ -110,7 +110,7 @@
         <option icon="common/page" text="toolbar" value="xml/toolbar.xml"/>
         <option icon="common/page" text="windows" value="xml/windows.xml"/>
     </option>
-    <option icon="common/folder" text="Complete GUIs" value="Complete GUIs">
+    <option icon="common/folder" text="Integration" value="Complete GUIs">
         <option icon="common/page" text="sites" value="guis/sites.xml"/>
         <option icon="common/page" text="person_part" value="guis/person_part.xml"/>
         <option icon="common/page" text="login" value="guis/login.xml"/>

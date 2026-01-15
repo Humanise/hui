@@ -11,7 +11,7 @@
       content: '';
       display: block;
       background: #788492;
-      height: 4px;
+      height: 2px;
     };
     .hui_tabs-below & {
       &:after {
@@ -21,7 +21,7 @@
         content: '';
         display: block;
         background: #788492;
-        height: 4px;
+        height: 2px;
       };
     }
   }
@@ -61,7 +61,7 @@
       border-width: 0 1px 1px;
 
       &.hui-is-selected {
-        @include vertical-gradient(#788492, #b5beca);
+        @include vertical-gradient(#8c97a5, #576372);
         border-color: #8d97a5 #788492;
         text-shadow: 0 1px rgba(0,0,0,0.3);
       }

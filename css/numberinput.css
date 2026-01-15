@@ -27,9 +27,9 @@
   background-image: url("../gfx/down.svg");
   background-position: 50% 2px;
 }
-.hui_numberinput.hui_is_small .hui_numberinput_up {
+.hui_numberinput.hui-small .hui_numberinput_up {
   background-position: 50% 4px;
 }
-.hui_numberinput.hui_is_small .hui_numberinput_down {
+.hui_numberinput.hui-small .hui_numberinput_down {
   background-position: 50% 4px;
 }

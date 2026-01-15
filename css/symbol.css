@@ -22,6 +22,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.hui_symbol > svg {
+  vertical-align: top;
+}
 .hui_symbol-search:before {
   content: "\e90c";
 }

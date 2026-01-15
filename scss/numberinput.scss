@@ -32,10 +32,10 @@
     background-image: url("../gfx/down.svg");
     background-position: 50% 2px;
   }
-  &.hui_is_small &_up {
+  &.hui-small &_up {
     background-position: 50% 4px;
   }
-  &.hui_is_small &_down {
+  &.hui-small &_down {
     background-position: 50% 4px;
   }
 }

@@ -16,8 +16,8 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
     </actions>
     <content>
       <button symbol="info" name="contexted"/>
-      <button symbol="more" name="more" variant="clear" size="large"/>
-      <button symbol="gear" name="other" variant="clear" size="large"/>
+      <button symbol="more" name="more" bare="true" size="large"/>
+      <button symbol="gear" name="other" bare="true" size="large"/>
     </content>
   </foundation>
 

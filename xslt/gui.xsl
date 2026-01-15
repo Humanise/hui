@@ -2493,16 +2493,31 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:if test="@selected='true'"> hui_toolbar_icon_selected</xsl:if>
         <xsl:if test="@disabled='true'"> hui_toolbar_icon_disabled</xsl:if>
       </xsl:attribute>
-      <span class="hui_icon">
-        <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="32"/></xsl:call-template>
-        <xsl:if test="@overlay">
-          <span class="hui_icon_overlay" style="background-image: url('{$context}/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
-        </xsl:if>
-        <xsl:if test="@badge!=''">
-          <span class="hui_icon_badge"><xsl:value-of select="@badge"/></span>
-        </xsl:if>
-        <xsl:comment/>
-      </span>
+      <xsl:choose>
+        <xsl:when test="@symbol">
+          <xsl:call-template name="gui:symbol">
+            <xsl:with-param name="name"><xsl:value-of select="@symbol"/></xsl:with-param>
+<!--
+            <xsl:with-param name="class">
+            <xsl:if test="(not(@title) or @title='') and (not(@text) or @text='')">
+              <xsl:text>hui_button_symbol_notext</xsl:text>
+            </xsl:if>
+            </xsl:with-param>-->
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="@icon">
+        <span class="hui_icon">
+          <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="32"/></xsl:call-template>
+          <xsl:if test="@overlay">
+            <span class="hui_icon_overlay" style="background-image: url('{$context}/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
+          </xsl:if>
+          <xsl:if test="@badge!=''">
+            <span class="hui_icon_badge"><xsl:value-of select="@badge"/></span>
+          </xsl:if>
+          <xsl:comment/>
+        </span>
+        </xsl:when>
+      </xsl:choose>
       <span class="hui_toolbar_icon_text"><xsl:value-of select="@title"/><xsl:value-of select="@text"/></span>
     </a>
     <script type="text/javascript">
@@ -2689,7 +2704,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <button name="«text»" icon="«icon»" text="«text»" selected="«boolean»" click="«script»"/>
   </bar>
   -->
-  <xsl:template match="gui:bar//gui:button[@icon]">
+  <xsl:template match="gui:bar//gui:button[@icon] | gui:bar//gui:button[@symbol]">
     <xsl:variable name="class">
       <xsl:text>hui_bar_button</xsl:text>
       <xsl:if test="@selected='true'"><xsl:text> hui_bar_button-selected</xsl:text></xsl:if>
@@ -2700,6 +2715,18 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <span class="hui_icon_16">
           <xsl:call-template name="gui:icon-style"><xsl:with-param name="icon" select="@icon"/><xsl:with-param name="size" select="16"/></xsl:call-template>
           <xsl:comment/></span>
+      </xsl:if>
+
+      <xsl:if test="@symbol">
+        <xsl:call-template name="gui:symbol">
+          <xsl:with-param name="name"><xsl:value-of select="@symbol"/></xsl:with-param>
+          <!--
+          <xsl:with-param name="class">
+          <xsl:if test="(not(@title) or @title='') and (not(@text) or @text='')">
+            <xsl:text>hui_button_symbol_notext</xsl:text>
+          </xsl:if>
+          </xsl:with-param>-->
+        </xsl:call-template>
       </xsl:if>
       <xsl:if test="@text">
         <span class="hui_bar_button_text"><xsl:value-of select="@text"/></span>
@@ -3105,12 +3132,12 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:attribute name="class">
         <xsl:text>hui_numberinput</xsl:text>
         <xsl:if test="@adaptive='true'"><xsl:text> hui_numberinput-adaptive</xsl:text></xsl:if>
-        <xsl:if test="@size='small' or ancestor::gui:cell"><xsl:text> hui_is_small</xsl:text></xsl:if>
+        <xsl:if test="@size='small' or ancestor::gui:cell"><xsl:text> hui-small</xsl:text></xsl:if>
       </xsl:attribute>
       <input type="text" value="{@value}">
         <xsl:attribute name="class">
           <xsl:text>hui_textinput</xsl:text>
-          <xsl:if test="@size='small' or ancestor::gui:cell"><xsl:text> hui_is_small</xsl:text></xsl:if>
+          <xsl:if test="@size='small' or ancestor::gui:cell"><xsl:text> hui-small</xsl:text></xsl:if>
         </xsl:attribute>
       </input>
       <span class="hui_numberinput_units"><xsl:comment/></span>
@@ -3150,12 +3177,12 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </xsl:if>
       <xsl:attribute name="class">
         <xsl:text>hui_style_length hui_numberinput</xsl:text>
-        <xsl:if test="@size='small' or ancestor::gui:cell"> hui_is_small</xsl:if>
+        <xsl:if test="@size='small' or ancestor::gui:cell"> hui-small</xsl:if>
       </xsl:attribute>
       <input type="text" value="{@value}">
         <xsl:attribute name="class">
           <xsl:text>hui_textinput</xsl:text>
-          <xsl:if test="@size='small' or ancestor::gui:cell"> hui_is_small</xsl:if>
+          <xsl:if test="@size='small' or ancestor::gui:cell"> hui-small</xsl:if>
         </xsl:attribute>
       </input>
       <a class="hui_numberinput_up"><xsl:comment/></a>
@@ -3298,7 +3325,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <xsl:attribute name="class">
       <xsl:text>hui_dropdown</xsl:text>
       <xsl:if test="@adaptive='true'"> hui_dropdown-adaptive</xsl:if>
-      <xsl:if test="@size='small' or @small='true' or ancestor::gui:cell"> hui_is_small</xsl:if>
+      <xsl:if test="@size='small' or @small='true' or ancestor::gui:cell"> hui-small</xsl:if>
     </xsl:attribute>
     <span class="hui_dropdown_text"><xsl:comment/></span>
     </a>
@@ -3513,7 +3540,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:attribute name="class">
         <xsl:choose>
           <xsl:when test="@class"><xsl:value-of select="@class"/></xsl:when>
-          <xsl:when test="@variant='clear'"><xsl:value-of select="'hui_button hui-clear'"/></xsl:when>
+          <xsl:when test="@bare='true'"><xsl:value-of select="'hui_button-bare'"/></xsl:when>
           <xsl:otherwise>
             <xsl:text>hui_button</xsl:text>
             <xsl:if test="@variant">

@@ -467,6 +467,12 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
             <option text="Mattis Egestas Inceptos" value="50"/>
           </dropdown>
         </field>
+        <field label="Small:">
+          <dropdown small="true">
+            <option text="Mattis Egestas Inceptos" value="49"/>
+            <option text="Mattis Egestas Inceptos" value="50"/>
+          </dropdown>
+        </field>
       </fields>
       <buttons>
         <button click="hui.log(dateForm.getValues())" text="Data"/>

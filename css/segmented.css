@@ -43,25 +43,11 @@
   border-color: #ddd #ccc #aaa;
   font-size: 0;
   height: 20px;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-  background-image: -webkit-linear-gradient(top, #fff, #eee);
-  background-image: -moz-linear-gradient(top, #fff, #eee);
-  background-image: -ms-linear-gradient(top, #fff, #eee);
-  background-image: -o-linear-gradient(top, #fff, #eee);
-  background-image: linear-gradient(top, #fff, #eee);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="#eee");
+  background-image: linear-gradient(180deg, #fff, #eee);
 }
 .hui_segmented-standard .hui_segmented_item.hui-is-selected, .hui_segmented-standard .hui_segmented_item.hui-is-selected:hover {
   background: #ddd;
-  background-color: #EFF2F4;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#EFF2F4), to(#C0C9CF));
-  background-image: -webkit-linear-gradient(top, #EFF2F4, #C0C9CF);
-  background-image: -moz-linear-gradient(top, #EFF2F4, #C0C9CF);
-  background-image: -ms-linear-gradient(top, #EFF2F4, #C0C9CF);
-  background-image: -o-linear-gradient(top, #EFF2F4, #C0C9CF);
-  background-image: linear-gradient(top, #EFF2F4, #C0C9CF);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#EFF2F4", endColorstr="#C0C9CF");
+  background-image: linear-gradient(180deg, #EFF2F4, #C0C9CF);
 }
 .hui_segmented-inset {
   font-size: 0;
@@ -73,14 +59,7 @@
   border-radius: 10px;
   border: 1px solid #ddd;
   border-color: #ccc #ccc #ddd;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-  background-image: -webkit-linear-gradient(top, #fff, #eee);
-  background-image: -moz-linear-gradient(top, #fff, #eee);
-  background-image: -ms-linear-gradient(top, #fff, #eee);
-  background-image: -o-linear-gradient(top, #fff, #eee);
-  background-image: linear-gradient(top, #fff, #eee);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="#eee");
+  background-image: linear-gradient(180deg, #fff, #eee);
   margin: 0 2px;
 }
 .hui_segmented-inset .hui_segmented_text {
@@ -90,14 +69,7 @@
 .hui_segmented-inset .hui_segmented_item.hui-is-selected, .hui_segmented-inset .hui_segmented_item.hui-is-selected:hover {
   border-color: #555 #666 #888;
   background: #ddd;
-  background-color: #777;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#777), to(#99a));
-  background-image: -webkit-linear-gradient(top, #777, #99a);
-  background-image: -moz-linear-gradient(top, #777, #99a);
-  background-image: -ms-linear-gradient(top, #777, #99a);
-  background-image: -o-linear-gradient(top, #777, #99a);
-  background-image: linear-gradient(top, #777, #99a);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#777", endColorstr="#99a");
+  background-image: linear-gradient(180deg, #777, #99a);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
   color: #fff;
 }

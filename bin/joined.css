@@ -257,6 +257,9 @@ span.hui_disclosure_open:hover {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.hui_symbol > svg {
+  vertical-align: top;
+}
 .hui_symbol-search:before {
   content: "\e90c";
 }
@@ -325,7 +328,7 @@ span.hui_disclosure_open:hover {
 }
 
 /**************** Standard button ************/
-.hui_button:not(.hui-clear) {
+.hui_button {
   color: #333;
   display: inline-block;
   vertical-align: middle;
@@ -338,14 +341,7 @@ span.hui_disclosure_open:hover {
   -webkit-user-select: none;
   -moz-user-select: none;
   white-space: nowrap;
-  background-color: #fcfcfd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
-  background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfd", endColorstr="#e3e7ea");
+  background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px;
@@ -355,78 +351,78 @@ span.hui_disclosure_open:hover {
   box-sizing: content-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
 }
-.hui_button:not(.hui-clear):hover {
+.hui_button:hover {
   border-color: #d2d2d2 #b7b7b7 #9c9c9c;
   background: linear-gradient(#f9f9f9, #d5dade);
 }
-.hui_button:not(.hui-clear):active {
+.hui_button:active {
   border-color: #adadad #b7b7b7 #bfbfbf;
   background: linear-gradient(#f1f2f3, #d1d4d6);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
   text-shadow: none;
   line-height: 26px;
 }
-.hui_button:not(.hui-clear):focus {
+.hui_button:focus {
   border: 1px solid #0069ff;
   box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
   outline: none;
 }
-.hui_button:not(.hui-clear).hui-small {
+.hui_button.hui-small {
   font-size: 11px;
   height: 20px;
   line-height: 20px;
   padding: 0 7px;
 }
-.hui_button:not(.hui-clear).hui-small:active {
+.hui_button.hui-small:active {
   line-height: 21px;
 }
-.hui_button:not(.hui-clear).hui-small .hui_button_icon {
+.hui_button.hui-small .hui_button_icon {
   margin-top: 2px;
 }
-.hui_button:not(.hui-clear).hui-large {
+.hui_button.hui-large {
   font-size: 14px;
   height: 28px;
   line-height: 28px;
   padding: 0 12px;
 }
-.hui_button:not(.hui-clear).hui-large:active {
+.hui_button.hui-large:active {
   line-height: 29px;
 }
-.hui_button:not(.hui-clear).hui-mini {
+.hui_button.hui-mini {
   font-size: 9px;
   height: 16px;
   line-height: 16px;
   padding: 0 5px;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
 }
-.hui_button:not(.hui-clear).hui-mini:active {
+.hui_button.hui-mini:active {
   line-height: 17px;
 }
-.hui_button:not(.hui-clear).hui-tiny {
+.hui_button.hui-tiny {
   font-size: 8px;
   height: 14px;
   line-height: 14px;
   padding: 0 5px;
   box-shadow: none;
 }
-.hui_button:not(.hui-clear).hui-tiny::active {
+.hui_button.hui-tiny::active {
   line-height: 15px;
 }
-.hui_button:not(.hui-clear).hui-highlighted {
+.hui_button.hui-highlighted {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 5px #6ede4a;
   border-color: #adcaba #9fc1b1 #99ada2;
 }
-.hui_button:not(.hui-clear).hui-highlighted:focus {
+.hui_button.hui-highlighted:focus {
   box-shadow: inset 0 0 5px #6ede4a, 0 0 2px #0069ff, inset 0 0 2px #0069ff;
   border-color: #0069ff;
 }
-.hui_button:not(.hui-clear).hui-highlighted:active {
+.hui_button.hui-highlighted:active {
   box-shadow: inset 0px 1px 5px #6bc54e;
   border-color: #99ada2 #9fc1b1 #adcaba;
   background: linear-gradient(#daebd5, #c8d7c2);
   text-shadow: none;
 }
-.hui_button:not(.hui-clear).hui-disabled, .hui_button:not(.hui-clear).hui-disabled:hover {
+.hui_button.hui-disabled, .hui_button.hui-disabled:hover {
   cursor: default;
   background: #f9f9f9;
   color: #999;
@@ -460,49 +456,44 @@ span.hui_disclosure_open:hover {
   margin: -2px -4px 0;
 }
 .hui_button.hui-small > .hui_symbol {
+  width: 14px;
+  height: 14px;
   margin: -2px 4px 0 -3px;
 }
 .hui_button.hui-small > .hui_button_symbol_notext {
-  margin: -2px -2px 0;
+  margin: -2px -4px 0;
 }
 .hui_button.hui-mini > .hui_symbol {
-  width: 10px;
-  height: 10px;
-  margin: -3px 3px 0 -2px;
-  line-height: 10px;
+  width: 12px;
+  height: 12px;
+  margin: -1px 3px 0 -2px;
+  line-height: 12px;
 }
 .hui_button.hui-mini > .hui_button_symbol_notext {
-  margin: -3px -2px 0;
+  margin: -1px -3px 0;
 }
 .hui_button.hui-tiny > .hui_symbol {
   width: 10px;
   height: 10px;
-  margin: -4px 3px 0 -2px;
+  margin: -2px 3px 0 -2px;
   line-height: 10px;
 }
 .hui_button.hui-tiny > .hui_button_symbol_notext {
-  margin: -4px -2px 0;
+  margin: -2px -3px 0;
 }
 
-.hui_button.hui-clear {
+.hui_button-bare {
   display: inline-flex;
   vertical-align: middle;
 }
-.hui_button.hui-clear > .hui_symbol {
+.hui_button-bare > .hui_symbol {
   margin: 0;
 }
 
 .hui_button.hui-light {
   border: 1px solid #ddd;
   border-radius: 3px;
-  background-color: #ffffff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f6f6f6));
-  background-image: -webkit-linear-gradient(top, #ffffff, #f6f6f6);
-  background-image: -moz-linear-gradient(top, #ffffff, #f6f6f6);
-  background-image: -ms-linear-gradient(top, #ffffff, #f6f6f6);
-  background-image: -o-linear-gradient(top, #ffffff, #f6f6f6);
-  background-image: linear-gradient(top, #ffffff, #f6f6f6);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#f6f6f6");
+  background-image: linear-gradient(180deg, #ffffff, #f6f6f6);
   color: #333;
   box-shadow: none;
 }
@@ -513,24 +504,10 @@ span.hui_disclosure_open:hover {
 }
 .hui_button.hui-light:hover {
   border-color: #d7d7d7;
-  background-color: #fafafa;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#eeeeee));
-  background-image: -webkit-linear-gradient(top, #fafafa, #eeeeee);
-  background-image: -moz-linear-gradient(top, #fafafa, #eeeeee);
-  background-image: -ms-linear-gradient(top, #fafafa, #eeeeee);
-  background-image: -o-linear-gradient(top, #fafafa, #eeeeee);
-  background-image: linear-gradient(top, #fafafa, #eeeeee);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fafafa", endColorstr="#eeeeee");
+  background-image: linear-gradient(180deg, #fafafa, #eeeeee);
 }
 .hui_button.hui-light:active {
-  background-color: #eeeeee;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#fafafa));
-  background-image: -webkit-linear-gradient(top, #eeeeee, #fafafa);
-  background-image: -moz-linear-gradient(top, #eeeeee, #fafafa);
-  background-image: -ms-linear-gradient(top, #eeeeee, #fafafa);
-  background-image: -o-linear-gradient(top, #eeeeee, #fafafa);
-  background-image: linear-gradient(top, #eeeeee, #fafafa);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#eeeeee", endColorstr="#fafafa");
+  background-image: linear-gradient(180deg, #eeeeee, #fafafa);
 }
 .hui_button.hui-light.hui-highlighted {
   box-shadow: inset 0 0 4px #6ede4a;
@@ -552,75 +529,47 @@ span.hui_disclosure_open:hover {
   margin-right: -5px;
 }
 
-.hui_context_dark .hui_button:not(.hui-clear) {
+.hui_context_dark .hui_button {
   border-color: #232323 #040404 #000000;
-  background-color: #5c5f63;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#5c5f63), to(#4f5152));
-  background-image: -webkit-linear-gradient(top, #5c5f63, #4f5152);
-  background-image: -moz-linear-gradient(top, #5c5f63, #4f5152);
-  background-image: -ms-linear-gradient(top, #5c5f63, #4f5152);
-  background-image: -o-linear-gradient(top, #5c5f63, #4f5152);
-  background-image: linear-gradient(top, #5c5f63, #4f5152);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#5c5f63", endColorstr="#4f5152");
+  background-image: linear-gradient(180deg, #5c5f63, #4f5152);
   color: #fff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 1px #666, inset 0 1px 0 #888;
   border-radius: 3px;
 }
-.hui_context_dark .hui_button:not(.hui-clear):focus {
+.hui_context_dark .hui_button:focus {
   border-color: #65a5ff;
   box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff;
 }
-.hui_context_dark .hui_button:not(.hui-clear):hover {
+.hui_context_dark .hui_button:hover {
   box-shadow: 0 0 1px #666, inset 0 1px 0 #666;
-  background-color: rgb(79.7172774869, 82.3167539267, 85.7827225131);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(79.7172774869, 82.3167539267, 85.7827225131)), to(rgb(66.4875776398, 68.1708074534, 69.0124223602)));
-  background-image: -webkit-linear-gradient(top, rgb(79.7172774869, 82.3167539267, 85.7827225131), rgb(66.4875776398, 68.1708074534, 69.0124223602));
-  background-image: -moz-linear-gradient(top, rgb(79.7172774869, 82.3167539267, 85.7827225131), rgb(66.4875776398, 68.1708074534, 69.0124223602));
-  background-image: -ms-linear-gradient(top, rgb(79.7172774869, 82.3167539267, 85.7827225131), rgb(66.4875776398, 68.1708074534, 69.0124223602));
-  background-image: -o-linear-gradient(top, rgb(79.7172774869, 82.3167539267, 85.7827225131), rgb(66.4875776398, 68.1708074534, 69.0124223602));
-  background-image: linear-gradient(top, rgb(79.7172774869, 82.3167539267, 85.7827225131), rgb(66.4875776398, 68.1708074534, 69.0124223602));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(79.7172774869, 82.3167539267, 85.7827225131)", endColorstr="rgb(66.4875776398, 68.1708074534, 69.0124223602)");
+  background-image: linear-gradient(180deg, rgb(79.7172774869, 82.3167539267, 85.7827225131), rgb(66.4875776398, 68.1708074534, 69.0124223602));
 }
-.hui_context_dark .hui_button:not(.hui-clear):active {
+.hui_context_dark .hui_button:active {
   box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3);
   border-color: #000;
 }
-.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted {
+.hui_context_dark .hui_button.hui-highlighted {
   /*
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
   border-color: #2c3831 #222b26 #232b27;
   @include vertical-gradient(#36634e, #2b4e38);*/
   box-shadow: inset 0 1px 0px rgb(46, 162, 255), 0 0px 1px rgba(255, 255, 255, 0.35);
   border-color: #002752 #003361 #000000;
-  background-color: #0a71ec;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#0a71ec), to(#005694));
-  background-image: -webkit-linear-gradient(top, #0a71ec, #005694);
-  background-image: -moz-linear-gradient(top, #0a71ec, #005694);
-  background-image: -ms-linear-gradient(top, #0a71ec, #005694);
-  background-image: -o-linear-gradient(top, #0a71ec, #005694);
-  background-image: linear-gradient(top, #0a71ec, #005694);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0a71ec", endColorstr="#005694");
+  background-image: linear-gradient(180deg, #0a71ec, #005694);
 }
-.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:focus {
+.hui_context_dark .hui_button.hui-highlighted:focus {
   border-color: #65a5ff;
   box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff;
 }
-.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:hover {
+.hui_context_dark .hui_button.hui-highlighted:hover {
   box-shadow: inset 0 1px 0px rgb(20.5, 150.6531100478, 255), 0 0px 1px rgba(255, 255, 255, 0.35);
-  background-color: rgb(8.9634146341, 101.2865853659, 211.5365853659);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(8.9634146341, 101.2865853659, 211.5365853659)), to(rgb(0, 71.1824324324, 122.5)));
-  background-image: -webkit-linear-gradient(top, rgb(8.9634146341, 101.2865853659, 211.5365853659), rgb(0, 71.1824324324, 122.5));
-  background-image: -moz-linear-gradient(top, rgb(8.9634146341, 101.2865853659, 211.5365853659), rgb(0, 71.1824324324, 122.5));
-  background-image: -ms-linear-gradient(top, rgb(8.9634146341, 101.2865853659, 211.5365853659), rgb(0, 71.1824324324, 122.5));
-  background-image: -o-linear-gradient(top, rgb(8.9634146341, 101.2865853659, 211.5365853659), rgb(0, 71.1824324324, 122.5));
-  background-image: linear-gradient(top, rgb(8.9634146341, 101.2865853659, 211.5365853659), rgb(0, 71.1824324324, 122.5));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(8.9634146341, 101.2865853659, 211.5365853659)", endColorstr="rgb(0, 71.1824324324, 122.5)");
+  background-image: linear-gradient(180deg, rgb(8.9634146341, 101.2865853659, 211.5365853659), rgb(0, 71.1824324324, 122.5));
 }
-.hui_context_dark .hui_button:not(.hui-clear).hui-highlighted:active {
+.hui_context_dark .hui_button.hui-highlighted:active {
   box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3);
 }
-.hui_context_dark .hui_button:not(.hui-clear).hui-disabled, .hui_context_dark .hui_button:not(.hui-clear).hui-disabled:hover {
+.hui_context_dark .hui_button.hui-disabled, .hui_context_dark .hui_button.hui-disabled:hover {
   border-color: #111;
   background: #333;
   color: #999;
@@ -830,14 +779,7 @@ body .hui_context_dark label.hui_form_field,
 }
 
 .hui_dropdown {
-  background-color: #fcfcfd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
-  background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfd", endColorstr="#e3e7ea");
+  background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px;
@@ -905,7 +847,7 @@ body .hui_context_dark label.hui_form_field,
   font-style: italic;
   padding-right: 2px;
 }
-.hui_dropdown.hui_is_small {
+.hui_dropdown.hui-small {
   height: 22px;
   line-height: 20px;
 }
@@ -1294,19 +1236,19 @@ td.view_sidebar {
 .hui_toolbar-border-top {
   border-top: 1px solid #ddd;
   padding: 0;
-  border-top: 1px solid #fff;
-  background: #f2f2f3;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
 }
 .hui_toolbar-border-bottom {
   border-bottom: 1px solid #ddd;
   padding: 0;
   border-top: 1px solid #fff;
-  background: #f2f2f3;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
 }
 .hui_toolbar-window {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #fff;
   box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 #ccc;
+  padding-bottom: 1px;
 }
 .hui_toolbar_right {
   position: absolute;
@@ -1324,32 +1266,28 @@ td.view_sidebar {
 
 /********************************** Icon ************************/
 .hui_toolbar_icon {
-  height: 54px;
-  padding: 1px 7px;
+  height: 52px;
+  margin: 1px 0;
+  padding: 0px 7px;
   vertical-align: middle;
   display: inline-block;
   font-size: 0px;
   text-align: center;
   cursor: pointer;
   text-decoration: none;
+  border-radius: 4px;
+  border: 1px solid transparent;
 }
 .hui_toolbar_icon:focus {
-  height: 54px;
-  padding: 0 6px;
   border: 1px solid #0069ff;
   box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
   outline: none;
-  border-radius: 3px;
 }
 .hui_toolbar_icon_selected {
   background: rgba(0, 0, 40, 0.1);
   background: radial-gradient(rgba(0, 0, 40, 0.05) 50%, rgba(0, 0, 40, 0.1) 100%);
   box-shadow: inset 0 0px 6px rgba(0, 0, 40, 0.2);
-  padding: 1px 9px;
-  margin: 0 -2px;
-}
-.hui_toolbar_icon_selected:focus {
-  padding: 0px 8px;
+  background-clip: padding-box;
 }
 .hui_toolbar_icon_text {
   font-size: 11px;
@@ -1360,7 +1298,7 @@ td.view_sidebar {
 .hui_toolbar_icon .hui_icon {
   height: 32px;
   width: 32px;
-  margin: 4px auto 3px auto;
+  margin: 3px auto 2px auto;
   display: inline-block;
   position: relative;
 }
@@ -1382,6 +1320,11 @@ td.view_sidebar {
 }
 .hui_toolbar_icon_disabled:hover .hui_icon {
   filter: none;
+}
+.hui_toolbar_icon .hui_symbol {
+  width: 24px;
+  height: 24px;
+  margin: 6px 0 7px;
 }
 
 /************************************ Items *****************************/
@@ -1637,20 +1580,12 @@ th.hui_toolbar_grid_label {
 .hui_list th {
   text-align: left;
   font-size: 9pt;
-  background: #fafafa;
   border-bottom: 1px solid #ccc;
   color: #334455;
   vertical-align: top;
-  line-height: 21px;
-  height: 21px;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  line-height: 24px;
+  height: 24px;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
   cursor: default;
   padding: 0px 5px;
   font-weight: normal;
@@ -1663,32 +1598,33 @@ th.hui_toolbar_grid_label {
 
 .hui_list th.sortable:hover {
   cursor: pointer;
-  background-color: rgb(242.25, 242.25, 242.25);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(242.25, 242.25, 242.25)), to(rgb(227.25, 227.25, 227.25)));
-  background-image: -webkit-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  background-image: -moz-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  background-image: -ms-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  background-image: -o-linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  background-image: linear-gradient(top, rgb(242.25, 242.25, 242.25), rgb(227.25, 227.25, 227.25));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="rgb(242.25, 242.25, 242.25)", endColorstr="rgb(227.25, 227.25, 227.25)");
+  background-image: linear-gradient(180deg, rgb(242.35, 242.35, 242.35), rgb(238.35, 238.35, 238.35));
 }
 
 .hui_list th.sort_ascending,
 .hui_list th.sort_descending {
   font-weight: bold;
+  position: relative;
+}
+.hui_list th.sort_ascending:after,
+.hui_list th.sort_descending:after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: url("../gfx/drop.svg") center center no-repeat;
+  right: 7px;
+  top: 7px;
+  opacity: 0.5;
 }
 
-.hui_list th.sort_ascending span {
-  background: url("../gfx/list_ascending.png") right center no-repeat;
-}
-
-.hui_list th.sort_descending span {
-  background: url("../gfx/list_descending.png") right center no-repeat;
+.hui_list th.sort_descending:after {
+  transform: rotate(180deg);
 }
 
 .hui_list td {
   font-size: 9pt;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ddd;
   padding: 3px 5px;
   vertical-align: top;
   cursor: default;
@@ -1784,31 +1720,22 @@ th.hui_toolbar_grid_label {
 
 .hui_list_navigation {
   display: none;
-  /*background: url('../gfx/list_navigation.png');*/
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
   border-bottom: 1px solid #ccc;
-  height: 26px;
+  height: 24px;
   padding: 0px 3px;
 }
 
-span.hui_list_count {
+.hui_list_count {
   float: right;
   color: #666;
-  height: 26px;
-  line-height: 26px;
+  height: 24px;
+  line-height: 24px;
   font-size: 12px;
-  padding-right: 7px;
+  padding-right: 5px;
 }
 
 .hui_list_selection {
-  margin-top: 1px;
   float: left;
   height: 24px;
   /*background: url('../gfx/list_box.png') repeat-x;*/
@@ -1834,7 +1761,7 @@ span.hui_list_count {
   margin-top: 4px;
   line-height: 16px;
   padding: 0px 4px;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .hui_list_selection span {
@@ -1845,7 +1772,7 @@ span.hui_list_count {
 }
 
 .hui_list_selection a:hover {
-  background: #ddd;
+  background: rgba(0, 0, 0, 0.1);
   color: #000;
 }
 
@@ -1981,14 +1908,7 @@ a.hui_list_checkbox {
   height: 12px;
   margin-top: 2px;
   background: #eee;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fff, rgb(240, 240, 240));
   font-weight: bold;
   overflow: hidden;
   text-indent: -20px;
@@ -2190,24 +2110,22 @@ a.list_check_all {
 }
 .hui_selection_disclosure {
   display: inline-block;
-  width: 11px;
-  height: 11px;
+  width: 15px;
+  height: 16px;
   vertical-align: middle;
-  background: url("../gfx/disclosure.png");
+  background: url("../gfx/drop.svg") no-repeat;
+  background-position: 50% 50%;
+  background-size: 8px 8px;
+  transform: rotate(-90deg);
   font-size: 0;
   line-height: 0;
   cursor: default;
-  margin-right: 3px;
-  opacity: 0.3;
-}
-.hui_selection_disclosure:hover {
-  background-position: 0 -11px;
+  margin-left: -2px;
+  opacity: 0.2;
+  transition: transform 0.2s;
 }
 .hui_selection_disclosure_open {
-  background-position: 0 -22px;
-}
-.hui_selection_disclosure_open:hover {
-  background-position: 0 -33px;
+  transform: rotate(0deg);
 }
 
 .hui_context_sidebar .hui_selection,
@@ -2216,6 +2134,9 @@ a.list_check_all {
 }
 
 .hui_selection:hover .hui_selection_disclosure {
+  opacity: 0.5;
+}
+.hui_selection:hover .hui_selection_disclosure:hover {
   opacity: 1;
 }
 
@@ -3556,14 +3477,7 @@ a.hui_datepicker_next {
 
 .hui_box_header {
   height: 56px;
-  background-color: #d1dae5;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#d1dae5), to(#b6c0cc));
-  background-image: -webkit-linear-gradient(top, #d1dae5, #b6c0cc);
-  background-image: -moz-linear-gradient(top, #d1dae5, #b6c0cc);
-  background-image: -ms-linear-gradient(top, #d1dae5, #b6c0cc);
-  background-image: -o-linear-gradient(top, #d1dae5, #b6c0cc);
-  background-image: linear-gradient(top, #d1dae5, #b6c0cc);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d1dae5", endColorstr="#b6c0cc");
+  background-image: linear-gradient(180deg, #d1dae5, #b6c0cc);
   border: 1px solid #b6c1d0;
   border-color: #c4cbd4 #acb2bb #a3aab3;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
@@ -3888,7 +3802,7 @@ ul.hui_wizard a.hui_selected {
   content: "";
   display: block;
   background: #788492;
-  height: 4px;
+  height: 2px;
 }
 .hui_tabs-below .hui_tabs_bar:after {
   content: none;
@@ -3897,7 +3811,7 @@ ul.hui_wizard a.hui_selected {
   content: "";
   display: block;
   background: #788492;
-  height: 4px;
+  height: 2px;
 }
 .hui_tabs_tab {
   display: inline-block;
@@ -3908,14 +3822,7 @@ ul.hui_wizard a.hui_selected {
   color: #123;
   text-decoration: none;
   cursor: pointer;
-  background-color: #fcfcfd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
-  background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfd", endColorstr="#e3e7ea");
+  background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px 3px 0 0;
@@ -3923,14 +3830,7 @@ ul.hui_wizard a.hui_selected {
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.2);
 }
 .hui_tabs_tab.hui-is-selected {
-  background-color: #b5beca;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#b5beca), to(#788492));
-  background-image: -webkit-linear-gradient(top, #b5beca, #788492);
-  background-image: -moz-linear-gradient(top, #b5beca, #788492);
-  background-image: -ms-linear-gradient(top, #b5beca, #788492);
-  background-image: -o-linear-gradient(top, #b5beca, #788492);
-  background-image: linear-gradient(top, #b5beca, #788492);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#b5beca", endColorstr="#788492");
+  background-image: linear-gradient(180deg, #b5beca, #788492);
   border-color: #a4adb9 #788492;
   color: #fff;
   text-shadow: 0 -1px rgba(0, 0, 0, 0.3);
@@ -3947,14 +3847,7 @@ ul.hui_wizard a.hui_selected {
   border-width: 0 1px 1px;
 }
 .hui_tabs-below .hui_tabs_tab.hui-is-selected {
-  background-color: #788492;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#788492), to(#b5beca));
-  background-image: -webkit-linear-gradient(top, #788492, #b5beca);
-  background-image: -moz-linear-gradient(top, #788492, #b5beca);
-  background-image: -ms-linear-gradient(top, #788492, #b5beca);
-  background-image: -o-linear-gradient(top, #788492, #b5beca);
-  background-image: linear-gradient(top, #788492, #b5beca);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#788492", endColorstr="#b5beca");
+  background-image: linear-gradient(180deg, #8c97a5, #576372);
   border-color: #8d97a5 #788492;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
 }
@@ -4048,14 +3941,7 @@ ul.hui_wizard a.hui_selected {
 }
 
 .hui_bar .hui_bar_button-selected, .hui_bar .hui_bar_button-selected:hover {
-  background-color: #bdbdbd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#bdbdbd), to(#ebebeb));
-  background-image: -webkit-linear-gradient(top, #bdbdbd, #ebebeb);
-  background-image: -moz-linear-gradient(top, #bdbdbd, #ebebeb);
-  background-image: -ms-linear-gradient(top, #bdbdbd, #ebebeb);
-  background-image: -o-linear-gradient(top, #bdbdbd, #ebebeb);
-  background-image: linear-gradient(top, #bdbdbd, #ebebeb);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#bdbdbd", endColorstr="#ebebeb");
+  background-image: linear-gradient(180deg, #bdbdbd, #ebebeb);
 }
 
 .hui_bar_button-selected .hui_icon_16 {
@@ -4075,14 +3961,7 @@ ul.hui_wizard a.hui_selected {
 
 /******************* window mini variant ***************/
 .hui_bar-window_mini {
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fff, rgb(240, 240, 240));
   min-height: 24px;
   padding: 0;
 }
@@ -4119,14 +3998,7 @@ ul.hui_wizard a.hui_selected {
 }
 
 .hui_bar-window_mini .hui_bar_button-selected, .hui_bar-window_mini .hui_bar_button-selected:hover {
-  background-color: #bbb;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#bbb), to(#ddd));
-  background-image: -webkit-linear-gradient(top, #bbb, #ddd);
-  background-image: -moz-linear-gradient(top, #bbb, #ddd);
-  background-image: -ms-linear-gradient(top, #bbb, #ddd);
-  background-image: -o-linear-gradient(top, #bbb, #ddd);
-  background-image: linear-gradient(top, #bbb, #ddd);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#bbb", endColorstr="#ddd");
+  background-image: linear-gradient(180deg, #bbb, #ddd);
   border-color: #bbb;
 }
 
@@ -4140,14 +4012,7 @@ ul.hui_wizard a.hui_selected {
 
 /******************* layout variant ***************/
 .hui_bar-layout {
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
   border-bottom: 1px solid #ddd;
 }
 .hui_bar-layout .hui_bar_text {
@@ -4203,14 +4068,7 @@ ul.hui_wizard a.hui_selected {
 
 /******************* Layout mini variant ***************/
 .hui_bar-layout_mini {
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgb(240, 240, 240)));
-  background-image: -webkit-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -moz-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -ms-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: -o-linear-gradient(top, #fff, rgb(240, 240, 240));
-  background-image: linear-gradient(top, #fff, rgb(240, 240, 240));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="rgb(240, 240, 240)");
+  background-image: linear-gradient(180deg, #fff, rgb(240, 240, 240));
   min-height: 22px;
   border-bottom: 1px solid #ddd;
   padding: 0;
@@ -4235,16 +4093,14 @@ ul.hui_wizard a.hui_selected {
   background: #eee;
   border-color: #ddd;
 }
+.hui_bar-layout_mini .hui_bar_button .hui_symbol {
+  width: 14px;
+  height: 14px;
+  margin: 0 -2px;
+}
 
 .hui_bar-layout_mini .hui_bar_button-selected, .hui_bar-layout_mini .hui_bar_button-selected:hover {
-  background-color: #bbb;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#bbb), to(#ddd));
-  background-image: -webkit-linear-gradient(top, #bbb, #ddd);
-  background-image: -moz-linear-gradient(top, #bbb, #ddd);
-  background-image: -ms-linear-gradient(top, #bbb, #ddd);
-  background-image: -o-linear-gradient(top, #bbb, #ddd);
-  background-image: linear-gradient(top, #bbb, #ddd);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#bbb", endColorstr="#ddd");
+  background-image: linear-gradient(180deg, #bbb, #ddd);
   border-color: #bbb;
 }
 
@@ -4435,25 +4291,11 @@ div.hui_videoplayer_placeholder:hover span.hui_videoplayer_placeholder_info stro
   border-color: #ddd #ccc #aaa;
   font-size: 0;
   height: 20px;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-  background-image: -webkit-linear-gradient(top, #fff, #eee);
-  background-image: -moz-linear-gradient(top, #fff, #eee);
-  background-image: -ms-linear-gradient(top, #fff, #eee);
-  background-image: -o-linear-gradient(top, #fff, #eee);
-  background-image: linear-gradient(top, #fff, #eee);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="#eee");
+  background-image: linear-gradient(180deg, #fff, #eee);
 }
 .hui_segmented-standard .hui_segmented_item.hui-is-selected, .hui_segmented-standard .hui_segmented_item.hui-is-selected:hover {
   background: #ddd;
-  background-color: #EFF2F4;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#EFF2F4), to(#C0C9CF));
-  background-image: -webkit-linear-gradient(top, #EFF2F4, #C0C9CF);
-  background-image: -moz-linear-gradient(top, #EFF2F4, #C0C9CF);
-  background-image: -ms-linear-gradient(top, #EFF2F4, #C0C9CF);
-  background-image: -o-linear-gradient(top, #EFF2F4, #C0C9CF);
-  background-image: linear-gradient(top, #EFF2F4, #C0C9CF);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#EFF2F4", endColorstr="#C0C9CF");
+  background-image: linear-gradient(180deg, #EFF2F4, #C0C9CF);
 }
 .hui_segmented-inset {
   font-size: 0;
@@ -4465,14 +4307,7 @@ div.hui_videoplayer_placeholder:hover span.hui_videoplayer_placeholder_info stro
   border-radius: 10px;
   border: 1px solid #ddd;
   border-color: #ccc #ccc #ddd;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-  background-image: -webkit-linear-gradient(top, #fff, #eee);
-  background-image: -moz-linear-gradient(top, #fff, #eee);
-  background-image: -ms-linear-gradient(top, #fff, #eee);
-  background-image: -o-linear-gradient(top, #fff, #eee);
-  background-image: linear-gradient(top, #fff, #eee);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff", endColorstr="#eee");
+  background-image: linear-gradient(180deg, #fff, #eee);
   margin: 0 2px;
 }
 .hui_segmented-inset .hui_segmented_text {
@@ -4482,14 +4317,7 @@ div.hui_videoplayer_placeholder:hover span.hui_videoplayer_placeholder_info stro
 .hui_segmented-inset .hui_segmented_item.hui-is-selected, .hui_segmented-inset .hui_segmented_item.hui-is-selected:hover {
   border-color: #555 #666 #888;
   background: #ddd;
-  background-color: #777;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#777), to(#99a));
-  background-image: -webkit-linear-gradient(top, #777, #99a);
-  background-image: -moz-linear-gradient(top, #777, #99a);
-  background-image: -ms-linear-gradient(top, #777, #99a);
-  background-image: -o-linear-gradient(top, #777, #99a);
-  background-image: linear-gradient(top, #777, #99a);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#777", endColorstr="#99a");
+  background-image: linear-gradient(180deg, #777, #99a);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
   color: #fff;
 }
@@ -5141,14 +4969,7 @@ div.hui_colorpicker_swatches a {
 .hui_checkbox_button {
   width: 16px;
   height: 16px;
-  background-color: #fcfcfd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
-  background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfd", endColorstr="#e3e7ea");
+  background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px;
@@ -5294,14 +5115,7 @@ div.hui_infoview_click:hover {
 .hui_radiobutton_button {
   width: 16px;
   height: 16px;
-  background-color: #fcfcfd;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
-  background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
-  background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfd", endColorstr="#e3e7ea");
+  background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 50%;
@@ -5373,10 +5187,10 @@ div.hui_infoview_click:hover {
   background-image: url("../gfx/down.svg");
   background-position: 50% 2px;
 }
-.hui_numberinput.hui_is_small .hui_numberinput_up {
+.hui_numberinput.hui-small .hui_numberinput_up {
   background-position: 50% 4px;
 }
-.hui_numberinput.hui_is_small .hui_numberinput_down {
+.hui_numberinput.hui-small .hui_numberinput_down {
   background-position: 50% 4px;
 }
 
@@ -5438,7 +5252,7 @@ div.hui_rendering p {
   border: 1px solid #ccc;
   border-radius: 5px 5px 0 0;
   padding: 0 5px;
-  background: #f6f6f6;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
 }
 .hui_structure_bottom {
   min-height: 26px;
@@ -5448,7 +5262,7 @@ div.hui_rendering p {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #f6f6f6;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
 }
 .hui_structure_middle {
   position: absolute;

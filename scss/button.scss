@@ -28,7 +28,7 @@
 
 /**************** Standard button ************/
 
-.hui_button:not(.hui-clear) {
+.hui_button {
   color: $text-color;
   display: inline-block;
   vertical-align: middle;
@@ -177,33 +177,35 @@
     margin: -2px -4px 0;
   }
   &.hui-small > .hui_symbol {
+    width: 14px;
+    height: 14px;
     margin: -2px 4px 0 -3px;
   }
   &.hui-small > .hui_button_symbol_notext {
-    margin: -2px -2px 0;
+    margin: -2px -4px 0;
   }
   &.hui-mini > .hui_symbol {
-    width: 10px;
-    height: 10px;
-    margin: -3px 3px 0 -2px;
-    line-height: 10px;
+    width: 12px;
+    height: 12px;
+    margin: -1px 3px 0 -2px;
+    line-height: 12px;
   }
   &.hui-mini > .hui_button_symbol_notext {
-    margin: -3px -2px 0;
+    margin: -1px -3px 0;
   }
   &.hui-tiny > .hui_symbol {
     width: 10px;
     height: 10px;
-    margin: -4px 3px 0 -2px;
+    margin: -2px 3px 0 -2px;
     line-height: 10px;
   }
   &.hui-tiny > .hui_button_symbol_notext {
-    margin: -4px -2px 0;
+    margin: -2px -3px 0;
   }
 }
 
 
-.hui_button.hui-clear {
+.hui_button-bare {
   display: inline-flex;
   vertical-align: middle;
   > .hui_symbol {
@@ -265,7 +267,7 @@
 
 
 .hui_context_dark {
-  .hui_button:not(.hui-clear) {
+  .hui_button {
     border-color: #232323 #040404 #000000;
     @include vertical-gradient(#5c5f63, #4f5152);
     color: #fff;
