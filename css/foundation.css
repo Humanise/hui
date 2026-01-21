@@ -132,6 +132,9 @@
   transition-property: left, width;
   transition-duration: 0.3s;
 }
+.hui_foundation_navigation .hui_selection {
+  padding: 5px;
+}
 .hui_foundation_results {
   position: absolute;
   width: 100%;
@@ -182,7 +185,7 @@
   left: 0;
   padding: 0 0 0 30px;
 }
-.hui_foundation_actions .hui_button, .hui_foundation_actions .hui_dropdown {
+.hui_foundation_actions .hui_button, .hui_foundation_actions .hui_dropdown, .hui_foundation_actions .hui_checkbox_button {
   box-shadow: none;
 }
 .hui_foundation_actions-details {

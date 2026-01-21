@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:hui" title="Collection" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
+  <style>
+    .item {
+      border-bottom: 1px solid #eee;
+      padding: 5px;
+      cursor: pointer;
+    }
+    .item.hui-selected {
+      font-weight: bold;
+    }
+  </style>
+  <source name="mySource" url="data/collection_data.json"/>
+
+  <box width="300" title="Collection" top="40">
+    <collection name="myCollection" selectable="true" source="mySource"/>
+  </box>
+
+  <box width="300" title="Collection" top="40">
+    <collection name="myOtherCollection" selectable="true"/>
+  </box>
+
+  <script>
+    hui.control({
+      selected: {},
+      'myCollection.render!'(e) {
+        return hui.build('div.item', {text: e.value.title });
+      },
+      'myCollection.select!'(e) {
+        e.value.data.selected = !!e.value.data.selected;
+        var id = e.value.data.id;
+        hui.ui.msg.success({text: id})
+        this.selected[id] = !this.selected[id];
+      },
+      'myCollection.isSelected!'(e) {
+        return this.selected[e.value.id] === true;
+      }
+    })
+  </script>
+
+  <script>
+    hui.control({
+      data: [{id:1},{id:2},{id:3},{id:4}],
+      selected:{},
+      'ready!'() {
+        myOtherCollection.setData(this.data)
+      },
+      'myOtherCollection.render!'(e) {
+        return hui.build('div.item', {text: JSON.stringify(e.value) });
+      },
+      'myOtherCollection.select!'(e) {
+        e.value.data.selected = !!e.value.data.selected;
+        var id = e.value.data.id;
+        hui.ui.msg.success({text: "id: " + id + ", index: " + e.value.index})
+        this.selected[id] = !this.selected[id];
+      },
+      'myOtherCollection.isSelected!'(e) {
+        //return e.value.selected;
+        console.log(e.value)
+        return this.selected[e.value.id] === true;
+      }
+    })
+  </script>
+</gui>

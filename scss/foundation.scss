@@ -108,6 +108,9 @@
     overflow: hidden;
     transition-property: left, width;
     transition-duration: .3s;
+    .hui_selection {
+      padding: 5px;
+    }
   }
 
   &_results {
@@ -159,7 +162,7 @@
     left: 0;
     padding: 0 0 0 $bar-height;
 
-    .hui_button, .hui_dropdown {
+    .hui_button, .hui_dropdown, .hui_checkbox_button {
       box-shadow: none;
     }
     &-details {
