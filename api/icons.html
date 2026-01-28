@@ -41,7 +41,11 @@
         background-position: 0 -100%;
       }
     </style>
-    <script src="../bin/joined.js"></script>
+    <link rel="stylesheet" href="../css/icon.css">
+    <script src="../js/hui.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/Component.js"></script>
+    <script src="../js/Icon.js"></script>
     <script type="text/javascript">
     hui.ui.request({
       url : '../info/icons.json',
@@ -56,6 +60,8 @@
             var sizes = obj[group][icon];
             for (var i=0; i < sizes.length; i++) {
               var size = sizes[i];
+              var x = hui.ui.Icon.create({icon: group+'/'+icon, size: size});
+              x.addTo(groupNode);
               hui.build('a',{
                 'class' : 'icon',
                 style : "background-image:url('../icons/"+group+"/"+icon+size+".png'); width:"+size+"px;height:"+size+"px;",

@@ -5510,7 +5510,7 @@ hui.component = function(name, spec) {
   var component = hui.ui[name]
   component.create = function(state) {
     state = state || {};
-    var cp = {element: spec.create()};
+    var cp = {element: spec.create(state)};
     hui.extend(cp, state);
     if (state.testName) {
       cp.element.setAttribute('data-test', state.testName);
@@ -15930,8 +15930,8 @@ hui.component('Icon', {
       this.state.size = params.size;
     }
   },
-  create : function(options) {
-    return hui.ui.createIcon(options.icon, options.size, 'span');
+  create : function() {
+    return hui.build('span', {children: [hui.build('span.hui_icon')]});
   },
   '!click'() {
     this.fire('click')
@@ -15940,8 +15940,8 @@ hui.component('Icon', {
     this.change({size:size})
   },
   draw : function(changed) {
-    if ('size' in changed) {
-      var iconNode = this.nodes.icon;
+    if ('icon' in changed || 'size' in changed) {
+      var iconNode = this.nodes.icon || this.element;
       hui.ui.setIconImage(iconNode, this.state.icon, changed.size);
       iconNode.className = 'hui_icon hui_icon_' + changed.size;
       if (hui.cls.has(this.element, 'hui_icon_labeled')) {

@@ -53,6 +53,9 @@ hui.ui.Component.prototype = {
   getElement : function() {
     return this.element;
   },
+  addTo(other) {
+    other.appendChild(this.getElement());
+  },
   /**
    * Removes the component from the DOM
    * @see hui.ui.destroy
@@ -83,15 +86,17 @@ hui.ui.Component.prototype = {
   },
   change : function(newState) {
     var changed = {};
+    var num = 0;
     for (key in newState) {
       if (newState.hasOwnProperty(key) && this.state.hasOwnProperty(key) ) {
         if (this.state[key] !== newState[key]) {
           this.state[key] = newState[key];
           changed[key] = newState[key];
+          num++;
         }
       }
     }
-    if (changed!={} && this.draw) {
+    if (num > 0 && this.draw) {
       this.draw(changed);
     }
   },
@@ -126,7 +131,7 @@ hui.component = function(name, spec) {
   var component = hui.ui[name]
   component.create = function(state) {
     state = state || {};
-    var cp = {element: spec.create()};
+    var cp = {element: spec.create(state)};
     hui.extend(cp, state);
     if (state.testName) {
       cp.element.setAttribute('data-test', state.testName);

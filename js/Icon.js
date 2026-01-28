@@ -1,7 +1,7 @@
 hui.component('Icon', {
   state: {
     icon: undefined,
-    size: 16
+    size: undefined
   },
   nodes : {
     'icon' : '.hui_icon'
@@ -12,8 +12,8 @@ hui.component('Icon', {
       this.state.size = params.size;
     }
   },
-  create : function(options) {
-    return hui.ui.createIcon(options.icon, options.size, 'span');
+  create : function(params) {
+    return hui.ui.createIcon(params.icon, params.size);
   },
   '!click'() {
     this.fire('click')
@@ -22,12 +22,12 @@ hui.component('Icon', {
     this.change({size:size})
   },
   draw : function(changed) {
-    if ('size' in changed) {
-      var iconNode = this.nodes.icon;
-      hui.ui.setIconImage(iconNode, this.state.icon, changed.size);
-      iconNode.className = 'hui_icon hui_icon_' + changed.size;
+    if ('icon' in changed || 'size' in changed) {
+      var iconNode = this.nodes.icon || this.element;
+      hui.ui.setIconImage(iconNode, this.state.icon, this.state.size);
+      iconNode.className = 'hui_icon hui_icon_' + this.state.size;
       if (hui.cls.has(this.element, 'hui_icon_labeled')) {
-        this.element.className = 'hui_icon_labeled hui_icon_labeled_' + changed.size;
+        this.element.className = 'hui_icon_labeled hui_icon_labeled_' + this.state.size;
       }
     }
   }
