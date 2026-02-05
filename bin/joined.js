@@ -5437,6 +5437,9 @@ hui.ui.Component.prototype = {
   getElement : function() {
     return this.element;
   },
+  addTo(other) {
+    other.appendChild(this.getElement());
+  },
   /**
    * Removes the component from the DOM
    * @see hui.ui.destroy
@@ -5467,15 +5470,17 @@ hui.ui.Component.prototype = {
   },
   change : function(newState) {
     var changed = {};
+    var num = 0;
     for (key in newState) {
       if (newState.hasOwnProperty(key) && this.state.hasOwnProperty(key) ) {
         if (this.state[key] !== newState[key]) {
           this.state[key] = newState[key];
           changed[key] = newState[key];
+          num++;
         }
       }
     }
-    if (changed!={} && this.draw) {
+    if (num > 0 && this.draw) {
       this.draw(changed);
     }
   },
@@ -5491,7 +5496,43 @@ hui.ui.Component.prototype = {
 hui.component = function(name, spec) {
   hui.ui[name] = function(options) {
     options = options || {};
-    hui.ui.Component.call(this, options);
+    this.name = options.name;
+    this.state = hui.override({}, this.state);
+
+    for (key in this.state) {
+      if (options.hasOwnProperty(key) && this.state.hasOwnProperty(key) ) {
+        if (this.state[key] !== options[key]) {
+          this.state[key] = options[key];
+        }
+      }
+    }
+
+    if (!this.name) {
+      hui.ui.latestObjectIndex++;
+      this.name = 'unnamed'+hui.ui.latestObjectIndex;
+    }
+    var element = options.element;
+    if (element) {
+      element = hui.get(element);
+    }
+    else if (this.create) {
+      element = this.create();
+      if (options.testName) {
+        element.setAttribute('data-test', options.testName);
+      }
+    }
+    this.element = element;
+    this.delegates = [];
+    if (this.nodes) {
+      this.nodes = hui.collect(this.nodes,this.element);
+    } else {
+      this.nodes = [];
+    }
+    this.owned = {};
+    this.nodes.root = this.element
+    if (options.listen) {
+      this.listen(options.listen);
+    }
     this.init && this.init(options);
     this.change(options);
     this.attach && this.attach();
@@ -5506,9 +5547,11 @@ hui.component = function(name, spec) {
         })(this, key)
       }
     }
+    hui.ui.registerComponent(this);
   }
   var component = hui.ui[name]
   component.create = function(state) {
+    return new component(state);
     state = state || {};
     var cp = {element: spec.create(state)};
     hui.extend(cp, state);
@@ -5521,9 +5564,9 @@ hui.component = function(name, spec) {
   };
   component.prototype = spec;
   hui.extend(component.prototype, hui.ui.Component.prototype);
-  if (spec['with']) {
-    for (var i = 0; i < spec['with'].length; i++) {
-      var mixin = hui.component[spec['with'][i]];
+  if (spec.use) {
+    for (var i = 0; i < spec.use.length; i++) {
+      var mixin = hui.component[spec.use[i]];
       for (prop in mixin) {
         if (typeof(mixin[prop]) == 'function') {
           component.prototype[prop] = mixin[prop]
@@ -5538,7 +5581,7 @@ hui.component = function(name, spec) {
       }
     }
   }
-};
+}
 
 hui.component.value = {
   state: {value: undefined},
@@ -15150,7 +15193,7 @@ hui.ui.TokenField.prototype = {
 };
 
 hui.component('Checkbox', {
-  'with': [
+  use: [
     'value', 'enabled', 'key', 'size'
   ],
   state : {
@@ -15919,19 +15962,13 @@ hui.ui.Rendering.prototype = {
 hui.component('Icon', {
   state: {
     icon: undefined,
-    size: 16
+    size: undefined
   },
   nodes : {
     'icon' : '.hui_icon'
   },
-  init(params) {
-    this.state.icon = params.icon;
-    if (params.size) {
-      this.state.size = params.size;
-    }
-  },
   create : function() {
-    return hui.build('span', {children: [hui.build('span.hui_icon')]});
+    return hui.ui.createIcon(this.state.icon, this.state.size);
   },
   '!click'() {
     this.fire('click')
@@ -15942,10 +15979,10 @@ hui.component('Icon', {
   draw : function(changed) {
     if ('icon' in changed || 'size' in changed) {
       var iconNode = this.nodes.icon || this.element;
-      hui.ui.setIconImage(iconNode, this.state.icon, changed.size);
-      iconNode.className = 'hui_icon hui_icon_' + changed.size;
+      hui.ui.setIconImage(iconNode, this.state.icon, this.state.size);
+      iconNode.className = 'hui_icon hui_icon_' + this.state.size;
       if (hui.cls.has(this.element, 'hui_icon_labeled')) {
-        this.element.className = 'hui_icon_labeled hui_icon_labeled_' + changed.size;
+        this.element.className = 'hui_icon_labeled hui_icon_labeled_' + this.state.size;
       }
     }
   }
@@ -15953,21 +15990,26 @@ hui.component('Icon', {
 
 hui.component('Symbol', {
   state: {
-    name: null,
+    symbol: null,
     size: 16
   },
   nodes : {
-    'svg' : 'svg'
+    'svg' : 'svg',
+    'use' : 'use'
   },
-  create : function(options) {
-    return hui.build('a.hui_symbol', { html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"></svg>'});
+  create(options) {
+    var s = this.state.size + 'px';
+    return hui.build('a.hui_symbol', {
+      html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><use xlink:href="../../symbols/all.svg#icon-' + this.state.symbol + '"></use></svg>',
+      style: { width: s, height: s, fontSize: s }
+    });
   },
   '!click'() {
     this.fire('click')
   },
-  draw : function(changed) {
-    if ('name' in changed) {
-      this.nodes.svg.innerHTML = '<use xlink:href="../../symbols/all.svg#icon-' + changed.name + '"></use>';
+  draw(changed) {
+    if ('symbol' in changed) {
+      this.nodes.user.setAttribute('xlink:href', '../../symbols/all.svg#icon-' + this.state.symbol);
     }
     if ('size' in changed) {
       this.element.style.width = changed.size + 'px';

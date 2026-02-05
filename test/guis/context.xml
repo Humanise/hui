@@ -3,21 +3,22 @@
 <gui xmlns="uri:hui" xmlns:on="uri:hui-event" title="System" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
   <controller name="controller" url="context.js"/>
-  <remote url="data/context.json"/>
 
   <foundation>
     <navigation>
+      <overflow>
       <selection>
         <option text="Hey" icon="common/info"/>
       </selection>
+      </overflow>
     </navigation>
     <actions>
 
     </actions>
     <content>
       <button symbol="info" name="contexted"/>
-      <button symbol="more" name="more" bare="true" size="large"/>
-      <button symbol="gear" name="other" bare="true" size="large"/>
+      <button symbol="more" name="more" bare="true"/>
+      <button symbol="gear" name="other" bare="true"/>
     </content>
   </foundation>
 

@@ -402,7 +402,15 @@
     <xs:attribute name="tiny" type="xs:boolean"/>
     <xs:attribute name="large" type="xs:boolean"/>
     <xs:attribute name="highlighted" type="xs:boolean"/>
+    <xs:attribute name="bare" type="xs:boolean"/>
     <xs:attribute name="disabled" type="xs:boolean"/>
+    <xs:attribute name="size">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="large|regular|small|mini|tiny"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="variant">
       <xs:simpleType>
         <xs:restriction base="xs:string">
@@ -1267,6 +1275,7 @@
       <xs:attribute name="source" type="xs:string"/>
       <xs:attribute name="class" type="xs:string"/>
       <xs:attribute name="selection-class" type="xs:string"/>
+      <xs:attribute name="selectable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
 
@@ -1342,7 +1351,7 @@
     <xs:attribute name="variant">
       <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:pattern value="light|clear"/>
+          <xs:pattern value="light|clear|dark"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>

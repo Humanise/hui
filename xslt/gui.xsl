@@ -1567,7 +1567,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
   <xsl:template match="gui:symbol">
     <xsl:call-template name="gui:symbol">
-      <xsl:with-param name="name"><xsl:value-of select="@name"/></xsl:with-param>
+      <xsl:with-param name="name"><xsl:value-of select="@symbol"/></xsl:with-param>
     </xsl:call-template>
     <xsl:if test="@name">
     <script type="text/javascript">
@@ -1575,6 +1575,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
       var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Symbol({
         element : '<xsl:call-template name="gui:id"/>'
         <xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+        <xsl:if test="@symbol">,symbol:'<xsl:value-of select="@symbol"/>'</xsl:if>
       });
       <xsl:call-template name="gui:createobject"/>
       })();

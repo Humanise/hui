@@ -16,7 +16,7 @@ var controller = {
     ], parent: table})
     iconNames.forEach(name => {
       var row = hui.build('tr', {parent: table});
-      var sym = hui.ui.Symbol.create({name: name, size: 16});
+      var sym = new hui.ui.Symbol({symbol: name, size: 16});
       hui.build('tr', { children:[
         hui.build('th', {text: name}),
         hui.build('td', {children: [sym.getElement()]}),

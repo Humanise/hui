@@ -112,7 +112,43 @@ hui.ui.Component.prototype = {
 hui.component = function(name, spec) {
   hui.ui[name] = function(options) {
     options = options || {};
-    hui.ui.Component.call(this, options);
+    this.name = options.name;
+    this.state = hui.override({}, this.state);
+
+    for (key in this.state) {
+      if (options.hasOwnProperty(key) && this.state.hasOwnProperty(key) ) {
+        if (this.state[key] !== options[key]) {
+          this.state[key] = options[key];
+        }
+      }
+    }
+
+    if (!this.name) {
+      hui.ui.latestObjectIndex++;
+      this.name = 'unnamed'+hui.ui.latestObjectIndex;
+    }
+    var element = options.element;
+    if (element) {
+      element = hui.get(element);
+    }
+    else if (this.create) {
+      element = this.create();
+      if (options.testName) {
+        element.setAttribute('data-test', options.testName);
+      }
+    }
+    this.element = element;
+    this.delegates = [];
+    if (this.nodes) {
+      this.nodes = hui.collect(this.nodes,this.element);
+    } else {
+      this.nodes = [];
+    }
+    this.owned = {};
+    this.nodes.root = this.element
+    if (options.listen) {
+      this.listen(options.listen);
+    }
     this.init && this.init(options);
     this.change(options);
     this.attach && this.attach();
@@ -127,9 +163,11 @@ hui.component = function(name, spec) {
         })(this, key)
       }
     }
+    hui.ui.registerComponent(this);
   }
   var component = hui.ui[name]
   component.create = function(state) {
+    return new component(state);
     state = state || {};
     var cp = {element: spec.create(state)};
     hui.extend(cp, state);
@@ -142,9 +180,9 @@ hui.component = function(name, spec) {
   };
   component.prototype = spec;
   hui.extend(component.prototype, hui.ui.Component.prototype);
-  if (spec['with']) {
-    for (var i = 0; i < spec['with'].length; i++) {
-      var mixin = hui.component[spec['with'][i]];
+  if (spec.use) {
+    for (var i = 0; i < spec.use.length; i++) {
+      var mixin = hui.component[spec.use[i]];
       for (prop in mixin) {
         if (typeof(mixin[prop]) == 'function') {
           component.prototype[prop] = mixin[prop]
@@ -159,7 +197,7 @@ hui.component = function(name, spec) {
       }
     }
   }
-};
+}
 
 hui.component.value = {
   state: {value: undefined},

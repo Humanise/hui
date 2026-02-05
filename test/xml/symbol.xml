@@ -23,7 +23,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
           <button symbol="left"/>
         </item>
         <item label="Info">
-          <symbol name="info"/>
+          <symbol symbol="info"/>
         </item>
         <flexible/>
         <item label="Search">
@@ -79,8 +79,8 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       </div>
 
         <div>
-        <symbol name="info"/>
-        <symbol name="info"/>
+        <symbol symbol="info"/>
+        <symbol symbol="info"/>
         </div>
         <html>
           <style>

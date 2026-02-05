@@ -6,14 +6,8 @@ hui.component('Icon', {
   nodes : {
     'icon' : '.hui_icon'
   },
-  init(params) {
-    this.state.icon = params.icon;
-    if (params.size) {
-      this.state.size = params.size;
-    }
-  },
-  create : function(params) {
-    return hui.ui.createIcon(params.icon, params.size);
+  create : function() {
+    return hui.ui.createIcon(this.state.icon, this.state.size);
   },
   '!click'() {
     this.fire('click')
