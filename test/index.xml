@@ -34,7 +34,8 @@
     <tabs small="true">
       <tab title="Humanise User Interface">
         <toolbar>
-            <icon icon="common/info" text="About"/>
+          <icon icon="common/info" text="About"/>
+          <icon icon="common/search" text="Search"/>
           <right>
             <icon icon="common/internet" name="publish" text="Publish"/>
           </right>
