@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
-<gui xmlns="uri:hui" padding="10" title="Box">
+<gui xmlns="uri:hui" padding="10" title="Object finder">
+  <script url="../helpers.js"/>
+  <source name="gallerySource" url="data/objectfinder_gallery.json"/>
   <window title="Vælg billede" name="finder" width="600">
     <structure height="500">
       <middle>
@@ -16,24 +18,57 @@
         </left>
         <center>
           <bar variant="layout">
-            <segmented>
+            <segmented value="gallery" name="viewToggle">
               <option icon="view/list" value="list"/>
               <option icon="view/gallery" value="gallery"/>
             </segmented>
+            <button text="Add" size="small" name="add"/>
             <right>
             <searchfield expanded-width="200"/>
             </right>
           </bar>
           <overflow>
-            <list/>
+            <fragment name="listView" visible="false">
+              <list url="data/list_pages.xml"/>
+            </fragment>
+            <fragment name="galleryView" visible="true">
+              <gallery source="gallerySource" name="gallery"/>
+            </fragment>
           </overflow>
         </center>
       </middle>
     </structure>
   </window>
+  <panel name="adder" title="Add something" width="300" padding="10" auto-hide='true'>
+    <form name="addForm">
+      <fields>
+        <field label="Title">
+          <text-input/>
+        </field>
+      </fields>
+      <buttons>
+        <button text="Add" highlighted="true"/>
+      </buttons>
+    </form>
+  </panel>
   <script>
-    hui.on(function() {
-      finder.show()
+    hui.control({
+      'ready!'() {
+        finder.show();
+      },
+      'viewToggle.valueChanged!'(e) {
+        listView.setVisible(e.value == 'list')
+        galleryView.setVisible(e.value == 'gallery')
+      },
+      'gallery.buildImageUrl!'(e) {
+        var item = e.value.item;
+        var fitted = hui.fit(item, e.value);
+        return createPlaceholder(fitted.width, fitted.height, `${item.width} × ${item.height}`)
+      },
+      'add.click!'(e) {
+        adder.show({target: add});
+        addForm.focus();
+      }
     })
   </script>
 </gui>

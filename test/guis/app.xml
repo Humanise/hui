@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
+<gui xmlns="uri:hui" title="App" adaptive="true">
+  <script url="../helpers.js"/>
+  <source name="gallerySource" url="data/objectfinder_gallery.json"/>
+  <foundation name="foundation">
+    <navigation>
+      <overflow>
+        <selection value="latest" name="selector">
+          <option text="Alle billeder" icon="common/image" value="all"/>
+          <option text="Seneste" icon="common/time" value="latest"/>
+          <title>Album</title>
+          <option text="Personer" icon="common/folder" value="1"/>
+        </selection>
+      </overflow>
+    </navigation>
+    <results>
+      <bar variant="layout">
+        <segmented value="gallery" name="viewToggle">
+          <option icon="view/list" value="list"/>
+          <option icon="view/gallery" value="gallery"/>
+        </segmented>
+        <wide>
+          <searchfield adaptive="true"/>
+        </wide>
+      </bar>
+      <overflow>
+        <fragment name="listView" visible="false">
+          <list url="data/list_pages.xml"/>
+        </fragment>
+        <fragment name="galleryView" visible="true">
+          <gallery source="gallerySource" name="gallery"/>
+        </fragment>
+      </overflow>
+    </results>
+    <actions>
+      <bar>
+        <button text="Add" size="small" name="add"/>
+      </bar>
+    </actions>
+    <content>
+      <fragment name="contentView"/>
+    </content>
+  </foundation>
+    
+  <panel name="adder" title="Add something" width="300" padding="10" auto-hide='true'>
+    <form name="addForm">
+      <fields>
+        <field label="Title">
+          <text-input/>
+        </field>
+      </fields>
+      <buttons>
+        <button text="Add" highlighted="true"/>
+      </buttons>
+    </form>
+  </panel>
+  <script>
+    hui.control({
+      'ready!'() {
+      },
+      'selector.select!'(e) {
+        foundation.submerge();
+      },
+      'viewToggle.valueChanged!'(e) {
+        listView.setVisible(e.value == 'list')
+        galleryView.setVisible(e.value == 'gallery')
+      },
+      'gallery.buildImageUrl!'(e) {
+        var item = e.value.item;
+        var fitted = hui.fit(item, e.value);
+        return createPlaceholder(fitted.width, fitted.height, `${item.width} × ${item.height}`)
+      },
+      'gallery.select!'(e) {
+        var selection = e.source.getSelection()[0];
+        if (selection) {
+          contentView.setContent(hui.build('h1', {text: JSON.stringify(selection)}));
+        } else {
+          contentView.clear();
+        }
+        foundation.disposeOverlay();
+      },
+      'add.click!'(e) {
+        adder.show({target: add});
+        addForm.focus();
+      }
+    })
+  </script>
+</gui>

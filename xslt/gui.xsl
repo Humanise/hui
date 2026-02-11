@@ -2674,11 +2674,19 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:if test="(@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)) or @visible='false'">
         <xsl:attribute name="style">display:none;</xsl:attribute>
       </xsl:if>
-      <div class="hui_bar_left">
-        <xsl:apply-templates select="child::*[not(name()='right')]"/>
-        <xsl:comment/>
-      </div>
-      <xsl:apply-templates select="gui:right"/>
+      <xsl:choose>
+        <xsl:when test="gui:right">
+          <div class="hui_bar_left">
+            <xsl:apply-templates select="child::*[not(name()='right')]"/>
+            <xsl:comment/>
+            <xsl:apply-templates select="gui:right"/>
+          </div>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+          <xsl:comment/>
+        </xsl:otherwise>
+      </xsl:choose>
     </div>
     <script type="text/javascript">
       var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Bar({
@@ -2783,6 +2791,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   -->
   <xsl:template match="gui:bar//gui:flexible">
     <span class="hui_bar_flexible">
+      <xsl:comment/>
+    </span>
+  </xsl:template>
+
+  <xsl:template match="gui:bar//gui:wide">
+    <span class="hui_bar_wide" style="flex-grow: 1; display: flex;">
+      <xsl:apply-templates/>
       <xsl:comment/>
     </span>
   </xsl:template>
