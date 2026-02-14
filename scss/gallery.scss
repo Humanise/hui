@@ -4,14 +4,11 @@
   overflow: hidden;
   min-height: 100%;
   font-size: 0;
+  text-align: center;
 }
 
 .hui_gallery_drop {
   background: #fff url('../gfx/hover_bg.png');
-}
-
-.hui_gallery {
-  text-align: center;
 }
 
 .hui_gallery_item {
@@ -34,7 +31,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('../gfx/progress/spinner_white_16.gif') center center no-repeat;
+  background: url('../gfx/progress/spinner_white.svg') center center no-repeat;
+  background-size: 24px;
 }
 
 

@@ -11176,9 +11176,10 @@ hui.ui.Gallery = function(options) {
   if (this.options.source) {
     this.options.source.listen(this);
   }
-  if (this.element.parentNode && hui.cls.has(this.element.parentNode,'hui_overflow')) {
+  const overflow = hui.closest('.hui_overflow_body', this.element);
+  if (overflow) {
     this.revealing = true;
-    hui.listen(this.element.parentNode,'scroll',this._reveal.bind(this));
+    hui.listen(overflow, 'scroll', this._reveal.bind(this));
   }
 };
 
@@ -11261,8 +11262,8 @@ hui.ui.Gallery.prototype = {
       if (!this.revealing && object.height < object.width) {
         top = (this.height-(this.height*object.height/object.width))/2;
       }
-      var img = hui.build('img',{style:'margin:'+top+'px auto 0px'});
-      var item = hui.build('div',{'class' : 'hui_gallery_item',style:'width:'+this.width+'px; height:'+this.height+'px'});
+      var img = hui.build('img', { style: 'margin:' + top + 'px auto 0px'});
+      var item = hui.build('div', {'class' : 'hui_gallery_item', style: 'width:' + this.width + 'px; height:' + this.height + 'px'});
       if (!this.revealing) {
         item.style.backgroundImage = 'url(' + this._resolveImageUrl(object) + ')';
       }
@@ -11270,7 +11271,7 @@ hui.ui.Gallery.prototype = {
       hui.listen(item,'click',function(e) {
         this._itemClicked(i,e);
       }.bind(this));
-      item.dragDropInfo = {kind:'image',icon:'common/image',id:object.id,title:object.name || object.title};
+      item.dragDropInfo = {kind: 'image', icon: 'common/image', id: object.id, title: object.name || object.title};
       item.onmousedown = function(e) {
         hui.ui.startDrag(e,item);
         return false;
@@ -11288,13 +11289,12 @@ hui.ui.Gallery.prototype = {
     if (!this.revealing) {
       return;
     }
-    var container = this.element.parentNode;
+    var container = hui.closest('.hui_overflow_body', this.element);
     var limit = container.scrollTop + container.clientHeight;
     if (limit <= this.maxRevealed) {
       return;
     }
     this.maxRevealed = limit;
-    var self = this;
     for (var i=0,l=this.nodes.length; i < l; i++) {
       var item = this.nodes[i];
       if (item.revealed) {
@@ -11313,8 +11313,8 @@ hui.ui.Gallery.prototype = {
     var img = new Image();
     img.onload = function() {
       item.className = 'hui_gallery_item';
-      hui.cls.remove(item,'hui_is_pending');
-      hui.cls.remove(item,'hui_is_loading');
+      hui.cls.remove(item, 'hui_is_pending');
+      hui.cls.remove(item, 'hui_is_loading');
       item.style.backgroundImage = 'url(' + url + ')';
     };
     img.onerror = function() {
