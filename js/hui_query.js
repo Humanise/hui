@@ -32,6 +32,9 @@ hui.Query.prototype = {
       hui.style.set(node,css);
     });    
   },
+  text : function(text) {
+    return this.each(n => n.innerText = text);
+  },
   each : function(fn) {
     this._context.forEach(fn);
     return this;
