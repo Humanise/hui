@@ -4,25 +4,10 @@
   text-align: left;
   font-size: 0;
   display: flex;
-  justify-content: space-between;
+  //justify-content: space-between;
+  align-items: center;
   min-height: 30px;
   padding: 0 2px;
-
-  &_right {
-    float: right;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    align-content: flex-start;
-  }
-
-  &_left {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    flex-wrap: wrap;
-    align-content: flex-start;
-  }
 
   &_space {
     display: inline-block;
@@ -123,7 +108,8 @@
 /******************* window mini variant ***************/
 
 .hui_bar-window_mini {
-  @include vertical-gradient(#fff, rgb(240,240,240));
+  //@include vertical-gradient(#fff, rgb(240,240,240));
+  @include gradient;
   min-height: 24px;
   padding: 0;
 }

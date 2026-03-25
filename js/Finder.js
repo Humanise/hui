@@ -105,11 +105,38 @@ hui.ui.Finder.prototype = {
 
     var searchField, bar;
 
-    if (opts.search || opts.gallery) {
-      bar = hui.ui.Bar.create({
-        variant: 'layout'
+    var ensureBar = () => {
+      if (!bar) {
+        bar = hui.ui.Bar.create({
+          variant: 'layout'
+        });
+        layout.addCenter(bar);
+      }
+    }
+
+    if (opts.upload && hui.ui.Upload.HTML5.support().supported) {
+      ensureBar();
+      var uploadButton = hui.ui.Button.create({
+        text: 'Add...',
+        small: true
       });
-      layout.addCenter(bar);
+      uploadButton.listen({
+        $click: this._showUpload.bind(this)
+      });
+      bar.add(uploadButton);
+    }
+    if (opts.creation) {
+      ensureBar();
+      bar.add(hui.ui.Button.create({
+        text: opts.creation.button || 'Add...',
+        small: true,
+        listen : {
+          $click:  this._showCreation.bind(this)
+        }
+      }));
+    }
+    if (opts.search || opts.gallery) {
+      ensureBar();
       if (opts.search) {
         searchField = hui.ui.SearchField.create({
           expandedWidth: 200
@@ -119,7 +146,8 @@ hui.ui.Finder.prototype = {
             list.resetState();
           }
         });
-        bar.addToRight(searchField);
+        bar.addFlexible();
+        bar.add(searchField);
       }
     }
     var right = hui.ui.Overflow.create({dynamic:true});
@@ -217,25 +245,6 @@ hui.ui.Finder.prototype = {
       });
       gallerySource.refresh();
     }
-    if (opts.upload && hui.ui.Upload.HTML5.support().supported) {
-      var uploadButton = hui.ui.Button.create({
-        text: 'Add...',
-        small: true
-      });
-      uploadButton.listen({
-        $click: this._showUpload.bind(this)
-      });
-      bar.add(uploadButton);
-    }
-    if (opts.creation) {
-      bar.add(hui.ui.Button.create({
-        text: opts.creation.button || 'Add...',
-        small: true,
-        listen : {
-          $click:  this._showCreation.bind(this)
-        }
-      }));
-    }
     if (selectionSource) {
       selectionSource.refresh();
     }
@@ -284,7 +293,7 @@ hui.ui.Finder.prototype = {
     if (!this._createPanel) {
       var form = this._createForm = hui.ui.Form.create({listen:{$submit:this._create.bind(this)}});
       form.buildGroup({above:true},this.options.creation.formula);
-      var panel = this._createPanel = hui.ui.BoundPanel.create({padding:10,width:300,modal:true});
+      var panel = this._createPanel = hui.ui.Panel.create({padding:10,width:300,autoHide:true});
       panel.add(form);
       var buttons = hui.ui.Buttons.create();
       buttons.add(hui.ui.Button.create({

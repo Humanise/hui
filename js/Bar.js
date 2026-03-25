@@ -13,7 +13,7 @@ hui.ui.Bar = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
   this.visible = hui.cls.has(this.element, 'hui_bar-absolute') || this.element.style.display == 'none' ? false : true;
-  this.body = hui.get.firstByClass(this.element, 'hui_bar_left');
+  this.body = this.element;
   hui.ui.extend(this);
 };
 
@@ -42,10 +42,6 @@ hui.ui.Bar.create = function(options) {
   options.element = hui.build('div', {
     'class': cls
   });
-  hui.build('div', {
-    'class': 'hui_bar_left',
-    parent: options.element
-  });
   return new hui.ui.Bar(options);
 };
 
@@ -65,6 +61,12 @@ hui.ui.Bar.prototype = {
   addDivider: function() {
     hui.build('span', {
       'class': 'hui_bar_divider',
+      parent: this.body
+    });
+  },
+  addFlexible: function() {
+    hui.build('span', {
+      'class': 'hui_bar_flexible',
       parent: this.body
     });
   },

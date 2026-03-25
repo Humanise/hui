@@ -5,99 +5,106 @@
   text-align: left;
   box-shadow: 0 4px 8px rgba(0,0,0,.15);
   background: #fff;
-}
 
-.hui_box_close {
-  width: 29px;
-  height: 31px;
-  background: url('../gfx/box_close.png') left top no-repeat;
-  position: absolute;
-  margin: -15px 0 0 -15px;
-  z-index: 200;
-}
+  &_close {
+    width: 18px;
+    height: 18px;
+    background: #333;
+    border: 2px solid #fff;
+    color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 3px rgba(0,0,0,.15);
+    position: absolute;
+    margin: -15px 0 0 -15px;
+    z-index: 200;
+    line-height: 1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.hui_box_close:hover {
-  background-position: 0 -31px;
-}
+    @include symbol-before($close-symbol) {
+      font-size: 14px;
+      line-height: 1;
+    }
+    
+    &:hover {
+      background-position: 0 -31px;
+    }
+    &:focus {
+      border-color: blue;
+      outline: none;
+    }
+    &:focus:hover {
+      background-position: 0 -93px;
+      outline: none;
+    }
+  }
 
-.hui_box_close:focus {
-  background-position: 0 -62px;
-  outline: none;
-}
+  &_absolute {
+    position: absolute;
+    left: 50%;
+    top: -10000px;
+    margin-left: -1000px;
+    visibility: hidden;
+  }
 
-.hui_box_close:focus:hover {
-  background-position: 0 -93px;
-  outline: none;
-}
+  /****************************** Plain ****************************/
 
-.hui_box_absolute {
-  position: absolute;
-  left: 50%;
-  top: -10000px;
-  margin-left: -1000px;
-  visibility: hidden;
-}
+  &_plain {
+      box-shadow: 0 5px 20px rgba(0,0,0,.3);
+  }
 
-/****************************** Plain ****************************/
+  &_close_plain {
+    margin: -15px 0 0 -15px;
+  }
 
-.hui_box_plain {
-    box-shadow: 0 5px 20px rgba(0,0,0,.3);
-}
+  /****************************** Standard ****************************/
 
-.hui_box_close_plain {
-  margin: -15px 0 0 -15px;
-}
+  &_textured {
+    background: #f3f3f3;
+    @include gradient;
+  }
 
-/****************************** Standard ****************************/
+  &_textured &_body {
+    border: 1px solid #fff;
+  }
 
-.hui_box_textured {
-  background: #f3f3f3;
-}
+  &_header {
+    height: 56px;
+    @include vertical-gradient(#f3f3f3, #e9e9e9);
+    border: 1px solid #b6c1d0;
+    border-color: #ddd #ddd #ccc;
+    font-family: $font;
+  }
 
-.hui_box_textured .hui_box_body {
-  border: 1px solid #fff;
-}
+  &_title {
+    float: left;
+    height: 56px;
+    line-height: 56px;
+    font-size: 12pt;
+    color: #333;
+    font-weight: normal;
+    padding: 0px 15px;
+  }
 
-.hui_box_header {
-  height: 56px;
-  @include vertical-gradient(#d1dae5,#b6c0cc);
-  border: 1px solid #b6c1d0;
-  border-color: #c4cbd4 #acb2bb #a3aab3;
-  font-family: $font;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset -1px 0 0 rgba(0,0,0,0.1), inset 1px 0 0 rgba(0,0,0,0.1);
-  border-width: 1px 0;
-}
+  &_header_toolbar &_title {
+    float: right;
+  }
 
-.hui_box_title {
-  float: left;
-  height: 56px;
-  line-height: 56px;
-  font-size: 12pt;
-  color: #44474c;
-  font-weight: normal;
-  padding: 0px 15px;
-  text-shadow: rgba(255,255,255,.5) 0px 1px 0px;
-}
+  &_header .hui_toolbar {
+    float: left;
+  }
 
-.hui_box_header_toolbar .hui_box_title {
-  float: right;
-}
-
-.hui_box_header .hui_toolbar {
-  float: left;
-}
-
-.hui_box_header a.hui_toolbar_icon_selected {
-    background-color: rgba(119, 142, 169, 0.5);
-}
-
-/***************************** Rounded ************************/
+  /***************************** Rounded ************************/
 
 
-.hui_box_rounded {
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  box-shadow: 0 1px 3px rgba(0,0,0,.1);
-  border-top-color: #e6e6e6;
+  &_rounded {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    border-top-color: #e6e6e6;
+  }
+
 }
 

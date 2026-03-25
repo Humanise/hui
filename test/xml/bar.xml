@@ -7,8 +7,9 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
     <top>
       <bar>
         <button icon="common/edit" text="Edit"/>
-        <tool icon="common/folder" text="Folder" overlay="new" selected="true"/>
+        <tool icon="common/folder" text="New folder" overlay="new" selected="true"/>
         <tool icon="common/info" text="Info"/>
+        <tool icon="common/edit" text="Edit"/>
         <item label="Info">
           <dropdown value="1">
             <option value="1" text="My option"/>
@@ -154,11 +155,13 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
     <set selected="false" on="wheelPastels"/>
     <set selected="true" on="wheelBrightness"/>
   </listen>
+
   <listen for="click" on="wheelPastels">
     <set selected="true" on="wheelPastels"/>
     <set selected="false" on="wheelBrightness"/>
     <set title="'Pastels!'" on="win"/>
   </listen>
+
   <script>
     hui.ui.listen({
       $ready : function() {

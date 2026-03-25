@@ -48,3 +48,32 @@ hui.on(function() {
     new hui.ui[configs[i].getAttribute('data-type')](data);
   }
 });
+
+hui.on(function() {
+  var configs = document.querySelectorAll('[hui\\:component]');
+  for (var i = 0; i < configs.length; i++) {
+    var node = configs[i];
+    const type = node.getAttribute('hui:component');
+    const data = {
+      element: node
+    }
+    const listener = {}
+    const atts = node.attributes;
+    for (var j = 0; j < atts.length; j++) {
+      const attr = atts[j]
+      if (attr.name.startsWith('hui:')) {
+        const name = attr.name.substring(4);
+        if (name.endsWith('!')) {
+          listener[name] = () => {
+            eval(attr.value);
+          }
+        }
+        else if (name !== 'component') {
+          console.log(name, attr.value);
+          data[name] = attr.value;
+        }
+      }
+    }
+    new hui.ui[type](data).listen(listener);
+  }
+});

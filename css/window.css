@@ -75,6 +75,10 @@
   background: rgba(0, 0, 0, 0.1);
   color: #000;
 }
+.hui_window_close:active:before {
+  background: rgba(0, 0, 0, 0.15);
+  color: #000;
+}
 .hui_window_back {
   position: absolute;
   width: 100%;
@@ -153,4 +157,8 @@
 }
 .hui_window_dark .hui_window_busy-legacy .hui_window_busy_text {
   background-image: url("../gfx/progress/spinner_black_32.gif");
+}
+
+.hui_window_body > .hui_structure {
+  border-top: 1px solid #ddd;
 }

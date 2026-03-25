@@ -30,8 +30,11 @@ QUnit.test( "Test2", function( assert ) {
     assert.ok(list, 'found previous test')
     list.clearListeners();
     list.listen({
-      $select : function() {
-        assert.ok(true)
+      $select : function(value) {
+        if (value) {
+          assert.ok(true)
+          done();
+        }
       }
     });
     window.setTimeout(function() {
@@ -45,7 +48,6 @@ QUnit.test( "Test2", function( assert ) {
       assert.notOk(hui.dom.isVisible(list.element),'The list should be hidden');
       list.show();
       assert.ok(hui.dom.isVisible(list.element),'The list should be visible');
-      done();
 
     })
 

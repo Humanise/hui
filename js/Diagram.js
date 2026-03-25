@@ -579,7 +579,6 @@ hui.ui.Diagram.util = {
       onEnd : function() {
         hui.cls.remove(obj.element,'hui_diagram_dragging');
         obj.fixed = false;
-        hui.log('end');
       }
     });
     hui.listen(obj.element,'dblclick',function(e) {

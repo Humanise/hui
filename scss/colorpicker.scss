@@ -1,70 +1,68 @@
 @use 'tools' as *;
 
-div.hui_colorpicker {
-  margin-bottom: -3px;
-  border: 1px solid #ddd;
-}
+.hui_colorpicker {
+  border: 1px solid $border-color;
 
-div.hui_colorpicker_preview {
-  height: 24px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-width: 1px 0 0;
-}
+  &_preview {
+    height: 24px;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-width: 1px 0 0;
+  }
 
-div.hui_colorpicker_pages {
-  width: 256px;
-  height: 256px;
-  padding: 10px;
-  background: #fff;
-  border-top: 1px solid #ddd;
-}
+  &_pages {
+    width: 256px;
+    height: 256px;
+    padding: 10px;
+    background: #fff;
+    border-top: 1px solid $border-color;
+  }
 
-div.hui_colorpicker_page {
-  width: 256px;
-  height: 256px;
-  display: none;
-}
+  &_page {
+    width: 256px;
+    height: 256px;
+    display: none;
+  }
 
-div.hui_colorpicker_wheel1 {
-  background-image: url('../gfx/colorwheel1.png');
-  cursor: crosshair;
-  display: block;
-}
+  &_wheel1 {
+    background-image: url('../gfx/colorwheel1.png');
+    cursor: crosshair;
+    display: block;
+  }
 
-div.hui_colorpicker_wheel2 {
-  background-image: url('../gfx/colorwheel2.png');
-  cursor: crosshair;
-}
+  &_wheel2 {
+    background-image: url('../gfx/colorwheel2.png');
+    cursor: crosshair;
+  }
 
-div.hui_colorpicker_wheel3 {
-  background-image: url('../gfx/colorwheel3.png');
-  cursor: crosshair;
-}
+  &_wheel3 {
+    background-image: url('../gfx/colorwheel3.png');
+    cursor: crosshair;
+  }
 
-input.hui_colorpicker {
-  margin: 3px 3px 0 0;
-  width: 50px;
-  color: #999;
-  padding: 0 2px;
-  border: 1px solid #ccc;
-  font-size: 11px;
-  font-family: $mono-font;
-  height: 16px;
-  float: right;
-}
+  &_input {
+    margin-right: 3px;
+    width: 50px;
+    color: #999;
+    padding: 0 2px;
+    border: 1px solid #ccc;
+    font-size: 11px;
+    font-family: $mono-font;
+    height: 16px;
+  }
 
-div.hui_colorpicker_swatches {
-  font-size: 0;
-  width: 260px;
-  margin-left: -2px;
-  margin-top: -2px;
-  cursor: crosshair;
-}
+  &_swatches {
+    font-size: 0;
+    width: 260px;
+    margin-left: -2px;
+    margin-top: -2px;
+    cursor: crosshair;
+  }
 
-div.hui_colorpicker_swatches a {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  border: 1px solid #fff;
+  &_swatches a {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #fff;
+  }
 }

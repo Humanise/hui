@@ -9,7 +9,7 @@ hui.ui.ColorPicker = function(options) {
   this.buttons = [];
   this.preview = hui.get.firstByClass(this.element,'hui_colorpicker_preview');
   this.pages = hui.get.byClass(this.element,'hui_colorpicker_page');
-  this.input = hui.get.firstByTag(this.element,'input');
+  this.input = hui.get.firstByClass(this.element,'hui_colorpicker_input');
   this.wheel1 = this.pages[0];
   this.wheel2 = this.pages[1];
   this.wheel3 = this.pages[2];
@@ -46,23 +46,20 @@ hui.ui.ColorPicker.create = function(options) {
     'class':'hui_colorpicker',
     html :
       '<div class="hui_bar hui_bar-window_mini">'+
-        '<div class="hui_bar_left">'+
-          '<a class="hui_bar_button hui_bar_button-selected" href="javascript:void(0)" rel="0">'+
-            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_pastels',16)+'"></span>'+
-          '</a>'+
-          '<a class="hui_bar_button" href="javascript:void(0)" rel="1">'+
-            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_brightness',16)+'"></span>'+
-          '</a>'+
-          '<a class="hui_bar_button" href="javascript:void(0)" rel="2">'+
-            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_saturated',16)+'"></span>'+
-          '</a>'+
-          '<a class="hui_bar_button" href="javascript:void(0)" rel="3">'+
-            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/swatches',16)+'"></span>'+
-          '</a>'+
-        '</div>'+
-        '<div class="hui_bar_right">'+
-          '<input class="hui_colorpicker"/>'+
-        '</div>' +
+        '<a class="hui_bar_button hui_bar_button-selected" href="javascript:void(0)" rel="0">'+
+          '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_pastels',16)+'"></span>'+
+        '</a>'+
+        '<a class="hui_bar_button" href="javascript:void(0)" rel="1">'+
+          '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_brightness',16)+'"></span>'+
+        '</a>'+
+        '<a class="hui_bar_button" href="javascript:void(0)" rel="2">'+
+          '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_saturated',16)+'"></span>'+
+        '</a>'+
+        '<a class="hui_bar_button" href="javascript:void(0)" rel="3">'+
+          '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/swatches',16)+'"></span>'+
+        '</a>'+
+        '<span class="hui_bar_flexible"></span>' +
+        '<input class="hui_colorpicker_input"/>'+
       '</div>'+
       '<div class="hui_colorpicker_pages">'+
         '<div class="hui_colorpicker_page hui_colorpicker_wheel1"></div>'+

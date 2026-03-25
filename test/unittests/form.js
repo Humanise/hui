@@ -38,7 +38,9 @@ QUnit.test( 'Building', function( assert ) {
   textField.reset();
   assert.strictEqual(textField.getValue(),'','The value of the text field is ""');
 
+  var done = assert.async();
   syn.type(node,'hep hey',function() {
     assert.strictEqual(textField.getValue(),'hep hey','The text field has updated its value');
+    done();
   });
 });

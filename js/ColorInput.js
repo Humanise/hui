@@ -26,7 +26,7 @@ hui.ui.ColorInput = function(options) {
   this.value = null;
   hui.ui.extend(this);
   this.setValue(this.options.value);
-  this._addBehavior();
+  this._attach();
 };
 
 hui.ui.ColorInput.create = function(options) {
@@ -40,7 +40,7 @@ hui.ui.ColorInput.create = function(options) {
 };
 
 hui.ui.ColorInput.prototype = {
-  _addBehavior : function() {
+  _attach : function() {
     hui.listen(this.button, 'click',this._onButtonClick.bind(this));
   },
   _syncInput : function() {
@@ -71,13 +71,12 @@ hui.ui.ColorInput.prototype = {
       return; // TODO: mini picker
     }
     if (!this.panel) {
-      this.panel = hui.ui.BoundPanel.create({modal:true});
+      this.panel = hui.ui.Panel.create({autoHide:true,padding: 5});
       this.picker = hui.ui.ColorPicker.create();
       this.picker.listen(this);
       this.panel.add(this.picker);
     }
-    this.panel.position(this.button);
-    this.panel.show();
+    this.panel.show({target:this.button});
   },
   /** @private */
   $colorWasSelected : function(color) {

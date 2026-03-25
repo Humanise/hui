@@ -26,7 +26,7 @@ hui.ui.Window.create = function(options) {
   var html = '<div class="hui_window_front">'+(options.close ? '<div class="hui_window_close"></div>' : '')+
     '<div class="hui_window_titlebar">';
     if (options.icon) {
-      html+='<span class="hui_window_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,16)+')"></span>';
+      html+='<span class="hui_window_icon" style="'+hui.ui.getIconStyle(options.icon, 16)+'"></span>';
     }
   html+='<span class="hui_window_title">'+hui.ui.getTranslated(options.title)+'</span></div>'+
     '<div class="hui_window_body" style="'+

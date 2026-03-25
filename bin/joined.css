@@ -338,8 +338,7 @@ span.hui_disclosure_open:hover {
   cursor: pointer;
   text-decoration: none;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+  user-select: none;
   white-space: nowrap;
   background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
@@ -347,7 +346,7 @@ span.hui_disclosure_open:hover {
   border-radius: 3px;
   padding: 0 10px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  -webkit-appearance: none;
+  appearance: none;
   box-sizing: content-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -915,101 +914,6 @@ h2.hui_header span.hui_icon_2 {
   vertical-align: top;
 }
 
-/********************** Layout ******************/
-table.hui_layout {
-  height: 100%;
-  width: 100%;
-  border-spacing: 0;
-}
-
-thead.hui_layout {
-  height: 1%;
-}
-
-div.hui_layout_top {
-  background: url("../gfx/layout.png") left top no-repeat;
-}
-
-div.hui_layout_top div.hui_layout_top {
-  background: url("../gfx/layout.png") right -100px no-repeat;
-}
-
-div.hui_layout_top div.hui_layout_top div.hui_layout_top {
-  background: url("../gfx/layout.png") left -200px repeat-x;
-  margin: 0 9px;
-}
-
-td.hui_layout_top {
-  padding: 0;
-}
-
-td.hui_layout_top div.hui_toolbar {
-  height: 56px;
-}
-
-table.hui_layout_middle {
-  height: 100%;
-  width: 100%;
-  border-spacing: 0;
-  background: #fff;
-  border-top: 1px solid #CCCCCC;
-  border-bottom: 1px solid #CCCCCC;
-}
-
-tr.hui_layout_middle {
-  background: url(../gfx/layout_middle.png) repeat-y scroll 100% 0;
-}
-
-td.hui_layout_middle {
-  padding: 0;
-  background: url(../gfx/layout_middle.png) repeat-y scroll 0 0;
-  padding: 0 3px;
-}
-
-td.hui_layout_left {
-  background: #EBF0F7 none repeat scroll 0 0;
-  border-right: 1px solid #BBBBBB;
-  vertical-align: top;
-  padding: 0;
-  width: 200px;
-}
-
-div.hui_layout_left {
-  width: 200px;
-  font-size: 0;
-  line-height: 0;
-}
-
-td.hui_layout_center {
-  background: #fff;
-  vertical-align: top;
-  padding: 0;
-  width: 100%;
-  height: auto;
-}
-
-tfoot.hui_layout {
-  height: 1%;
-}
-
-div.hui_layout_bottom {
-  background: url("../gfx/layout.png") left 230px repeat-y;
-  min-height: 30px;
-}
-
-div.hui_layout_bottom div.hui_layout_bottom {
-  background: url("../gfx/layout.png") right 130px repeat-y;
-}
-
-div.hui_layout_bottom div.hui_layout_bottom div.hui_layout_bottom {
-  background: url("../gfx/layout.png") left -570px repeat-x;
-  margin: 0 9px;
-}
-
-td.hui_layout_bottom {
-  padding: 0;
-}
-
 .hui_overflow {
   width: 100%;
   position: relative;
@@ -1285,8 +1189,8 @@ td.view_sidebar {
 }
 .hui_toolbar_icon_selected {
   background: rgba(0, 0, 40, 0.1);
-  background: radial-gradient(rgba(0, 0, 40, 0.05) 50%, rgba(0, 0, 40, 0.1) 100%);
-  box-shadow: inset 0 0px 6px rgba(0, 0, 40, 0.2);
+  background: radial-gradient(rgba(0, 0, 20, 0.05) 50%, rgba(0, 0, 20, 0.1) 100%);
+  box-shadow: inset 0 0px 6px rgba(0, 0, 20, 0.1);
   background-clip: padding-box;
 }
 .hui_toolbar_icon_text {
@@ -1478,6 +1382,10 @@ th.hui_toolbar_grid_label {
   background: rgba(0, 0, 0, 0.1);
   color: #000;
 }
+.hui_window_close:active:before {
+  background: rgba(0, 0, 0, 0.15);
+  color: #000;
+}
 .hui_window_back {
   position: absolute;
   width: 100%;
@@ -1556,6 +1464,10 @@ th.hui_toolbar_grid_label {
 }
 .hui_window_dark .hui_window_busy-legacy .hui_window_busy_text {
   background-image: url("../gfx/progress/spinner_black_32.gif");
+}
+
+.hui_window_body > .hui_structure {
+  border-top: 1px solid #ddd;
 }
 
 .hui_list {
@@ -2190,15 +2102,6 @@ a.list_check_all {
 
 .hui_selection_busy .hui_selected .hui_selection_label {
   color: #fff;
-}
-
-/** Layout specifics **/
-.hui_layout_left .hui_selection {
-  margin-top: 4px;
-}
-
-.hui_layout_left .hui_selection_title {
-  margin-top: 10px;
 }
 
 /********************** Dark ************************/
@@ -3422,31 +3325,52 @@ a.hui_datepicker_next {
   text-align: left;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   background: #fff;
+  /****************************** Plain ****************************/
+  /****************************** Standard ****************************/
+  /***************************** Rounded ************************/
 }
-
 .hui_box_close {
-  width: 29px;
-  height: 31px;
-  background: url("../gfx/box_close.png") left top no-repeat;
+  width: 18px;
+  height: 18px;
+  background: #333;
+  border: 2px solid #fff;
+  color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
   position: absolute;
   margin: -15px 0 0 -15px;
   z-index: 200;
+  line-height: 1;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
+.hui_box_close:before {
+  font-family: "HUI" !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e917";
+  font-size: 14px;
+  line-height: 1;
+}
 .hui_box_close:hover {
   background-position: 0 -31px;
 }
-
 .hui_box_close:focus {
-  background-position: 0 -62px;
+  border-color: blue;
   outline: none;
 }
-
 .hui_box_close:focus:hover {
   background-position: 0 -93px;
   outline: none;
 }
-
 .hui_box_absolute {
   position: absolute;
   left: 50%;
@@ -3454,59 +3378,41 @@ a.hui_datepicker_next {
   margin-left: -1000px;
   visibility: hidden;
 }
-
-/****************************** Plain ****************************/
 .hui_box_plain {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
-
 .hui_box_close_plain {
   margin: -15px 0 0 -15px;
 }
-
-/****************************** Standard ****************************/
 .hui_box_textured {
   background: #f3f3f3;
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
 }
-
 .hui_box_textured .hui_box_body {
   border: 1px solid #fff;
 }
-
 .hui_box_header {
   height: 56px;
-  background-image: linear-gradient(180deg, #d1dae5, #b6c0cc);
+  background-image: linear-gradient(180deg, #f3f3f3, #e9e9e9);
   border: 1px solid #b6c1d0;
-  border-color: #c4cbd4 #acb2bb #a3aab3;
+  border-color: #ddd #ddd #ccc;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), inset -1px 0 0 rgba(0, 0, 0, 0.1), inset 1px 0 0 rgba(0, 0, 0, 0.1);
-  border-width: 1px 0;
 }
-
 .hui_box_title {
   float: left;
   height: 56px;
   line-height: 56px;
   font-size: 12pt;
-  color: #44474c;
+  color: #333;
   font-weight: normal;
   padding: 0px 15px;
-  text-shadow: rgba(255, 255, 255, 0.5) 0px 1px 0px;
 }
-
 .hui_box_header_toolbar .hui_box_title {
   float: right;
 }
-
 .hui_box_header .hui_toolbar {
   float: left;
 }
-
-.hui_box_header a.hui_toolbar_icon_selected {
-  background-color: rgba(119, 142, 169, 0.5);
-}
-
-/***************************** Rounded ************************/
 .hui_box_rounded {
   border-radius: 5px;
   border: 1px solid #ddd;
@@ -3863,23 +3769,9 @@ ul.hui_wizard a.hui_selected {
   text-align: left;
   font-size: 0;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   min-height: 30px;
   padding: 0 2px;
-}
-.hui_bar_right {
-  float: right;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  align-content: flex-start;
-}
-.hui_bar_left {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  flex-wrap: wrap;
-  align-content: flex-start;
 }
 .hui_bar_space {
   display: inline-block;
@@ -3959,7 +3851,7 @@ ul.hui_wizard a.hui_selected {
 
 /******************* window mini variant ***************/
 .hui_bar-window_mini {
-  background-image: linear-gradient(180deg, #fff, rgb(240, 240, 240));
+  background-image: linear-gradient(180deg, #fafafa, #f6f6f6);
   min-height: 24px;
   padding: 0;
 }
@@ -4816,50 +4708,42 @@ div.hui_links_row:hover span.hui_links_remove {
   animation-name: hui_effect_tada;
 }
 
-div.hui_colorpicker {
-  margin-bottom: -3px;
+.hui_colorpicker {
   border: 1px solid #ddd;
 }
-
-div.hui_colorpicker_preview {
+.hui_colorpicker_preview {
   height: 24px;
   background: #fff;
   border: 1px solid #ddd;
   border-width: 1px 0 0;
 }
-
-div.hui_colorpicker_pages {
+.hui_colorpicker_pages {
   width: 256px;
   height: 256px;
   padding: 10px;
   background: #fff;
   border-top: 1px solid #ddd;
 }
-
-div.hui_colorpicker_page {
+.hui_colorpicker_page {
   width: 256px;
   height: 256px;
   display: none;
 }
-
-div.hui_colorpicker_wheel1 {
+.hui_colorpicker_wheel1 {
   background-image: url("../gfx/colorwheel1.png");
   cursor: crosshair;
   display: block;
 }
-
-div.hui_colorpicker_wheel2 {
+.hui_colorpicker_wheel2 {
   background-image: url("../gfx/colorwheel2.png");
   cursor: crosshair;
 }
-
-div.hui_colorpicker_wheel3 {
+.hui_colorpicker_wheel3 {
   background-image: url("../gfx/colorwheel3.png");
   cursor: crosshair;
 }
-
-input.hui_colorpicker {
-  margin: 3px 3px 0 0;
+.hui_colorpicker_input {
+  margin-right: 3px;
   width: 50px;
   color: #999;
   padding: 0 2px;
@@ -4867,18 +4751,15 @@ input.hui_colorpicker {
   font-size: 11px;
   font-family: Menlo, "Lucida Console", Monaco, monospace;
   height: 16px;
-  float: right;
 }
-
-div.hui_colorpicker_swatches {
+.hui_colorpicker_swatches {
   font-size: 0;
   width: 260px;
   margin-left: -2px;
   margin-top: -2px;
   cursor: crosshair;
 }
-
-div.hui_colorpicker_swatches a {
+.hui_colorpicker_swatches a {
   display: inline-block;
   width: 18px;
   height: 18px;
@@ -5601,31 +5482,29 @@ div.hui_markupeditor {
   line-height: 16px;
   padding-left: 2px;
 }
-
 .hui_objectinput_object {
   font-size: 12px;
   line-height: 1;
   margin-bottom: 3px;
   padding-left: 2px;
 }
-
 .hui_objectinput_title {
   margin: 0 3px;
   cursor: default;
   vertical-align: middle;
 }
-
 .hui_objectinput_delete {
   visibility: hidden;
   margin-left: 5px;
 }
-
 .hui_objectinput_object:hover .hui_objectinput_delete {
   visibility: visible;
 }
-
+.hui_objectinput_actions {
+  margin-top: 5px;
+}
 .hui_objectinput_actions .hui_button {
-  margin: 0;
+  margin-right: 5px;
 }
 
 .hui_rows {

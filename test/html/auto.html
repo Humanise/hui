@@ -1,5 +1,5 @@
 <!DOCTYPE html">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:hui="http://humanise.dk/ui">
 <head>
   <title>HUI</title>
   <link type="text/css" href="style.css" rel="stylesheet" />
@@ -12,11 +12,11 @@
     <h1>Annotated configuration</h1>
   </div>
 
-  <a href="#" class="hui_button"><span><span>This is a button</span></span><noscript data-type="Button">{"confirm":{"text":"It works!"}}</noscript></a>
+  <a href="#" class="hui_button"><span><span>This is a button using nocript</span></span><noscript data-type="Button">{"confirm":{"text":"It works!"}}</noscript></a>
 
   <a href="#" class="hui_button" data-hui="Button">
-    This is a button
-    <!--{"name":"myButton","confirm":{"text":"It works!"}}-->
+    This is a button using comment
+    <!--{"name":"myCommentButton","confirm":{"text":"It works!"}}-->
   </a>
 
   <a href="#" class="hui_button">
@@ -29,19 +29,27 @@
   </a>
 
   <a href="#" class="hui_button" data-hui='Button {"name":"someName","confirm":{"text":"Sure?"}}'>
-    This is a button
+    This is a button with data-hui
   </a>
+
+  <button class="hui_button" hui:component="Button" hui:name="namespacedButton" hui:click!="alert(0)">This is a namespaced button</button>
 
   <hr/>
 
   <textarea class="hui_textinput" data-hui='TextInput'></textarea>
 
   <script>
-    hui.on(['hui.ui','hui.Color'],function() {
+    hui.on(() => {
+      console.log('Ready!')
+    });
+    hui.on(['hui.ui'],function() {
       hui.log('UI is ready: ' + hui.ui.getContext());
-      hui.ui.listen({
-        $click$myButton : function() {
-          hui.ui.msg({text:'The button was clicked!',duration:2000})
+      hui.control({
+        $click$myCommentButton : function() {
+          hui.ui.msg({text: 'The comment button was clicked!', duration: 2000})
+        },
+        'namespacedButton.click!'() {
+          hui.ui.msg({text: 'The namespaced button was clicked!', duration: 2000})
         }
       })
     })
@@ -56,6 +64,7 @@
   <script src="../../js/hui_animation.js"></script>
   <script src="../../js/hui_auto.js"></script>
   <script src="../../js/hui_color.js"></script>
+  <script src="../../js/hui_control.js"></script>
   <script src="../../js/ui.js"></script>
   <script src="../../js/Button.js"></script>
   <script src="../../js/TextInput.js"></script>

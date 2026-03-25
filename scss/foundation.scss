@@ -153,7 +153,7 @@
   };
 
   &_actions {
-    @include vertical-gradient(#fff, rgb(240,240,240));
+    @include gradient;
     position: absolute;
     top: 0;
     height: $bar-height;

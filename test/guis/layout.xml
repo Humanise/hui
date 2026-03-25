@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
+<gui xmlns="uri:hui" title="Animation" padding="20">
+  <row>
+    <button text="Button"/>
+    <button text="Button"/>
+    <dropdown>
+      <option value="one" text="One"/>
+    </dropdown>
+    <column>
+      <button text="Button"/>
+      <button text="Button"/>
+    </column>
+  </row>
+</gui>

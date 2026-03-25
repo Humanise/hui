@@ -4,7 +4,6 @@
 hui.ui.Drawing = function(options) {
   this.options = hui.override({width:200,height:200},options);
   this.element = hui.get(options.element);
-  hui.log({width:options.width,height:options.height});
   this.svg = hui.ui.Drawing._build({tag:'svg',parent:this.element,attributes:{width:options.width,height:options.height}});
   this.element.appendChild(this.svg);
   this.name = options.name;

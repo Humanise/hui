@@ -67,7 +67,11 @@
     &:hover:before {
       background: rgba(0,0,0,.1);
       color: #000;
-    };
+    }
+    &:active:before {
+      background: rgba(0,0,0,.15);
+      color: #000;
+    }
   }
 
   &_back {
@@ -178,4 +182,8 @@
     }
   }
 
+}
+
+.hui_window_body > .hui_structure {
+  border-top: 1px solid #ddd;
 }

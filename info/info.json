@@ -4944,18 +4944,6 @@
         "attributes": []
       },
       "js": {
-        "name": "Layout",
-        "file": "Layout.js"
-      },
-      "xsl": []
-    },
-    {
-      "xml": {
-        "name": null,
-        "_type": null,
-        "attributes": []
-      },
-      "js": {
         "name": "LocationPicker",
         "file": "LocationPicker.js"
       },

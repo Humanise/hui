@@ -216,12 +216,6 @@
     "css": "keyboardnavigator.css"
   },
   {
-    "name": "Layout",
-    "sass": "layout.scss",
-    "css": "layout.css",
-    "xmlSample": "layout.xml"
-  },
-  {
     "name": "Link",
     "sass": "link.scss",
     "css": "link.css"

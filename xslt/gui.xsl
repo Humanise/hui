@@ -1703,6 +1703,34 @@ doc title:'Rich text' class:'hui.ui.RichText'
     </script>
   </xsl:template>
 
+  <xsl:template match="gui:row">
+    <div style="display: flex;">
+      <xsl:attribute name="class">
+        <xsl:text>hui_row</xsl:text>
+      </xsl:attribute>
+
+      <xsl:for-each select="*">
+        <div>
+          <xsl:if test="position() > 1">
+            <xsl:attribute name="style">margin-left: 5px;</xsl:attribute>
+          </xsl:if>
+          <xsl:apply-templates select="."/>
+        </div>
+      </xsl:for-each>
+      <xsl:comment/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="gui:column">
+    <div style="display: flex; flex-direction: column">
+      <xsl:attribute name="class">
+        <xsl:text>hui_row</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+      <xsl:comment/>
+    </div>
+  </xsl:template>
+
   <xsl:template match="gui:rows/gui:row">
     <div>
       <xsl:attribute name="class">
@@ -1961,93 +1989,6 @@ doc title:'Rich text' class:'hui.ui.RichText'
       })();
     </script>
   </xsl:template>
-
-
-
-
-
-  <!--doc title:'Layout' class:'hui.ui.Layout' module:'layout'
-  <layout name="«name»">
-      <top>
-          ···
-      </top>
-      <middle>
-          <left>
-              ···
-          </left>
-          <center padding="«pixels»">
-              ···
-          </center>
-      </middle>
-      <bottom>
-          ···
-      </botttom>
-  </layout>
-  -->
-  <xsl:template match="gui:layout">
-    <table class="hui_layout">
-      <xsl:call-template name="gui:id-attribute"/>
-      <xsl:apply-templates/>
-    </table>
-    <script type="text/javascript">
-      (function() {
-        var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Layout({element:'<xsl:call-template name="gui:id"/>',name:'<xsl:value-of select="@name"/>'});
-        <xsl:call-template name="gui:createobject"/>
-      })();
-    </script>
-  </xsl:template>
-
-  <xsl:template match="gui:layout/gui:top">
-    <thead class="hui_layout">
-      <tr><td class="hui_layout_top">
-        <div class="hui_layout_top"><div class="hui_layout_top"><div class="hui_layout_top">
-          <xsl:apply-templates/>
-          <xsl:comment/>
-        </div></div></div>
-      </td></tr>
-    </thead>
-  </xsl:template>
-
-  <xsl:template match="gui:layout/gui:middle">
-    <tbody class="hui_layout">
-      <tr class="hui_layout_middle">
-        <td class="hui_layout_middle">
-        <table class="hui_layout_middle">
-          <tr>
-            <xsl:apply-templates/>
-          </tr>
-        </table>
-      </td></tr>
-    </tbody>
-  </xsl:template>
-
-  <xsl:template match="gui:layout/gui:middle/gui:left">
-    <td class="hui_layout_left hui_context_sidebar">
-      <xsl:apply-templates/>
-      <div class="hui_layout_left"><xsl:comment/></div>
-    </td>
-  </xsl:template>
-
-  <xsl:template match="gui:layout/gui:middle/gui:center">
-    <td class="hui_layout_center">
-      <xsl:if test="@padding">
-        <xsl:attribute name="style">padding: <xsl:value-of select="@padding"/>px;</xsl:attribute>
-      </xsl:if>
-      <xsl:apply-templates/>
-    </td>
-  </xsl:template>
-
-  <xsl:template match="gui:layout/gui:bottom">
-    <tfoot class="hui_layout">
-      <tr><td class="hui_layout_bottom">
-        <div class="hui_layout_bottom"><div class="hui_layout_bottom"><div class="hui_layout_bottom">
-          <xsl:apply-templates/>
-        </div></div></div>
-      </td></tr>
-    </tfoot>
-  </xsl:template>
-
-
 
 
   <!--doc title:'Fragment' class:'hui.ui.Fragment' module:'layout'
@@ -2674,19 +2615,9 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:if test="(@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)) or @visible='false'">
         <xsl:attribute name="style">display:none;</xsl:attribute>
       </xsl:if>
-      <xsl:choose>
-        <xsl:when test="gui:right">
-          <div class="hui_bar_left">
-            <xsl:apply-templates select="child::*[not(name()='right')]"/>
-            <xsl:comment/>
-            <xsl:apply-templates select="gui:right"/>
-          </div>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:apply-templates/>
-          <xsl:comment/>
-        </xsl:otherwise>
-      </xsl:choose>
+      <xsl:apply-templates select="child::*[not(name()='right')]"/>
+      <xsl:comment/>
+      <xsl:apply-templates select="gui:right"/>
     </div>
     <script type="text/javascript">
       var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Bar({
@@ -2699,10 +2630,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:bar/gui:right">
-    <div class="hui_bar_right">
-      <xsl:apply-templates/>
+    <span class="hui_bar_flexible">
       <xsl:comment/>
-    </div>
+    </span>
+    <xsl:apply-templates/>
   </xsl:template>
 
 
@@ -3252,9 +3183,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <div class="hui_objectinput_list">
         <span class="hui_objectinput_text">No value</span>
       </div>
-      <a class="hui_button hui_button_small hui_objectinput_choose" href="javascript://">Select...</a>
-      <a class="hui_button hui_is_disabled hui_button_small hui_objectinput_remove" href="javascript://">Remove</a>
-      <xsl:comment/>
+      <div class="hui_objectinput_actions">
+        <a class="hui_button hui-small hui_objectinput_choose" href="javascript://">Select...</a>
+        <a class="hui_button hui_is_disabled hui-small hui_objectinput_remove" href="javascript://">Remove</a>
+      </div>
     </div>
 
     <script type="text/javascript">

@@ -3569,6 +3569,9 @@ hui.Query.prototype = {
       hui.style.set(node,css);
     });    
   },
+  text : function(text) {
+    return this.each(n => n.innerText = text);
+  },
   each : function(fn) {
     this._context.forEach(fn);
     return this;
@@ -3788,6 +3791,7 @@ hui.control = function(recipe) {
     ready && ready.bind(recipe)();
   });
   hui.ui.listen(recipe);
+  console.log('listen')
 };
 
 hui.controller = function(name) {
@@ -5871,7 +5875,7 @@ hui.ui.Window.create = function(options) {
   var html = '<div class="hui_window_front">'+(options.close ? '<div class="hui_window_close"></div>' : '')+
     '<div class="hui_window_titlebar">';
     if (options.icon) {
-      html+='<span class="hui_window_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,16)+')"></span>';
+      html+='<span class="hui_window_icon" style="'+hui.ui.getIconStyle(options.icon, 16)+'"></span>';
     }
   html+='<span class="hui_window_title">'+hui.ui.getTranslated(options.title)+'</span></div>'+
     '<div class="hui_window_body" style="'+
@@ -11870,82 +11874,6 @@ Date.dayNames =
     "F",
     "L"];
 
-/**
- * @constructor
- * @param {Object} options { element «Node | id», name: «String» }
- */
-hui.ui.Layout = function(options) {
-  this.name = options.name;
-  this.options = options || {};
-  this.element = hui.get(options.element);
-  hui.ui.extend(this);
-};
-
-hui.ui.Layout.create = function(options) {
-  options = hui.override({text:'',highlighted:false,enabled:true},options);
-
-  options.element = hui.dom.parse('<table class="hui_layout"><tbody class="hui_layout"><tr class="hui_layout_middle"><td class="hui_layout_middle">'+
-      '<table class="hui_layout_middle"><tr>'+
-      '<td class="hui_layout_left hui_context_sidebar"><div class="hui_layout_left"></div></td>'+
-      '<td class="hui_layout_center"></td>'+
-      '</tr></table>'+
-      '</td></tr></tbody></table>');
-  return new hui.ui.Layout(options);
-};
-
-hui.ui.Layout.prototype = {
-
-  addToLeft : function(widget) {
-    var tbody = hui.get.firstByClass(this.element,'hui_layout_left');
-    tbody.appendChild(widget.element);
-  },
-
-  addToCenter : function(widget) {
-    var tbody = hui.get.firstByClass(this.element,'hui_layout_center');
-    tbody.appendChild(widget.element);
-  },
-
-  /** @private */
-  $$layout : function() {
-    if (hui.browser.gecko) {
-      var center = hui.get.firstByClass(this.element,'hui_layout_center');
-      if (center) {
-        center.style.height='100%';
-      }
-    }
-    if (!window.navigator.userAgent.indexOf('AppleWebKit/536')) {
-      if (!hui.browser.msie7 && !hui.browser.msie8 && !hui.browser.msie9) {
-        return;
-      }
-    }
-    if (!hui.dom.isVisible(this.element)) {
-      return;
-    }
-    if (this.diff===undefined) {
-      var head = hui.get.firstByClass(this.element,'hui_layout_top');
-      var top = hui.get.firstByTag(head,'*').clientHeight;
-      var foot = hui.get.firstByTag(hui.get.firstByTag(this.element,'tfoot'),'td');
-      var bottom = 0;
-      if (foot) {
-        var inner = hui.get.firstByTag(foot,'*');
-        if (inner) {
-          bottom = inner.clientHeight;
-        }
-      }
-      top += hui.position.getTop(this.element);
-      this.diff = bottom+top;
-      if (this.element.parentNode!==document.body) {
-        this.diff+=15;
-      } else {
-      }
-    }
-    var tbody = hui.get.firstByTag(this.element,'tbody');
-    var cell = hui.get.firstByTag(tbody,'td');
-    var height = (hui.window.getViewHeight()-this.diff+5);
-    cell.style.height = height+'px';
-  }
-};
-
 (function (_super) {
 
   /**
@@ -12791,7 +12719,7 @@ hui.ui.Bar = function(options) {
   this.name = options.name;
   this.element = hui.get(options.element);
   this.visible = hui.cls.has(this.element, 'hui_bar-absolute') || this.element.style.display == 'none' ? false : true;
-  this.body = hui.get.firstByClass(this.element, 'hui_bar_left');
+  this.body = this.element;
   hui.ui.extend(this);
 };
 
@@ -12820,10 +12748,6 @@ hui.ui.Bar.create = function(options) {
   options.element = hui.build('div', {
     'class': cls
   });
-  hui.build('div', {
-    'class': 'hui_bar_left',
-    parent: options.element
-  });
   return new hui.ui.Bar(options);
 };
 
@@ -12843,6 +12767,12 @@ hui.ui.Bar.prototype = {
   addDivider: function() {
     hui.build('span', {
       'class': 'hui_bar_divider',
+      parent: this.body
+    });
+  },
+  addFlexible: function() {
+    hui.build('span', {
+      'class': 'hui_bar_flexible',
       parent: this.body
     });
   },
@@ -14415,7 +14345,7 @@ hui.ui.ColorPicker = function(options) {
   this.buttons = [];
   this.preview = hui.get.firstByClass(this.element,'hui_colorpicker_preview');
   this.pages = hui.get.byClass(this.element,'hui_colorpicker_page');
-  this.input = hui.get.firstByTag(this.element,'input');
+  this.input = hui.get.firstByClass(this.element,'hui_colorpicker_input');
   this.wheel1 = this.pages[0];
   this.wheel2 = this.pages[1];
   this.wheel3 = this.pages[2];
@@ -14452,23 +14382,20 @@ hui.ui.ColorPicker.create = function(options) {
     'class':'hui_colorpicker',
     html :
       '<div class="hui_bar hui_bar-window_mini">'+
-        '<div class="hui_bar_left">'+
-          '<a class="hui_bar_button hui_bar_button-selected" href="javascript:void(0)" rel="0">'+
-            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_pastels',16)+'"></span>'+
-          '</a>'+
-          '<a class="hui_bar_button" href="javascript:void(0)" rel="1">'+
-            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_brightness',16)+'"></span>'+
-          '</a>'+
-          '<a class="hui_bar_button" href="javascript:void(0)" rel="2">'+
-            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_saturated',16)+'"></span>'+
-          '</a>'+
-          '<a class="hui_bar_button" href="javascript:void(0)" rel="3">'+
-            '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/swatches',16)+'"></span>'+
-          '</a>'+
-        '</div>'+
-        '<div class="hui_bar_right">'+
-          '<input class="hui_colorpicker"/>'+
-        '</div>' +
+        '<a class="hui_bar_button hui_bar_button-selected" href="javascript:void(0)" rel="0">'+
+          '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_pastels',16)+'"></span>'+
+        '</a>'+
+        '<a class="hui_bar_button" href="javascript:void(0)" rel="1">'+
+          '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_brightness',16)+'"></span>'+
+        '</a>'+
+        '<a class="hui_bar_button" href="javascript:void(0)" rel="2">'+
+          '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/wheel_saturated',16)+'"></span>'+
+        '</a>'+
+        '<a class="hui_bar_button" href="javascript:void(0)" rel="3">'+
+          '<span class="hui_icon_16" style="'+hui.ui.getIconStyle('colorpicker/swatches',16)+'"></span>'+
+        '</a>'+
+        '<span class="hui_bar_flexible"></span>' +
+        '<input class="hui_colorpicker_input"/>'+
       '</div>'+
       '<div class="hui_colorpicker_pages">'+
         '<div class="hui_colorpicker_page hui_colorpicker_wheel1"></div>'+
@@ -16047,7 +15974,7 @@ hui.ui.ColorInput = function(options) {
   this.value = null;
   hui.ui.extend(this);
   this.setValue(this.options.value);
-  this._addBehavior();
+  this._attach();
 };
 
 hui.ui.ColorInput.create = function(options) {
@@ -16061,7 +15988,7 @@ hui.ui.ColorInput.create = function(options) {
 };
 
 hui.ui.ColorInput.prototype = {
-  _addBehavior : function() {
+  _attach : function() {
     hui.listen(this.button, 'click',this._onButtonClick.bind(this));
   },
   _syncInput : function() {
@@ -16092,13 +16019,12 @@ hui.ui.ColorInput.prototype = {
       return; // TODO: mini picker
     }
     if (!this.panel) {
-      this.panel = hui.ui.BoundPanel.create({modal:true});
+      this.panel = hui.ui.Panel.create({autoHide:true,padding: 5});
       this.picker = hui.ui.ColorPicker.create();
       this.picker.listen(this);
       this.panel.add(this.picker);
     }
-    this.panel.position(this.button);
-    this.panel.show();
+    this.panel.show({target:this.button});
   },
   /** @private */
   $colorWasSelected : function(color) {
@@ -16298,11 +16224,38 @@ hui.ui.Finder.prototype = {
 
     var searchField, bar;
 
-    if (opts.search || opts.gallery) {
-      bar = hui.ui.Bar.create({
-        variant: 'layout'
+    var ensureBar = () => {
+      if (!bar) {
+        bar = hui.ui.Bar.create({
+          variant: 'layout'
+        });
+        layout.addCenter(bar);
+      }
+    }
+
+    if (opts.upload && hui.ui.Upload.HTML5.support().supported) {
+      ensureBar();
+      var uploadButton = hui.ui.Button.create({
+        text: 'Add...',
+        small: true
       });
-      layout.addCenter(bar);
+      uploadButton.listen({
+        $click: this._showUpload.bind(this)
+      });
+      bar.add(uploadButton);
+    }
+    if (opts.creation) {
+      ensureBar();
+      bar.add(hui.ui.Button.create({
+        text: opts.creation.button || 'Add...',
+        small: true,
+        listen : {
+          $click:  this._showCreation.bind(this)
+        }
+      }));
+    }
+    if (opts.search || opts.gallery) {
+      ensureBar();
       if (opts.search) {
         searchField = hui.ui.SearchField.create({
           expandedWidth: 200
@@ -16312,7 +16265,8 @@ hui.ui.Finder.prototype = {
             list.resetState();
           }
         });
-        bar.addToRight(searchField);
+        bar.addFlexible();
+        bar.add(searchField);
       }
     }
     var right = hui.ui.Overflow.create({dynamic:true});
@@ -16410,25 +16364,6 @@ hui.ui.Finder.prototype = {
       });
       gallerySource.refresh();
     }
-    if (opts.upload && hui.ui.Upload.HTML5.support().supported) {
-      var uploadButton = hui.ui.Button.create({
-        text: 'Add...',
-        small: true
-      });
-      uploadButton.listen({
-        $click: this._showUpload.bind(this)
-      });
-      bar.add(uploadButton);
-    }
-    if (opts.creation) {
-      bar.add(hui.ui.Button.create({
-        text: opts.creation.button || 'Add...',
-        small: true,
-        listen : {
-          $click:  this._showCreation.bind(this)
-        }
-      }));
-    }
     if (selectionSource) {
       selectionSource.refresh();
     }
@@ -16477,7 +16412,7 @@ hui.ui.Finder.prototype = {
     if (!this._createPanel) {
       var form = this._createForm = hui.ui.Form.create({listen:{$submit:this._create.bind(this)}});
       form.buildGroup({above:true},this.options.creation.formula);
-      var panel = this._createPanel = hui.ui.BoundPanel.create({padding:10,width:300,modal:true});
+      var panel = this._createPanel = hui.ui.Panel.create({padding:10,width:300,autoHide:true});
       panel.add(form);
       var buttons = hui.ui.Buttons.create();
       buttons.add(hui.ui.Button.create({
@@ -19690,7 +19625,6 @@ hui.ui.Diagram.util = {
       onEnd : function() {
         hui.cls.remove(obj.element,'hui_diagram_dragging');
         obj.fixed = false;
-        hui.log('end');
       }
     });
     hui.listen(obj.element,'dblclick',function(e) {
@@ -19705,7 +19639,6 @@ hui.ui.Diagram.util = {
 hui.ui.Drawing = function(options) {
   this.options = hui.override({width:200,height:200},options);
   this.element = hui.get(options.element);
-  hui.log({width:options.width,height:options.height});
   this.svg = hui.ui.Drawing._build({tag:'svg',parent:this.element,attributes:{width:options.width,height:options.height}});
   this.element.appendChild(this.svg);
   this.name = options.name;
@@ -21684,6 +21617,82 @@ hui.ui.KeyboardNavigator.prototype = {
         this._render();
       }.bind(this)
     });
+  }
+};
+
+/**
+ * @constructor
+ * @param {Object} options { element «Node | id», name: «String» }
+ */
+hui.ui.Layout = function(options) {
+  this.name = options.name;
+  this.options = options || {};
+  this.element = hui.get(options.element);
+  hui.ui.extend(this);
+};
+
+hui.ui.Layout.create = function(options) {
+  options = hui.override({text:'',highlighted:false,enabled:true},options);
+
+  options.element = hui.dom.parse('<table class="hui_layout"><tbody class="hui_layout"><tr class="hui_layout_middle"><td class="hui_layout_middle">'+
+      '<table class="hui_layout_middle"><tr>'+
+      '<td class="hui_layout_left hui_context_sidebar"><div class="hui_layout_left"></div></td>'+
+      '<td class="hui_layout_center"></td>'+
+      '</tr></table>'+
+      '</td></tr></tbody></table>');
+  return new hui.ui.Layout(options);
+};
+
+hui.ui.Layout.prototype = {
+
+  addToLeft : function(widget) {
+    var tbody = hui.get.firstByClass(this.element,'hui_layout_left');
+    tbody.appendChild(widget.element);
+  },
+
+  addToCenter : function(widget) {
+    var tbody = hui.get.firstByClass(this.element,'hui_layout_center');
+    tbody.appendChild(widget.element);
+  },
+
+  /** @private */
+  $$layout : function() {
+    if (hui.browser.gecko) {
+      var center = hui.get.firstByClass(this.element,'hui_layout_center');
+      if (center) {
+        center.style.height='100%';
+      }
+    }
+    if (!window.navigator.userAgent.indexOf('AppleWebKit/536')) {
+      if (!hui.browser.msie7 && !hui.browser.msie8 && !hui.browser.msie9) {
+        return;
+      }
+    }
+    if (!hui.dom.isVisible(this.element)) {
+      return;
+    }
+    if (this.diff===undefined) {
+      var head = hui.get.firstByClass(this.element,'hui_layout_top');
+      var top = hui.get.firstByTag(head,'*').clientHeight;
+      var foot = hui.get.firstByTag(hui.get.firstByTag(this.element,'tfoot'),'td');
+      var bottom = 0;
+      if (foot) {
+        var inner = hui.get.firstByTag(foot,'*');
+        if (inner) {
+          bottom = inner.clientHeight;
+        }
+      }
+      top += hui.position.getTop(this.element);
+      this.diff = bottom+top;
+      if (this.element.parentNode!==document.body) {
+        this.diff+=15;
+      } else {
+      }
+    }
+    var tbody = hui.get.firstByTag(this.element,'tbody');
+    var cell = hui.get.firstByTag(tbody,'td');
+    var height = (hui.window.getViewHeight()-this.diff+5);
+    cell.style.height = height+'px';
   }
 };
 
@@ -23974,6 +23983,35 @@ hui.on(function() {
     var data = hui.string.fromJSON(configs[i].textContent);
     data.element = configs[i].parentNode;
     new hui.ui[configs[i].getAttribute('data-type')](data);
+  }
+});
+
+hui.on(function() {
+  var configs = document.querySelectorAll('[hui\\:component]');
+  for (var i = 0; i < configs.length; i++) {
+    var node = configs[i];
+    const type = node.getAttribute('hui:component');
+    const data = {
+      element: node
+    }
+    const listener = {}
+    const atts = node.attributes;
+    for (var j = 0; j < atts.length; j++) {
+      const attr = atts[j]
+      if (attr.name.startsWith('hui:')) {
+        const name = attr.name.substring(4);
+        if (name.endsWith('!')) {
+          listener[name] = () => {
+            eval(attr.value);
+          }
+        }
+        else if (name !== 'component') {
+          console.log(name, attr.value);
+          data[name] = attr.value;
+        }
+      }
+    }
+    new hui.ui[type](data).listen(listener);
   }
 });
 

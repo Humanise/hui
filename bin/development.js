@@ -49,7 +49,6 @@
   document.write('<script type="text/javascript" src="'+_context+'/js/Gallery.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Calendar.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/DatePicker.js"></script>');
-  document.write('<script type="text/javascript" src="'+_context+'/js/Layout.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Dock.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Box.js"></script>');
   document.write('<script type="text/javascript" src="'+_context+'/js/Wizard.js"></script>');
