@@ -29,7 +29,7 @@ hui.ui.listen({
     win.show();
     win.listen({
       $userClosedWindow : function() {
-        info.$complete();
+        hui.ui.Editor.get().stopRowEditing();
       }
     })
   }

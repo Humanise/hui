@@ -1,7 +1,7 @@
 @use 'tools' as *;
 
 .hui_checkbox {
-  font-size: 12px;
+  font-size: $control-font-size;
   line-height: 18px;
   cursor: pointer;
   color: $text-color;

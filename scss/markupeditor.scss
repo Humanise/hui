@@ -24,7 +24,7 @@ div.hui_markupeditor {
   height: 18px;
   line-height: 18px;
   padding: 0 3px;
-  font-size: 12px;
+  font-size: $control-font-size;
   color: #333;
   text-decoration: none;
 }
@@ -34,6 +34,6 @@ div.hui_markupeditor {
   color: #333;
   padding: 3px 5px;
   display: inline-block;
-  font-size: 12px;
+  font-size: $control-font-size;
   text-decoration: none;
 }

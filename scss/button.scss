@@ -32,41 +32,31 @@
   color: $text-color;
   display: inline-block;
   vertical-align: middle;
-  font-size: 12px;
-  height: 24px;
-  line-height: 24px;
+  font-size: $control-font-size;
+  height: $control-height - 2px;
+  line-height: $control-height - 2px;
   cursor: pointer;
   text-decoration: none;
   @include font;
   user-select: none;
   white-space: nowrap;
-  @include vertical-gradient(#fcfcfd, #e3e7ea);
-  border: 1px solid #ccc;
-  border-color: #e3e3e3 #ccc #bbb;
-  border-radius: 3px;
+  @include control-base;
   padding: 0 10px;
-  box-shadow: 0 1px 1px rgba(0,0,0,.1);
   appearance: none;
   box-sizing: content-box;
   text-shadow: 0 -1px 0 rgba(255,255,255,.5);
 
   &:hover {
-    border-color: #d2d2d2 #b7b7b7 #9c9c9c;
-    background: linear-gradient(#f9f9f9, #d5dade);
+    @include control-hover;
   }
 
   &:active {
-    border-color: #adadad #b7b7b7 #bfbfbf;
-    background: linear-gradient(#f1f2f3, #d1d4d6);
-    box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
-    text-shadow: none;
+    @include control-active;
     line-height: 26px;
   }
 
   &:focus {
-    border: 1px solid $focus-color;
-    box-shadow: 0 0 2px $focus-color,inset 0 0 2px $focus-color;
-    outline: none;
+    @include control-focus;
   }
 
   &.hui-small {

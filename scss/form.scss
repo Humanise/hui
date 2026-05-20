@@ -26,7 +26,7 @@
   position: absolute;
   margin-top: -19px;
   background: #fff;
-  font-size: 12px;
+  font-size: $control-font-size;
   padding: 0 4px;
   margin-left: -2px;
   color: #666;
@@ -61,7 +61,7 @@ table.hui_form_fields {
 
   &_label {
     color: $text-color;
-    font-size: 12px;
+    font-size: $control-font-size;
     font-weight: normal;
     line-height: 18px;
     display: block;

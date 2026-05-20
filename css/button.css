@@ -36,8 +36,8 @@
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px;
-  padding: 0 10px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  padding: 0 10px;
   appearance: none;
   box-sizing: content-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
@@ -47,7 +47,7 @@
   background: linear-gradient(#f9f9f9, #d5dade);
 }
 .hui_button:active {
-  border-color: #adadad #b7b7b7 #bfbfbf;
+  border-color: #9c9c9c #b7b7b7 #aeaeae;
   background: linear-gradient(#f1f2f3, #d1d4d6);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
   text-shadow: none;

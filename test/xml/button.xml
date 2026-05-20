@@ -24,6 +24,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
       <button icon="common/delete" text="Delete"/>
       <button icon="monochrome/delete" text="Delete"/>
       <button icon="monochrome/close" text="Cancel"/>
+      <button symbol="delete" text="Delete"/>
     </buttons>
 
     <buttons top="10">
@@ -99,7 +100,7 @@ xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
           sizes.forEach(function(size) {
             states.forEach(function(state) {
               var p = {
-                text: variant + ' ' + size + ' ' + state,
+                text: (variant || 'standard') + ' ' + (size || 'normal') + ' ' + (state || 'default'),
                 variant: variant
               };
               if (size) p[size] = true;

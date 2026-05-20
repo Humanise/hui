@@ -5,7 +5,6 @@
   position: relative;
   font-size: 0;
 }
-
 .hui_slider_bar {
   display: inline-block;
   margin-top: 6px;
@@ -15,24 +14,31 @@
   box-shadow: inset 0px 1px 2px #aaa;
   border-radius: 3px;
 }
-
 .hui_slider_knob {
   position: absolute;
   width: 16px;
   height: 16px;
-  box-shadow: inset 0px -3px 5px #ddd, 0 1px 3px rgba(0, 0, 0, 0.5);
+  background: #fff;
+  background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
+  border: 1px solid #ccc;
+  border-color: #e3e3e3 #ccc #bbb;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   left: 5px;
   top: 0;
-  background: #fff;
   cursor: move;
   cursor: -webkit-grab;
 }
-.hui_slider_knob.hui_slider-grabbing, .hui_slider_knob:hover {
-  background: #f6f6f6;
+.hui_slider_knob:hover {
+  border-color: #d2d2d2 #b7b7b7 #9c9c9c;
+  background: linear-gradient(#f9f9f9, #d5dade);
 }
-
-.hui_slider-grabbing {
+.hui_slider_knob:active, .hui_slider_knob.hui_slider-grabbing, .hui_slider_knob.hui_slider-grabbing:hover {
+  border-color: #9c9c9c #b7b7b7 #aeaeae;
+  background: linear-gradient(#f1f2f3, #d1d4d6);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
 }

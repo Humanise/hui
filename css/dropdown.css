@@ -13,8 +13,7 @@
   cursor: pointer;
   text-decoration: none;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+  user-select: none;
   padding: 0 24px 0 7px;
   box-sizing: border-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);

@@ -8,12 +8,11 @@
   display: inline-block;
   width: 100%;
   box-sizing: border-box;
-  -moz-box-sizing: border-box;
   background: #fff;
   border: 1px solid #ccc;
   border-color: #bbb #ccc #e3e3e3;
   border-radius: 2px;
-  height: 26px;
+  height: $control-height;
   font-size: 0;
 
   &-focused {
@@ -31,7 +30,7 @@
     height: 16px;
     outline: none;
     font-family: $font;
-    font-size: 12px;
+    font-size: $control-font-size;
   }
 
 }

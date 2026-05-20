@@ -10,7 +10,7 @@
 
 .hui_radiobutton {
   margin-right: 10px;
-  font-size: 10pt;
+  font-size: 12px;
   cursor: default;
   display: inline-block;
   cursor: pointer;
@@ -18,16 +18,17 @@
   padding: 4px 0;
 }
 .hui_radiobutton_button {
-  width: 16px;
-  height: 16px;
   background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   display: inline-block;
   position: relative;
   vertical-align: top;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 .hui_radiobutton_selected .hui_radiobutton_button:before {
   content: "";
@@ -55,6 +56,7 @@
   border-color: #9c9c9c #b7b7b7 #aeaeae;
   background: linear-gradient(#f1f2f3, #d1d4d6);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
 }
 .hui_radiobutton_label {
   vertical-align: top;

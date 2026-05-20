@@ -2,10 +2,10 @@
   display: inline-block;
   position: relative;
   vertical-align: middle;
-  padding-right: 28px;
+  padding-right: 30px;
 }
 .hui_colorinput input {
-  font-size: 9pt;
+  font-size: 12px;
   font-family: Menlo, "Lucida Console", Monaco, monospace;
   width: 62px;
 }
@@ -14,9 +14,10 @@
   top: -1px;
   right: 0px;
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: 1px solid rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
   border-radius: 2px;
   margin-left: 3px;
   margin-top: 1px;

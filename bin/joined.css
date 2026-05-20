@@ -344,8 +344,8 @@ span.hui_disclosure_open:hover {
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
   border-radius: 3px;
-  padding: 0 10px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  padding: 0 10px;
   appearance: none;
   box-sizing: content-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
@@ -355,7 +355,7 @@ span.hui_disclosure_open:hover {
   background: linear-gradient(#f9f9f9, #d5dade);
 }
 .hui_button:active {
-  border-color: #adadad #b7b7b7 #bfbfbf;
+  border-color: #9c9c9c #b7b7b7 #aeaeae;
   background: linear-gradient(#f1f2f3, #d1d4d6);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
   text-shadow: none;
@@ -792,8 +792,7 @@ body .hui_context_dark label.hui_form_field,
   cursor: pointer;
   text-decoration: none;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+  user-select: none;
   padding: 0 24px 0 7px;
   box-sizing: border-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
@@ -3492,7 +3491,7 @@ ul.hui_wizard a.hui_selected {
   border-color: #bbb #ccc #e3e3e3;
   border-radius: 2px;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
-  -webkit-appearance: none;
+  appearance: none;
   box-sizing: border-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
   width: 100px;
@@ -4773,7 +4772,6 @@ div.hui_links_row:hover span.hui_links_remove {
   display: inline-block;
   width: 100%;
   box-sizing: border-box;
-  -moz-box-sizing: border-box;
   background: #fff;
   border: 1px solid #ccc;
   border-color: #bbb #ccc #e3e3e3;
@@ -4984,7 +4982,7 @@ div.hui_infoview_click:hover {
 
 .hui_radiobutton {
   margin-right: 10px;
-  font-size: 10pt;
+  font-size: 12px;
   cursor: default;
   display: inline-block;
   cursor: pointer;
@@ -4992,16 +4990,17 @@ div.hui_infoview_click:hover {
   padding: 4px 0;
 }
 .hui_radiobutton_button {
-  width: 16px;
-  height: 16px;
   background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
   border: 1px solid #ccc;
   border-color: #e3e3e3 #ccc #bbb;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   display: inline-block;
   position: relative;
   vertical-align: top;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 .hui_radiobutton_selected .hui_radiobutton_button:before {
   content: "";
@@ -5029,6 +5028,7 @@ div.hui_infoview_click:hover {
   border-color: #9c9c9c #b7b7b7 #aeaeae;
   background: linear-gradient(#f1f2f3, #d1d4d6);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
 }
 .hui_radiobutton_label {
   vertical-align: top;
@@ -5094,10 +5094,10 @@ div.hui_rendering p {
   display: inline-block;
   position: relative;
   vertical-align: middle;
-  padding-right: 28px;
+  padding-right: 30px;
 }
 .hui_colorinput input {
-  font-size: 9pt;
+  font-size: 12px;
   font-family: Menlo, "Lucida Console", Monaco, monospace;
   width: 62px;
 }
@@ -5106,9 +5106,10 @@ div.hui_rendering p {
   top: -1px;
   right: 0px;
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: 1px solid rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
   border-radius: 2px;
   margin-left: 3px;
   margin-top: 1px;
@@ -5177,7 +5178,6 @@ div.hui_rendering p {
   position: relative;
   font-size: 0;
 }
-
 .hui_slider_bar {
   display: inline-block;
   margin-top: 6px;
@@ -5187,24 +5187,31 @@ div.hui_rendering p {
   box-shadow: inset 0px 1px 2px #aaa;
   border-radius: 3px;
 }
-
 .hui_slider_knob {
   position: absolute;
   width: 16px;
   height: 16px;
-  box-shadow: inset 0px -3px 5px #ddd, 0 1px 3px rgba(0, 0, 0, 0.5);
+  background: #fff;
+  background-image: linear-gradient(180deg, #fcfcfd, #e3e7ea);
+  border: 1px solid #ccc;
+  border-color: #e3e3e3 #ccc #bbb;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   left: 5px;
   top: 0;
-  background: #fff;
   cursor: move;
   cursor: -webkit-grab;
 }
-.hui_slider_knob.hui_slider-grabbing, .hui_slider_knob:hover {
-  background: #f6f6f6;
+.hui_slider_knob:hover {
+  border-color: #d2d2d2 #b7b7b7 #9c9c9c;
+  background: linear-gradient(#f9f9f9, #d5dade);
 }
-
-.hui_slider-grabbing {
+.hui_slider_knob:active, .hui_slider_knob.hui_slider-grabbing, .hui_slider_knob.hui_slider-grabbing:hover {
+  border-color: #9c9c9c #b7b7b7 #aeaeae;
+  background: linear-gradient(#f1f2f3, #d1d4d6);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
 }
