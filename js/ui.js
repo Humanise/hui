@@ -462,9 +462,7 @@ hui.ui.showMessage = function(options) {
   }
   hui.ui.message.style.marginTop = (hui.ui.message.offsetHeight / -2) + 'px';
   hui.ui.message.style.zIndex = hui.ui.nextTopIndex();
-  if (hui.browser.opacity) {
-    hui.animate(hui.ui.message, 'opacity', 1, 300);
-  }
+  hui.animate(hui.ui.message, 'opacity', 1, 300);
   window.clearTimeout(hui.ui.messageTimer);
   if (options.duration) {
     hui.ui.messageTimer = window.setTimeout(hui.ui.hideMessage,options.duration);
@@ -486,11 +484,7 @@ hui.ui.msg.fail = function(options) {
 hui.ui.hideMessage = function() {
   window.clearTimeout(hui.ui.messageDelayTimer);
   if (hui.ui.message) {
-    if (hui.browser.opacity) {
-      hui.animate(hui.ui.message,'opacity',0,300,{hideOnComplete:true});
-    } else {
-      hui.ui.message.style.display='none';
-    }
+    hui.animate(hui.ui.message,'opacity',0,300,{hideOnComplete:true});
   }
 };
 
@@ -505,14 +499,12 @@ hui.ui.showToolTip = function(options) {
   var n = hui.get(options.element);
   var pos = hui.position.get(n);
   hui.dom.setText(t.getElementsByTagName('div')[1],options.text);
-  if (t.style.display=='none' && hui.browser.opacity) {
+  if (t.style.display=='none') {
     hui.style.setOpacity(t,0);
   }
   hui.style.set(t,{'display':'block',zIndex:hui.ui.nextTopIndex()});
   hui.style.set(t,{left:(pos.left-t.clientWidth+4)+'px',top:(pos.top+2-(t.clientHeight/2)+(n.clientHeight/2))+'px'});
-  if (hui.browser.opacity) {
-    hui.animate(t,'opacity',1,300);
-  }
+  hui.animate(t,'opacity',1,300);
 };
 
 hui.ui.hideToolTip = function(options) {

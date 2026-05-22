@@ -9,25 +9,13 @@ QUnit.test( "Test", function( assert ) {
   assert.equal(hui.style.get('one','padding-top'),'10px');
   assert.equal(hui.style.get('one','padding-right'),'10px');
 
-  if (hui.browser.msie7 || hui.browser.msie8 || hui.browser.webkitVersion>=536) {
-    assert.equal(hui.style.get('one','padding'),'10px');
-  } else {
-    assert.equal(hui.style.get('one','padding'),'');
-  }
+  assert.equal(hui.style.get('one','padding'),'10px');
   assert.equal(new hui.Color(hui.style.get('one','color')).toHex(),'#ff0000');
   assert.equal(hui.style.get('one','font-size'),'12px');
   assert.equal(hui.style.get('one','display'),'block');
   assert.equal(hui.style.get('one','border-top-width'),'2px','Check top width');
-  if (hui.browser.msie7 || hui.browser.msie8 || hui.browser.webkitVersion>=536) {
-    assert.equal(hui.style.get('one','border-width'),'2px');
-  } else {
-    assert.equal(hui.style.get('one','border-width'),'');
-  }
-  if (hui.browser.opacity) {
-    assert.equal(hui.style.get('one','opacity'),'1','Check opacity');
-  } else {
-    assert.equal(hui.style.get('one','opacity'),undefined,'Check opacity');
-  }
+  assert.equal(hui.style.get('one','border-width'),'2px');
+  assert.equal(hui.style.get('one','opacity'),'1','Check opacity');
   if (hui.browser.webkit) {
     assert.equal(hui.style.get('one','background-color'),'rgba(0, 0, 0, 0)','Check background color');
     assert.equal(hui.style.get('one','line-height'),'normal');

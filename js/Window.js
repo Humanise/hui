@@ -107,9 +107,7 @@ hui.ui.Window.prototype = {
         this.element.style.left = Math.round((hui.window.getViewWidth()-width)/2)+'px';
       }
     }
-    if (hui.browser.opacity) {
-      hui.animate(this.element,'opacity',1,0);
-    }
+    hui.animate(this.element,'opacity',1,0);
     this.visible = true;
     hui.ui.callVisible(this);
   },
@@ -122,15 +120,10 @@ hui.ui.Window.prototype = {
   },
   hide : function() {
     if (!this.visible) return;
-    if (hui.browser.opacity) {
-      hui.animate(this.element,'opacity',0,100,{$complete:function() {
-        this.element.style.display='none';
-        hui.ui.callVisible(this);
-      }.bind(this)});
-    } else {
+    hui.animate(this.element,'opacity',0,100,{$complete:function() {
       this.element.style.display='none';
       hui.ui.callVisible(this);
-    }
+    }.bind(this)});
     this.visible = false;
   },
   add : function(widgetOrNode) {

@@ -567,12 +567,8 @@ hui.ui.List.prototype = {
         button.click(this._buttonClick.bind(this));
         cell.appendChild(button.getElement());
       } else if (hui.dom.isElement(child,'wrap')) {
-        if (hui.browser.wordbreak) {
-          hui.cls.add(cell,'hui_list_wrap');
-          hui.dom.addText(cell,hui.dom.getText(child));
-        } else {
-          hui.dom.addText(cell,this._wrap(hui.dom.getText(child)));
-        }
+        hui.cls.add(cell,'hui_list_wrap');
+        hui.dom.addText(cell,hui.dom.getText(child));
       } else if (hui.dom.isElement(child,'delete')) {
         this._parseCell(child,hui.build('del',{parent:cell}));
       } else if (hui.dom.isElement(child,'strong')) {
@@ -652,23 +648,6 @@ hui.ui.List.prototype = {
     }
   },
 
-  _wrap : function(str) {
-    var out = '';
-    var count = 0;
-    for (var i=0; i < str.length; i++) {
-      if (str[i]===' ' || str[i]==='-') {
-        count=0;
-      } else {
-        count++;
-      }
-      out+=str[i];
-      if (count>10) {
-        out+='\u200B';
-        count=0;
-      }
-    }
-    return out;
-  },
   _getData : function(node) {
     var data = node.getAttribute('data');
     if (data) {

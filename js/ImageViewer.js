@@ -201,20 +201,12 @@ hui.ui.ImageViewer.prototype = {
     window.clearTimeout(this.ctrlHider);
     if (this._shouldShowController()) {
       this.ctrlHider = window.setTimeout(this._hideController.bind(this),2000);
-      if (!hui.browser.opacity) {
-        this.nodes.controller.style.display='block';
-      } else {
-        hui.effect.fadeIn({element:this.nodes.controller,duration:200});
-      }
+      hui.effect.fadeIn({element:this.nodes.controller,duration:200});
     }
   },
   _hideController : function() {
     if (!this.overController) {
-      if (!hui.browser.opacity) {
-        this.nodes.controller.style.display='none';
-      } else {
-        hui.effect.fadeOut({element:this.nodes.controller,duration:500});
-      }
+      hui.effect.fadeOut({element:this.nodes.controller,duration:500});
     }
   },
   _getLargestSize : function(canvas,image) {
@@ -360,9 +352,6 @@ hui.ui.ImageViewer.prototype = {
     /*
     if (!this._listening) {
       this._listening = true;
-      if (!hui.browser.msie6 && !hui.browser.msie7) {
-        hui.listen(window,'hashchange',this._onHashChange.bind(this));
-      }
     }
     if (visible) {
       document.location='#imageviewer';

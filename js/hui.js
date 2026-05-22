@@ -14,16 +14,6 @@ hui = window.hui || {};
 
   /** If the browser is any version of InternetExplorer */
   browser.msie = !/opera/i.test(agent) && /MSIE/.test(agent) || /Trident/.test(agent);
-  /** If the browser is InternetExplorer 6 */
-  browser.msie6 = agent.indexOf('MSIE 6') !== -1;
-  /** If the browser is InternetExplorer 7 */
-  browser.msie7 = agent.indexOf('MSIE 7') !== -1;
-  /** If the browser is InternetExplorer 8 */
-  browser.msie8 = agent.indexOf('MSIE 8') !== -1;
-  /** If the browser is InternetExplorer 9 */
-  browser.msie9 = agent.indexOf('MSIE 9') !== -1;
-  /** If the browser is InternetExplorer 9 in compatibility mode */
-  browser.msie9compat = browser.msie7 && agent.indexOf('Trident/5.0') !== -1;
   /** If the browser is InternetExplorer 10 */
   browser.msie10 = agent.indexOf('MSIE 10') !== -1;
   /** If the browser is InternetExplorer 11 */
@@ -44,15 +34,6 @@ hui = window.hui || {};
   browser.ipad = browser.webkit && agent.indexOf('iPad') !== -1;
   /** If the browser is on Windows */
   browser.windows = agent.indexOf('Windows') !== -1;
-
-  /** If the browser supports CSS opacity */
-  browser.opacity = !browser.msie6 && !browser.msie7 && !browser.msie8;
-  /** If the browser supports CSS Media Queries */
-  browser.mediaQueries = browser.opacity;
-  /** If the browser supports CSS animations */
-  browser.animation = !browser.msie6 && !browser.msie7 && !browser.msie8 && !browser.msie9;
-
-  browser.wordbreak = !browser.msie6 && !browser.msie7 && !browser.msie8;
 
   browser.touch = (!!('ontouchstart' in window) || (!!('onmsgesturechange' in window) && !!window.navigator.maxTouchPoints)) ? true : false;
 
@@ -1024,8 +1005,6 @@ hui.build = function(name,options,doc) {
         hui.cls.add(e,options['class']);
       } else if (prop=='style' && typeof(options[prop])=='object') {
         hui.style.set(e,options[prop]);
-      } else if (prop=='style' && (hui.browser.msie7 || hui.browser.msie6)) {
-        e.style.setAttribute('cssText',options[prop]);
       } else if (hui.isDefined(options[prop])) {
         e.setAttribute(prop,options[prop]);
       }
@@ -1923,15 +1902,7 @@ hui.style = {
   },
   /** Cross browser way of setting opacity */
   setOpacity : function(element,opacity) {
-    if (!hui.browser.opacity) {
-      if (opacity==1) {
-        element.style.filter = null;
-      } else {
-        element.style.filter = 'alpha(opacity='+(opacity*100)+')';
-      }
-    } else {
-      element.style.opacity = opacity;
-    }
+    element.style.opacity = opacity;
   },
   length : function(value) {
     if (typeof(value) === 'number') {

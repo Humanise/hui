@@ -94,9 +94,7 @@ hui.ui.BoundPanel.prototype = {
       this.element.style.zIndex = hui.ui.nextPanelIndex();
       return;
     }
-    if (hui.browser.opacity) {
-      hui.style.setOpacity(this.element, 0);
-    }
+    hui.style.setOpacity(this.element, 0);
     var vert;
     if (this.relativePosition == 'left') {
       vert = false;
@@ -116,11 +114,9 @@ hui.ui.BoundPanel.prototype = {
     var index = hui.ui.nextPanelIndex();
     this.element.style.zIndex = index;
     hui.ui.callVisible(this);
-    if (hui.browser.opacity) {
-      hui.animate(this.element, 'opacity', 1, 300, {
-        ease: hui.ease.fastSlow
-      });
-    }
+    hui.animate(this.element, 'opacity', 1, 300, {
+      ease: hui.ease.fastSlow
+    });
     hui.animate(this.element, vert ? 'margin-top' : 'margin-left', '0px', 300, {
       ease: hui.ease.fastSlow
     });
@@ -151,18 +147,13 @@ hui.ui.BoundPanel.prototype = {
     if (!this.visible) {
       return;
     }
-    if (!hui.browser.opacity) {
-      this.element.style.display = 'none';
-      hui.ui.callVisible(this);
-    } else {
-      hui.animate(this.element, 'opacity', 0, 100, {
-        ease: hui.ease.slowFast,
-        $complete: function() {
-          this.element.style.display = 'none';
-          hui.ui.callVisible(this);
-        }.bind(this)
-      });
-    }
+    hui.animate(this.element, 'opacity', 0, 100, {
+      ease: hui.ease.slowFast,
+      $complete: function() {
+        this.element.style.display = 'none';
+        hui.ui.callVisible(this);
+      }.bind(this)
+    });
     if (this.options.modal) {
       hui.ui.hideCurtain(this);
     }

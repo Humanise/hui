@@ -105,15 +105,6 @@ hui.animation._propertyUpater = function(element, v, work) {
   element[work.property] = Math.round(work.from+(work.to-work.from)*v);
 };
 
-hui.animation._ieOpacityUpdater = function(element, v, work) {
-  var opacity = (work.from + (work.to - work.from) * v);
-  if (opacity == 1) {
-    element.style.removeAttribute('filter');
-  } else {
-    element.style.filter = 'alpha(opacity=' + (opacity * 100) + ')';
-  }
-};
-
 hui.animation._render = function() {
   hui.animation.running = true;
   var next = false,
@@ -242,8 +233,6 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
     work.from = from;
   } else if (property=='transform') {
     work.transform = hui.animation.Item.parseTransform(to,this.element);
-  } else if (!hui.browser.opacity && property=='opacity') {
-    work.from = this._getIEOpacity(this.element);
   } else if (css) {
     var style = hui.style.get(this.element,property);
     var parsedStyle = hui.animation._parseStyle(style);
@@ -255,9 +244,7 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
     var parsed = hui.animation._parseStyle(to);
     work.to = parsed.value;
     work.unit = parsed.unit;
-    if (!hui.browser.opacity && property=='opacity') {
-      work.updater = hui.animation._ieOpacityUpdater;
-    } else if (property=='transform') {
+    if (property=='transform') {
       work.updater = hui.browser.msie ? function() {} : hui.animation._transformUpater;
     } else if (parsed.type=='color') {
       work.updater = hui.animation._colorUpater;
@@ -311,16 +298,6 @@ hui.animation.Item.parseTransform = function(value,element) {
     result.scale = {from:from,to:parseFloat(scale[1])};
   }
   return result;
-};
-
-hui.animation.Item.prototype._getIEOpacity = function(element) {
-  var filter = hui.style.get(element,'filter').toLowerCase();
-  var match = filter.match(/opacity=([0-9]+)/);
-  if (match) {
-    return parseFloat(match[1])/100;
-  } else {
-    return 1;
-  }
 };
 
 hui.animation.Item.prototype.getWork = function(property) {

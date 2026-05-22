@@ -14,16 +14,6 @@ hui = window.hui || {};
 
   /** If the browser is any version of InternetExplorer */
   browser.msie = !/opera/i.test(agent) && /MSIE/.test(agent) || /Trident/.test(agent);
-  /** If the browser is InternetExplorer 6 */
-  browser.msie6 = agent.indexOf('MSIE 6') !== -1;
-  /** If the browser is InternetExplorer 7 */
-  browser.msie7 = agent.indexOf('MSIE 7') !== -1;
-  /** If the browser is InternetExplorer 8 */
-  browser.msie8 = agent.indexOf('MSIE 8') !== -1;
-  /** If the browser is InternetExplorer 9 */
-  browser.msie9 = agent.indexOf('MSIE 9') !== -1;
-  /** If the browser is InternetExplorer 9 in compatibility mode */
-  browser.msie9compat = browser.msie7 && agent.indexOf('Trident/5.0') !== -1;
   /** If the browser is InternetExplorer 10 */
   browser.msie10 = agent.indexOf('MSIE 10') !== -1;
   /** If the browser is InternetExplorer 11 */
@@ -44,15 +34,6 @@ hui = window.hui || {};
   browser.ipad = browser.webkit && agent.indexOf('iPad') !== -1;
   /** If the browser is on Windows */
   browser.windows = agent.indexOf('Windows') !== -1;
-
-  /** If the browser supports CSS opacity */
-  browser.opacity = !browser.msie6 && !browser.msie7 && !browser.msie8;
-  /** If the browser supports CSS Media Queries */
-  browser.mediaQueries = browser.opacity;
-  /** If the browser supports CSS animations */
-  browser.animation = !browser.msie6 && !browser.msie7 && !browser.msie8 && !browser.msie9;
-
-  browser.wordbreak = !browser.msie6 && !browser.msie7 && !browser.msie8;
 
   browser.touch = (!!('ontouchstart' in window) || (!!('onmsgesturechange' in window) && !!window.navigator.maxTouchPoints)) ? true : false;
 
@@ -1024,8 +1005,6 @@ hui.build = function(name,options,doc) {
         hui.cls.add(e,options['class']);
       } else if (prop=='style' && typeof(options[prop])=='object') {
         hui.style.set(e,options[prop]);
-      } else if (prop=='style' && (hui.browser.msie7 || hui.browser.msie6)) {
-        e.style.setAttribute('cssText',options[prop]);
       } else if (hui.isDefined(options[prop])) {
         e.setAttribute(prop,options[prop]);
       }
@@ -1923,15 +1902,7 @@ hui.style = {
   },
   /** Cross browser way of setting opacity */
   setOpacity : function(element,opacity) {
-    if (!hui.browser.opacity) {
-      if (opacity==1) {
-        element.style.filter = null;
-      } else {
-        element.style.filter = 'alpha(opacity='+(opacity*100)+')';
-      }
-    } else {
-      element.style.opacity = opacity;
-    }
+    element.style.opacity = opacity;
   },
   length : function(value) {
     if (typeof(value) === 'number') {
@@ -2568,15 +2539,6 @@ hui.animation._propertyUpater = function(element, v, work) {
   element[work.property] = Math.round(work.from+(work.to-work.from)*v);
 };
 
-hui.animation._ieOpacityUpdater = function(element, v, work) {
-  var opacity = (work.from + (work.to - work.from) * v);
-  if (opacity == 1) {
-    element.style.removeAttribute('filter');
-  } else {
-    element.style.filter = 'alpha(opacity=' + (opacity * 100) + ')';
-  }
-};
-
 hui.animation._render = function() {
   hui.animation.running = true;
   var next = false,
@@ -2705,8 +2667,6 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
     work.from = from;
   } else if (property=='transform') {
     work.transform = hui.animation.Item.parseTransform(to,this.element);
-  } else if (!hui.browser.opacity && property=='opacity') {
-    work.from = this._getIEOpacity(this.element);
   } else if (css) {
     var style = hui.style.get(this.element,property);
     var parsedStyle = hui.animation._parseStyle(style);
@@ -2718,9 +2678,7 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
     var parsed = hui.animation._parseStyle(to);
     work.to = parsed.value;
     work.unit = parsed.unit;
-    if (!hui.browser.opacity && property=='opacity') {
-      work.updater = hui.animation._ieOpacityUpdater;
-    } else if (property=='transform') {
+    if (property=='transform') {
       work.updater = hui.browser.msie ? function() {} : hui.animation._transformUpater;
     } else if (parsed.type=='color') {
       work.updater = hui.animation._colorUpater;
@@ -2774,16 +2732,6 @@ hui.animation.Item.parseTransform = function(value,element) {
     result.scale = {from:from,to:parseFloat(scale[1])};
   }
   return result;
-};
-
-hui.animation.Item.prototype._getIEOpacity = function(element) {
-  var filter = hui.style.get(element,'filter').toLowerCase();
-  var match = filter.match(/opacity=([0-9]+)/);
-  if (match) {
-    return parseFloat(match[1])/100;
-  } else {
-    return 1;
-  }
 };
 
 hui.animation.Item.prototype.getWork = function(property) {
@@ -4672,9 +4620,7 @@ hui.ui.showMessage = function(options) {
   }
   hui.ui.message.style.marginTop = (hui.ui.message.offsetHeight / -2) + 'px';
   hui.ui.message.style.zIndex = hui.ui.nextTopIndex();
-  if (hui.browser.opacity) {
-    hui.animate(hui.ui.message, 'opacity', 1, 300);
-  }
+  hui.animate(hui.ui.message, 'opacity', 1, 300);
   window.clearTimeout(hui.ui.messageTimer);
   if (options.duration) {
     hui.ui.messageTimer = window.setTimeout(hui.ui.hideMessage,options.duration);
@@ -4696,11 +4642,7 @@ hui.ui.msg.fail = function(options) {
 hui.ui.hideMessage = function() {
   window.clearTimeout(hui.ui.messageDelayTimer);
   if (hui.ui.message) {
-    if (hui.browser.opacity) {
-      hui.animate(hui.ui.message,'opacity',0,300,{hideOnComplete:true});
-    } else {
-      hui.ui.message.style.display='none';
-    }
+    hui.animate(hui.ui.message,'opacity',0,300,{hideOnComplete:true});
   }
 };
 
@@ -4715,14 +4657,12 @@ hui.ui.showToolTip = function(options) {
   var n = hui.get(options.element);
   var pos = hui.position.get(n);
   hui.dom.setText(t.getElementsByTagName('div')[1],options.text);
-  if (t.style.display=='none' && hui.browser.opacity) {
+  if (t.style.display=='none') {
     hui.style.setOpacity(t,0);
   }
   hui.style.set(t,{'display':'block',zIndex:hui.ui.nextTopIndex()});
   hui.style.set(t,{left:(pos.left-t.clientWidth+4)+'px',top:(pos.top+2-(t.clientHeight/2)+(n.clientHeight/2))+'px'});
-  if (hui.browser.opacity) {
-    hui.animate(t,'opacity',1,300);
-  }
+  hui.animate(t,'opacity',1,300);
 };
 
 hui.ui.hideToolTip = function(options) {
@@ -5956,9 +5896,7 @@ hui.ui.Window.prototype = {
         this.element.style.left = Math.round((hui.window.getViewWidth()-width)/2)+'px';
       }
     }
-    if (hui.browser.opacity) {
-      hui.animate(this.element,'opacity',1,0);
-    }
+    hui.animate(this.element,'opacity',1,0);
     this.visible = true;
     hui.ui.callVisible(this);
   },
@@ -5971,15 +5909,10 @@ hui.ui.Window.prototype = {
   },
   hide : function() {
     if (!this.visible) return;
-    if (hui.browser.opacity) {
-      hui.animate(this.element,'opacity',0,100,{$complete:function() {
-        this.element.style.display='none';
-        hui.ui.callVisible(this);
-      }.bind(this)});
-    } else {
+    hui.animate(this.element,'opacity',0,100,{$complete:function() {
       this.element.style.display='none';
       hui.ui.callVisible(this);
-    }
+    }.bind(this)});
     this.visible = false;
   },
   add : function(widgetOrNode) {
@@ -6864,12 +6797,8 @@ hui.ui.List.prototype = {
         button.click(this._buttonClick.bind(this));
         cell.appendChild(button.getElement());
       } else if (hui.dom.isElement(child,'wrap')) {
-        if (hui.browser.wordbreak) {
-          hui.cls.add(cell,'hui_list_wrap');
-          hui.dom.addText(cell,hui.dom.getText(child));
-        } else {
-          hui.dom.addText(cell,this._wrap(hui.dom.getText(child)));
-        }
+        hui.cls.add(cell,'hui_list_wrap');
+        hui.dom.addText(cell,hui.dom.getText(child));
       } else if (hui.dom.isElement(child,'delete')) {
         this._parseCell(child,hui.build('del',{parent:cell}));
       } else if (hui.dom.isElement(child,'strong')) {
@@ -6949,23 +6878,6 @@ hui.ui.List.prototype = {
     }
   },
 
-  _wrap : function(str) {
-    var out = '';
-    var count = 0;
-    for (var i=0; i < str.length; i++) {
-      if (str[i]===' ' || str[i]==='-') {
-        count=0;
-      } else {
-        count++;
-      }
-      out+=str[i];
-      if (count>10) {
-        out+='\u200B';
-        count=0;
-      }
-    }
-    return out;
-  },
   _getData : function(node) {
     var data = node.getAttribute('data');
     if (data) {
@@ -9127,9 +9039,7 @@ hui.ui.BoundPanel.prototype = {
       this.element.style.zIndex = hui.ui.nextPanelIndex();
       return;
     }
-    if (hui.browser.opacity) {
-      hui.style.setOpacity(this.element, 0);
-    }
+    hui.style.setOpacity(this.element, 0);
     var vert;
     if (this.relativePosition == 'left') {
       vert = false;
@@ -9149,11 +9059,9 @@ hui.ui.BoundPanel.prototype = {
     var index = hui.ui.nextPanelIndex();
     this.element.style.zIndex = index;
     hui.ui.callVisible(this);
-    if (hui.browser.opacity) {
-      hui.animate(this.element, 'opacity', 1, 300, {
-        ease: hui.ease.fastSlow
-      });
-    }
+    hui.animate(this.element, 'opacity', 1, 300, {
+      ease: hui.ease.fastSlow
+    });
     hui.animate(this.element, vert ? 'margin-top' : 'margin-left', '0px', 300, {
       ease: hui.ease.fastSlow
     });
@@ -9184,18 +9092,13 @@ hui.ui.BoundPanel.prototype = {
     if (!this.visible) {
       return;
     }
-    if (!hui.browser.opacity) {
-      this.element.style.display = 'none';
-      hui.ui.callVisible(this);
-    } else {
-      hui.animate(this.element, 'opacity', 0, 100, {
-        ease: hui.ease.slowFast,
-        $complete: function() {
-          this.element.style.display = 'none';
-          hui.ui.callVisible(this);
-        }.bind(this)
-      });
-    }
+    hui.animate(this.element, 'opacity', 0, 100, {
+      ease: hui.ease.slowFast,
+      $complete: function() {
+        this.element.style.display = 'none';
+        hui.ui.callVisible(this);
+      }.bind(this)
+    });
     if (this.options.modal) {
       hui.ui.hideCurtain(this);
     }
@@ -9611,20 +9514,12 @@ hui.ui.ImageViewer.prototype = {
     window.clearTimeout(this.ctrlHider);
     if (this._shouldShowController()) {
       this.ctrlHider = window.setTimeout(this._hideController.bind(this),2000);
-      if (!hui.browser.opacity) {
-        this.nodes.controller.style.display='block';
-      } else {
-        hui.effect.fadeIn({element:this.nodes.controller,duration:200});
-      }
+      hui.effect.fadeIn({element:this.nodes.controller,duration:200});
     }
   },
   _hideController : function() {
     if (!this.overController) {
-      if (!hui.browser.opacity) {
-        this.nodes.controller.style.display='none';
-      } else {
-        hui.effect.fadeOut({element:this.nodes.controller,duration:500});
-      }
+      hui.effect.fadeOut({element:this.nodes.controller,duration:500});
     }
   },
   _getLargestSize : function(canvas,image) {
@@ -9770,9 +9665,6 @@ hui.ui.ImageViewer.prototype = {
     /*
     if (!this._listening) {
       this._listening = true;
-      if (!hui.browser.msie6 && !hui.browser.msie7) {
-        hui.listen(window,'hashchange',this._onHashChange.bind(this));
-      }
     }
     if (visible) {
       document.location='#imageviewer';
@@ -21617,82 +21509,6 @@ hui.ui.KeyboardNavigator.prototype = {
         this._render();
       }.bind(this)
     });
-  }
-};
-
-/**
- * @constructor
- * @param {Object} options { element «Node | id», name: «String» }
- */
-hui.ui.Layout = function(options) {
-  this.name = options.name;
-  this.options = options || {};
-  this.element = hui.get(options.element);
-  hui.ui.extend(this);
-};
-
-hui.ui.Layout.create = function(options) {
-  options = hui.override({text:'',highlighted:false,enabled:true},options);
-
-  options.element = hui.dom.parse('<table class="hui_layout"><tbody class="hui_layout"><tr class="hui_layout_middle"><td class="hui_layout_middle">'+
-      '<table class="hui_layout_middle"><tr>'+
-      '<td class="hui_layout_left hui_context_sidebar"><div class="hui_layout_left"></div></td>'+
-      '<td class="hui_layout_center"></td>'+
-      '</tr></table>'+
-      '</td></tr></tbody></table>');
-  return new hui.ui.Layout(options);
-};
-
-hui.ui.Layout.prototype = {
-
-  addToLeft : function(widget) {
-    var tbody = hui.get.firstByClass(this.element,'hui_layout_left');
-    tbody.appendChild(widget.element);
-  },
-
-  addToCenter : function(widget) {
-    var tbody = hui.get.firstByClass(this.element,'hui_layout_center');
-    tbody.appendChild(widget.element);
-  },
-
-  /** @private */
-  $$layout : function() {
-    if (hui.browser.gecko) {
-      var center = hui.get.firstByClass(this.element,'hui_layout_center');
-      if (center) {
-        center.style.height='100%';
-      }
-    }
-    if (!window.navigator.userAgent.indexOf('AppleWebKit/536')) {
-      if (!hui.browser.msie7 && !hui.browser.msie8 && !hui.browser.msie9) {
-        return;
-      }
-    }
-    if (!hui.dom.isVisible(this.element)) {
-      return;
-    }
-    if (this.diff===undefined) {
-      var head = hui.get.firstByClass(this.element,'hui_layout_top');
-      var top = hui.get.firstByTag(head,'*').clientHeight;
-      var foot = hui.get.firstByTag(hui.get.firstByTag(this.element,'tfoot'),'td');
-      var bottom = 0;
-      if (foot) {
-        var inner = hui.get.firstByTag(foot,'*');
-        if (inner) {
-          bottom = inner.clientHeight;
-        }
-      }
-      top += hui.position.getTop(this.element);
-      this.diff = bottom+top;
-      if (this.element.parentNode!==document.body) {
-        this.diff+=15;
-      } else {
-      }
-    }
-    var tbody = hui.get.firstByTag(this.element,'tbody');
-    var cell = hui.get.firstByTag(tbody,'td');
-    var height = (hui.window.getViewHeight()-this.diff+5);
-    cell.style.height = height+'px';
   }
 };
 

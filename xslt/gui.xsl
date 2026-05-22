@@ -72,17 +72,6 @@
       <link rel="stylesheet" href="{$context}/{$pathVersion}bin/minimized.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
     </xsl:otherwise>
   </xsl:choose>
-  <!--
-  <xsl:comment><![CDATA[[if IE 8]>
-    <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie8.css]]><![CDATA["> </link>
-  <![endif]]]></xsl:comment>
-  <xsl:comment><![CDATA[[if lt IE 7]>
-    <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie6.css]]><![CDATA["> </link>
-  <![endif]]]></xsl:comment>
-  <xsl:comment><![CDATA[[if IE 7]>
-    <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie7.css]]><![CDATA["> </link>
-  <![endif]]]></xsl:comment>
-  -->
   <xsl:if test="//gui:graph">
     <link rel="stylesheet" href="{$context}/{$pathVersion}css/graph.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
   </xsl:if>
