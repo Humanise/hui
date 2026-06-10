@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:hui" padding="20" title="Box" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="uri:hui ../../xslt/schema.xsd">
+  <controller url="chat.js"/>
+  <box width="500" padding="10" title="Chat" variant="textured" closable="true">
+    <toolbar>
+      <icon symbol="add" text="Add something" name="addText"/>
+    </toolbar>
+    <chat name="chat"/>
+  </box>
+
+</gui>

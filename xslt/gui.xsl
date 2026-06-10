@@ -96,6 +96,9 @@
   <xsl:if test="//gui:media-simulator">
     <link rel="stylesheet" href="{$context}/{$pathVersion}css/mediasimulator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
   </xsl:if>
+  <xsl:if test="//gui:chat">
+    <link rel="stylesheet" href="{$context}/{$pathVersion}css/chat.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+  </xsl:if>
 
   <xsl:for-each select="//gui:css">
     <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -153,6 +156,9 @@
   </xsl:if>
   <xsl:if test="//gui:clipboard">
     <script src="{$context}/{$pathVersion}js/Clipboard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+  </xsl:if>
+  <xsl:if test="//gui:chat">
+    <script src="{$context}/{$pathVersion}js/Chat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
   </xsl:if>
 
   <xsl:for-each select="gui:localize[@source]">
@@ -3806,6 +3812,22 @@ doc title:'Rich text' class:'hui.ui.RichText'
         element:'<xsl:call-template name="gui:id"/>',
         name:'<xsl:value-of select="@name"/>',
         components: components
+      });
+      <xsl:call-template name="gui:createobject"/>
+      })()
+    </script>
+  </xsl:template>
+
+  <xsl:template match="gui:chat">
+    <div class="hui_chat">
+      <div class="hui_chat_body"><xsl:comment/></div>
+      <xsl:text disable-output-escaping='yes'><![CDATA[<textarea spellcheck="false" class="hui_chat_input"></textarea>]]></xsl:text>
+    </div>
+    <script type="text/javascript">
+      (function() {
+      var <xsl:call-template name="gui:id"/>_obj = new hui.ui.Chat({
+        element:'<xsl:call-template name="gui:id"/>',
+        name:'<xsl:value-of select="@name"/>'
       });
       <xsl:call-template name="gui:createobject"/>
       })()
