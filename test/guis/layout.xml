@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
-<gui xmlns="uri:hui" title="Animation" padding="20">
+<gui xmlns="uri:hui" title="Layout" padding="20">
   <row>
     <button text="Button"/>
     <button text="Button"/>

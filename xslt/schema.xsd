@@ -24,6 +24,7 @@
       <xs:element name="structure" type="structure"/>
       <xs:element name="columns" type="columns"/>
       <xs:element name="rows" type="rows"/>
+      <xs:element name="row" type="row"/>
       <xs:element name="foundation" type="foundation"/>
       <xs:element name="boundpanel" type="boundpanel"/>
       <xs:element name="panel" type="panel"/>
@@ -571,6 +572,7 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="text" type="bar_text" minOccurs="0" maxOccurs="1"/>
       <xs:element name="right" type="bar_right" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="wide" type="bar_wide"/>
       <xs:element name="button" type="bar_button"/>
       <xs:element name="checkbox" type="checkbox"/>
       <xs:element name="dropdown" type="dropdown"/>
@@ -600,6 +602,19 @@
     </xs:choice>
   </xs:complexType>
 
+  <xs:complexType name="bar_wide">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="button" type="bar_button"/>
+      <xs:element name="checkbox" type="checkbox"/>
+      <xs:element name="dropdown" type="dropdown"/>
+      <xs:element name="segmented" type="segmented"/>
+      <xs:element name="searchfield" type="searchfield"/>
+      <xs:element name="flexible" type="bar_flexible"/>
+      <xs:element name="tool" type="toolbar_icon"/>
+      <xs:element name="item" type="toolbar_item"/>
+    </xs:choice>
+  </xs:complexType>
+
   <xs:complexType name="bar_flexible">
   </xs:complexType>
 
@@ -624,6 +639,7 @@
     <xs:attribute name="icon" type="xs:string"/>
     <xs:attribute name="symbol" type="xs:string"/>
     <xs:attribute name="small" type="xs:boolean"/>
+    <xs:attribute name="size" type="xs:string"/>
     <xs:attribute name="click" type="xs:string"/> <!-- TODO -->
   </xs:complexType>
 
@@ -799,6 +815,7 @@
     <xs:attribute name="title" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
     <xs:attribute name="padding" type="xs:positiveInteger"/>
+    <xs:attribute name="auto-hide" type="xs:boolean"/>
     <!--
     <xs:attribute name="target" type="xs:string"/>
     <xs:attribute name="modal" type="xs:boolean"/>
@@ -960,6 +977,13 @@
 
   <!-- Rows -->
 
+  <xs:element name="row" type="row"/>
+  <xs:complexType name="row">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:any/>
+    </xs:choice>
+  </xs:complexType>
+
   <xs:element name="rows" type="rows"/>
   <xs:complexType name="rows">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -1004,6 +1028,13 @@
       <xs:any/>
     </xs:choice>
     <xs:attribute name="width" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="column" type="column"/>
+  <xs:complexType name="column">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:any/>
+    </xs:choice>
   </xs:complexType>
 
   <!-- Split -->
@@ -1739,6 +1770,11 @@
   <xs:complexType name="style-editor_component">
     <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="description" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="chat" type="chat"/>
+  <xs:complexType name="chat">
+    <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
 </xs:schema>

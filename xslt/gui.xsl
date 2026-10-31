@@ -1699,16 +1699,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:row">
-    <div style="display: flex;">
+    <div style="display: flex; gap: 5px;">
       <xsl:attribute name="class">
         <xsl:text>hui_row</xsl:text>
       </xsl:attribute>
 
       <xsl:for-each select="*">
         <div>
-          <xsl:if test="position() > 1">
-            <xsl:attribute name="style">margin-left: 5px;</xsl:attribute>
-          </xsl:if>
           <xsl:apply-templates select="."/>
         </div>
       </xsl:for-each>
@@ -1717,7 +1714,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:column">
-    <div style="display: flex; flex-direction: column">
+    <div style="display: flex; flex-direction: column; gap: 5px;">
       <xsl:attribute name="class">
         <xsl:text>hui_row</xsl:text>
       </xsl:attribute>
