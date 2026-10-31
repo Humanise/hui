@@ -7,6 +7,7 @@
   <script data-hui-context="../..">hui={_:[],on:function(){this._.push(arguments)}};</script>
   <script src="../../js/hui.js"></script>
   <script src="../../js/hui_animation.js"></script>
+  <script src="../../js/hui_control.js"></script>
   <script src="../../js/hui_color.js"></script>
   <script src="../../js/ui.js"></script>
   <script src="../../js/hui_require.js"></script>
@@ -22,11 +23,17 @@
         console.profileEnd();
       },5000);
     }
+    hui.control({
+      $ready() {
+        
+      }
+    })
   </script>
 </head>
 
 <body>
-  <button onclick="hui.ui.get('diagram').resume()">Resume</button>
+  <button onclick="hui.ui.get('diagram').resume()" class="hui_button">Resume</button>
+  <button onclick="hui.ui.get('diagram').resume()" class="hui_button">Resume</button>
   <div id="container" style="border: 1px solid #eee; margin: 50px">
 
   </div>
